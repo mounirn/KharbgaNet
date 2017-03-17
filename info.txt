@@ -1,0 +1,52 @@
+ kharbga
+ par hamdiii le Mar 28 Juil 2009, 14:33
+
+.A l’origine kharbga est un jeu ancestral très populaire joué en Afrique du nord,
+Crase a CDMIND jeu ce jeux existe actuellement sous forme numérique sur CD-ROM dans la gamme CDMIND GAMES et sous forme d’un jeu de table appelé kharbga en 2 clics 
+Aussi CDMIND organise un championnat en Tunisie pour la 1ère fois, 
+Pour plus d’information visité les sites :
+www.kharbga2clics.com 
+www.cdmind.com
+
+
+Saturday May 29, 2010
+
+Features:
+
+- Ability to play with other players via the network
+- Ability to play against the computer (artificial intelligence)
+    - Generate settings
+    - Identify moves
+    
+- Ability to watch a game being played by other players via the network
+- Ability to store games on the server
+- Ability to access stored games (site security)
+    - user account information
+    - integration with Facebook
+- Ability to replay a stored game
+- Ability to organize tournaments
+- Integration with Facebook
+
+- Ability to undo a previous setting or move.
+    - board level (stored game)
+    - user local view update
+    
+- Ability to start the board and the game with a specific state 
+  of the game
+
+
+
+Open issues:
+
+- Clear selections at the end of a game 
+    - after a player abondons due to inability to move
+    - after an attacker abondons due to inability to pay defender
+    - a player's score reaches zero
+-  Add end of the game moves to the Move History
+-  Add Untouchable Payment move to the History
+
+- Remove the pass button. 
+- Evaluate the player's possible moves at the begining of their turn
+    - Automatic pass if the player does not have a move
+    - Highlight possible moves
+    - Highlight capturable pieces
