@@ -39,7 +39,11 @@ function validSquare(square) {
 
 function validPieceCode(code) {
   if (typeof code !== 'string') return false;
-  return (code.search(/^[bw][S]$/) !== -1);   // MN -- Black or white
+  return (code.search(/^[bw][SADM]$/) !== -1);   // MN -- Black or white -- S 
+                // S Solider
+                // A Attacker
+                // D Defender
+                // M Malha 
 }
 
 // TODO: this whole function could probably be replaced with a single regex
@@ -52,12 +56,12 @@ function validFen(fen) {
 
   // FEN should be 8 sections separated by slashes
   var chunks = fen.split('/');
-  if (chunks.length !== 8) return false;
+  if (chunks.length !== 7) return false;   // MN only 7 rows
 
   // check the piece sections
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < 7; i++) {
     if (chunks[i] === '' ||
-        chunks[i].length > 8 ||
+        chunks[i].length > 7 ||
         chunks[i].search(/[^bw1-7]/) !== -1) {
       return false;
     }
@@ -80,7 +84,7 @@ function validPositionObject(pos) {
   return true;
 }
 
-// convert FEN piece code to bP, wK, etc
+// convert FEN piece code to bS, wS, etc
 function fenToPieceCode(piece) {
   // black piece
   if (piece.toLowerCase() === piece) {
@@ -91,7 +95,7 @@ function fenToPieceCode(piece) {
   return 'w' + piece.toUpperCase();
 }
 
-// convert bP, wK, etc code to FEN structure
+// convert bS, wS, etc code to FEN structure
 function pieceCodeToFen(piece) {
   var tmp = piece.split('');
 
@@ -199,7 +203,7 @@ cfg = cfg || {};
 //------------------------------------------------------------------------------
 
 var MINIMUM_JQUERY_VERSION = '1.7.0',
-  START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',  // MN start with an empty board
+  START_FEN = '7/7/7/7/7/7/7',  // MN start with an empty board
   START_POSITION = fenToObj(START_FEN);
 
 // use unique class names to prevent clashing with anything else on the page
@@ -545,7 +549,7 @@ function createElIds() {
 //------------------------------------------------------------------------------
 
 function buildBoardContainer() {
-  var html = '<div class="' + CSS.kharbga + '">';
+  var html = '<div class="' + CSS.kharbgaboard + '">';
 
   if (cfg.sparePieces === true) {
     html += '<div class="' + CSS.sparePieces + ' ' +

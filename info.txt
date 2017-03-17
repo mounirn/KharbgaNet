@@ -1,3 +1,44 @@
+
+FEN for Kharbga  -- 
+https://en.wikipedia.org/wiki/Forsyth–Edwards_Notation
+
+Adapted for Kharbga
+
+
+Definition[edit]
+A FEN "record" defines a particular game position, all in one text line and using only the ASCII character set. 
+A text file with only FEN data records should have the file extension ".fen".[1]
+
+A FEN record contains six fields. The separator between fields is a space. The fields are:
+
+- Piece placement (from white's perspective). 
+- Each rank is described, starting with rank 8 and ending with rank 1; 
+- within each rank, the contents of each square are described from file "a" through file "g". 
+- Following the Standard Algebraic Notation (SAN), each piece is identified by a single letter taken 
+- from the standard English names (solider = "S").
+- [1] White/Attacker pieces are designated using upper-case letters ("S") or A 
+- while black/Defender pieces use lowercase ("s"). Empty squares are noted using digits 1 through 7 (the number of empty squares), and "/" separates ranks.
+
+- Active color. "w" means White/Attacker moves next, "b" means Black / Defender.
+
+- 
+Castling availability. If neither side can castle, this is "-". Otherwise, this has one or more letters: "K" (White can castle kingside), "Q" (White can castle queenside), "k" (Black can castle kingside), and/or "q" (Black can castle queenside).
+En passant target square in algebraic notation. If there's no en passant target square, this is "-". If a pawn has just made a two-square move, this is the position "behind" the pawn. This is recorded regardless of whether there is a pawn in position to make an en passant capture.[2]
+Halfmove clock: This is the number of halfmoves since the last capture or pawn advance. This is used to determine if a draw can be claimed under the fifty-move rule.
+Fullmove number: The number of the full move. It starts at 1, and is incremented after Black's move.
+Examples[edit]
+Here is the FEN for the starting position:
+
+7/7/7/7/7/7/7  w    -- No pieces on the board
+
+
+chessboardjs.com -- adpated for use in the Kharbga UI 
+
+
+
+
+* Background Info
+*****************
  kharbga
  par hamdiii le Mar 28 Juil 2009, 14:33
 
