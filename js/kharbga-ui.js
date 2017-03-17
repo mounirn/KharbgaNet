@@ -5,7 +5,7 @@
  * Released under the MIT license
  * http://www.kharbga.net/license
  *
- * Date: 10 Aug 2013
+ * Date: Mar 17 2017
 
  *  -- Based on http://chessboardjs.com
  */
@@ -18,6 +18,8 @@
 // Kharbga Util Functions
 //------------------------------------------------------------------------------
 var COLUMNS = 'abcdefg'.split('');
+var ROWS = '1234567'.split('');
+    var LEN = ROWS.length;
 
 function validMove(move) {
   // move should be a string
@@ -56,7 +58,7 @@ function validFen(fen) {
   for (var i = 0; i < 8; i++) {
     if (chunks[i] === '' ||
         chunks[i].length > 8 ||
-        chunks[i].search(/[^kqrbnpKQRNBP1-8]/) !== -1) {
+        chunks[i].search(/[^bw1-7]/) !== -1) {
       return false;
     }
   }
@@ -116,15 +118,15 @@ function fenToObj(fen) {
   var rows = fen.split('/');
   var position = {};
 
-  var currentRow = 8;
-  for (var i = 0; i < 8; i++) {
+  var currentRow = 7;
+  for (var i = 0; i < 7; i++) {
     var row = rows[i].split('');
     var colIndex = 0;
 
     // loop through each character in the FEN section
     for (var j = 0; j < row.length; j++) {
       // number / empty squares
-      if (row[j].search(/[1-8]/) !== -1) {
+      if (row[j].search(/[1-7]/) !== -1) {
         var emptySquares = parseInt(row[j], 10);
         colIndex += emptySquares;
       }
@@ -151,9 +153,9 @@ function objToFen(obj) {
 
   var fen = '';
 
-  var currentRow = 8;
-  for (var i = 0; i < 8; i++) {
-    for (var j = 0; j < 8; j++) {
+  var currentRow = 7;
+  for (var i = 0; i < 7; i++) {
+    for (var j = 0; j < 7; j++) {
       var square = COLUMNS[j] + currentRow;
 
       // piece exists
@@ -167,7 +169,7 @@ function objToFen(obj) {
       }
     }
 
-    if (i !== 7) {
+    if (i !== 6) {
       fen += '/';
     }
 
@@ -176,7 +178,7 @@ function objToFen(obj) {
 
   // squeeze the numbers together
   // haha, I love this solution...
-  fen = fen.replace(/11111111/g, '8');
+ // fen = fen.replace(/11111111/g, '8');
   fen = fen.replace(/1111111/g, '7');
   fen = fen.replace(/111111/g, '6');
   fen = fen.replace(/11111/g, '5');
@@ -187,7 +189,7 @@ function objToFen(obj) {
   return fen;
 }
 
-window['ChessBoard'] = window['ChessBoard'] || function(containerElOrId, cfg) {
+window['KharbgaBoard'] = window['KharbgaBoard'] || function(containerElOrId, cfg) {
 'use strict';
 
 cfg = cfg || {};
@@ -197,7 +199,7 @@ cfg = cfg || {};
 //------------------------------------------------------------------------------
 
 var MINIMUM_JQUERY_VERSION = '1.7.0',
-  START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+  START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',  // MN start with an empty board
   START_POSITION = fenToObj(START_FEN);
 
 // use unique class names to prevent clashing with anything else on the page
@@ -206,7 +208,7 @@ var CSS = {
   alpha: 'alpha-d2270',
   black: 'black-3c85d',
   board: 'board-b72b1',
-  chessboard: 'chessboard-63f37',
+  kharbgaboard: 'kharbgaboard-63f37',
   clearfix: 'clearfix-7da63',
   highlight1: 'highlight1-32417',
   highlight2: 'highlight2-9c5d2',
@@ -301,7 +303,7 @@ function error(code, msg, obj) {
     return;
   }
 
-  var errorText = 'ChessBoard Error ' + code + ': ' + msg;
+  var errorText = 'KharbgaBoard Error ' + code + ': ' + msg;
 
   // print to console
   if (cfg.showErrors === 'console' &&
@@ -335,8 +337,8 @@ function checkDeps() {
   if (typeof containerElOrId === 'string') {
     // cannot be empty
     if (containerElOrId === '') {
-      window.alert('ChessBoard Error 1001: ' +
-        'The first argument to ChessBoard() cannot be an empty string.' +
+      window.alert('KharbgaBoard Error 1001: ' +
+        'The first argument to KharbgaBoard() cannot be an empty string.' +
         '\n\nExiting...');
       return false;
     }
@@ -344,7 +346,7 @@ function checkDeps() {
     // make sure the container element exists in the DOM
     var el = document.getElementById(containerElOrId);
     if (! el) {
-      window.alert('ChessBoard Error 1002: Element with id "' +
+      window.alert('KharbgaBoard Error 1002: Element with id "' +
         containerElOrId + '" does not exist in the DOM.' +
         '\n\nExiting...');
       return false;
@@ -361,8 +363,8 @@ function checkDeps() {
     containerEl = $(containerElOrId);
 
     if (containerEl.length !== 1) {
-      window.alert('ChessBoard Error 1003: The first argument to ' +
-        'ChessBoard() must be an ID or a single DOM node.' +
+      window.alert('KharbgaBoard Error 1003: The first argument to ' +
+        'KharbgaBoard() must be an ID or a single DOM node.' +
         '\n\nExiting...');
       return false;
     }
@@ -372,7 +374,7 @@ function checkDeps() {
   if (! window.JSON ||
       typeof JSON.stringify !== 'function' ||
       typeof JSON.parse !== 'function') {
-    window.alert('ChessBoard Error 1004: JSON does not exist. ' +
+    window.alert('KharbgaBoard Error 1004: JSON does not exist. ' +
       'Please include a JSON polyfill.\n\nExiting...');
     return false;
   }
@@ -380,7 +382,7 @@ function checkDeps() {
   // check for a compatible version of jQuery
   if (! (typeof window.$ && $.fn && $.fn.jquery &&
       compareSemVer($.fn.jquery, MINIMUM_JQUERY_VERSION) === true)) {
-    window.alert('ChessBoard Error 1005: Unable to find a valid version ' +
+    window.alert('KharbgaBoard Error 1005: Unable to find a valid version ' +
       'of jQuery. Please include jQuery ' + MINIMUM_JQUERY_VERSION + ' or ' +
       'higher on the page.\n\nExiting...');
     return false;
@@ -444,7 +446,7 @@ function expandConfig() {
   if (cfg.hasOwnProperty('pieceTheme') !== true ||
       (typeof cfg.pieceTheme !== 'string' &&
        typeof cfg.pieceTheme !== 'function')) {
-    cfg.pieceTheme = 'img/chesspieces/wikipedia/{piece}.png';
+    cfg.pieceTheme = '../img/kharbgapieces/{piece}.png';
   }
 
   // animation speeds
@@ -515,21 +517,21 @@ function calculateSquareSize() {
     boardWidth--;
   }
 
-  return (boardWidth / 8);
+  return (boardWidth / 7);
 }
 
 // create random IDs for elements
 function createElIds() {
   // squares on the board
   for (var i = 0; i < COLUMNS.length; i++) {
-    for (var j = 1; j <= 8; j++) {
+    for (var j = 1; j <= 7; j++) {
       var square = COLUMNS[i] + j;
       SQUARE_ELS_IDS[square] = square + '-' + createId();
     }
   }
 
   // spare pieces
-  var pieces = 'KQRBNP'.split('');
+  var pieces = 'SSSSSSSSSSSSSSSSSSSSSSSS'.split('');   // 24 pieces that are the same
   for (var i = 0; i < pieces.length; i++) {
     var whitePiece = 'w' + pieces[i];
     var blackPiece = 'b' + pieces[i];
@@ -543,7 +545,7 @@ function createElIds() {
 //------------------------------------------------------------------------------
 
 function buildBoardContainer() {
-  var html = '<div class="' + CSS.chessboard + '">';
+  var html = '<div class="' + CSS.kharbga + '">';
 
   if (cfg.sparePieces === true) {
     html += '<div class="' + CSS.sparePieces + ' ' +
@@ -587,16 +589,16 @@ function buildBoard(orientation) {
 
   // algebraic notation / orientation
   var alpha = deepCopy(COLUMNS);
-  var row = 8;
+  var row = 7;
   if (orientation === 'black') {
     alpha.reverse();
     row = 1;
   }
 
   var squareColor = 'white';
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < 7; i++) {
     html += '<div class="' + CSS.row + '">';
-    for (var j = 0; j < 8; j++) {
+    for (var j = 0; j < 7; j++) {
       var square = alpha[j] + row;
 
       html += '<div class="' + CSS.square + ' ' + CSS[squareColor] + ' ' +
@@ -608,7 +610,7 @@ function buildBoard(orientation) {
       if (cfg.showNotation === true) {
         // alpha notation
         if ((orientation === 'white' && row === 1) ||
-            (orientation === 'black' && row === 8)) {
+            (orientation === 'black' && row === 7)) {
           html += '<div class="' + CSS.notation + ' ' + CSS.alpha + '">' +
             alpha[j] + '</div>';
         }
@@ -672,9 +674,9 @@ function buildPiece(piece, hidden, id) {
 }
 
 function buildSparePieces(color) {
-  var pieces = ['wK', 'wQ', 'wR', 'wB', 'wN', 'wP'];
+  var pieces = ['wS', 'wS', 'wS', 'wS', 'wS', 'wS'];
   if (color === 'black') {
-    pieces = ['bK', 'bQ', 'bR', 'bB', 'bN', 'bP'];
+    pieces = ['bS', 'bS', 'bS', 'bS', 'bS', 'bS'];
   }
 
   var html = '';
@@ -843,8 +845,8 @@ function createRadius(square) {
   var squares = [];
 
   // calculate distance of all squares
-  for (var i = 0; i < 8; i++) {
-    for (var j = 0; j < 8; j++) {
+  for (var i = 0; i < LEN; i++) {
+    for (var j = 0; j < 7; j++) {
       var s = COLUMNS[i] + (j + 1);
 
       // skip the square we're starting from
@@ -1445,7 +1447,7 @@ widget.resize = function() {
   SQUARE_SIZE = calculateSquareSize();
 
   // set board width
-  boardEl.css('width', (SQUARE_SIZE * 8) + 'px');
+  boardEl.css('width', (SQUARE_SIZE * LEN) + 'px');
 
   // set drag piece size
   draggedPieceEl.css({
@@ -1680,7 +1682,7 @@ function initDom() {
 
   // create the drag piece
   var draggedPieceId = createId();
-  $('body').append(buildPiece('wP', true, draggedPieceId));
+  $('body').append(buildPiece('wS', true, draggedPieceId));
   draggedPieceEl = $('#' + draggedPieceId);
 
   // get the border size
@@ -1707,10 +1709,10 @@ init();
 // return the widget object
 return widget;
 
-}; // end window.ChessBoard
+}; // end window.KharbgaBoard
 
 // expose util functions
-window.ChessBoard.fenToObj = fenToObj;
-window.ChessBoard.objToFen = objToFen;
+window.KharbgaBoard.fenToObj = fenToObj;
+window.KharbgaBoard.objToFen = objToFen;
 
 })(); // end anonymous wrapper
