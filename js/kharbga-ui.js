@@ -10,6 +10,15 @@
  *  -- Based on http://chessboardjs.com
  */
 
+/**
+ * ///TODO:
+ *   - add ability to keep track of number of pieces still available for setting
+ *   - add ability to display captured pieces and counts foreach player
+ *   - make the piece images smaller than currently
+ *   - add image of Malha at setting time
+ *   - remove image of malha at start
+ */
+
 // start anonymous scope
 ;(function() {
 'use strict';
@@ -39,11 +48,11 @@ function validSquare(square) {
 
 function validPieceCode(code) {
   if (typeof code !== 'string') return false;
-  return (code.search(/^[bw][SADM]$/) !== -1);   // MN -- Black or white -- S 
+  return (code.search(/^[bw][S]$/) !== -1);   // MN -- Black or white -- S 
                 // S Solider
                 // A Attacker
                 // D Defender
-                // M Malha 
+                // M Malha - Middle cell 
 }
 
 // TODO: this whole function could probably be replaced with a single regex
@@ -203,7 +212,7 @@ cfg = cfg || {};
 //------------------------------------------------------------------------------
 
 var MINIMUM_JQUERY_VERSION = '1.7.0',
-  START_FEN = '7/7/7/7/7/7/7',  // MN start with an empty board
+  START_FEN = '7/7/7/7/7/7/7',  // MN start with an empty board  (Middle cell is not 
   START_POSITION = fenToObj(START_FEN);
 
 // use unique class names to prevent clashing with anything else on the page
@@ -246,7 +255,7 @@ var widget = {};
 //------------------------------------------------------------------------------
 
 var ANIMATION_HAPPENING = false,
-  BOARD_BORDER_SIZE = 2,
+  BOARD_BORDER_SIZE = 5,
   CURRENT_ORIENTATION = 'white',
   CURRENT_POSITION = {},
   SQUARE_SIZE,
@@ -256,7 +265,11 @@ var ANIMATION_HAPPENING = false,
   DRAGGING_A_PIECE = false,
   SPARE_PIECE_ELS_IDS = {},
   SQUARE_ELS_IDS = {},
-  SQUARE_ELS_OFFSETS;
+  SQUARE_ELS_OFFSETS,
+  ATTACKER_PIECES_AVAILABLE_FOR_SETTING = 24,
+  ATTACKER_PEICES_CAPTURED = 0,
+  DEFENDER_PIECES_AVAILABLE_FOR_SETTING = 24,
+  DEFENDER_PEICES_CAPTURED = 0;
 
 //------------------------------------------------------------------------------
 // JS Util Functions
@@ -535,7 +548,7 @@ function createElIds() {
   }
 
   // spare pieces
-  var pieces = 'SSSSSSSSSSSSSSSSSSSSSSSS'.split('');   // 24 pieces that are the same
+  var pieces = 'S'.split('');   // 24 pieces that are the same
   for (var i = 0; i < pieces.length; i++) {
     var whitePiece = 'w' + pieces[i];
     var blackPiece = 'b' + pieces[i];
@@ -678,9 +691,9 @@ function buildPiece(piece, hidden, id) {
 }
 
 function buildSparePieces(color) {
-  var pieces = ['wS', 'wS', 'wS', 'wS', 'wS', 'wS'];
+  var pieces = ['wS'];
   if (color === 'black') {
-    pieces = ['bS', 'bS', 'bS', 'bS', 'bS', 'bS'];
+    pieces = ['bS'];
   }
 
   var html = '';
