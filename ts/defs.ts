@@ -259,7 +259,9 @@ namespace Kharbga {
 
         constructor() {
             this.UseArabicIds = false;  // default
+            this.cells = [];  // init array 
             for (let r = 0; r < 7; r++) {
+                this.cells[r] = [];
                 for (let c = 0; c < 7; c++) {
                     let cell = new BoardCell(this, r, c);
                     this.cells[r][c] = cell;

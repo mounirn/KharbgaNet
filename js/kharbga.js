@@ -145,7 +145,9 @@ var Kharbga;
             this.cellsById = new Object();
             this.piecesSetCount = 0;
             this.UseArabicIds = false;
+            this.cells = [];
             for (var r = 0; r < 7; r++) {
+                this.cells[r] = [];
                 for (var c = 0; c < 7; c++) {
                     var cell = new BoardCell(this, r, c);
                     this.cells[r][c] = cell;
