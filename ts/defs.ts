@@ -611,8 +611,9 @@ namespace Kharbga {
             this.col = col;
             this.id = BoardCell.LeftLabels[row] + (col + 1).toString();
 
+            this.listAdjacentCells = [];  
             // setup adjacent cells
-            //  this.SetAdjacentCells(b);
+            this.SetAdjacentCells(b);
 
         }
 
