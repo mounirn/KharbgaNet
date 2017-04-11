@@ -353,7 +353,6 @@ var Kharbga;
             this.col = col;
             this.id = BoardCell.LeftLabels[row] + (col + 1).toString();
             this.listAdjacentCells = [];
-            this.SetAdjacentCells(b);
         }
         BoardCell.prototype.Row = function () {
             return this.row;

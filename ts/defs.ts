@@ -269,6 +269,7 @@ namespace Kharbga {
                 }
             }
             this._cellIds = Object.keys(this.cellsById);
+
             // Process the board to set adjacent cells
             for (let id of this._cellIds) {
                 let cell = this.cellsById[id] as BoardCell;
@@ -612,9 +613,7 @@ namespace Kharbga {
             this.id = BoardCell.LeftLabels[row] + (col + 1).toString();
 
             this.listAdjacentCells = [];  
-            // setup adjacent cells
-            this.SetAdjacentCells(b);
-
+      
         }
 
         /**
