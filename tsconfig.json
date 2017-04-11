@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outFile": "./js/kharbga.js",
+    "sourceMap": true
+  },
+  "include": [
+    "./ts/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "./ts/test.ts",
+    "./ts/events.ts"
+  ]
+}

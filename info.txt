@@ -175,3 +175,11 @@ Open issues:
     - Automatic pass if the player does not have a move
     - Highlight possible moves
     - Highlight capturable pieces
+
+
+
+Dev Notes:
+***********
+
+Compling Typescipt 
+- tsc

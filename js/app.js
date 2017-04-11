@@ -1,4 +1,4 @@
-/// reference 
+/// reference kharbga.js
 /* include after all dependecies */
 
 
@@ -6,7 +6,7 @@ var init = function () {
     var board,
         boardEl = $('#board');
 
-  // var game = new KharbgaGame();   // KharbgaGame()
+    var game = new Kharbga.Game();   // KharbgaGame()
 
     var  squareClass = 'square-55d63',
         squareToHighlight,
@@ -21,6 +21,7 @@ var init = function () {
         console.log("Position: " + KharbgaBoard.objToFen(position));
         console.log("Orientation: " + orientation);
         console.log("--------------------");
+     //   console.log("game state: " + game.state.toString());
 
         // add logic to check if current player is allowed to make this move
     };
