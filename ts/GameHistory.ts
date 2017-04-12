@@ -3,12 +3,14 @@ namespace Kharbga {
      * Responsible for storing the game move history
      */
     export class GameHistory {
-        settings: Array<string> = new Array<string>(48);
-        moves: Array<string> = new Array<string>(100);
+        settings: string[];
+        moves: string[];
         /// <summary>
         /// Creates the move history
         /// </summary>
         public GameHistory() {
+            this.settings = [];
+            this.moves = [];
         }
 
         //  public delegate void GameHistoryEventHandler(object sender, GameHistoryEventArgs e);
@@ -35,7 +37,7 @@ namespace Kharbga {
         /// <param name="fromCellId"></param>
         /// <param name="toCellId"></param>
         AddMove(player: Player, fromCellId: string, toCellId: string) {
-            let move = player.IsAttacker ? 'A' : 'D' + ":" + fromCellId + ":" + toCellId;
+            let move = player.IsAttacker ? 'A' : 'D' + ":" + fromCellId + "-" + toCellId;
 
             this.moves.push(move);
 

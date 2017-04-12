@@ -34,22 +34,6 @@ namespace Kharbga {
         attackerUntouchable1: GameMove = null;
         attackerUntouchable2: GameMove = null;
 
-        // Events availble for the views to update state after changes made in the game
-        // 
-        /*   public delegate void GameEventHandler(object sender, GameEventArgs e);
-           public event GameEventHandler NewGameStartedEvent;
-           public event GameEventHandler NewPlayerTurnEvent;
-           public event GameEventHandler NewSettingCompletedEvent;
-           public event GameEventHandler SettingsCompletedEvent;
-           public event GameEventHandler NewMoveStartedEvent;
-           public event GameEventHandler NewMoveCompletedEvent;
-           public event GameEventHandler NewMoveCanceledEvent;
-           public event GameEventHandler WinnerDeclaredEvent;
-       
-           public event GameEventHandler UntouchableSelectedEvent;
-           public event GameEventHandler UntouchableExchangeCanceled;
-       */
-
         /// <summary>
         /// Initializes the game to the no started state
         /// </summary>
@@ -93,18 +77,43 @@ namespace Kharbga {
         public getState(): GameState { return this.state; }
 
         /**
-         * Starts a new game.
+         * Starts a new game between two players on the same computer
          */
         public start(): void {
             this.init();
+            this.reset();
 
             var eventData = new GameEventData(this, this.getCurrentPlayer());
             this.gameEvents.newGameStartedEvent(eventData);
             this.gameEvents.newPlayerTurnEvent(eventData);
-            //   NewGameStartedEvent(this, null);
-            //   NewPlayerTurnEvent(this, null);
+         }
+
+        /**
+         * indicates whether the game is done or not
+         */
+        public game_over(): boolean {
+            if (this.state == GameState.WinnerDeclared)
+                return true;
+            else
+                return false;
+        }
+        /**
+        * indicates whether the game is done or not
+        */
+        public game_setting_over(): boolean {
+            if (this.state === GameState.Setting)
+                return false;
+            else return true;
         }
 
+        /**
+         * Identifies who's turn it is to play
+         * Returns 'a' if atacker, 'd' if defender
+         */
+        public turn(): string {
+            if (this.currentPlayer.IsAttacker()) return 'a';
+            else return 'd';
+        }
         /**
          *  Returns the game history manager
          */
@@ -114,15 +123,15 @@ namespace Kharbga {
         /**
          * Returns the current player
          */
-        getCurrentPlayer(): Player { return this.currentPlayer; }
+        public getCurrentPlayer(): Player { return this.currentPlayer; }
 
-        getAttackerScore(): number { return this.attackerScore; }
-        getDefenderScore(): number { return this.defenderScore; }
+        public getAttackerScore(): number { return this.attackerScore; }
+        public getDefenderScore(): number { return this.defenderScore; }
 
         /**
          * Returns the startup time of the game
          */
-        getStartTime(): Date { return this.startTime; }
+        public getStartTime(): Date { return this.startTime; }
 
         /// <summary>
         /// Returns the time span since the game started
@@ -164,7 +173,7 @@ namespace Kharbga {
         /**
          * Resets the game. Clears the board and players info
          */
-        Reset(): void {
+        public reset(): void {
             this.board.Clear();
             this.attacker.Reset();
             this.defender.Reset();
@@ -175,9 +184,9 @@ namespace Kharbga {
 
         /**
          * Acts on the user requested move from by clicking on the cells 
-         * @param cellId - the cell id clicked by the user
+         * @param cellId - the cell id clicked/selected by the user for a move start or end
          */
-        processMove(cellId: string): boolean {
+        public processMove(cellId: string): boolean {
             if (this.state == GameState.Setting) {
                 return this.recordSetting(cellId);
             }
@@ -191,7 +200,7 @@ namespace Kharbga {
         /**
          *  Returns true if the board is ready to start playing after a new game
          */
-        checkIfSettingsCompleted(): void {
+        private checkIfSettingsCompleted(): void {
             if (this.board.AllPiecesAreSet()) {
                 this.state = GameState.Moving;
 
@@ -205,14 +214,14 @@ namespace Kharbga {
         /**
          * checks if the current player can not move 
          */
-        checkIfPlayerCanNotMove(): void {
+        private checkIfPlayerCanNotMove(): void {
             ///TODO:
             /// Check if this case is not at the begining of the game. 
             /// Defendent wins the game if they are blocked after the first attacker move and no pieces are captured
             this.PlayerChangeTurn();
         }
 
-        PlayerChangeTurn(): void {
+        private PlayerChangeTurn(): void {
             if (this.currentPlayer.IsAttacker())
                 this.currentPlayer = this.defender;
             else
@@ -224,9 +233,6 @@ namespace Kharbga {
             this.gameEvents.newPlayerTurnEvent(eventData);
 
         }
-
-
-
 
         CurrentPlayerAbdondoned() {
             if (this.currentPlayer == this.attacker) {
@@ -247,13 +253,11 @@ namespace Kharbga {
         CheckScores(): void {
             if (this.defenderScore == 0) {
                 this.winner = this.attacker;
-
                 this.state = GameState.DefenderLostAllPieces;
 
                 //WinnerDeclaredEvent(this, null);
                 var eventData = new GameEventData(this, this.winner);
                 this.gameEvents.winnerDeclaredEvent(eventData);
-
             }
         }
 
@@ -280,11 +284,9 @@ namespace Kharbga {
                 // NewPlayerTurnEvent(this, null);
                 var eventData = new GameEventData(this, this.getCurrentPlayer());
                 this.gameEvents.newPlayerTurnEvent(eventData);
-
             }
             return bCanPass;
         }
-
 
         CheckIfCurrentPlayerCanPassTurn(): boolean {
             let possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
@@ -295,11 +297,11 @@ namespace Kharbga {
         }
 
 
-
         /**
          * Records the current player request to set a piece. In order for a setting to be accepted, the
          * following conditions need to be met
          * @param cellId the id of a valid cell
+         * @returns true if successful move. false otherwise
          */
         recordSetting(cellId: string): boolean {
             if (this.state != GameState.Setting)
@@ -328,6 +330,18 @@ namespace Kharbga {
                     this.PlayerChangeTurn();
                 }
                 this.checkIfSettingsCompleted();
+            }
+            else {
+                // create an invalid setting event
+                var eventData = new GameEventData(this, this.getCurrentPlayer());
+                let cell = this.board.GetCellById(cellId);
+                eventData.targetCellId = cellId;
+                eventData.from = cell;
+                eventData.to = cell;
+                if (recorded === PlayerSettingStatus.ERR_MALHA)
+                    this.gameEvents.invalidSettingMalhaEvent(eventData);
+                else if (recorded === PlayerSettingStatus.ERR_OCCUPIED)
+                    this.gameEvents.invalidSettingOccupiedEvent(eventData);
             }
             return recorded == PlayerSettingStatus.OK;
         }

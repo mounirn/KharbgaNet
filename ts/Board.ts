@@ -83,8 +83,11 @@ namespace Kharbga {
          */
         RecordPlayerSetting(id: string, isAttacker: boolean): PlayerSettingStatus {
             let cell = this.GetCellById(id);
-            if (cell == null)
+            if (cell == null) {
+                console.log("invalid cell id passed: %s", id); 
+
                 return PlayerSettingStatus.ERR_INVALID_CELL;
+            }
 
             if (cell.IsMalha()) {
                 // generate event

@@ -52,8 +52,10 @@ var Kharbga;
         };
         Board.prototype.RecordPlayerSetting = function (id, isAttacker) {
             var cell = this.GetCellById(id);
-            if (cell == null)
+            if (cell == null) {
+                console.log("invalid cell id passed: %s", id);
                 return Kharbga.PlayerSettingStatus.ERR_INVALID_CELL;
+            }
             if (cell.IsMalha()) {
                 return Kharbga.PlayerSettingStatus.ERR_MALHA;
             }
@@ -252,7 +254,7 @@ var Kharbga;
             return this.state;
         };
         BoardCell.prototype.IsOccupied = function () {
-            return this.state == Kharbga.BoardCellState.Empty;
+            return this.state != Kharbga.BoardCellState.Empty;
         };
         BoardCell.prototype.IsOccupiedByAttacker = function () {
             return this.state == Kharbga.BoardCellState.OccupiedByAttacker;
@@ -526,9 +528,28 @@ var Kharbga;
         Game.prototype.getState = function () { return this.state; };
         Game.prototype.start = function () {
             this.init();
+            this.reset();
             var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
             this.gameEvents.newGameStartedEvent(eventData);
             this.gameEvents.newPlayerTurnEvent(eventData);
+        };
+        Game.prototype.game_over = function () {
+            if (this.state == Kharbga.GameState.WinnerDeclared)
+                return true;
+            else
+                return false;
+        };
+        Game.prototype.game_setting_over = function () {
+            if (this.state === Kharbga.GameState.Setting)
+                return false;
+            else
+                return true;
+        };
+        Game.prototype.turn = function () {
+            if (this.currentPlayer.IsAttacker())
+                return 'a';
+            else
+                return 'd';
         };
         Game.prototype.getHistory = function () { return this.history; };
         Game.prototype.getCurrentPlayer = function () { return this.currentPlayer; };
@@ -542,7 +563,7 @@ var Kharbga;
             this.spectators.push(s);
         };
         Game.prototype.Board = function () { return this.board; };
-        Game.prototype.Reset = function () {
+        Game.prototype.reset = function () {
             this.board.Clear();
             this.attacker.Reset();
             this.defender.Reset();
@@ -641,6 +662,17 @@ var Kharbga;
                 }
                 this.checkIfSettingsCompleted();
             }
+            else {
+                var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+                var cell = this.board.GetCellById(cellId);
+                eventData.targetCellId = cellId;
+                eventData.from = cell;
+                eventData.to = cell;
+                if (recorded === Kharbga.PlayerSettingStatus.ERR_MALHA)
+                    this.gameEvents.invalidSettingMalhaEvent(eventData);
+                else if (recorded === Kharbga.PlayerSettingStatus.ERR_OCCUPIED)
+                    this.gameEvents.invalidSettingOccupiedEvent(eventData);
+            }
             return recorded == Kharbga.PlayerSettingStatus.OK;
         };
         Game.prototype.recordMove = function (clickedCellId) {
@@ -736,6 +768,7 @@ var Kharbga;
             this.player = currentPlayer;
             this.from = null;
             this.to = null;
+            this.targetCellId = "";
         }
         return GameEventData;
     }());

@@ -109,7 +109,7 @@ namespace Kharbga{
          * Checks if the current cell is occupied or not
          */
         IsOccupied(): boolean {
-            return this.state == BoardCellState.Empty;
+            return this.state != BoardCellState.Empty;
         }
 
         /**

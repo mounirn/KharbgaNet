@@ -15,30 +15,34 @@
 <body>
     <div class="container">
         <h1>Welcome to Kharbga</h1>
+        <div id="message"></div>
         <div class="row">
             <div class="col-sm-3">
-                <p>Player Turn: <span id="player"></span></p>
+                <input class="btn btn-success" type="button" id="startGameBtn" value="Start New Game" />
+                <hr />
+                <p>Player Turn: <span id="player" class=""></span></p>
                 <p>Attacker Score: <span id="attacker_score"></span></p>
                 <p>Defender Score: <span id="defender_score"></span></p>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-6">
                 <!-- The Board --->
                 <div id="board" style="width: 400px"></div>
+                <!-- Board End --->
             </div>
-        </div>
-     
-        <!-- Board End --->
-        <p>Game State: <span id="state"></span></p>
-        <p>FEN: <span id="fen"></span></p>
-        <p>PGN: <span id="pgn"></span></p>
+            <div class="col-sm-3">              
+                <p>Game State: <span id="state" class="badge"></span></p>
+                <p>FEN: <span id="fen"></span></p>
+                <p>PGN: <span id="pgn"></span></p>
+                <br />
+                <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game and Board Info" /><br />
+                <input class="btn btn-danger" type="button" id="clearBoardBtn" value="Clear Board" /><br />
+                <!--    <input type="button" id="clearBoardInstantBtn" value="Clear Board Instant" /><br />-->
+                <input class="btn btn-warning" type="button" id="flipOrientationBtn" value="Flip orientation" />
+                <div id="movesHistory">
 
-        <input class="btn btn-info"type="button" id="getPositionBtn" value="Refresh Game and Board Info" /><br />
-
-        <input class="btn btn-success" type="button" id="startGameBtn" value="Start New Game" />
-        <input class="btn btn-danger" type="button" id="clearBoardBtn" value="Clear Board" /><br />
-    <!--    <input type="button" id="clearBoardInstantBtn" value="Clear Board Instant" /><br />-->
-        <input class="btn btn-warning" type="button" id="flipOrientationBtn" value="Flip orientation" />
-
+                </div>
+            </div>
+        </div>      
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>

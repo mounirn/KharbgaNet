@@ -530,18 +530,18 @@ function calculateSquareSize() {
   // pad one pixel
   var boardWidth = containerWidth - 1;
 
-  while (boardWidth % 8 !== 0 && boardWidth > 0) {
+  while (boardWidth % COLUMNS.length !== 0 && boardWidth > 0) {
     boardWidth--;
   }
 
-  return (boardWidth / 7);
+  return (boardWidth / COLUMNS.length);
 }
 
 // create random IDs for elements
 function createElIds() {
   // squares on the board
   for (var i = 0; i < COLUMNS.length; i++) {
-    for (var j = 1; j <= 7; j++) {
+      for (var j = 1; j <= ROWS.length; j++) {
       var square = COLUMNS[i] + j;
       SQUARE_ELS_IDS[square] = square + '-' + createId();
     }
@@ -645,7 +645,8 @@ function buildBoard(orientation) {
     }
     html += '<div class="' + CSS.clearfix + '"></div></div>';
 
-    squareColor = (squareColor === 'white' ? 'black' : 'white');
+    // MN uncommented flipping the color after each row
+    //squareColor = (squareColor === 'white' ? 'black' : 'white');
 
     if (orientation === 'white') {
       row--;
@@ -696,10 +697,20 @@ function buildSparePieces(color) {
     pieces = ['bS'];
   }
 
-  var html = '';
+  var html = '<div class="row">';
+  // MN : add indication which one is the attacker and which one is the defender
+  //   
+  if (color === 'black') {
+      html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender</strong></div>';
+  }
+  else {
+      html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker</strong></div>';
+  }
+  html += '<div class="col-sm-9">'
   for (var i = 0; i < pieces.length; i++) {
     html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
   }
+  html += '</div></div>'
 
   return html;
 }

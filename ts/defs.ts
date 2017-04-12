@@ -22,13 +22,18 @@ namespace Kharbga {
         Spectator
     }
 
+    /**
+     * Setting status 
+    */
     export enum PlayerSettingStatus {
         OK,
         ERR_INVALID_CELL,
         ERR_MALHA,
         ERR_OCCUPIED
     }
-
+    /**
+     *
+     */
     export enum PlayerMoveStatus {
         OK,
         ERR_FROM_IS_SURROUNDED,

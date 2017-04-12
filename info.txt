@@ -137,6 +137,7 @@ www.cdmind.com
 Saturday May 29, 2010
 
 Features:
+********
 
 - Ability to play with other players via the network
 - Ability to play against the computer (artificial intelligence)
@@ -161,7 +162,26 @@ Features:
 
 
 
-Open issues:
+Open Issues / To Do:
+*******************
+
+- Display the number settings left for each player after each turn
+- Display the number of spare pieces remaining off board
+- Display the number player score (number of pieces on board)
+- Display the Malha image while on setting
+- Remove the Malha image after setting is completed
+- Update the game setting at the end of the setting phase
+- Add instruction for player for how to move
+- Instead of draffing accept clicking a cell as 
+- Choose the type of game to play:
+
+	* players using the same computer 
+	* players using different computers  (networking functions)
+	* 
+- make sure all UI messages/strings are transalatable (change depending on language selection)
+- Add documentation about game rules
+- Display game history
+- Reply a game history
 
 - Clear selections at the end of a game 
     - after a player abondons due to inability to move

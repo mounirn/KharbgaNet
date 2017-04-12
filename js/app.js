@@ -3,25 +3,42 @@ var init = function () {
     var board,
         boardEl = $('#board');
 
+    // the current player turn
+    var currentPlayer;
+
     // the game events
     function onNewGameStarted(eventData) {
         console.log("event: onNewGameStarted - source: " + eventData.source);
+
+        $('#player').html('New Game...');
+        $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
     }
     function onNewPlayerTurn(eventData) {
         console.log("event: onNewPlayerTurn - player: " + eventData.player);
 
         
         $('#player').html(Kharbga.PlayerRole[eventData.player.role]);
+        currentPlayer = eventData.player;
+
+        $('#message').html("<div class='alert alert-success'>It is the turn  of the "
+                +  Kharbga.PlayerRole[eventData.player.role] + " to play </div>")
     }
     function onNewSettingCompleted(eventData) {
         console.log("event: onNewSettingCompleted - source " + eventData.source);
         // settings from and to are the same
         console.log("event: onNewSettingCompleted - from " + eventData.from);
         console.log("event: onNewSettingCompleted - to " + eventData.to);
+
+        $('#message').html("<div class='alert alert-success'>It is the turn  of the "
+            + Kharbga.PlayerRole[eventData.player.role] + " to set the 2nd piece </div>")
+
     }
     function onSettingsCompleted(eventData) {
         console.log("event: onSettingsCompleted - source: " + eventData.source);
 
+        $('#message').html("<div class='alert alert-warning'>The setting phase is now completed.  </div>");
+
+        $('#state').html(Kharbga.GameState[game.getState()]);
     }
     function onNewMoveStarted(eventData) {
         console.log("event: onNewMoveStarted - source: " + eventData.source);
@@ -43,17 +60,30 @@ var init = function () {
     function onWinnerDeclared(eventData) {
         console.log("event: onWinnerDeclared - winner: " + eventData.player);
 
+        $('#message').html("<div class='alert alert-info'>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role]  + "</div>")
     }
     function onUntouchableSelected(eventData) {
         console.log("event: onUntouchableSelected - source: " + eventData.source);
         console.log("event: onUntouchableSelected - from " + eventData.from);
         console.log("event: onUntouchableSelected - to " + eventData.to);
 
+    
+
     }
 
     function onUntouchableExchangeCanceled(eventData) {
         console.log("event: onUntouchableExchangeCanceled - source: " + eventData.source);
 
+    }
+    function onInvalidSettingMalha(eventData) {
+        console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
+        $('#message').html("<div class='alert alert-danger'>Setting on middle cell (Malha) is not allowed</div>")
+
+    }
+    function onInvalidSettingOccupied(eventData) {
+        console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
+
+        $('#message').html("<div class='alert alert-danger'>Setting on an occupied cell is not allowed</div>")
     }
     // Setup the game events to pass to the game object
     var gameEvents = {
@@ -66,13 +96,17 @@ var init = function () {
         newMoveCanceledEvent : onNewMoveCanceled,
         winnerDeclaredEvent : onWinnerDeclared,
         untouchableSelectedEvent : onUntouchableSelected,
-        untouchableExchangeCanceled : onUntouchableExchangeCanceled,
+        untouchableExchangeCanceledEvent: onUntouchableExchangeCanceled,
+        invalidSettingMalhaEvent: onInvalidSettingMalha,
+        invalidSettingOccupiedEvent: onInvalidSettingOccupied,
+
     }   
  
 
     var game = new Kharbga.Game(gameEvents);   // KharbgaGame()
     // set the game state
     $('#state').html(Kharbga.GameState[game.getState()]);
+    $('#message').html("<div class='alert alert-info'>Click on Start New Game button to start a new game on this computer between two players</div>")
 
     var  squareClass = 'square-55d63',
         squareToHighlight,
@@ -81,7 +115,7 @@ var init = function () {
 
     var onDragMove = function (newLocation, oldLocation, source,
         piece, position, orientation) {
-        console.log("New location: " + newLocation);
+  /*      console.log("New location: " + newLocation);
         console.log("Old location: " + oldLocation);
         console.log("Source: " + source);
         console.log("Piece: " + piece);
@@ -90,21 +124,55 @@ var init = function () {
         console.log("--------------------");
         console.log("game state: " + game.getState());
         console.log("game is in setting mode: " + game.isInSettingMode());
+    */
 
-        // add logic to check if current player is allowed to make this move
     };
 
     // do not pick up pieces if the game is over
     // only pick up pieces for the side to move
     var onDragStart = function(source, piece, position, orientation) {
-   /*   if (game.game_over() === true ||
-          (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-          (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-        return false;
-      }
-    */
+       if (game.game_over() === true ||
+          (game.turn() === 'a' && piece.search(/^b/) !== -1) ||
+          (game.turn() === 'd' && piece.search(/^w/) !== -1)) {
+            return false;
+        }
+
+        // check if settings is over and selected piece is spare
+        if (game.game_setting_over() === true && source === 'spare')
+           return false;
+
+        // check if setting is not over and selected piece is on baord
+        if (game.game_setting_over() === false && source !== 'spare')
+            return false;
+
 
     };
+
+    var onDrop = function (source, target, piece, newPos, oldPos, orientation) {
+        console.log("Source: " + source);
+        console.log("Target: " + target);
+        console.log("Piece: " + piece);
+        console.log("New position: " + KharbgaBoard.objToFen(newPos));
+        console.log("Old position: " + KharbgaBoard.objToFen(oldPos));
+        console.log("Orientation: " + orientation);
+        console.log("--------------------");
+
+        var ret = game.processMove(target);
+        // see if the move is legal
+  //      var move = game.({
+  //          from: source,
+  //          to: target,
+  //          promotion: 'q' // NOTE: always promote to a queen for example simplicity
+  //      });
+
+        // illegal move
+      //  if (move === null) return 'snapback';
+
+       // updateStatus();
+        if (ret == false) return 'snapback';
+
+    };
+
 
     var onMoveEnd = function() {
       boardEl.find('.square-' + squareToHighlight)
@@ -120,6 +188,7 @@ var init = function () {
         onDragStart: onDragStart,
         onDragMove: onDragMove,
         onMoveEnd: onMoveEnd,
+        onDrop : onDrop,
         sparePieces: true,
         showErrors : 'console'
     };
@@ -129,6 +198,7 @@ var init = function () {
      * Starts a new game
      */
     function onStart() {
+        game.reset();
         game.start();
         board.start();
         

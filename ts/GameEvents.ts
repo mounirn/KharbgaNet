@@ -4,11 +4,13 @@ namespace Kharbga{
         player: Player;
         from: BoardCell;
         to: BoardCell;
+        targetCellId: string;
         public constructor(game: Game, currentPlayer: Player) {
             this.source = game;
             this.player = currentPlayer;
             this.from = null;
             this.to = null;
+            this.targetCellId = "";
         }
     }
 	export interface IGameEvents{
@@ -21,6 +23,8 @@ namespace Kharbga{
         newMoveCanceledEvent(eventData: GameEventData): void;
         winnerDeclaredEvent(eventData: GameEventData): void;
         untouchableSelectedEvent(eventData: GameEventData): void;
-        untouchableExchangeCanceled (eventData: GameEventData): void;
+        untouchableExchangeCanceledEvent(eventData: GameEventData): void;
+        invalidSettingMalhaEvent(eventData: GameEventData): void;
+        invalidSettingOccupiedEvent(eventData: GameEventData): void;
 	}
 }
