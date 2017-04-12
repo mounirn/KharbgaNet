@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------------
 var COLUMNS = 'abcdefg'.split('');
 var ROWS = '1234567'.split('');
-    var LEN = ROWS.length;
+var LEN = ROWS.length;
 
 function validMove(move) {
   // move should be a string
