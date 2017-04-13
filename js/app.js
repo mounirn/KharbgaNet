@@ -8,7 +8,7 @@ var init = function () {
 
     // the game events
     function onNewGameStarted(eventData) {
-        console.log("event: onNewGameStarted - source: " + eventData.source);
+        console.log("event: onNewGameStarted - source: " + eventData.source.fen());
 
         $('#player').html('New Game...');
         $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
@@ -25,7 +25,7 @@ var init = function () {
                 +  Kharbga.PlayerRole[eventData.player.role] + " to play </div>")
     }
     function onNewSettingCompleted(eventData) {
-        console.log("event: onNewSettingCompleted - source " + eventData.source);
+        console.log("event: onNewSettingCompleted - source " + eventData.source.fen());
         // settings from and to are the same
         console.log("event: onNewSettingCompleted - from " + eventData.from);
         console.log("event: onNewSettingCompleted - to " + eventData.to);
@@ -36,7 +36,7 @@ var init = function () {
         updateScores(eventData.source);
     }
     function onSettingsCompleted(eventData) {
-        console.log("event: onSettingsCompleted - source: " + eventData.source);
+        console.log("event: onSettingsCompleted - source: " + eventData.source.fen());
 
         $('#message').html("<div class='alert alert-warning'>The setting phase is now completed.  </div>");
 
@@ -45,13 +45,13 @@ var init = function () {
         updateScores(eventData.source);
     }
     function onNewMoveStarted(eventData) {
-        console.log("event: onNewMoveStarted - source: " + eventData.source);
+        console.log("event: onNewMoveStarted - source: " + eventData.source.fen());
         console.log("event: onNewMoveStarted - from " + eventData.from);
         console.log("event: onNewMoveStarted - to " + eventData.to);
 
     }
     function onNewMoveCompleted(eventData) {
-        console.log("event: onNewMoveCompleted - source: " + eventData.source);
+        console.log("event: onNewMoveCompleted - source: " + eventData.source.fen());
         console.log("event: onNewMoveCompleted - from " + eventData.from);
         console.log("event: onNewMoveCompleted - to " + eventData.to);
 
@@ -59,7 +59,7 @@ var init = function () {
         updateScores(eventData.source);
     }
     function onNewMoveCanceled(eventData) {
-        console.log("event: onNewMoveCanceled - source: " + eventData.source);
+        console.log("event: onNewMoveCanceled - source: " + eventData.source.fen());
 
     }
 
@@ -99,25 +99,50 @@ var init = function () {
         $('#attacker_score').html(game.getAttackerScore().toString());
         $('#defender_score').html(game.getDefenderScore().toString());
     }
+
+    /* Board Events */
+    function onInvalidMove(eventData) {
+        console.log("board event: onInvalidMove - target: " + eventData.targetCellId);
+    }
+    function onValidMove(eventData) {
+        console.log("board event: onValidMove - target: " + eventData.targetCellId);
+    }
+    function onCapturedPiece(eventData) {
+        console.log("board event: onCapturedPiece - target: " + eventData.targetCellId);
+
+      //  board.move(eventData.targetCellId + "-spare");
+
+        board.position(game.fen(), false);
+
+    }
+
+
     // Setup the game events to pass to the game object
     var gameEvents = {
-        newGameStartedEvent : onNewGameStarted,
-        newPlayerTurnEvent : onNewPlayerTurn,
-        newSettingCompletedEvent : onNewSettingCompleted,
-        settingsCompletedEvent : onSettingsCompleted,
-        newMoveStartedEvent : onNewMoveStarted,
-        newMoveCompletedEvent : onNewMoveCompleted,
-        newMoveCanceledEvent : onNewMoveCanceled,
-        winnerDeclaredEvent : onWinnerDeclared,
-        untouchableSelectedEvent : onUntouchableSelected,
+        newGameStartedEvent: onNewGameStarted,
+        newPlayerTurnEvent: onNewPlayerTurn,
+        newSettingCompletedEvent: onNewSettingCompleted,
+        settingsCompletedEvent: onSettingsCompleted,
+        newMoveStartedEvent: onNewMoveStarted,
+        newMoveCompletedEvent: onNewMoveCompleted,
+        newMoveCanceledEvent: onNewMoveCanceled,
+        winnerDeclaredEvent: onWinnerDeclared,
+        untouchableSelectedEvent: onUntouchableSelected,
         untouchableExchangeCanceledEvent: onUntouchableExchangeCanceled,
         invalidSettingMalhaEvent: onInvalidSettingMalha,
         invalidSettingOccupiedEvent: onInvalidSettingOccupied,
 
-    }   
+    };  
+
+    // Setup the board events
+    var boardEvents = {
+        invalidMoveEvent: onInvalidMove,
+        validMoveEvent: onValidMove,
+        capturedPieceEvent: onCapturedPiece
+    };
  
 
-    var game = new Kharbga.Game(gameEvents);   // KharbgaGame()
+    var game = new Kharbga.Game(gameEvents,boardEvents);   // KharbgaGame()
     // set the game state
     $('#state').html(Kharbga.GameState[game.getState()]);
     $('#message').html("<div class='alert alert-info'>Click on Start New Game button to start a new game on this computer between two players</div>")
@@ -150,7 +175,7 @@ var init = function () {
           (game.turn() === 'd' && piece.search(/^w/) !== -1)) {
             return false;
         }
-
+        
         // check if settings is over and selected piece is spare
         if (game.game_setting_over() === true && source === 'spare')
            return false;
@@ -158,7 +183,11 @@ var init = function () {
         // check if setting is not over and selected piece is on baord
         if (game.game_setting_over() === false && source !== 'spare')
             return false;
-
+        if (game.is_in_moving_state() === true) {
+            // check if piece is sourrounded -- return false
+            if (game.is_surrounded_piece(source))
+                return false;
+        }
 
     };
 
@@ -171,7 +200,12 @@ var init = function () {
         console.log("Orientation: " + orientation);
         console.log("--------------------");
 
-        var ret = game.processMove(target);
+        var ret;
+        if (game.is_in_moving_state())
+            ret = game.processMove(source,target);
+        else
+            ret = game.processSetting(target);
+
         // see if the move is legal
   //      var move = game.({
   //          from: source,
@@ -226,7 +260,7 @@ var init = function () {
      * Clears the game and the board. The board is a set with an empty position string or fen
      */
     function onClear() {
-        game = new Kharbga.Game();
+        game.reset();
         $('#state').html(Kharbga.GameState[game.getState()]);
         board.clear();
 

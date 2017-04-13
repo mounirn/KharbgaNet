@@ -7,7 +7,7 @@ namespace Kharbga {
     export class Game {
         id: string;  // the game id
         state: GameState;  // the game state as defined above
-        board: Board = new Board(); // represents the game board
+        board: Board; // represents the game board
         startTime: Date;
         attacker: Attacker = new Attacker(); // represents the attacker
         defender: Defender = new Defender(); // represents the defender
@@ -17,6 +17,7 @@ namespace Kharbga {
         winner: Player;
 
         gameEvents: IGameEvents;
+        boardEvents: IBoardEvents;
 
         // temp counter used for Settings. Players are allowed to set two pieces at a time
         // starting with 24 pieces.
@@ -37,10 +38,14 @@ namespace Kharbga {
         /// <summary>
         /// Initializes the game to the no started state
         /// </summary>
-        constructor(gameEvents : IGameEvents) {
+        constructor(gameEvents: IGameEvents, boardEvents: IBoardEvents) {
             this.state = GameState.NotStarted;
 
             this.gameEvents = gameEvents;
+            this.boardEvents = boardEvents; 
+
+            this.board = new Board(boardEvents);
+
         }
 
         init() {
@@ -51,6 +56,20 @@ namespace Kharbga {
             this.currentPlayer = this.attacker;
             this.state = GameState.Setting;
 
+        }
+        /**
+         * returns all possible moves for the current player
+         */
+        public moves() : Array<GameMove> {
+            var ret = this.board.GetPossibleMoves(this.currentPlayer);
+            return ret;
+        }
+        /**
+         * returns the current game position - fen format
+         */
+        public fen(): string {
+
+            return this.board.fen();
         }
         /**
          * returns true if the game is in setting mode. false, otherwise
@@ -119,7 +138,6 @@ namespace Kharbga {
          */
         getHistory(): GameHistory { return this.history; }
 
-
         /**
          * Returns the current player
          */
@@ -183,18 +201,90 @@ namespace Kharbga {
         }
 
         /**
+        * Process a setting
+        * @param cellId - the cell id clicked/selected by the user for a move start or end
+        */
+        public processSetting(cellId: string): boolean {
+            if (this.state == GameState.Setting)
+                return this.recordSetting(cellId);
+            else
+                return false;
+        }
+        /**
          * Acts on the user requested move from by clicking on the cells 
          * @param cellId - the cell id clicked/selected by the user for a move start or end
          */
-        public processMove(cellId: string): boolean {
-            if (this.state == GameState.Setting) {
-                return this.recordSetting(cellId);
-            }
-            else if (this.state == GameState.Moving) {
-                return this.recordMove(cellId);
-            }
-            else
+        public processMove(fromCellId: string, toCellId: string): boolean {
+            if (this.state != GameState.Moving)
                 return false;
+            let ret = false;
+            let fromCell = this.board.GetCellById(fromCellId);
+           
+            // Not fromCell set yet
+            if (fromCell == null)  return ret;
+            
+                // check if the piece clicke is the current player piece
+            if (fromCell.IsOccupiedBy(this.getCurrentPlayer()) === false) {
+                // Invalid piece selected (empty square or opponent piece)
+               // this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, fromCellId, null);
+                return ret;
+            }
+            // Check if the piece selected could actually move
+            if (fromCell.IsSurrounded()) {
+               // this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSourroundedForMoving, clickedCell, null);
+                return ret;
+            }
+
+            let toCell = this.board.GetCellById(toCellId);;
+
+            // deselection move/canceling move from fromCell
+            if (fromCell === toCell) {
+                //    NewMoveCanceledEvent(this, new GameEventArgs(_fromCell.ID, toCell.ID, CurrentPlayer));
+                this.fromCell = null;
+                return ret;
+            }
+
+            let result = this.board.RecordPlayerMove(fromCell, toCell);
+
+            if (result.status == PlayerMoveStatus.OK) {
+                let move = new GameMove(this.fromCell.ID(), toCell.ID(), this.currentPlayer);
+                this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
+                //    NewMoveCompletedEvent(this, new GameEventArgs(_fromCell.ID, toCell.ID, CurrentPlayer));
+                this.fromCell = null; // reset for the next turn
+                ret = true;
+            }
+
+            // Check when a player needs to relinquish their turn to play
+            // 
+            // 1. If the last move captured no pieces, player must change turn change turn
+            // 2. If the last move captured 1 or more pieces and the same piece can continue to move and 
+            //    capture more pieces, the player must continue moving and caputuring the opponent pieces 
+            //    until there are no more pieces to capture.
+            //    
+            if (result.capturedPieces == 0) {
+                // The move is completed with no capture
+                // Check untouchable exchange requests
+                ///todo fix this function checkUntouchables
+                //this.CheckUntouchableMoves(move);
+
+                this.PlayerChangeTurn();
+            }
+            else {   // Update the scores
+                if (this.currentPlayer.IsAttacker()) {
+                    this.defenderScore -= result.capturedPieces;
+                }
+                else
+                    this.attackerScore -= result.capturedPieces;
+
+                if (!this.board.StillHavePiecesToCapture(toCell))
+                    this.PlayerChangeTurn();
+
+                //Check the scores 
+                this.CheckScores();
+
+            }
+
+            return ret;          
         }
 
         /**
@@ -346,6 +436,22 @@ namespace Kharbga {
             return recorded == PlayerSettingStatus.OK;
         }
 
+        /**
+         * returs true if the game is in moving phase
+         */
+        public is_in_moving_state(): boolean {
+            return this.state == GameState.Moving;
+        }
+
+        /**
+         * Checks if the selected piece to drag is able to move
+         * @param selectedPieceId
+         */
+        public is_surrounded_piece(selectedPieceId: string): boolean {
+            let clickedCell = this.board.GetCellById(selectedPieceId);
+
+            return clickedCell.IsSurrounded();
+        }
 
         /// <summary>
         /// Records a player's move from one cell to another after setting

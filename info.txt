@@ -1,178 +1,15 @@
-Kharbga 
-
-also known by Kharbaga  -- >  a different game see Weekipedia
-
-
-http://nabataea.net/seega.html
-
-
-Rules
-There are many varieties of Seega, but we are only including instructions for one of the most common, basic games.
-
-A board of 5 x 5 squares is marked out and each player has twelve distinctive 'stones'. Rocks and potsherds work nicely. 
-The board may be increased to 7 x 7 or 9 x 9, each player then having twenty-four or forty pieces.
-
-Object of the Game 
-Similar to checkers, you are trying to capture your opponent's pieces. The game ends when a player (the looser) has only one piece left.
-
-Start (Optional in Kharga)
-To start, the first player lays down two of his or her pieces in the squares marked "X." The other player lays down two pieces
-in the squares marked "O."
-
-Next, the players take turns, laying down two pieces at a time in any square but the center square.
-These turns are taken until all the pieces are laid down. The center square is left open.
-
-Moving Pieces 
-Pieces may be moved only to adjacent open squares, but diagonal moves are not allowed.
-
-Taking Pieces 
-A piece is taken (removed from the board) when it is "sandwiched" by two of the opponent's pieces. Sandwiching diagonally does not count. 
-"Pieces are only taken when the opponent makes a move that sandwiches the piece. For example, if you move your piece in between two of your
-opponent's pieces your piece is safe. If in the original layout of the board, one of your pieces is between two of your opponent's pieces, 
-your piece is safe. 
-
-In the diagram, when the red stone is moved as shown, it captures all three blue stones simultaneously.
-
-
-After making a capture a player can continue to move the same stone as long as it makes further captures.
-Safe ground: a player can safely move a stone between two enemy stones and a stone on the central square cannot be captured.
-When a player cannot move the opponent must make an entry by taking an extra turn.
-
-
-
-The winner: a player wins outright if he can capture all the enemy stones.
-
-Each player may make a barrier behind which there are only his own pieces and these can be moved without fear of attack. The initial placing of the stones is important in planning such a barrier or in preventing the other player from making one. If a barrier is set up, then the player with most stones on the board wins. If they have the same number of stones on the board the game is drawn.
-
-
-
-
-Other Rules 
-If a player is completely blocked in so that he or she cannot make any moves, then the blocked-in player is allowed to remove any one of 
-the opponent's pieces to clear a path. This situation usually arises only within the first few moves of the game.
-
-A second move in a single turn is allowed if the first move yielded a "take" and an additional move of the same piece will yield another "take."
-If a whole series of such moves are possible, then several moves in the same turn are allowed.
-
-
-http://nrich.maths.org/1267
-
-
-http://bgsj.ludus-opuscula.org/PDF_Files/BGS4-complete.pdf
-
-
-
-https://fr.wikipedia.org/wiki/Kharbaga
-
-
-
-http://jeuxstrategie.free.fr/Seega_complet.php
-
-
-
-FEN for Kharbga  -- 
-https://en.wikipedia.org/wiki/Forsyth–Edwards_Notation
-
-Adapted for Kharbga
-
-
-Definition[edit]
-A FEN "record" defines a particular game position, all in one text line and using only the ASCII character set. 
-A text file with only FEN data records should have the file extension ".fen".[1]
-
-A FEN record contains six fields. The separator between fields is a space. The fields are:
-
-- Piece placement (from white's perspective). 
-- Each rank is described, starting with rank 8 and ending with rank 1; 
-- within each rank, the contents of each square are described from file "a" through file "g". 
-- Following the Standard Algebraic Notation (SAN), each piece is identified by a single letter taken 
-- from the standard English names (solider = "S").
-- [1] White/Attacker pieces are designated using upper-case letters ("S") or A 
-- while black/Defender pieces use lowercase ("s"). Empty squares are noted using digits 1 through 7 (the number of empty squares), and "/" separates ranks.
-
-- Active color. "w" means White/Attacker moves next, "b" means Black / Defender.
-
-- 
-Castling availability. If neither side can castle, this is "-". Otherwise, this has one or more letters: "K" (White can castle kingside), "Q" (White can castle queenside), "k" (Black can castle kingside), and/or "q" (Black can castle queenside).
-En passant target square in algebraic notation. If there's no en passant target square, this is "-". If a pawn has just made a two-square move, this is the position "behind" the pawn. This is recorded regardless of whether there is a pawn in position to make an en passant capture.[2]
-Halfmove clock: This is the number of halfmoves since the last capture or pawn advance. This is used to determine if a draw can be claimed under the fifty-move rule.
-Fullmove number: The number of the full move. It starts at 1, and is incremented after Black's move.
-Examples[edit]
-Here is the FEN for the starting position:
-
-7/7/7/7/7/7/7  w    -- No pieces on the board
-
-
-chessboardjs.com -- adpated for use in the Kharbga UI 
-
-
-* ****************
-PGN Portable game notation
-
-https://en.wikipedia.org/wiki/Portable_Game_Notation
-
-to be used to store the game move history
-
-
-* Algenraic chess notation
-https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
-
-
----> For
-
-
-* Background Info
-*****************
- kharbga
- par hamdiii le Mar 28 Juil 2009, 14:33
-
-.A l’origine kharbga est un jeu ancestral très populaire joué en Afrique du nord,
-Crase a CDMIND jeu ce jeux existe actuellement sous forme numérique sur CD-ROM dans la gamme CDMIND GAMES et sous forme d’un jeu de table appelé kharbga en 2 clics 
-Aussi CDMIND organise un championnat en Tunisie pour la 1ère fois, 
-Pour plus d’information visité les sites :
-www.kharbga2clics.com 
-www.cdmind.com
-
-
-Saturday May 29, 2010
-
-Features:
-********
-
-- Ability to play with other players via the network
-- Ability to play against the computer (artificial intelligence)
-    - Generate settings
-    - Identify moves
-    
-- Ability to watch a game being played by other players via the network
-- Ability to store games on the server
-- Ability to access stored games (site security)
-    - user account information
-    - integration with Facebook
-- Ability to replay a stored game
-- Ability to organize tournaments
-- Integration with Facebook
-
-- Ability to undo a previous setting or move.
-    - board level (stored game)
-    - user local view update
-    
-- Ability to start the board and the game with a specific state 
-  of the game
-
-
 
 Open Issues / To Do:
 *******************
 
-- Display the number settings left for each player after each turn
-- Display the number of spare pieces remaining off board
-- Display the number player score (number of pieces on board)
+- Enfore moving and capturing rules
+- Enforce two exchages  (or leave as an option)
+- Option for who starts first (defender or attacker )
 - Display the Malha image while on setting
 - Remove the Malha image after setting is completed
-- Update the game setting at the end of the setting phase
+- Update the game setting at the end of the setting phase -- done
 - Add instruction for player for how to move
-- Instead of draffing accept clicking a cell as 
+- Instead of dragging from spare pieces, add option to accept clicking a cell as an indication for setting on that cell 
 - Choose the type of game to play:
 
 	* players using the same computer 
@@ -196,10 +33,41 @@ Open Issues / To Do:
     - Highlight possible moves
     - Highlight capturable pieces
 
+- Ability to play with other players via the network
+- Ability to play against the computer (artificial intelligence)
+    - Generate settings
+    - Identify moves
+    
+- Ability to watch a game being played by other players via the network
+- Ability to store games on the server
+- Ability to access stored games (site security)
+    - user account information
+- Ability to replay a stored game
+- Ability to organize tournaments
+- Integration with Facebook
+
+- Ability to undo a previous setting or move.
+    - board level (stored game)
+    - user local view update
+    
+- Ability to start the board and the game with a specific state 
+  of the game
 
 
-Dev Notes:
-***********
+Dev Release Notes:
+******************
+v 0.1  -- Apr 30, 2017
 
+Features:
+- Online Web Access (www.kharbga.net)
+- Ability to play on a single computer 
+
+Issues:
+- Display the number settings left for each player after each turn -- done (message)
+- Display the number of spare pieces remaining off board  -- not needed?
+- Display the player score (number of pieces on board) -- done
+- Enforce settings rules
+
+******************
 Compling Typescipt 
-- tsc
+- tsc    (src directory)
