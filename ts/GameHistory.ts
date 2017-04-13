@@ -8,7 +8,7 @@ namespace Kharbga {
         /// <summary>
         /// Creates the move history
         /// </summary>
-        public GameHistory() {
+        constructor() {
             this.settings = [];
             this.moves = [];
         }

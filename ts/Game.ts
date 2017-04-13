@@ -313,7 +313,7 @@ namespace Kharbga {
                 this.numberOfSettingsAllowed--;
                 this.history.AddSetting(this.currentPlayer, cell.ID());          
 
-                if (this.getCurrentPlayer().IsAttacker)
+                if (this.getCurrentPlayer().IsAttacker() === true)
                     this.attackerScore++;
                 else
                     this.defenderScore++;

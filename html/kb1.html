@@ -19,10 +19,26 @@
         <div class="row">
             <div class="col-sm-3">
                 <input class="btn btn-success" type="button" id="startGameBtn" value="Start New Game" />
-                <hr />
-                <p>Player Turn: <span id="player" class=""></span></p>
-                <p>Attacker Score: <span id="attacker_score"></span></p>
-                <p>Defender Score: <span id="defender_score"></span></p>
+                <table class="table table-responsive">
+                    <tr>
+                        <td aligh="right">Player Turn: </td>
+                        <td><strong><span id="player" class=""></span></strong></td>
+                    </tr>
+                    <tr>
+                        <td aligh="right">Attacker Score:</td>
+                        <td><span id="attacker_score" class="badge"></span></td>
+                    </tr>
+                    <tr>
+                        <td aligh="right">Defender Score: </td>
+                        <td><span id="defender_score" class="badge"></span></td>
+                    </tr>
+                </table>
+
+         
+                <input class="btn btn-danger" type="button" id="clearBoardBtn" value="Clear Board" /><br />
+                <!--    <input type="button" id="clearBoardInstantBtn" value="Clear Board Instant" /><br />-->
+                <input class="btn btn-warning" type="button" id="flipOrientationBtn" value="Flip orientation" />
+
             </div>
             <div class="col-sm-6">
                 <!-- The Board --->
@@ -31,18 +47,28 @@
             </div>
             <div class="col-sm-3">              
                 <p>Game State: <span id="state" class="badge"></span></p>
-                <p>FEN: <span id="fen"></span></p>
-                <p>PGN: <span id="pgn"></span></p>
-                <br />
-                <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game and Board Info" /><br />
-                <input class="btn btn-danger" type="button" id="clearBoardBtn" value="Clear Board" /><br />
-                <!--    <input type="button" id="clearBoardInstantBtn" value="Clear Board Instant" /><br />-->
-                <input class="btn btn-warning" type="button" id="flipOrientationBtn" value="Flip orientation" />
-                <div id="movesHistory">
+             
+
+                
+            </div>
+        </div>   
+        <div>
+            <p>FEN: <span id="fen"></span></p>
+            <p>PGN: <span id="pgn"></span></p>
+            <br />
+            <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game Info" /><br />
+            <div id="movesHistory"></div>
+         </div>
+        <footer>
+            <div class="container row">
+                <div class="col-sm-9">
 
                 </div>
+                <div class="col-sm-3">
+                    <strong>Developed by <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+                </div>
             </div>
-        </div>      
+        </footer>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>

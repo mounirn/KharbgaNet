@@ -648,7 +648,7 @@ var Kharbga;
                 var cell = this.board.GetCellById(cellId);
                 this.numberOfSettingsAllowed--;
                 this.history.AddSetting(this.currentPlayer, cell.ID());
-                if (this.getCurrentPlayer().IsAttacker)
+                if (this.getCurrentPlayer().IsAttacker() === true)
                     this.attackerScore++;
                 else
                     this.defenderScore++;
@@ -778,17 +778,15 @@ var Kharbga;
 (function (Kharbga) {
     var GameHistory = (function () {
         function GameHistory() {
-            this.settings = new Array(48);
-            this.moves = new Array(100);
+            this.settings = [];
+            this.moves = [];
         }
-        GameHistory.prototype.GameHistory = function () {
-        };
         GameHistory.prototype.AddSetting = function (player, settingCellId) {
             var move = player.IsAttacker ? 'A' : 'D' + ":" + settingCellId;
             this.settings.push(move);
         };
         GameHistory.prototype.AddMove = function (player, fromCellId, toCellId) {
-            var move = player.IsAttacker ? 'A' : 'D' + ":" + fromCellId + ":" + toCellId;
+            var move = player.IsAttacker ? 'A' : 'D' + ":" + fromCellId + "-" + toCellId;
             this.moves.push(move);
         };
         return GameHistory;

@@ -12,6 +12,7 @@ var init = function () {
 
         $('#player').html('New Game...');
         $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
+        updateScores(eventData.source);
     }
     function onNewPlayerTurn(eventData) {
         console.log("event: onNewPlayerTurn - player: " + eventData.player);
@@ -32,13 +33,16 @@ var init = function () {
         $('#message').html("<div class='alert alert-success'>It is the turn  of the "
             + Kharbga.PlayerRole[eventData.player.role] + " to set the 2nd piece </div>")
 
+        updateScores(eventData.source);
     }
     function onSettingsCompleted(eventData) {
         console.log("event: onSettingsCompleted - source: " + eventData.source);
 
         $('#message').html("<div class='alert alert-warning'>The setting phase is now completed.  </div>");
 
-        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#state').html(Kharbga.GameState[eventData.source.getState()]);
+
+        updateScores(eventData.source);
     }
     function onNewMoveStarted(eventData) {
         console.log("event: onNewMoveStarted - source: " + eventData.source);
@@ -51,6 +55,8 @@ var init = function () {
         console.log("event: onNewMoveCompleted - from " + eventData.from);
         console.log("event: onNewMoveCompleted - to " + eventData.to);
 
+
+        updateScores(eventData.source);
     }
     function onNewMoveCanceled(eventData) {
         console.log("event: onNewMoveCanceled - source: " + eventData.source);
@@ -61,19 +67,22 @@ var init = function () {
         console.log("event: onWinnerDeclared - winner: " + eventData.player);
 
         $('#message').html("<div class='alert alert-info'>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role]  + "</div>")
+
+        updateScores(eventData.source);
     }
     function onUntouchableSelected(eventData) {
         console.log("event: onUntouchableSelected - source: " + eventData.source);
         console.log("event: onUntouchableSelected - from " + eventData.from);
         console.log("event: onUntouchableSelected - to " + eventData.to);
 
-    
+        updateScores(eventData.source);
 
     }
 
     function onUntouchableExchangeCanceled(eventData) {
         console.log("event: onUntouchableExchangeCanceled - source: " + eventData.source);
 
+        updateScores(eventData.source);
     }
     function onInvalidSettingMalha(eventData) {
         console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
@@ -84,6 +93,11 @@ var init = function () {
         console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
 
         $('#message').html("<div class='alert alert-danger'>Setting on an occupied cell is not allowed</div>")
+    }
+
+    function updateScores(game) {
+        $('#attacker_score').html(game.getAttackerScore().toString());
+        $('#defender_score').html(game.getDefenderScore().toString());
     }
     // Setup the game events to pass to the game object
     var gameEvents = {
@@ -205,6 +219,8 @@ var init = function () {
         $('#state').html(Kharbga.GameState[game.getState()]);
         $('#fen').html(board.fen());
         $('#pgn').html(board.position().toString());
+
+        updateScores(game);
     }
     /**
      * Clears the game and the board. The board is a set with an empty position string or fen
