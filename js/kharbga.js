@@ -746,10 +746,10 @@ var Kharbga;
             if (result.status == Kharbga.PlayerMoveStatus.OK) {
                 var move = new Kharbga.GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
                 this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
-                this.gameEvents.newMoveCompletedEvent(eventData);
                 ret = true;
                 if (result.capturedPieces == 0) {
                     this.PlayerChangeTurn();
+                    this.gameEvents.newMoveCompletedEvent(eventData);
                 }
                 else {
                     if (this.currentPlayer.IsAttacker()) {
@@ -758,6 +758,7 @@ var Kharbga;
                     else
                         this.attackerScore -= result.capturedPieces;
                     if (this.board.StillHavePiecesToCapture(toCell) === false) {
+                        this.gameEvents.newMoveCompletedEvent(eventData);
                         this.PlayerChangeTurn();
                     }
                     else {

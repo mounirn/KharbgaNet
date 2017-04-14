@@ -355,7 +355,7 @@ namespace Kharbga {
                 let move = new GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
                 this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
                 //    NewMoveCompletedEvent(this, new GameEventArgs(_fromCell.ID, toCell.ID, CurrentPlayer));           
-                this.gameEvents.newMoveCompletedEvent(eventData)
+               
                 ret = true;
 
                 // Check when a player needs to relinquish their turn to play
@@ -372,6 +372,7 @@ namespace Kharbga {
                     //this.CheckUntouchableMoves(move);
 
                     this.PlayerChangeTurn();
+                    this.gameEvents.newMoveCompletedEvent(eventData)
                 }
                 else {   // Update the scores
                     if (this.currentPlayer.IsAttacker()) {
@@ -382,7 +383,9 @@ namespace Kharbga {
 
                     // check if the player could still 
                     if (this.board.StillHavePiecesToCapture(toCell) === false) {
+                        this.gameEvents.newMoveCompletedEvent(eventData)
                         this.PlayerChangeTurn();
+                        
                     }
                     else {
                         // add event that player should continue to play since they could still capture

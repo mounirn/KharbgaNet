@@ -13,6 +13,8 @@ var init = function () {
         $('#player').html('New Game...');
         $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
         updateScores(eventData.source);
+
+        $('#exchangeRequestCheckbox').hide();
     }
     function onNewPlayerTurn(eventData) {
         console.log("event: onNewPlayerTurn - player: " + eventData.player);
@@ -22,7 +24,9 @@ var init = function () {
         currentPlayer = eventData.player;
 
         $('#message').html("<div class='alert alert-success'>It is the turn  of the "
-                +  Kharbga.PlayerRole[eventData.player.role] + " to play </div>")
+            + Kharbga.PlayerRole[eventData.player.role] + " to play </div>")
+
+
     }
     function onNewSettingCompleted(eventData) {
         console.log("event: onNewSettingCompleted - source " + eventData.source.fen());
@@ -38,11 +42,13 @@ var init = function () {
     function onSettingsCompleted(eventData) {
         console.log("event: onSettingsCompleted - source: " + eventData.source.fen());
 
-        $('#message').html("<div class='alert alert-warning'>The setting phase is now completed.  </div>");
+        $('#message').html("<div class='alert alert-info'>The setting phase is now completed.  It is the Attacker turn to move a piece to the middle cell and attempt to capture the opponent pieces. </div>");
 
         $('#state').html(Kharbga.GameState[eventData.source.getState()]);
 
         updateScores(eventData.source);
+
+        $('#exchangeRequest').show();
     }
     function onNewMoveStarted(eventData) {
         console.log("event: onNewMoveStarted - source: " + eventData.source.fen());
@@ -322,6 +328,7 @@ var init = function () {
     // flip the board
     $('#flipOrientationBtn').on('click', board.flip);
 
+    $('#exchangeRequest').hide();
     // handler for resizing
     $(window).resize(board.resize);
 
