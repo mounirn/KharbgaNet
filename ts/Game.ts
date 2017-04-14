@@ -606,9 +606,7 @@ namespace Kharbga {
                 this.attackerUntouchable1 = null;
                 this.attackerUntouchable2 = null;
                 //UntouchableExchangeCanceled(this, null);
-
             }
-
         }
 
         /** @summary Processes a request to exchange a defender piece with two of the attacker pieces
@@ -616,7 +614,7 @@ namespace Kharbga {
          * @param untouchablePieceId - the id of the defender piece to exchange
          * @param attackerPiece1 - the id of the attacker's 1st piece to exchange
          * @param attackerPiece2 - the id of the attacker's 2nd piece to exchange
-         */
+        */
         ProcessUntouchableTwoExchange(untouchablePieceId: string, attackerPiece1: string, attackerPiece2: string) {
             //steps:
             // - check if the defender piece is able to move and is not reachable
