@@ -1,18 +1,17 @@
 namespace Kharbga {
     /**
-     * Defines the player types. We could have games where:
-     * - a person plays against another person
-     * - a computer plays against another computer
-     * - a person plays against a computer
+     * @summary Defines the player types. We could have games where:
+     * - a person plays against another person on the same computer
+     * - a person plays the computer on the same computer
+     * - a person plays against another person on another computer
      */
     export enum PlayerType {
         Person,
         Computer
     }
 
-
     /**
-     * A player could be either an attacker, a defender, or spectator. 
+     * @summary A player could be either an attacker, a defender, or spectator. 
      * A spectator could make move suggestions to either players assuming they are given 
      * the OK.
      */
@@ -23,7 +22,7 @@ namespace Kharbga {
     }
 
     /**
-     * Setting status 
+     * @summary defines possible returns status when setting a player pieces on the board
     */
     export enum PlayerSettingStatus {
         OK,
@@ -32,7 +31,7 @@ namespace Kharbga {
         ERR_OCCUPIED
     }
     /**
-     *
+     * @summary defines the the possible returns status when player makes a move 
      */
     export enum PlayerMoveStatus {
         OK,
@@ -43,7 +42,7 @@ namespace Kharbga {
     }
 
     /**
-     * Defines the possible states of a cell
+     * @summary Defines the possible states of a board cell
      */
     export enum BoardCellState {
         Empty,
@@ -52,24 +51,24 @@ namespace Kharbga {
         OccupiedByDefenderRequestingTwo
     }
 
-    /// <summary>
-    /// Defines various move error cases
-    /// </summary>
+    /**
+     * @summary Defines various move error cases
+     */
     export enum BoardMoveType {
         SettingOnValidCell,
         SettingOnOccupiedCell,
         SettingOnMiddleCell,
-        SelectedCellThatIsSourroundedForMoving,
+        SelectedCellThatIsSurroundedForMoving,
         SelectedEmptyOrOpponentPieceForMoving,
         MovingToAnOccupiedCell,
-        MovingToNotAjacentcell,
+        MovingToNotAdjacentCell,
         MovedToAValidCell,
         OpponentPieceCaptured,
         InvalidCellId   
     };
 
     /**
-     * Players 
+     * @summary Defines piece states   -- this is now obsolete
      */
     export enum PieceState {
         IsNotSetYet,  // Waiting to be set
@@ -80,7 +79,7 @@ namespace Kharbga {
         IsExchanged
     }
     /**
-     * Defines the possible states of a game
+     * @summary Defines the possible states of a game
      */
     export enum GameState {
         // The game at startup. 
@@ -88,7 +87,7 @@ namespace Kharbga {
 
 
         /// The game starts by the attacker setting his/her pieces on the board with the objective
-        /// of caputuring the defender's pieces and limiting the defender from building up protected 
+        /// of capturing the defender's pieces and limiting the defender from building up protected 
         /// areas where his pieces could freely move.
         /// 
         /// The defender's objective is to protect his pieces, capture the attacker's pieces (Agban), and 
@@ -102,35 +101,35 @@ namespace Kharbga {
         /// exchanges.  
         Setting,
 
-        /// This is an illegal condition at the begining of a game. 
+        /// This is an illegal condition at the beginning of a game. 
         /// After setting is completed, the attacker is required to move first. 
         /// After the attacker's first move is completed, the defender must be 
         /// able to play. If the defender is blocked after the first move, the attacker loses and 
-        /// the defender is declated a winner. After the first move by the defender, the attacker can 
-        /// block the defender from moving. In this case, the defender must pass thier turn 
+        /// the defender is declared a winner. After the first move by the defender, the attacker can 
+        /// block the defender from moving. In this case, the defender must pass their turn 
         /// and request the attacker to continue playing until one or more pieces of the 
         /// defender are unblocked. In most cases, this condition results in the defender losing 
         /// all their pieces. 
         DefenderCanNotMove,
 
-        ///  This state happens after the first move by the defender. It is legal state and attacker loses the game
+        ///  This state happens after the first move by the defender. It is a legal state and the attacker loses the game
         ///  in most cases. In this legal case, the defender can freely move their pieces until the attacker is unblocked and is able to play. 
         AttackerCanNotMove,
 
-        /// After completing s
+        /// After completing setting, this game goes to this state for players to start the first moves
         Moving,
 
-        /// In this state, the defender is able to freely move a piece in an protected area unreachable by 
-        /// the attacker and is demanding exchanges (one piece of the defender for two pieces of the attacker). The attacker's 
-        /// pieces must be able to freely move. 
+        /// In this state, the defender is able to freely move a piece in a protected area unreachable by 
+        /// the attacker and is demanding exchanges (one piece of the defender for two pieces of the attacker). An  attacker's 
+        /// piece must be able to freely move in order to be able to participate in an exchange. 
         DefenderMovingUntouchable,
 
-        /// The attacker abondons play and loses the game when they can not capture all of the defender's pieces. 
+        /// The attacker abandons play and loses the game when they can not capture all of the defender's pieces. 
         /// The defender's untouchable pieces are twice the value of the attacker's pieces. 
-        AttackerAbondoned,
+        AttackerAbandoned,
 
-        /// The defender abondons play and loses the game when all their pieces are captured 
-        DefenderAbondoned,
+        /// The defender abandons play and loses the game when all their pieces are captured 
+        DefenderAbandoned,
 
         /// Defender lost all pieces.
         DefenderLostAllPieces,
@@ -138,25 +137,31 @@ namespace Kharbga {
         WinnerDeclared
     }
 
+    /**
+     * @summary define a game action type  -- used for logging mainly 
+     */
     export enum GameActionType {
         Setting,
         Move,
         MoveCapture,
         DefenderRequestTwo,
-        DefenderRequestTwoAccepptedByAttacker
+        DefenderRequestTwoAcceptedByAttacker
     }
 
     /**
-     * Represents a game player. The game is played by two players, an attacker and a defender. Players use 24 game pieces to set the board. 
+     * @summary Represents a game player. The game is played by two players, an attacker and a defender.
+     *  Players use 24 game pieces to set the board. 
      * The players take turns in setting the board two pieces each turn.
-     * After the board is set, players take turns to make game mvoes capturing each other pices or demanding exchanges. the Attacker has the
-     * advantages of setting his two pieces first.   The Defender follows a setting strategy so their pieces do not get captured by the Attacker.
+     * After the board is set, players take turns to make game moves capturing each others pieces or demanding exchanges.
+     *  the Attacker has the
+     * advantages of setting his two pieces first.   The Defender follows a setting strategy so their pieces
+     *  do not get captured by the Attacker.
      */
     export class Player {
         occupiedCells = new Array(24);
         type: PlayerType;
         role: PlayerRole;
-        toalTimeThinkingSinceStartOfGame: 0;
+        totalTimeThinkingSinceStartOfGame: 0;
         constructor(role: PlayerRole) {
             this.type = PlayerType.Person;
             this.role = role;
@@ -185,12 +190,12 @@ namespace Kharbga {
 
 
         Reset(): void {
-            this.toalTimeThinkingSinceStartOfGame = 0;
+            this.totalTimeThinkingSinceStartOfGame = 0;
         }
     }
 
     /**
-     * The attacker is the first one who starts the setting and the one that makes the first move
+     * @summary The attacker is the first one who starts the setting and the one that makes the first move
      * 
      */
     export class Attacker extends Player {
@@ -201,7 +206,7 @@ namespace Kharbga {
     }
 
     /**
-     * Defender follows the attacker setting
+     * @summary The Defender follows the attacker setting and moves. Demands exchanges.
      */
     export class Defender extends Player {
         constructor() {
@@ -210,9 +215,9 @@ namespace Kharbga {
         }
     }
 
-    /// <summary>
-    /// Reprsents the piece that players use to make their moves on the board
-    /// </summary>
+    /**
+     *  @summary Represents the piece that players use to make their moves on the board
+     */
     export class Piece {
         state: PieceState;
 
@@ -234,6 +239,9 @@ namespace Kharbga {
         }
     }
 
+    /**
+     * summary: defines a game move
+     */
     export class GameMove {
         constructor(from: string, to: string, p: Player) {
             this.From = from;

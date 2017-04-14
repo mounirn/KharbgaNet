@@ -1,6 +1,6 @@
 namespace Kharbga{
 	/**
-	 * Represents a Kharbga Board cell.
+	 * @summary Represents a Kharbga Board cell.
 	 * A Board is 
 	 */
     export class BoardCell {
@@ -10,9 +10,9 @@ namespace Kharbga{
         board: Board;
 
         public static COLUMNS = 'abcdefg'.split('');
-        static ROWS = '1234567'.split('');
+        public static ROWS = '1234567'.split('');
 
-        row: number;   // 9 to 6
+        row: number;   // 0 to 6
         col: number;   // 0 to 6
         id: string;    // this is the location following the notation column label followed by row label
         // examples: a1, b2, d3, etc. 
@@ -27,7 +27,7 @@ namespace Kharbga{
         listAdjacentCells: BoardCell[];
 
         /**
-         * Board cells are created by the board
+         * @summary Board cells are created on a board of size 7 x 7
          * @param b the board
          * @param row: 0-6
          * @param col: 0-6

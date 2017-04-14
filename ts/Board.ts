@@ -1,7 +1,8 @@
 namespace Kharbga {
-    /**
-   * Represents the game baord composed of a 7 by 7 cells
-   * The board is set by players pieces at 
+ /**
+   * @summary Represents the game board composed of a 7 by 7 cells
+   * The board is set by two players (an Attacker and a Defender) 
+   * two pieces at a time starting by the attacker
    */
     export class Board {
         UseArabicIds: boolean = false;
@@ -12,7 +13,7 @@ namespace Kharbga {
         // The cells dictionary accessed by cell ID
         cellsById: any = new Object();
 
-        // the list of cells ids
+        // the list of cell ids
         _cellIds: string[];
 
         // Keeps track of the number of player pieces set on the board
@@ -71,8 +72,7 @@ namespace Kharbga {
         }
 
         /**
-          * Returns the cell by row and column numbers
-          *
+          * @summary Returns the cell by row and column numbers     
           */
         GetCell(row: number, col: number): BoardCell {
             ///Add checks for the row and col
@@ -80,7 +80,7 @@ namespace Kharbga {
         }
 
         /**
-         * Returns the cell by a cell Id
+         * @summary Returns the cell by a cell Id
          */
         GetCellById(id: string): BoardCell {
             return this.cellsById[id] as BoardCell;
@@ -106,12 +106,11 @@ namespace Kharbga {
         }
 
         /**
-         * Records the player setting
-         * Returns true if a successful legal move
-         * @param id - the cell id
-         * @param isAttacker - indicates whether an attacker or a defender piece
+         * @summary Records the player setting and returns true if a successful legal move
+         * @param id - of the cell to set
+         * @param isAttacker - indicates whether an attacker or a defender piece to set
          * @returns: the setting status code
-         * events:
+         * @event:
          *      -- A piece from either players is placed on the Malha
          *      -- A piece is placed on an occupied cell
          */
@@ -145,17 +144,17 @@ namespace Kharbga {
         }
 
         /**
-         * Records the player move from fromCell to toCell if a successful move
+         * @summary Records the player move from fromCell to toCell if a successful move
          * @param fromCell the From Cell
          * @param toCell the To Cell
-         * @returns returns the move status and the number of captured
+         * @returns returns the move status and the number of opponent pieces captured
          */
         RecordPlayerMove(fromCell: BoardCell, toCell: BoardCell): { status: PlayerMoveStatus, capturedPieces: number } {
 
-            // can not move a surronded cell
+            // can not move a surrounded cell
             if (fromCell.IsSurrounded() === true) {
                 //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SelectedCellThatIsSourroundedForMoving, fromCell.ID, toCell.ID, string.Empty));
-                var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.SelectedCellThatIsSourroundedForMoving);
+                var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.SelectedCellThatIsSurroundedForMoving);
                 this.boardEvents.invalidMoveEvent(eventData);
 
                 return { status: PlayerMoveStatus.ERR_FROM_IS_SURROUNDED, capturedPieces: 0 };
@@ -172,8 +171,7 @@ namespace Kharbga {
 
             // the To cell must be adjacent to the From Cell
             if (fromCell.IsAdjacentTo(toCell) === false) {
-                //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell,  fromCell.ID, toCell.ID, string.Empty));
-                var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToNotAjacentcell);
+                var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToNotAdjacentCell);
                 this.boardEvents.invalidMoveEvent(eventData);
 
                 return { status: PlayerMoveStatus.ERR_TO_IS_IS_NOT_AN_ADJACENT_CELL, capturedPieces: 0 };
@@ -191,18 +189,17 @@ namespace Kharbga {
         }
 
         /**
-         * Processes captured pieces by given move
+         * @summary Processes captured pieces by a given move. A move could capture up to 3 opponent pieces at a time
          * @param fromCell
          * @param toCell
-         * @returns reutns the number of pieces captured
+         * @returns the number of pieces captured
+         * @event  captured piece event
          */
         ProcessCapturedPieces(fromCell: BoardCell, toCell: BoardCell): number {
-
             var ret = 0;
             //0. Start with the To piece. 
             //1. Get all cells adjacent and occupied by the opponent (opposite color)
-            //2. For each of these Opponent Cells, check if is is between 
-            //   the to piece and a piece of the same type
+            //2. For each of these opponent cells, check if is is "sandwitched" between the To cell type
             let toCellAdjacentCells = toCell.GetAdjacentCells();
             var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
 
@@ -217,17 +214,14 @@ namespace Kharbga {
                 if (toCell.Above() === adjCell) { // checking up
                     if (adjCell.Above() != null && adjCell.Above().State() === toCell.State()) {
                         adjCell.Clear(); // Remove from the player pieces
-                        //BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
                         this.boardEvents.capturedPieceEvent(eventData);
                          ret++;
-
                     }
                 }
                 else if (toCell.Below() == adjCell) {// checking down     
                     if (adjCell.Below() != null && adjCell.Below().State() === toCell.State()) {
                         adjCell.Clear();
-                        // BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
                         this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
@@ -236,7 +230,6 @@ namespace Kharbga {
                 else if (toCell.Left() == adjCell) { // checking left;     
                     if (adjCell.Left() != null && adjCell.Left().State() === toCell.State()) {
                         adjCell.Clear();
-                        //BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
                         this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
@@ -245,8 +238,7 @@ namespace Kharbga {
                 else if (toCell.Right() == adjCell) { // checking right
                     if (adjCell.Right() != null && adjCell.Right().State() === toCell.State()) {
                         adjCell.Clear();
-                        //BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
-                        eventData.targetCellId = adjCell.ID();
+                         eventData.targetCellId = adjCell.ID();
                         this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
                     }
@@ -256,14 +248,14 @@ namespace Kharbga {
         }
 
         /**
-         * returns true if the setting by the players is complete. Players take turn to set 24 pieces on the baord
+         * @returns true if the setting by the players is complete. Players take turn to set 24 pieces on the board
          */
         AllPiecesAreSet(): boolean {
             return this.piecesSetCount == 48;
         }
 
         /**
-         * Clears the board from all player pieces.
+         * @summary Clears the board from all player pieces.
          */
         Clear() {
             this.piecesSetCount = 0;
@@ -277,7 +269,7 @@ namespace Kharbga {
         }
 
         /**
-         * returns a list of cells occupied by the given player
+         * @returns a list of cells occupied by the given player
          * @param player 
          */
         GetPlayerPieces(player: Player): Array<string> {
@@ -292,13 +284,14 @@ namespace Kharbga {
             return ret;
         }
 
-        /// <summary>
-        /// Returns the possible moves for this player
-        /// </summary>
-        /// <returns>a list of moves</returns>
+        /**
+         * 
+         * @param player 
+         * @returns the possible moves for this player
+         */
         GetPossibleMoves(player: Player): Array<GameMove> {
             // 0. Get the player occupied cells
-            // 1. For each of these cell get adjacenet cells
+            // 1. For each of these cell get adjacent cells
             // 2.   For each adjacent cell, get empty cells
             // 3        For each empty cell, record a possible move from occupied cell to the empty cell
             let ret = new Array<GameMove>(5);
@@ -317,28 +310,32 @@ namespace Kharbga {
             return ret;
         }
 
+        /**
+         * @summary generate a invalid move event
+         * @param boardMoveType - the move type
+         * @param from - the from cell
+         * @param to -- the to  cell
+         */
         RaiseBoardInvalidMoveEvent(boardMoveType: BoardMoveType, from: BoardCell, to: BoardCell) {
-            //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(boardMoveType, from != null ? from.ID : string.Empty, to != null ? to.ID : string.Empty, string.Empty));
             var eventData = new BoardEventData(from, to, to.ID(), boardMoveType);
-
             this.boardEvents.invalidMoveEvent(eventData);
         }
 
         /**
-         * Checks if the player still have more moves to make. If a move captures an opponent piece, the player is required
-         * to continue to move until there is no more moves that could capture pieces.
+         * @summary Checks if the player still have more moves to make. If a move captures an opponent piece, 
+         * the player is required to continue to move until there is no more moves that could capture pieces.
          * @param fromCell
          * @returns true if there is at least one cell around fromCell from which a move that results in
-         *             capturing at least one opponent piece could be made
+         *   capturing at least one opponent piece could be made
+         * 
          */
 
-        /// <returns>
-        /// </returns>
         StillHavePiecesToCapture(fromCell: BoardCell): boolean {
+            // to do: also return the possible move that could make a capture
             let ret = false;
             // 1. look at all possible moves (to adjacent cells)
             // 2. for each move
-            // 3.    check if oppponent pieces could be captured by the move
+            // 3.    check if opponent pieces could be captured by the move
             // 4.          return true if can capture the opponent piece
             // 5. return false if no capturing moves.
             let adjCells = fromCell.GetAdjacentCells();
@@ -361,7 +358,6 @@ namespace Kharbga {
                     {
                         if (adjCell.Above() != null && adjCell.Above().State() === fromCell.State()) {
                             return true;
-                            // Remove from the player pieces
                         }
                     }
                     else if (toCell.Below() === adjCell) // checking down
@@ -387,7 +383,7 @@ namespace Kharbga {
             return ret;
         }
         /**
-         * Records a Defender exchange. The defender's untouchable piece is twice the value of the attacker's piece 
+         * @summary Records a Defender exchange. The defender's untouchable piece is twice the value of the attacker's piece 
          * @param untouchablePieceId
          * @param attackerPiece1Id
          * @param attackerPiece2Id
