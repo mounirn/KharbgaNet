@@ -9,7 +9,7 @@ namespace Kharbga{
         static BottomLabels = ["A", "B", "C", "D", "E", "F", "G"];
         board: Board;
 
-        static COLUMNS = 'abcdefg'.split('');
+        public static COLUMNS = 'abcdefg'.split('');
         static ROWS = '1234567'.split('');
 
         row: number;   // 9 to 6
@@ -211,13 +211,17 @@ namespace Kharbga{
          * Checks if the give cell is adjacent to this one
          * @param cell
          */
-        IsAdjacentTo(cell: BoardCell) {
-            this.listAdjacentCells.forEach(function (e) {
-                if (e == cell)
-                    return true;
-            });
+        IsAdjacentTo(cell: BoardCell): boolean {
+            let ret = false;
+            for (var i = 0; i < this.listAdjacentCells.length; i++) {
+                let adjCell = this.listAdjacentCells[i];
+                if (adjCell == cell) {
+                    ret = true;
+                    break;
+                }
+            };
 
-            return false;
+            return ret;
         }
 
         Clear() {

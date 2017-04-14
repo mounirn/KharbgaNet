@@ -153,7 +153,7 @@ namespace Kharbga {
         RecordPlayerMove(fromCell: BoardCell, toCell: BoardCell): { status: PlayerMoveStatus, capturedPieces: number } {
 
             // can not move a surronded cell
-            if (fromCell.IsSurrounded) {
+            if (fromCell.IsSurrounded() === true) {
                 //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SelectedCellThatIsSourroundedForMoving, fromCell.ID, toCell.ID, string.Empty));
                 var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.SelectedCellThatIsSourroundedForMoving);
                 this.boardEvents.invalidMoveEvent(eventData);
@@ -162,7 +162,7 @@ namespace Kharbga {
             }
 
             // can not move to an occupied cell
-            if (toCell.IsOccupied) {        
+            if (toCell.IsOccupied() === true) {        
                 //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToAnOccupiedCell, fromCell.ID, toCell.ID, string.Empty));
                 var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToAnOccupiedCell);
                 this.boardEvents.invalidMoveEvent(eventData);
@@ -171,7 +171,7 @@ namespace Kharbga {
             }
 
             // the To cell must be adjacent to the From Cell
-            if (!fromCell.IsAdjacentTo(toCell)) {
+            if (fromCell.IsAdjacentTo(toCell) === false) {
                 //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell,  fromCell.ID, toCell.ID, string.Empty));
                 var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToNotAjacentcell);
                 this.boardEvents.invalidMoveEvent(eventData);
@@ -207,47 +207,47 @@ namespace Kharbga {
             var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
 
             for (let adjCell of toCellAdjacentCells) {
-                if (adjCell.IsEmpty())  // not occupied
+                if (adjCell.IsEmpty() === true)  // not occupied
                     continue;
 
-                if (adjCell.State == toCell.State)  // occupied by the same piece as player
+                if (adjCell.State() === toCell.State() )  // occupied by the same piece as player
                     continue;
 
                 // We have an opponent piece 
-                if (toCell.Above() == adjCell) { // checking up
-                    if (adjCell.Above() != null && adjCell.Above().State() == toCell.State()) {
+                if (toCell.Above() === adjCell) { // checking up
+                    if (adjCell.Above() != null && adjCell.Above().State() === toCell.State()) {
                         adjCell.Clear(); // Remove from the player pieces
                         //BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
-                        this.boardEvents.capturedCellEvent(eventData);
+                        this.boardEvents.capturedPieceEvent(eventData);
                          ret++;
 
                     }
                 }
                 else if (toCell.Below() == adjCell) {// checking down     
-                    if (adjCell.Below() != null && adjCell.Below().State() == toCell.State()) {
+                    if (adjCell.Below() != null && adjCell.Below().State() === toCell.State()) {
                         adjCell.Clear();
                         // BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
-                        this.boardEvents.capturedCellEvent(eventData);
+                        this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
                     }
                 }
                 else if (toCell.Left() == adjCell) { // checking left;     
-                    if (adjCell.Left() != null && adjCell.Left().State() == toCell.State()) {
+                    if (adjCell.Left() != null && adjCell.Left().State() === toCell.State()) {
                         adjCell.Clear();
                         //BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
-                        this.boardEvents.capturedCellEvent(eventData);
+                        this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
                     }
                 }
                 else if (toCell.Right() == adjCell) { // checking right
-                    if (adjCell.Right() != null && adjCell.Right().State() == toCell.State()) {
+                    if (adjCell.Right() != null && adjCell.Right().State() === toCell.State()) {
                         adjCell.Clear();
                         //BoardCapturedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToNotAjacentcell, fromCell.ID, toCell.ID, adjCell.ID));
                         eventData.targetCellId = adjCell.ID();
-                        this.boardEvents.capturedCellEvent(eventData);
+                        this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
                     }
                 }
@@ -321,7 +321,7 @@ namespace Kharbga {
             //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(boardMoveType, from != null ? from.ID : string.Empty, to != null ? to.ID : string.Empty, string.Empty));
             var eventData = new BoardEventData(from, to, to.ID(), boardMoveType);
 
-            this.boardEvents.validMoveEvent(eventData);
+            this.boardEvents.invalidMoveEvent(eventData);
         }
 
         /**
@@ -343,30 +343,30 @@ namespace Kharbga {
             // 5. return false if no capturing moves.
             let adjCells = fromCell.GetAdjacentCells();
             for (let cell of adjCells) {
-                if (!cell.IsEmpty)
+                if (cell.IsEmpty() == false)
                     continue;
 
                 // can move here
                 let toCell = cell;
                 let toCellAjdCells = toCell.GetAdjacentCells();
                 for (let adjCell of toCellAjdCells) {
-                    if (adjCell.IsEmpty)  // not occupied
+                    if (adjCell.IsEmpty() == true)  // not occupied
                         continue;
 
-                    if (adjCell.State() == fromCell.State())  // occupied by the same piece as player
+                    if (adjCell.State() === fromCell.State())  // occupied by the same piece as player
                         continue;
 
                     // We have an opponent piece adjacent to the cell we are moving to
-                    if (toCell.Above() == adjCell) // checking up
+                    if (toCell.Above() === adjCell) // checking up
                     {
-                        if (adjCell.Above() != null && adjCell.Above().State() == fromCell.State()) {
+                        if (adjCell.Above() != null && adjCell.Above().State() === fromCell.State()) {
                             return true;
                             // Remove from the player pieces
                         }
                     }
-                    else if (toCell.Below() == adjCell) // checking down
+                    else if (toCell.Below() === adjCell) // checking down
                     {
-                        if (adjCell.Below != null && adjCell.Below().State() == fromCell.State()) {
+                        if (adjCell.Below() != null && adjCell.Below().State() == fromCell.State()) {
                             return true;
                         }
                     }

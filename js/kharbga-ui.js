@@ -71,7 +71,7 @@ function validFen(fen) {
   for (var i = 0; i < 7; i++) {
     if (chunks[i] === '' ||
         chunks[i].length > 7 ||
-        chunks[i].search(/[^bw1-7]/) !== -1) {
+        chunks[i].search(/[^sS1-7]/) !== -1) {
       return false;
     }
   }

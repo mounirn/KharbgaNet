@@ -38,7 +38,8 @@ namespace Kharbga {
         OK,
         ERR_FROM_IS_SURROUNDED,
         ERR_TO_IS_OCCUPIED,
-        ERR_TO_IS_IS_NOT_AN_ADJACENT_CELL
+        ERR_TO_IS_IS_NOT_AN_ADJACENT_CELL,
+        ERR_INVALID
     }
 
     /**
@@ -63,7 +64,8 @@ namespace Kharbga {
         MovingToAnOccupiedCell,
         MovingToNotAjacentcell,
         MovedToAValidCell,
-        OpponentPieceCaptured
+        OpponentPieceCaptured,
+        InvalidCellId   
     };
 
     /**

@@ -27,7 +27,7 @@ namespace Kharbga {
 
         // 
         // temp pointer indicating the from cell used in a game move (after setting is completed)
-        fromCell: BoardCell = null;
+        //fromCell: BoardCell = null;
 
         // temp pointers indicating pieces involved in a two exchange
         defenderIsRequestingExchange: boolean;
@@ -70,6 +70,102 @@ namespace Kharbga {
         public fen(): string {
 
             return this.board.fen();
+        }
+        /**
+         * Sets the game with the given fen setting
+         * @param fen
+         */
+        public set(fen: string) : boolean {
+            if (this.validFen(fen) !== true) {
+                return false;
+            }
+
+            // cut off any move, castling, etc info from the end
+            // we're only interested in position information
+            fen = fen.replace(/ .+$/, '');
+
+            var rows = fen.split('/');
+            var position = {};
+
+            var currentRow = 7;
+            for (var i = 0; i < 7; i++) {
+                var row = rows[i].split('');
+                var colIndex = 0;
+
+                // loop through each character in the FEN section
+                for (var j = 0; j < row.length; j++) {
+                    // number / empty squares
+                    if (row[j].search(/[1-7]/) !== -1) {
+                        var emptySquares = parseInt(row[j], 10);
+                        colIndex += emptySquares;
+                    }
+                    // piece
+                    else {
+                        var square = BoardCell.COLUMNS[colIndex] + currentRow;
+                        var isAttackerPiece = this.isDefenderPiece(row[j]) === false; 
+                    
+                        var result = this.board.RecordPlayerSetting(square, isAttackerPiece);
+                        if (result != PlayerSettingStatus.OK) {
+                            //
+                            console.log("Error loading fen: " + fen + " at suqare: " + square);
+                            return false;
+                        }
+                        else {
+                            if (isAttackerPiece)
+                                this.attackerScore++;
+                            else
+                                this.defenderScore++;
+                        }
+                      //  position[square] = fenToPieceCode(row[j]);
+                        colIndex++;
+                    }
+                }
+
+                currentRow--;
+            }
+
+            // after setting fen
+            this.checkIfSettingsCompleted();
+            return true;
+        }
+
+        /**
+         * Checks if the fen piece char is an Attacker or a Defender piece.
+         * Defender pieces are in lower case.
+         * @param piece - the piece code
+         */
+        isDefenderPiece(piece: string): boolean{          
+            if (piece.toLowerCase() === piece)
+                return true;
+            else
+                return false;
+        }
+        /**
+         * Checks if the give game fen string is valid or not
+         * @param fen - the fen string
+         */
+        // TODO: this whole function could probably be replaced with a single regex
+        validFen(fen:string ) : boolean {
+            if (typeof fen !== 'string') return false;
+
+            // cut off any move, castling, etc info from the end
+            // we're only interested in position information
+            fen = fen.replace(/ .+$/, '');
+
+            // FEN should be 8 sections separated by slashes
+            var chunks = fen.split('/');
+            if (chunks.length !== 7) return false;   // MN only 7 rows
+
+            // check the piece sections
+            for (var i = 0; i < 7; i++) {
+                if (chunks[i] === '' ||
+                    chunks[i].length > 7 ||
+                    chunks[i].search(/[^sS1-7]/) !== -1) {
+                    return false;
+                }
+            }
+
+            return true;
         }
         /**
          * returns true if the game is in setting mode. false, otherwise
@@ -198,6 +294,7 @@ namespace Kharbga {
             this.attackerScore = 0;
             this.defenderScore = 0;
             this.winner = null;
+            this.currentPlayer = this.attacker;
         }
 
         /**
@@ -221,17 +318,20 @@ namespace Kharbga {
             let fromCell = this.board.GetCellById(fromCellId);
            
             // Not fromCell set yet
-            if (fromCell == null)  return ret;
+            if (fromCell == null) {
+                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.InvalidCellId, fromCell, null);
+                return ret;
+            }
             
-                // check if the piece clicke is the current player piece
+            // check if the piece clicke is the current player piece
             if (fromCell.IsOccupiedBy(this.getCurrentPlayer()) === false) {
                 // Invalid piece selected (empty square or opponent piece)
-               // this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, fromCellId, null);
+                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, fromCell, null);
                 return ret;
             }
             // Check if the piece selected could actually move
             if (fromCell.IsSurrounded()) {
-               // this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSourroundedForMoving, clickedCell, null);
+               this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSourroundedForMoving, fromCell, null);
                 return ret;
             }
 
@@ -240,59 +340,77 @@ namespace Kharbga {
             // deselection move/canceling move from fromCell
             if (fromCell === toCell) {
                 //    NewMoveCanceledEvent(this, new GameEventArgs(_fromCell.ID, toCell.ID, CurrentPlayer));
-                this.fromCell = null;
+                var eventData = new GameEventData(this, this.getCurrentPlayer());
+                eventData.from = fromCell;
+                eventData.to = toCell;
+                this.gameEvents.newMoveCanceledEvent(eventData)
                 return ret;
             }
 
             let result = this.board.RecordPlayerMove(fromCell, toCell);
-
+            var eventData = new GameEventData(this, this.getCurrentPlayer());
+            eventData.from = fromCell;
+            eventData.to = toCell;
             if (result.status == PlayerMoveStatus.OK) {
-                let move = new GameMove(this.fromCell.ID(), toCell.ID(), this.currentPlayer);
+                let move = new GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
                 this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
-                //    NewMoveCompletedEvent(this, new GameEventArgs(_fromCell.ID, toCell.ID, CurrentPlayer));
-                this.fromCell = null; // reset for the next turn
+                //    NewMoveCompletedEvent(this, new GameEventArgs(_fromCell.ID, toCell.ID, CurrentPlayer));           
+                this.gameEvents.newMoveCompletedEvent(eventData)
                 ret = true;
-            }
 
-            // Check when a player needs to relinquish their turn to play
-            // 
-            // 1. If the last move captured no pieces, player must change turn change turn
-            // 2. If the last move captured 1 or more pieces and the same piece can continue to move and 
-            //    capture more pieces, the player must continue moving and caputuring the opponent pieces 
-            //    until there are no more pieces to capture.
-            //    
-            if (result.capturedPieces == 0) {
-                // The move is completed with no capture
-                // Check untouchable exchange requests
-                ///todo fix this function checkUntouchables
-                //this.CheckUntouchableMoves(move);
+                // Check when a player needs to relinquish their turn to play
+                // 
+                // 1. If the last move captured no pieces, player must change turn change turn
+                // 2. If the last move captured 1 or more pieces and the same piece can continue to move and 
+                //    capture more pieces, the player must continue moving and caputuring the opponent pieces 
+                //    until there are no more pieces to capture.
+                //    
+                if (result.capturedPieces == 0) {
+                    // The move is completed with no capture
+                    // Check untouchable exchange requests
+                    ///todo fix this function checkUntouchables
+                    //this.CheckUntouchableMoves(move);
 
-                this.PlayerChangeTurn();
-            }
-            else {   // Update the scores
-                if (this.currentPlayer.IsAttacker()) {
-                    this.defenderScore -= result.capturedPieces;
-                }
-                else
-                    this.attackerScore -= result.capturedPieces;
-
-                if (!this.board.StillHavePiecesToCapture(toCell))
                     this.PlayerChangeTurn();
+                }
+                else {   // Update the scores
+                    if (this.currentPlayer.IsAttacker()) {
+                        this.defenderScore -= result.capturedPieces;
+                    }
+                    else
+                        this.attackerScore -= result.capturedPieces;
 
-                //Check the scores 
-                this.CheckScores();
+                    // check if the player could still 
+                    if (this.board.StillHavePiecesToCapture(toCell) === false) {
+                        this.PlayerChangeTurn();
+                    }
+                    else {
+                        // add event that player should continue to play since they could still capture
+                        
+                        this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData)
 
+                    }
+                    //Check the scores 
+                    this.CheckScores();
+
+                }
+            } else {
+                eventData.move_status = result.status;
+                this.gameEvents.invalidMoveEvent(eventData);
             }
 
             return ret;          
         }
 
         /**
-         *  Returns true if the board is ready to start playing after a new game
+         *  Returns true if the board is ready to start 2nd phase after setting 
          */
         private checkIfSettingsCompleted(): void {
             if (this.board.AllPiecesAreSet()) {
                 this.state = GameState.Moving;
+
+                this.currentPlayer = this.attacker;   // attackers starts after finishing the game
+                // check game options here if defender is to start
 
                 // SettingsCompletedEvent(this, null);
                 var eventData = new GameEventData(this, this.getCurrentPlayer());
@@ -393,7 +511,7 @@ namespace Kharbga {
          * @param cellId the id of a valid cell
          * @returns true if successful move. false otherwise
          */
-        recordSetting(cellId: string): boolean {
+        public recordSetting(cellId: string): boolean {
             if (this.state != GameState.Setting)
                 return false;
 
@@ -452,7 +570,7 @@ namespace Kharbga {
 
             return clickedCell.IsSurrounded();
         }
-
+/*
         /// <summary>
         /// Records a player's move from one cell to another after setting
         /// </summary>
@@ -467,13 +585,13 @@ namespace Kharbga {
             // Not fromCell set yet
             if (this.fromCell == null) {
                 // check if the piece clicke is the current player piece
-                if (!clickedCell.IsOccupiedBy(this.getCurrentPlayer())) {
+                if (clickedCell.IsOccupiedBy(this.getCurrentPlayer()) === false) {
                     // Invalid piece selected (empty square or opponent piece)
                     this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, clickedCell, null);
                     return ret;
                 }
                 // Check if the piece selected could actually move
-                if (clickedCell.IsSurrounded()) {
+                if (clickedCell.IsSurrounded() === true) {
                     this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSourroundedForMoving, clickedCell, null);
                     return ret;
                 }
@@ -534,7 +652,7 @@ namespace Kharbga {
             }
             return ret;
         }
-
+*/
         CheckUntouchableMoves(move: GameMove): void {
             if (this.defenderIsRequestingExchange == true) {
                 if (this.currentPlayer.IsDefender()) {

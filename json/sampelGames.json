@@ -1,14 +1,14 @@
 [
   {
     "id": "1",
-    "settings": [],
-    "fen": "",
+    "settings": ["a:d3","a:d5"],
+    "fen": "sSSSsSs/sssssSs/sSS1SSS/SssSsss/SSSsssS/SSSSssS/SSsSsss",
     "moves": []
   },
   {
     "id": "2",
     "settings": [],
-    "fen": "",
+    "fen": "SssSsss/sSSSSSS/ssSsSss/sss1sSS/sSsSSSS/SssSsSS/SssSsSs",
     "moves": []
   }
 ]

@@ -51,15 +51,30 @@ var init = function () {
 
     }
     function onNewMoveCompleted(eventData) {
-        console.log("event: onNewMoveCompleted - source: " + eventData.source.fen());
-        console.log("event: onNewMoveCompleted - from " + eventData.from);
-        console.log("event: onNewMoveCompleted - to " + eventData.to);
+        console.log("event: onNewMoveCompleted - game position: %s - from: %s - to: %s  ",
+            eventData.source.fen() , eventData.from.ID(), eventData.to.ID() );
 
+
+        updateScores(eventData.source);
+    }
+
+    function onNewMoveCompletedContinueSamePlayer(eventData){
+        console.log("event: onNewMoveCompletedContinueSamePlayer - source: %s - from %s - to: %s ",
+            eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
+
+        $('#message').html("<div class='alert alert-success'>Same player continue playing. There are still pieces that could be captured  </div>");
 
         updateScores(eventData.source);
     }
     function onNewMoveCanceled(eventData) {
         console.log("event: onNewMoveCanceled - source: " + eventData.source.fen());
+
+    }
+
+    function onInvalidGameMove(eventData) {
+        console.log("game event: onInvalidMove - game fen: " + eventData.source.fen());
+        console.log("event: onNewMoveCompleted - from " + eventData.from.ID());
+        console.log("event: onNewMoveCompleted - to " + eventData.to.ID());
 
     }
 
@@ -102,7 +117,8 @@ var init = function () {
 
     /* Board Events */
     function onInvalidMove(eventData) {
-        console.log("board event: onInvalidMove - target: " + eventData.targetCellId);
+        console.log("board event: onInvalidMove - target: %s - type : %s ",
+            eventData.targetCellId, Kharbga.BoardMoveType[eventData.type]);
     }
     function onValidMove(eventData) {
         console.log("board event: onValidMove - target: " + eventData.targetCellId);
@@ -113,7 +129,7 @@ var init = function () {
       //  board.move(eventData.targetCellId + "-spare");
 
         board.position(game.fen(), false);
-
+        updateScores(game);
     }
 
 
@@ -125,13 +141,14 @@ var init = function () {
         settingsCompletedEvent: onSettingsCompleted,
         newMoveStartedEvent: onNewMoveStarted,
         newMoveCompletedEvent: onNewMoveCompleted,
+        newMoveCompletedContinueSamePlayerEvent: onNewMoveCompletedContinueSamePlayer,
         newMoveCanceledEvent: onNewMoveCanceled,
         winnerDeclaredEvent: onWinnerDeclared,
         untouchableSelectedEvent: onUntouchableSelected,
         untouchableExchangeCanceledEvent: onUntouchableExchangeCanceled,
         invalidSettingMalhaEvent: onInvalidSettingMalha,
         invalidSettingOccupiedEvent: onInvalidSettingOccupied,
-
+        invalidMoveEvent : onInvalidGameMove
     };  
 
     // Setup the board events
@@ -256,6 +273,20 @@ var init = function () {
 
         updateScores(game);
     }
+
+    function onLoadSetting1(){
+        var fen = "SssSsss/sSSSSSS/ssSsSss/sss1sSS/sSsSSSS/SssSsSS/SssSsSs";
+        game.reset();
+        game.start();
+        board.start();
+        board.position(fen,false);
+
+        game.set(fen);
+
+        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#fen').html(board.fen());
+        $('#pgn').html(board.position().toString());
+    }
     /**
      * Clears the game and the board. The board is a set with an empty position string or fen
      */
@@ -285,6 +316,8 @@ var init = function () {
     $('#clearBoardInstantBtn').on('click', function() {
         board.clear(false);
     });
+
+    $('#loadSetting1Btn').on('click', onLoadSetting1);
 
     // flip the board
     $('#flipOrientationBtn').on('click', board.flip);

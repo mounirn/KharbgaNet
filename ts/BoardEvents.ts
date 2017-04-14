@@ -16,6 +16,6 @@ namespace Kharbga {
     export interface IBoardEvents {
         invalidMoveEvent(eventData: BoardEventData): void;
         validMoveEvent(eventData: BoardEventData): void;
-        capturedCellEvent(eventData: BoardEventData): void;
+        capturedPieceEvent(eventData: BoardEventData): void;
     }
 }

@@ -10,6 +10,7 @@ Open Issues / To Do:
 - Update the game setting at the end of the setting phase -- done
 - Add instruction for player for how to move
 - Instead of dragging from spare pieces, add option to accept clicking a cell as an indication for setting on that cell 
+- disbale selecting spare pieces 
 - Choose the type of game to play:
 
 	* players using the same computer 
