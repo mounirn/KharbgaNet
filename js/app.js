@@ -1,5 +1,5 @@
 /* include after all dependecies */
-var init = function () {
+var init = function() {
     var board,
         boardEl = $('#board');
 
@@ -15,30 +15,39 @@ var init = function () {
         updateScores(eventData.source);
 
         $('#exchangeRequestCheckbox').hide();
+
+        // malha square
+        var malha = boardEl.find('.square-d4');
+        malha.addClass('highlight-malha');
     }
+
     function onNewPlayerTurn(eventData) {
         console.log("event: onNewPlayerTurn - player: " + eventData.player);
 
-        
+
         $('#player').html(Kharbga.PlayerRole[eventData.player.role]);
         currentPlayer = eventData.player;
 
-        $('#message').html("<div class='alert alert-success'>It is the turn  of the "
-            + Kharbga.PlayerRole[eventData.player.role] + " to play </div>")
+        $('#message').html("<div class='alert alert-success'>It is the turn  of the " +
+            Kharbga.PlayerRole[eventData.player.role] + " to play </div>")
 
 
     }
+
     function onNewSettingCompleted(eventData) {
         console.log("event: onNewSettingCompleted - source " + eventData.source.fen());
         // settings from and to are the same
         console.log("event: onNewSettingCompleted - from " + eventData.from);
         console.log("event: onNewSettingCompleted - to " + eventData.to);
 
-        $('#message').html("<div class='alert alert-success'>It is the turn  of the "
-            + Kharbga.PlayerRole[eventData.player.role] + " to set the 2nd piece </div>")
+        $('#message').html("<div class='alert alert-success'>It is the turn  of the " +
+            Kharbga.PlayerRole[eventData.player.role] + " to set the 2nd piece </div>")
 
         updateScores(eventData.source);
+
+
     }
+
     function onSettingsCompleted(eventData) {
         console.log("event: onSettingsCompleted - source: " + eventData.source.fen());
 
@@ -49,22 +58,26 @@ var init = function () {
         updateScores(eventData.source);
 
         $('#exchangeRequest').show();
+
+        boardEl.find('.square-d4').removeClass('highlight-malha');
     }
+
     function onNewMoveStarted(eventData) {
         console.log("event: onNewMoveStarted - source: " + eventData.source.fen());
         console.log("event: onNewMoveStarted - from " + eventData.from);
         console.log("event: onNewMoveStarted - to " + eventData.to);
 
     }
+
     function onNewMoveCompleted(eventData) {
         console.log("event: onNewMoveCompleted - game position: %s - from: %s - to: %s  ",
-            eventData.source.fen() , eventData.from.ID(), eventData.to.ID() );
+            eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
 
 
         updateScores(eventData.source);
     }
 
-    function onNewMoveCompletedContinueSamePlayer(eventData){
+    function onNewMoveCompletedContinueSamePlayer(eventData) {
         console.log("event: onNewMoveCompletedContinueSamePlayer - source: %s - from %s - to: %s ",
             eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
 
@@ -72,6 +85,7 @@ var init = function () {
 
         updateScores(eventData.source);
     }
+
     function onNewMoveCanceled(eventData) {
         console.log("event: onNewMoveCanceled - source: " + eventData.source.fen());
 
@@ -87,10 +101,11 @@ var init = function () {
     function onWinnerDeclared(eventData) {
         console.log("event: onWinnerDeclared - winner: " + eventData.player);
 
-        $('#message').html("<div class='alert alert-info'>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role]  + "</div>")
+        $('#message').html("<div class='alert alert-info'>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role] + "</div>")
 
         updateScores(eventData.source);
     }
+
     function onUntouchableSelected(eventData) {
         console.log("event: onUntouchableSelected - source: " + eventData.source);
         console.log("event: onUntouchableSelected - from " + eventData.from);
@@ -105,11 +120,13 @@ var init = function () {
 
         updateScores(eventData.source);
     }
+
     function onInvalidSettingMalha(eventData) {
         console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
         $('#message').html("<div class='alert alert-danger'>Setting on middle cell (Malha) is not allowed</div>")
 
     }
+
     function onInvalidSettingOccupied(eventData) {
         console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
 
@@ -126,13 +143,15 @@ var init = function () {
         console.log("board event: onInvalidMove - target: %s - type : %s ",
             eventData.targetCellId, Kharbga.BoardMoveType[eventData.type]);
     }
+
     function onValidMove(eventData) {
         console.log("board event: onValidMove - target: " + eventData.targetCellId);
     }
+
     function onCapturedPiece(eventData) {
         console.log("board event: onCapturedPiece - target: " + eventData.targetCellId);
 
-      //  board.move(eventData.targetCellId + "-spare");
+        //  board.move(eventData.targetCellId + "-spare");
 
         board.position(game.fen(), false);
         updateScores(game);
@@ -154,8 +173,8 @@ var init = function () {
         untouchableExchangeCanceledEvent: onUntouchableExchangeCanceled,
         invalidSettingMalhaEvent: onInvalidSettingMalha,
         invalidSettingOccupiedEvent: onInvalidSettingOccupied,
-        invalidMoveEvent : onInvalidGameMove
-    };  
+        invalidMoveEvent: onInvalidGameMove
+    };
 
     // Setup the board events
     var boardEvents = {
@@ -163,45 +182,45 @@ var init = function () {
         validMoveEvent: onValidMove,
         capturedPieceEvent: onCapturedPiece
     };
- 
 
-    var game = new Kharbga.Game(gameEvents,boardEvents);   // KharbgaGame()
+
+    var game = new Kharbga.Game(gameEvents, boardEvents); // KharbgaGame()
     // set the game state
     $('#state').html(Kharbga.GameState[game.getState()]);
     $('#message').html("<div class='alert alert-info'>Click on Start New Game button to start a new game on this computer between two players</div>")
 
-    var  squareClass = 'square-55d63',
+    var squareClass = 'square-55d63',
         squareToHighlight,
         colorToHighlight;
 
 
-    var onDragMove = function (newLocation, oldLocation, source,
+    var onDragMove = function(newLocation, oldLocation, source,
         piece, position, orientation) {
-  /*      console.log("New location: " + newLocation);
-        console.log("Old location: " + oldLocation);
-        console.log("Source: " + source);
-        console.log("Piece: " + piece);
-        console.log("Position: " + KharbgaBoard.objToFen(position));
-        console.log("Orientation: " + orientation);
-        console.log("--------------------");
-        console.log("game state: " + game.getState());
-        console.log("game is in setting mode: " + game.isInSettingMode());
-    */
+        /*      console.log("New location: " + newLocation);
+              console.log("Old location: " + oldLocation);
+              console.log("Source: " + source);
+              console.log("Piece: " + piece);
+              console.log("Position: " + KharbgaBoard.objToFen(position));
+              console.log("Orientation: " + orientation);
+              console.log("--------------------");
+              console.log("game state: " + game.getState());
+              console.log("game is in setting mode: " + game.isInSettingMode());
+          */
 
     };
 
     // do not pick up pieces if the game is over
     // only pick up pieces for the side to move
     var onDragStart = function(source, piece, position, orientation) {
-       if (game.game_over() === true ||
-          (game.turn() === 'a' && piece.search(/^b/) !== -1) ||
-          (game.turn() === 'd' && piece.search(/^w/) !== -1)) {
+        if (game.game_over() === true ||
+            (game.turn() === 'a' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'd' && piece.search(/^w/) !== -1)) {
             return false;
         }
-        
+
         // check if settings is over and selected piece is spare
         if (game.game_setting_over() === true && source === 'spare')
-           return false;
+            return false;
 
         // check if setting is not over and selected piece is on baord
         if (game.game_setting_over() === false && source !== 'spare')
@@ -214,7 +233,7 @@ var init = function () {
 
     };
 
-    var onDrop = function (source, target, piece, newPos, oldPos, orientation) {
+    var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
         console.log("Source: " + source);
         console.log("Target: " + target);
         console.log("Piece: " + piece);
@@ -225,31 +244,31 @@ var init = function () {
 
         var ret;
         if (game.is_in_moving_state())
-            ret = game.processMove(source,target);
+            ret = game.processMove(source, target);
         else
             ret = game.processSetting(target);
 
         // see if the move is legal
-  //      var move = game.({
-  //          from: source,
-  //          to: target,
-  //          promotion: 'q' // NOTE: always promote to a queen for example simplicity
-  //      });
+        //      var move = game.({
+        //          from: source,
+        //          to: target,
+        //          promotion: 'q' // NOTE: always promote to a queen for example simplicity
+        //      });
 
         // illegal move
-      //  if (move === null) return 'snapback';
+        //  if (move === null) return 'snapback';
 
-       // updateStatus();
+        // updateStatus();
         if (ret == false) return 'snapback';
 
     };
 
 
     var onMoveEnd = function() {
-      boardEl.find('.square-' + squareToHighlight)
-        .addClass('highlight-' + colorToHighlight);
+        boardEl.find('.square-' + squareToHighlight)
+            .addClass('highlight-' + colorToHighlight);
 
-     // add logic to check if a valid move
+        // add logic to check if a valid move
 
     };
 
@@ -259,9 +278,9 @@ var init = function () {
         onDragStart: onDragStart,
         onDragMove: onDragMove,
         onMoveEnd: onMoveEnd,
-        onDrop : onDrop,
+        onDrop: onDrop,
         sparePieces: true,
-        showErrors : 'console'
+        showErrors: 'console'
     };
     var board = KharbgaBoard('board', cfg);
 
@@ -272,7 +291,7 @@ var init = function () {
         game.reset();
         game.start();
         board.start();
-        
+
         $('#state').html(Kharbga.GameState[game.getState()]);
         $('#fen').html(board.fen());
         $('#pgn').html(board.position().toString());
@@ -280,12 +299,12 @@ var init = function () {
         updateScores(game);
     }
 
-    function onLoadSetting1(){
+    function onLoadSetting1() {
         var fen = "SssSsss/sSSSSSS/ssSsSss/sss1sSS/sSsSSSS/SssSsSS/SssSsSs";
         game.reset();
         game.start();
         board.start();
-        board.position(fen,false);
+        board.position(fen, false);
 
         game.set(fen);
 

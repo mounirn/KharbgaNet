@@ -8,12 +8,16 @@
  * Date: $date$
  */
 
+
 /* clearfix */
+
 .clearfix-7da63 {
     clear: both;
 }
 
+
 /* board */
+
 .board-b72b1 {
     border: 2px solid #404040;
     -webkit-box-sizing: content-box;
@@ -21,7 +25,9 @@
     box-sizing: content-box;
 }
 
+
 /* square */
+
 .square-55d63 {
     float: left;
     position: relative;
@@ -34,26 +40,35 @@
     user-select: none;
 }
 
+
 /* white square */
+
 .white-1e1d7 {
     background-color: #f0d9b5;
     color: #b58863;
 }
 
+
 /* black square */
+
 .black-3c85d {
     background-color: #b58863;
     color: #f0d9b5;
 }
 
+
 /* highlighted square */
-.highlight1-32417, .highlight2-9c5d2 {
+
+.highlight1-32417,
+.highlight2-9c5d2 {
     -webkit-box-shadow: inset 0 0 3px 3px yellow;
     -moz-box-shadow: inset 0 0 3px 3px yellow;
     box-shadow: inset 0 0 3px 3px yellow;
 }
 
+
 /* notation */
+
 .notation-322f9 {
     cursor: default;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -71,7 +86,9 @@
     left: 2px;
 }
 
+
 /* from https://github.com/theborakompanioni/angular-chess */
+
 body {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
@@ -80,38 +97,37 @@ body {
     margin: 5px;
 }
 
-    .board.board-xs {
-        width: 200px;
-    }
+.board.board-xs {
+    width: 200px;
+}
 
-    .board.board-sm {
-        width: 300px;
-    }
+.board.board-sm {
+    width: 300px;
+}
 
-    .board.board-md {
-        width: 500px;
-    }
+.board.board-md {
+    width: 500px;
+}
 
-    .board.board-lg {
-        width: 700px;
-    }
+.board.board-lg {
+    width: 700px;
+}
 
-    .board.board-fluid-xs {
-        width: 15%;
-    }
+.board.board-fluid-xs {
+    width: 15%;
+}
 
-    .board.board-fluid-sm {
-        width: 30%;
-    }
+.board.board-fluid-sm {
+    width: 30%;
+}
 
-    .board.board-fluid-md {
-        width: 50%;
-    }
+.board.board-fluid-md {
+    width: 50%;
+}
 
-    .board.board-fluid-lg {
-        width: 70%;
-    }
-
+.board.board-fluid-lg {
+    width: 70%;
+}
 
 .footer {
     margin-top: 42px;
@@ -121,6 +137,8 @@ body {
 /***
 * http://nicolasgallagher.com/micro-clearfix-hack/
 */
+
+
 /**
  * For modern browsers
  * 1. The space content is one way to avoid an Opera bug when the
@@ -130,25 +148,28 @@ body {
  * 2. The use of `table` rather than `block` is only necessary if using
  *    `:before` to contain the top-margins of child elements.
  */
+
 .cf:before,
 .cf:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
+    content: " ";
+    /* 1 */
+    display: table;
+    /* 2 */
 }
 
 .cf:after {
     clear: both;
 }
 
+
 /**
  * For IE 6/7 only
  * Include this rule to trigger hasLayout and contain floats.
  */
+
 .cf {
     *zoom: 1;
 }
-
-
 
 .highlight-white {
     -webkit-box-shadow: inset 0 0 3px 3px yellow;
@@ -160,6 +181,8 @@ body {
     -webkit-box-shadow: inset 0 0 3px 3px red;
     -moz-box-shadow: inset 0 0 3px 3px red;
     box-shadow: inset 0 0 3px 3px red;
+    background-image: url("../img/KMalha.jpg");
+    background-position: center;
 }
 
 .highlight-black {
@@ -179,99 +202,79 @@ body {
     .str {
         color: #b5bd68;
     }
-
     .kwd {
         color: #b294bb;
     }
-
     .com {
         color: #969896;
     }
-
     .typ {
         color: #81a2be;
     }
-
     .lit {
         color: #de935f;
     }
-
     .pun {
         color: #c5c8c6;
     }
-
     .opn {
         color: #c5c8c6;
     }
-
     .clo {
         color: #c5c8c6;
     }
-
     .tag {
         color: #cc6666;
     }
-
     .atn {
         color: #de935f;
     }
-
     .atv {
         color: #8abeb7;
     }
-
     .dec {
         color: #de935f;
     }
-
     .var {
         color: #cc6666;
     }
-
     .fun {
         color: #81a2be;
     }
 }
 
-@media print,projection {
+@media print,
+projection {
     .str {
         color: #060;
     }
-
     .kwd {
         color: #006;
         font-weight: bold;
     }
-
     .com {
         color: #600;
         font-style: italic;
     }
-
     .typ {
         color: #404;
         font-weight: bold;
     }
-
     .lit {
         color: #044;
     }
-
     .pun,
     .opn,
     .clo {
         color: #440;
     }
-
     .tag {
         color: #006;
         font-weight: bold;
     }
-
     .atn {
         color: #404;
     }
-
     .atv {
         color: #060;
     }
@@ -296,7 +299,7 @@ html {
 }
 
 body {
-   /*background: url('../img/bg.png') repeat;*/ 
+    /*background: url('../img/bg.png') repeat;*/
 }
 
 div#body_container {
@@ -310,41 +313,41 @@ div#footer {
     padding: 18px 0px;
 }
 
-    div#footer div.row {
-        background: #333;
-    }
+div#footer div.row {
+    background: #333;
+}
 
-    div#footer a {
-        color: #fff;
-    }
+div#footer a {
+    color: #fff;
+}
 
-    div#footer p {
-        font-size: 12px;
-        margin-bottom: 0px;
-    }
+div#footer p {
+    font-size: 12px;
+    margin-bottom: 0px;
+}
 
 div#left_footer a {
     text-decoration: underline;
 }
 
-    div#left_footer a:hover {
-        text-decoration: none;
-    }
+div#left_footer a:hover {
+    text-decoration: none;
+}
 
 div#right_footer {
     text-align: right;
 }
 
-    div#right_footer a {
-        color: #fff;
-        font-size: 12px;
-        padding: 0px 8px;
-        text-decoration: none;
-    }
+div#right_footer a {
+    color: #fff;
+    font-size: 12px;
+    padding: 0px 8px;
+    text-decoration: none;
+}
 
-        div#right_footer a:hover {
-            text-decoration: underline;
-        }
+div#right_footer a:hover {
+    text-decoration: underline;
+}
 
 div.row {
     background: #fff;
@@ -380,10 +383,10 @@ div.top-bar li:hover {
     background: #000;
 }
 
-    div.top-bar li.active a,
-    div.top-bar li a:hover {
-        color: #d9d9d9;
-    }
+div.top-bar li.active a,
+div.top-bar li a:hover {
+    color: #d9d9d9;
+}
 
 small {
     font-size: 80%;
@@ -418,14 +421,14 @@ div#examples_list_container h4 {
     padding: 15px 20px;
 }
 
-    div#examples_list_container h4.active {
-        background: #4d4d4d;
-        border-top: 1px solid #1a1a1a;
-        border-right: 1px solid #1a1a1a;
-        border-left: 4px solid #1a1a1a;
-        color: #fff;
-        font-weight: bold;
-    }
+div#examples_list_container h4.active {
+    background: #4d4d4d;
+    border-top: 1px solid #1a1a1a;
+    border-right: 1px solid #1a1a1a;
+    border-left: 4px solid #1a1a1a;
+    color: #fff;
+    font-weight: bold;
+}
 
 div#examples_list_container ul {
     border-left: 3px solid #eee;
@@ -441,14 +444,14 @@ div#examples_list_container li {
     padding: 5px 0px 5px 20px;
 }
 
-    div#examples_list_container li:hover {
-        color: #222;
-    }
+div#examples_list_container li:hover {
+    color: #222;
+}
 
-    div#examples_list_container li.active {
-        color: #222;
-        font-weight: bold;
-    }
+div#examples_list_container li.active {
+    color: #222;
+    font-weight: bold;
+}
 
 div#example_html_container {
     margin-bottom: 40px;
@@ -489,22 +492,22 @@ code {
     font-weight: normal;
 }
 
-    code.plain {
-        color: #d94d3a;
-    }
+code.plain {
+    color: #d94d3a;
+}
 
-    code.html,
-    code.keyword {
-        color: #0066cc;
-    }
+code.html,
+code.keyword {
+    color: #0066cc;
+}
 
-    code.string {
-        color: blue;
-    }
+code.string {
+    color: blue;
+}
 
-    code.number {
-        color: #7f0000;
-    }
+code.number {
+    color: #7f0000;
+}
 
 pre {
     font-size: 14px;
@@ -536,26 +539,28 @@ table#markup_example_tbl {
     border: 0px;
 }
 
-    table#markup_example_tbl tr {
-        background: #fff;
-    }
+table#markup_example_tbl tr {
+    background: #fff;
+}
 
-    table#markup_example_tbl td {
-        width: 50%;
-        padding: 20px;
-        padding-bottom: 250px;
-    }
+table#markup_example_tbl td {
+    width: 50%;
+    padding: 20px;
+    padding-bottom: 250px;
+}
 
-#example_html_container input, input.btn, button.btn {
+#example_html_container input,
+input.btn,
+button.btn {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: auto;
     background: #2ba6cb;
     border: 1px solid #1e728c;
-    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
-    -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
     color: #fff;
     cursor: pointer;
     display: inline-block;

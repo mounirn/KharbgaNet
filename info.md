@@ -49,7 +49,7 @@
 * Ability to replay a stored game
 * Ability to organize tournaments
 * Integration with Facebook
-* Mobile App version  (Cordova / XAmarin)
+* Mobile App version  (Cordova / Xamarin)
 
 * Ability to undo a previous setting or move.
     - board level (stored game)
@@ -73,5 +73,5 @@ Features:
 	5 Ability to start the board and the game with a specific state of the game (fen)   -- Done
     6 Enforce moving and capturing rules
 
-# Compling Typescipt 
+# Compiling TypeScript 
 - tsc    (src directory)

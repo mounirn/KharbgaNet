@@ -23,7 +23,7 @@ An online board strategy game based on the ancient games of Kharbga and Seega fr
   3. An opponent solider is captured if its gets sandwiched (placed between two opponent soldiers ) on the move (not during setting)
   4. If the move results in a capture, the captured piece is removed off the board. The player that made the capture is required to continue moving the same soldier to the next adjacent square until no more captures could be done. 
   5. If no capture results from the move, players change turns
-  6. If the 
+  6. Pieces are only captured when the opponent makes a move that sandwiches the piece. Pieces are considered safe in these cases: the pieces moves  between two of the opponent's pieces or it the pieces is between two of the opponent's pieces in the original setting of the board
 
 
 ## Setting strategies
