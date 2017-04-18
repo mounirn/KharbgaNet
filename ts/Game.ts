@@ -23,6 +23,8 @@ namespace Kharbga {
         numberOfSettingsAllowed = 2;
         attackerScore = 0;
         defenderScore = 0;
+        moveSourceRequired : string = "";
+        moveDestinationsPossible : Array<string> = null;
 
         // 
         // temp pointer indicating the from cell used in a game move (after setting is completed)
@@ -231,6 +233,26 @@ namespace Kharbga {
             if (this.currentPlayer.IsAttacker()) return 'a';
             else return 'd';
         }
+
+        /**
+         * Checks if a specific piece is required to be moved
+         */
+        public move_source_required(): string {
+            return this.moveSourceRequired;
+        }
+
+        /**
+         * checks if the given destination is valid for the required piece
+         * @param dest
+         */
+        public valid_move_destination(dest: string): boolean {
+            if (this.moveDestinationsPossible == null || this.moveSourceRequired.length ==0)
+                return true;
+            if (this.moveDestinationsPossible.indexOf(dest) >= 0)
+                return true;
+            return false;
+
+        }
         /**
          *  @returns the game history manager
          */
@@ -314,42 +336,48 @@ namespace Kharbga {
         public processMove(fromCellId: string, toCellId: string): boolean {
             if (this.state != GameState.Moving)
                 return false;
+
+            // check the pssible moves  
+            if (this.valid_move_destination(toCellId) === false)
+                return false;
+
             let ret = false;
             let fromCell = this.board.GetCellById(fromCellId);
            
             // Not fromCell set yet
             if (fromCell == null) {
-                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.InvalidCellId, fromCell, null);
+                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.InvalidCellId, null, null, fromCellId);
                 return ret;
             }
             
-            // check if the piece clicke is the current player piece
+            // check if the piece selected is owned by the current player
             if (fromCell.IsOccupiedBy(this.getCurrentPlayer()) === false) {
                 // Invalid piece selected (empty square or opponent piece)
-                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, fromCell, null);
+                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, fromCell, null,fromCellId);
                 return ret;
             }
             // Check if the piece selected could actually move
             if (fromCell.IsSurrounded()) {
-               this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSurroundedForMoving, fromCell, null);
+               this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSurroundedForMoving, fromCell, null, fromCellId);
                 return ret;
             }
 
-            let toCell = this.board.GetCellById(toCellId);;
+            let toCell = this.board.GetCellById(toCellId);
+            if (toCell == null) {
 
+                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.InvalidCellId, fromCell, toCell,toCellId);
+                return ret;
+            }
+            let eventData = new GameEventData(this, this.getCurrentPlayer());
+            eventData.from = fromCell;
+            eventData.to = toCell;
             // deselection move/canceling move from fromCell
-            if (fromCell === toCell) {
-                var eventData = new GameEventData(this, this.getCurrentPlayer());
-                eventData.from = fromCell;
-                eventData.to = toCell;
+            if (fromCell === toCell) {    
                 this.gameEvents.newMoveCanceledEvent(eventData)
                 return ret;
             }
 
             let result = this.board.RecordPlayerMove(fromCell, toCell);
-            var eventData = new GameEventData(this, this.getCurrentPlayer());
-            eventData.from = fromCell;
-            eventData.to = toCell;
             if (result.status == PlayerMoveStatus.OK) {
                 let move = new GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
                 this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
@@ -380,12 +408,16 @@ namespace Kharbga {
                         this.attackerScore -= result.capturedPieces;
 
                     // check if the player could still 
-                    if (this.board.StillHavePiecesToCapture(toCell) === false) {
+                    let stillHavePiecesToCaptureResult = this.board.StillHavePiecesToCapture(toCell);
+                    if (stillHavePiecesToCaptureResult.status === false) {
                         this.gameEvents.newMoveCompletedEvent(eventData)
                         this.PlayerChangeTurn();
                         
                     }
                     else {
+                        eventData.targetCellId = toCell.ID();
+                        this.moveSourceRequired = toCell.ID();
+                        this.moveDestinationsPossible = stillHavePiecesToCaptureResult.possibleMoves;
                         // add event that player should continue to play since they could still capture                       
                         this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData)
                     }
@@ -432,6 +464,7 @@ namespace Kharbga {
             else
                 this.currentPlayer = this.attacker;
 
+            this.moveSourceRequired = "";
             // raise an event a new player move
             //NewPlayerTurnEvent(this, null);
             var eventData = new GameEventData(this, this.getCurrentPlayer());

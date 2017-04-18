@@ -1,13 +1,19 @@
 
 # Open Issues / To Do:
 ---
+* Add app menu Game - User:  Register, Login,  Game:  New, Save, Open, Abandon, 
+* Display possible moves 
+* Add Undo (Take back) and Redo
+* Highlihting of possible moves
 * Enforce the rule related to blocking the defender after the first move.
   1 The Defender wins if they are blocked from moving after the first move or capture
-* Enforce two exchanges  (or leave as an option)
+* Program the two pieces exchanges UI
+    - Add Two Exchange Request option (available on Defender's move)
+    - The piece played by the defender when a two exchange request mode is on will be marked for exchange
+    - The Attacker must respond either by accepting the exchange or not
+    - If the attacker accepts the exchange, they need to mark accept the exchange checkbox and play two consecutives moves to indicate free piece to use for the exchange
 * Option for who starts first (defender or attacker )
-* Display the Malha image while on setting
-* Remove the Malha image after setting is completed
-* Update the game setting at the end of the setting phase -- done
+
 * Add instruction for player for how to move
 * Instead of dragging from spare pieces, add option to accept clicking a cell as an indication for setting on that cell 
 * Disable selecting spare pieces 
@@ -66,12 +72,18 @@ Features:
 - Ability to play on a single computer 
 
 * Resolved Issues:
-	1 Display the number settings left for each player after each turn -- done (message)
-	2 Display the number of spare pieces remaining off board  -- not needed?
-	3 Display the player score (number of pieces on board) -- done
-	4 Enforce settings rules
-	5 Ability to start the board and the game with a specific state of the game (fen)   -- Done
-    6 Enforce moving and capturing rules
+  1. Display the number settings left for each player after each turn. Added messages
+  2. Display the number of spare pieces remaining off board  -- not needed?
+  3. Display the player score (number of pieces on board) 
+  4. Enforce settings rules
+  5. Ability to start the board and the game with a specific state of the game (fen)   
+  6. Enforce moving and capturing rules
+  7. Display the Malha image while on setting
+  8. Remove the Malha image after setting is completed
+  9.  Update the game state at the end of the setting phase 
+  10. Enforced the rule that a player must continue moving the same piece until no capture is possible
+  11. UI enhacements to the board cell 
+  12. Messages improvements indicating which move is required.
 
 # Compiling TypeScript 
 - tsc    (src directory)

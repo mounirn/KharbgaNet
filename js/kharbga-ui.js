@@ -225,7 +225,8 @@
             sparePiecesBottom: 'spare-pieces-bottom-ae20f',
             sparePiecesTop: 'spare-pieces-top-4028b',
             square: 'square-55d63',
-            white: 'white-1e1d7'
+            white: 'white-1e1d7',
+            kwhite: 'kharbga-cell'
         };
 
         //------------------------------------------------------------------------------
@@ -503,7 +504,7 @@
         // calculates square size based on the width of the container
         // got a little CSS black magic here, so let me explain:
         // get the width of the container element (could be anything), reduce by 1 for
-        // fudge factor, and then keep reducing until we find an exact mod 8 for
+        // fudge factor, and then keep reducing until we find an exact mod 7 for
         // our square size
         function calculateSquareSize() {
             var containerWidth = parseInt(containerEl.css('width'), 10);
@@ -598,7 +599,7 @@
                 row = 1;
             }
 
-            var squareColor = 'white';
+            var squareColor = 'kwhite';
             for (var i = 0; i < 7; i++) {
                 html += '<div class="' + CSS.row + '">';
                 for (var j = 0; j < 7; j++) {
@@ -627,7 +628,7 @@
 
                     html += '</div>'; // end .square
 
-                    squareColor = (squareColor === 'white' ? 'black' : 'white');
+                   // squareColor = (squareColor === 'white' ? 'black' : 'white');
                 }
                 html += '<div class="' + CSS.clearfix + '"></div></div>';
 
@@ -666,8 +667,8 @@
             html += 'alt="" ' +
                 'class="' + CSS.piece + '" ' +
                 'data-piece="' + piece + '" ' +
-                'style="width: ' + SQUARE_SIZE + 'px;' +
-                'height: ' + SQUARE_SIZE + 'px;';
+                'style="width: ' + (SQUARE_SIZE-0) + 'px;' +
+                'height: ' + (SQUARE_SIZE-0) + 'px;';
             if (hidden === true) {
                 html += 'display:none;';
             }
@@ -1638,6 +1639,35 @@
                 CURRENT_ORIENTATION);
         }
 
+        /**
+         * Handler for double clicking a cell indicating selecting the square or a the piece for setting or exchange
+         * @param {any} e  -- the cell event
+         */
+        function ondoubleclickSquare(e) {
+            // do not fire this event if we are dragging a piece
+            // NOTE: this should never happen, but it's a safeguard
+            if (DRAGGING_A_PIECE !== false) return;
+
+            // get the square
+            var square = $(e.currentTarget).attr('data-square');
+
+            // NOTE: this should never happen; defensive
+            if (validSquare(square) !== true) return;
+
+            // get the piece on this square
+            var piece = false;
+            if (CURRENT_POSITION.hasOwnProperty(square) === true) {
+                piece = CURRENT_POSITION[square];
+            }
+
+            if (cfg.hasOwnProperty('onSelected') !== true ||
+                typeof cfg.onSelected !== 'function') return;
+
+            // execute their function
+            cfg.onSelected(square, piece, deepCopy(CURRENT_POSITION),
+                CURRENT_ORIENTATION);
+        }
+
         //------------------------------------------------------------------------------
         // Initialization
         //------------------------------------------------------------------------------
@@ -1654,6 +1684,9 @@
             // mouse enter / leave square
             boardEl.on('mouseenter', '.' + CSS.square, mouseenterSquare);
             boardEl.on('mouseleave', '.' + CSS.square, mouseleaveSquare);
+
+            // double click handler -- MN
+            boardEl.on('ondblclick', '.' + CSS.square, ondoubleclickSquare);
 
             // IE doesn't like the events on the window object, but other browsers
             // perform better that way

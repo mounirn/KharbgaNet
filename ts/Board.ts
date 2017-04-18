@@ -316,8 +316,8 @@ namespace Kharbga {
          * @param from - the from cell
          * @param to -- the to  cell
          */
-        RaiseBoardInvalidMoveEvent(boardMoveType: BoardMoveType, from: BoardCell, to: BoardCell) {
-            var eventData = new BoardEventData(from, to, to.ID(), boardMoveType);
+        RaiseBoardInvalidMoveEvent(boardMoveType: BoardMoveType, from: BoardCell, to: BoardCell, invalidCellId: string) {
+            var eventData = new BoardEventData(from, to, invalidCellId, boardMoveType);
             this.boardEvents.invalidMoveEvent(eventData);
         }
 
@@ -330,9 +330,11 @@ namespace Kharbga {
          * 
          */
 
-        StillHavePiecesToCapture(fromCell: BoardCell): boolean {
+        StillHavePiecesToCapture(fromCell: BoardCell): { status: boolean, possibleMoves: Array<string> } {
             // to do: also return the possible move that could make a capture
-            let ret = false;
+            var moves = new Array<string>();
+            var ret = { status: false, possibleMoves: moves }; 
+
             // 1. look at all possible moves (to adjacent cells)
             // 2. for each move
             // 3.    check if opponent pieces could be captured by the move
@@ -357,25 +359,29 @@ namespace Kharbga {
                     if (toCell.Above() === adjCell) // checking up
                     {
                         if (adjCell.Above() != null && adjCell.Above().State() === fromCell.State()) {
-                            return true;
+                            ret.status = true;
+                            ret.possibleMoves.push(toCell.ID());
                         }
                     }
                     else if (toCell.Below() === adjCell) // checking down
                     {
                         if (adjCell.Below() != null && adjCell.Below().State() == fromCell.State()) {
-                            return true;
+                            ret.status = true;
+                            ret.possibleMoves.push(toCell.ID());
                         }
                     }
                     else if (toCell.Left() == adjCell) // checking left;
                     {
                         if (adjCell.Left() != null && adjCell.Left().State() == fromCell.State()) {
-                            return true;
+                            ret.status = true;
+                            ret.possibleMoves.push(toCell.ID());
                         }
                     }
                     else if (toCell.Right() == adjCell) // checking right
                     {
                         if (adjCell.Right() != null && adjCell.Right().State() == fromCell.State()) {
-                            return true;
+                            ret.status = true;
+                            ret.possibleMoves.push(toCell.ID());
                         }
                     }
                 }
