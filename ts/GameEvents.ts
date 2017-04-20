@@ -6,6 +6,8 @@ namespace Kharbga{
         to: BoardCell;
         targetCellId: string;
         move_status: PlayerMoveStatus;
+        move_flags: GameMoveFlags;
+
         public constructor(game: Game, currentPlayer: Player) {
             this.source = game;
             this.player = currentPlayer;
@@ -17,7 +19,11 @@ namespace Kharbga{
     }
 	export interface IGameEvents{
         newGameStartedEvent(eventData: GameEventData) : void;
-        newPlayerTurnEvent(eventData: GameEventData) : void;
+        newPlayerTurnEvent(eventData: GameEventData): void;
+
+        // Player passed since they do not have a valid move (if they are blocked) not after the first move
+        playerPassedEvent(eventData: GameEventData): void;
+
         newSettingCompletedEvent(eventData: GameEventData): void;
         settingsCompletedEvent(eventData: GameEventData): void;
         newMoveStartedEvent(eventData: GameEventData): void;
@@ -25,8 +31,12 @@ namespace Kharbga{
         newMoveCompletedContinueSamePlayerEvent(eventData: GameEventData): void;
         newMoveCanceledEvent(eventData: GameEventData): void;
         winnerDeclaredEvent(eventData: GameEventData): void;
+
         untouchableSelectedEvent(eventData: GameEventData): void;
         untouchableExchangeCanceledEvent(eventData: GameEventData): void;
+        untouchableExchangeCompletedEvent(eventData: GameEventData): void;
+
+
         invalidSettingMalhaEvent(eventData: GameEventData): void;
         invalidSettingOccupiedEvent(eventData: GameEventData): void;
 

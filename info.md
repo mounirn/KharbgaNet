@@ -1,6 +1,10 @@
 
 # Open Issues / To Do:
 ---
+* Detect Player blocked condition and allow the player to continue if it is not the first block
+* Add ability to detect the number of times exchange requests are requested using the same piece and attacker is not paying up (limit to 3)
+ 
+* Add ability to indicate exchange request by dragging the piece off the board
 * Add app menu Game - User:  Register, Login,  Game:  New, Save, Open, Abandon, 
 * Display possible moves 
 * Add Undo (Take back) and Redo

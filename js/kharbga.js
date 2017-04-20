@@ -121,7 +121,6 @@ var Kharbga;
             this.boardEvents.validMoveEvent(eventData);
             var capturedCount = this.ProcessCapturedPieces(fromCell, toCell);
             return { status: Kharbga.PlayerMoveStatus.OK, capturedPieces: capturedCount };
-            ;
         };
         Board.prototype.ProcessCapturedPieces = function (fromCell, toCell) {
             var ret = 0;
@@ -257,11 +256,18 @@ var Kharbga;
         };
         Board.prototype.RecordExchange = function (untouchablePieceId, attackerPiece1Id, attackerPiece2Id) {
             var uc = this.GetCellById(untouchablePieceId);
+            if (uc == null)
+                return false;
             var ac1 = this.GetCellById(attackerPiece1Id);
+            if (ac1 == null)
+                return false;
             var ac2 = this.GetCellById(attackerPiece2Id);
+            if (ac2 == null)
+                return false;
             uc.Clear();
             ac1.Clear();
             ac2.Clear();
+            return true;
         };
         return Board;
     }());
@@ -497,7 +503,8 @@ var Kharbga;
         GameState[GameState["AttackerAbandoned"] = 6] = "AttackerAbandoned";
         GameState[GameState["DefenderAbandoned"] = 7] = "DefenderAbandoned";
         GameState[GameState["DefenderLostAllPieces"] = 8] = "DefenderLostAllPieces";
-        GameState[GameState["WinnerDeclared"] = 9] = "WinnerDeclared";
+        GameState[GameState["AttackerLostAllPieces"] = 9] = "AttackerLostAllPieces";
+        GameState[GameState["WinnerDeclared"] = 10] = "WinnerDeclared";
     })(GameState = Kharbga.GameState || (Kharbga.GameState = {}));
     var GameActionType;
     (function (GameActionType) {
@@ -566,6 +573,26 @@ var Kharbga;
         return GameMove;
     }());
     Kharbga.GameMove = GameMove;
+    var GameMoveFlags = (function () {
+        function GameMoveFlags() {
+            this.resigned = false;
+            this.exchangeRequest = false;
+            this.exchangeRequestAccepted = false;
+            this.exchangeRequestDefenderPiece = '';
+            this.exchangeRequestAttackerPiece1 = '';
+            this.exchangeRequestAttackerPiece2 = '';
+        }
+        GameMoveFlags.prototype.reset = function () {
+            this.resigned = false;
+            this.exchangeRequest = false;
+            this.exchangeRequestAccepted = false;
+            this.exchangeRequestDefenderPiece = '';
+            this.exchangeRequestAttackerPiece1 = '';
+            this.exchangeRequestAttackerPiece2 = '';
+        };
+        return GameMoveFlags;
+    }());
+    Kharbga.GameMoveFlags = GameMoveFlags;
 })(Kharbga || (Kharbga = {}));
 var Kharbga;
 (function (Kharbga) {
@@ -580,13 +607,12 @@ var Kharbga;
             this.defenderScore = 0;
             this.moveSourceRequired = "";
             this.moveDestinationsPossible = null;
-            this.defenderUntouchableMove = null;
-            this.attackerUntouchable1 = null;
-            this.attackerUntouchable2 = null;
+            this.firstMove = true;
             this.state = Kharbga.GameState.NotStarted;
             this.gameEvents = gameEvents;
             this.boardEvents = boardEvents;
             this.board = new Kharbga.Board(boardEvents);
+            this.moveFlags = new Kharbga.GameMoveFlags();
         }
         Game.prototype.init = function () {
             this.id = "";
@@ -595,6 +621,7 @@ var Kharbga;
             this.defenderScore = 0;
             this.currentPlayer = this.attacker;
             this.state = Kharbga.GameState.Setting;
+            this.firstMove = true;
         };
         Game.prototype.moves = function () {
             var ret = this.board.GetPossibleMoves(this.currentPlayer);
@@ -641,6 +668,9 @@ var Kharbga;
             this.checkIfSettingsCompleted();
             return true;
         };
+        Game.prototype.move_flags = function () {
+            return this.moveFlags;
+        };
         Game.prototype.isDefenderPiece = function (piece) {
             if (piece.toLowerCase() === piece)
                 return true;
@@ -664,7 +694,7 @@ var Kharbga;
             return true;
         };
         Game.prototype.isInSettingMode = function () {
-            return this.state == Kharbga.GameState.Setting;
+            return this.state === Kharbga.GameState.Setting;
         };
         Game.prototype.getGameId = function () {
             return this.id;
@@ -681,10 +711,10 @@ var Kharbga;
             this.gameEvents.newPlayerTurnEvent(eventData);
         };
         Game.prototype.game_over = function () {
-            if (this.state == Kharbga.GameState.WinnerDeclared)
-                return true;
-            else
+            if (this.state === Kharbga.GameState.Setting || this.state === Kharbga.GameState.Moving)
                 return false;
+            else
+                return true;
         };
         Game.prototype.game_setting_over = function () {
             if (this.state === Kharbga.GameState.Setting)
@@ -735,9 +765,24 @@ var Kharbga;
             else
                 return false;
         };
-        Game.prototype.processMove = function (fromCellId, toCellId) {
+        Game.prototype.processMove = function (fromCellId, toCellId, resigned, exchangeRequest) {
             if (this.state != Kharbga.GameState.Moving)
                 return false;
+            var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+            this.moveFlags.resigned = resigned;
+            if (this.moveFlags.resigned) {
+                if (eventData.player.IsAttacker()) {
+                    this.winner = this.defender;
+                    this.state = Kharbga.GameState.AttackerAbandoned;
+                }
+                else {
+                    this.winner = this.attacker;
+                    this.state = Kharbga.GameState.DefenderAbandoned;
+                }
+                eventData.player = this.winner;
+                this.gameEvents.winnerDeclaredEvent(eventData);
+                return;
+            }
             if (this.valid_move_destination(toCellId) === false)
                 return false;
             var ret = false;
@@ -759,11 +804,12 @@ var Kharbga;
                 this.board.RaiseBoardInvalidMoveEvent(Kharbga.BoardMoveType.InvalidCellId, fromCell, toCell, toCellId);
                 return ret;
             }
-            var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
             eventData.from = fromCell;
             eventData.to = toCell;
+            eventData.targetCellId = toCell.ID();
             if (fromCell === toCell) {
                 this.gameEvents.newMoveCanceledEvent(eventData);
+                this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
                 return ret;
             }
             var result = this.board.RecordPlayerMove(fromCell, toCell);
@@ -771,9 +817,11 @@ var Kharbga;
                 var move = new Kharbga.GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
                 this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
                 ret = true;
+                this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
                 if (result.capturedPieces == 0) {
-                    this.PlayerChangeTurn();
+                    eventData.targetCellId = toCellId;
                     this.gameEvents.newMoveCompletedEvent(eventData);
+                    this.PlayerChangeTurn();
                 }
                 else {
                     if (this.currentPlayer.IsAttacker()) {
@@ -783,6 +831,7 @@ var Kharbga;
                         this.attackerScore -= result.capturedPieces;
                     var stillHavePiecesToCaptureResult = this.board.StillHavePiecesToCapture(toCell);
                     if (stillHavePiecesToCaptureResult.status === false) {
+                        eventData.targetCellId = toCellId;
                         this.gameEvents.newMoveCompletedEvent(eventData);
                         this.PlayerChangeTurn();
                     }
@@ -792,8 +841,8 @@ var Kharbga;
                         this.moveDestinationsPossible = stillHavePiecesToCaptureResult.possibleMoves;
                         this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData);
                     }
-                    this.CheckScores();
                 }
+                this.CheckScores();
             }
             else {
                 eventData.move_status = result.status;
@@ -804,13 +853,21 @@ var Kharbga;
         Game.prototype.checkIfSettingsCompleted = function () {
             if (this.board.AllPiecesAreSet()) {
                 this.state = Kharbga.GameState.Moving;
+                this.firstMove = true;
                 this.currentPlayer = this.attacker;
                 var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
                 this.gameEvents.settingsCompletedEvent(eventData);
             }
         };
         Game.prototype.checkIfPlayerCanNotMove = function () {
-            this.PlayerChangeTurn();
+            var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+            if (this.state != Kharbga.GameState.Setting && this.CheckIfCurrentPlayerCanPassTurn() === true) {
+                if (this.currentPlayer.IsAttacker())
+                    this.currentPlayer = this.defender;
+                else
+                    this.currentPlayer = this.attacker;
+                this.gameEvents.playerPassedEvent(eventData);
+            }
         };
         Game.prototype.PlayerChangeTurn = function () {
             if (this.currentPlayer.IsAttacker())
@@ -819,6 +876,29 @@ var Kharbga;
                 this.currentPlayer = this.attacker;
             this.moveSourceRequired = "";
             var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+            if (this.state == Kharbga.GameState.Moving) {
+                if (this.currentPlayerIsBlocked() === true) {
+                    if (this.currentPlayer.IsAttacker())
+                        this.state = Kharbga.GameState.AttackerCanNotMove;
+                    else
+                        this.state = Kharbga.GameState.DefenderCanNotMove;
+                    if (this.firstMove) {
+                        this.winner = this.defender;
+                        eventData.player = this.winner;
+                        this.state = Kharbga.GameState.WinnerDeclared;
+                        this.gameEvents.winnerDeclaredEvent(eventData);
+                        return;
+                    }
+                    else {
+                        this.gameEvents.playerPassedEvent(eventData);
+                        this.state = Kharbga.GameState.Moving;
+                        this.PlayerChangeTurn();
+                        return;
+                    }
+                }
+                if (this.firstMove === true)
+                    this.firstMove = false;
+            }
             this.gameEvents.newPlayerTurnEvent(eventData);
         };
         Game.prototype.CurrentPlayerAbandoned = function () {
@@ -840,6 +920,14 @@ var Kharbga;
                 var eventData = new Kharbga.GameEventData(this, this.winner);
                 this.gameEvents.winnerDeclaredEvent(eventData);
             }
+            else {
+                if (this.attackerScore == 0) {
+                    this.state = Kharbga.GameState.AttackerLostAllPieces;
+                    this.winner = this.defender;
+                    var eventData = new Kharbga.GameEventData(this, this.winner);
+                    this.gameEvents.winnerDeclaredEvent(eventData);
+                }
+            }
         };
         Game.prototype.recordCurrentPlayerPassed = function () {
             var bCanPass = this.CheckIfCurrentPlayerCanPassTurn();
@@ -856,6 +944,13 @@ var Kharbga;
             return bCanPass;
         };
         Game.prototype.CheckIfCurrentPlayerCanPassTurn = function () {
+            var possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
+            if (possibleMoves.length == 0)
+                return true;
+            else
+                return false;
+        };
+        Game.prototype.currentPlayerIsBlocked = function () {
             var possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
             if (possibleMoves.length == 0)
                 return true;
@@ -904,40 +999,80 @@ var Kharbga;
             var clickedCell = this.board.GetCellById(selectedPieceId);
             return clickedCell.IsSurrounded();
         };
-        Game.prototype.CheckUntouchableMoves = function (move) {
-            if (this.defenderIsRequestingExchange == true) {
-                if (this.currentPlayer.IsDefender()) {
-                    this.defenderUntouchableMove = move;
-                }
-                if (this.currentPlayer.IsAttacker() && this.defenderUntouchableMove != null) {
-                    if (this.attackerUntouchable1 == null) {
-                        this.attackerUntouchable1 = move;
+        Game.prototype.CheckUntouchableMoves = function (targetCellId, moveExchangeRequest, eventData) {
+            if (this.currentPlayer.IsDefender()) {
+                if (moveExchangeRequest == false) {
+                    this.moveFlags.exchangeRequestDefenderPiece = '';
+                    this.moveFlags.exchangeRequestAccepted = false;
+                    this.moveFlags.exchangeRequestAttackerPiece1 = '';
+                    this.moveFlags.exchangeRequestAttackerPiece2 = '';
+                    if (this.moveFlags.exchangeRequest) {
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;
+                        this.gameEvents.untouchableExchangeCanceledEvent(eventData);
                     }
-                    else if (this.attackerUntouchable2 == null) {
-                        this.attackerUntouchable2 = move;
-                        this.ProcessUntouchableTwoExchange(this.defenderUntouchableMove.To, this.attackerUntouchable1.To, this.attackerUntouchable2.To);
+                    else {
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;
+                    }
+                    return;
+                }
+                else {
+                    if (this.moveFlags.exchangeRequest == false) {
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;
+                        this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                        return;
+                    }
+                    else {
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;
+                        this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                        if (this.moveFlags.exchangeRequestAccepted && this.moveFlags.exchangeRequestAttackerPiece1 != ''
+                            && this.moveFlags.exchangeRequestAttackerPiece2 != '') {
+                            var result = this.ProcessUntouchableTwoExchange(this.moveFlags.exchangeRequestDefenderPiece, this.moveFlags.exchangeRequestAttackerPiece1, this.moveFlags.exchangeRequestAttackerPiece2);
+                            if (result == true) {
+                                this.gameEvents.untouchableExchangeCompletedEvent(eventData);
+                                this.moveFlags.reset();
+                                return;
+                            }
+                        }
                     }
                 }
             }
             else {
-                this.defenderUntouchableMove = null;
-                this.attackerUntouchable1 = null;
-                this.attackerUntouchable2 = null;
-            }
-        };
-        Game.prototype.processRequestingExchange = function (requestingExchange) {
-            this.defenderIsRequestingExchange = requestingExchange;
-            if (requestingExchange != true) {
-                this.defenderUntouchableMove = null;
-                this.attackerUntouchable1 = null;
-                this.attackerUntouchable2 = null;
+                if (moveExchangeRequest === false) {
+                    this.moveFlags.exchangeRequestAttackerPiece1 = '';
+                    this.moveFlags.exchangeRequestAttackerPiece2 = '';
+                    this.moveFlags.exchangeRequestDefenderPiece = '';
+                    if (this.moveFlags.exchangeRequest || this.moveFlags.exchangeRequestAccepted) {
+                        this.moveFlags.exchangeRequestAccepted = moveExchangeRequest;
+                        this.gameEvents.untouchableExchangeCanceledEvent(eventData);
+                    }
+                    else {
+                        this.moveFlags.exchangeRequestAccepted = moveExchangeRequest;
+                    }
+                    return;
+                }
+                else {
+                    this.moveFlags.exchangeRequestAccepted = true;
+                    if (this.moveFlags.exchangeRequestAttackerPiece1 != '') {
+                        this.moveFlags.exchangeRequestAttackerPiece2 = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                    }
+                    else {
+                        this.moveFlags.exchangeRequestAttackerPiece1 = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                    }
+                }
             }
         };
         Game.prototype.ProcessUntouchableTwoExchange = function (untouchablePieceId, attackerPiece1, attackerPiece2) {
-            this.board.RecordExchange(untouchablePieceId, attackerPiece1, attackerPiece2);
-            this.defenderScore--;
-            this.attackerScore--;
-            this.attackerScore--;
+            var ret = this.board.RecordExchange(untouchablePieceId, attackerPiece1, attackerPiece2);
+            if (ret === true) {
+                this.defenderScore--;
+                this.attackerScore--;
+                this.attackerScore--;
+            }
+            return ret;
         };
         return Game;
     }());

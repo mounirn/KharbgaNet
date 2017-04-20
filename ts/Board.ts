@@ -179,13 +179,13 @@ namespace Kharbga {
 
             toCell.SetSameAs(fromCell);
             fromCell.Clear();
-            // BoardMovedPieceEvent(this, new BoardMoveEventArgs(BoardMoveType.MovedToAValidCell, fromCell.ID, toCell.ID, string.Empty));
+
             var eventData = new BoardEventData(fromCell, toCell, toCell.ID(),  BoardMoveType.MovedToAValidCell);
             this.boardEvents.validMoveEvent(eventData);
             //
             let capturedCount = this.ProcessCapturedPieces(fromCell, toCell);
 
-            return { status: PlayerMoveStatus.OK, capturedPieces: capturedCount };;
+            return { status: PlayerMoveStatus.OK, capturedPieces: capturedCount };
         }
 
         /**
@@ -394,16 +394,26 @@ namespace Kharbga {
          * @param attackerPiece1Id
          * @param attackerPiece2Id
          */
-        RecordExchange(untouchablePieceId: string, attackerPiece1Id: string, attackerPiece2Id: string) {
+        RecordExchange(untouchablePieceId: string, attackerPiece1Id: string, attackerPiece2Id: string) : boolean {
             let uc = this.GetCellById(untouchablePieceId);
+            if (uc == null)
+                return false; 
+
             let ac1 = this.GetCellById(attackerPiece1Id);
+            if (ac1 == null)
+                return false; 
+
             let ac2 = this.GetCellById(attackerPiece2Id);
+
+            if (ac2 == null)
+                return false; 
 
             uc.Clear();
             ac1.Clear();
             ac2.Clear();
 
-            //BoardExchangedPieceEvent(this, new BoardUntouchableExchangeEventArgs(untouchablePieceId, attackerPiece1Id,attackerPiece2Id));
+            return true;
+            
         }
     }
 

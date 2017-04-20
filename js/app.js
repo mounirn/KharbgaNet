@@ -21,7 +21,7 @@ var init = function() {
         $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
         updateScores(eventData.source);
 
-        $('.exchangeRequest').hide();
+         $('.exchangeRequest').hide();
       //  $('#exchangeRequestCheckbox').hide();
 
         // malha square
@@ -80,9 +80,10 @@ var init = function() {
     }
 
     function onNewMoveStarted(eventData) {
-        console.log("event: onNewMoveStarted - source: " + eventData.source.fen());
+     /*   console.log("event: onNewMoveStarted - source: " + eventData.source.fen());
         console.log("event: onNewMoveStarted - from " + eventData.from);
         console.log("event: onNewMoveStarted - to " + eventData.to);
+*/
 
     }
 
@@ -96,15 +97,13 @@ var init = function() {
         sourceRequired.removeClass('highlight-source');
 
         boardEl.find('.highlight-captured').removeClass('highlight-captured');
-
+      
         updateScores(eventData.source);
+        updateMoveFlags(eventData.source.move_flags());
 
-        if ($('#exchangeRequestChecked').attr('checked') == true) {
-            $('#exchangeRequestDefenderPiece').text(to);
-        }
-        else {
-            $('#exchangeRequestDefenderPiece').text('');
-        }
+
+        // update the board position here for the case when processing exchanges
+        board.position(game.fen(), true);
     }
 
     function onNewMoveCompletedContinueSamePlayer(eventData) {
@@ -122,11 +121,17 @@ var init = function() {
         sourceRequired.addClass('highlight-source');
 
         updateScores(eventData.source);
+
     }
 
+    /**
+     * handler for the player selecting a cell and not moving and staying the same cell. This could indicate a player
+     * selecting a piece for exchange
+     * @param {any} eventData -- the action data
+     */
     function onNewMoveCanceled(eventData) {
-        console.log("event: onNewMoveCanceled - source: " + eventData.source.fen());
-
+        console.log("event: onNewMoveCanceled - target Cell Id: " + eventData.targetCellId);
+ 
     }
 
     function onInvalidGameMove(eventData) {
@@ -136,30 +141,57 @@ var init = function() {
 
     }
 
+    /**
+     * Handler for when the game is game
+     * @param {any} eventData - the game event info
+     */
     function onWinnerDeclared(eventData) {
         console.log("event: onWinnerDeclared - winner: " + eventData.player);
 
-        $('#message').html("<div class='alert alert-info'>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role] + "</div>")
+        $('#message').html("<div class='alert alert-info'><strong>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role] + " </strong></div>")
 
         updateScores(eventData.source);
 
+        $('#state').html(Kharbga.GameState[eventData.source.getState()]);
+        
+
         $('#startGameBtn').show();
+        $('#loadSetting1').hide();
+      //  board.clear();
     }
 
     function onUntouchableSelected(eventData) {
-        console.log("event: onUntouchableSelected - source: " + eventData.source);
-        console.log("event: onUntouchableSelected - from " + eventData.from);
-        console.log("event: onUntouchableSelected - to " + eventData.to);
+        console.log("event: onUntouchableSelected - cell: " + eventData.targetCellId);
+     
+        var exchangeSquare = boardEl.find('.square-' + eventData.targetCellId);
+        exchangeSquare.addClass('highlight-exchange');
 
-        updateScores(eventData.source);
+        updateMoveFlags(eventData.source.move_flags());
 
     }
 
     function onUntouchableExchangeCanceled(eventData) {
         console.log("event: onUntouchableExchangeCanceled - source: " + eventData.source);
+        $('#message').html("<div class='alert alert-warning'>Exchange Request Canceled</div>")
 
         updateScores(eventData.source);
+        updateMoveFlags(eventData.source.move_flags());
+
+        boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
     }
+
+    function onUntouchableExchangeCompleted(eventData) {
+        console.log("event: onUntouchableExchangeCompleted - source: " + eventData.source);
+        $('#message').html("<div class='alert alert-success'>Exchnage Request Completed</div>")
+
+
+     //   board.position(game.fen(), false);
+        updateScores(eventData.source);
+        updateMoveFlags(eventData.source.move_flags());
+
+        boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
+    }
+
 
     function onInvalidSettingMalha(eventData) {
         console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
@@ -182,6 +214,8 @@ var init = function() {
     function onInvalidMove(eventData) {
         console.log("board event: onInvalidMove - target: %s - type : %s ",
             eventData.targetCellId, Kharbga.BoardMoveType[eventData.type]);
+
+        $('#message').html("<div class='alert alert-danger'>Invalid Move " + Kharbga.BoardMoveType[eventData.type] +" </div>")
     }
 
     function onValidMove(eventData) {
@@ -202,6 +236,20 @@ var init = function() {
         updateScores(game);
     }
 
+    function onExchangedPiece(eventData) {
+        console.log("board event: onExchangedPiece - target: " + eventData.targetCellId);
+
+        //  board.move(eventData.targetCellId + "-spare");
+        // remove original piece from source square
+        //srcSquareEl.find('.' + CSS.piece).remove();
+        var exchangedSquare = boardEl.find('.square-' + eventData.targetCellId);
+        exchangedSquare.addClass('highlight-exchange');
+        // capturedSquare.find('.' + pieceClass).remove();
+
+        board.position(game.fen(), false);
+        updateScores(game);
+    }
+
 
     // Setup the game events to pass to the game object
     var gameEvents = {
@@ -216,6 +264,7 @@ var init = function() {
         winnerDeclaredEvent: onWinnerDeclared,
         untouchableSelectedEvent: onUntouchableSelected,
         untouchableExchangeCanceledEvent: onUntouchableExchangeCanceled,
+        untouchableExchangeCompletedEvent: onUntouchableExchangeCompleted,
         invalidSettingMalhaEvent: onInvalidSettingMalha,
         invalidSettingOccupiedEvent: onInvalidSettingOccupied,
         invalidMoveEvent: onInvalidGameMove
@@ -285,6 +334,20 @@ var init = function() {
         }
     };
 
+
+    function readMoveParams() {
+     
+    }
+
+    function updateMoveFlags(moveFlags) {
+        $('#exchangeRequestCheckbox').attr('checked', moveFlags.exchangeRequest);
+        $('#exchangeRequestAcceptedCheckbox').attr('checked', moveFlags.exchangeRequestAccepted);
+
+        $('#exchangeRequestDefenderPiece').text(moveFlags.exchangeRequestDefenderPiece);
+        $('#exchangeRequestAttackerPiece1').text(moveFlags.exchangeRequestAttackerPiece1);
+        $('#exchangeRequestAttackerPiece2').text(moveFlags.exchangeRequestAttackerPiece2);
+    }
+
     var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
         console.log("onDrop - from: %s - to: %s ", source, target);
         /*    console.log("Target: " + target);
@@ -294,29 +357,21 @@ var init = function() {
         console.log("Orientation: " + orientation);
         console.log("--------------------");
 */
+        // readMoveParams();
         $('#gameMove').html(source + "-" + target);
 
         var ret;
-        var params = {};
-        params.exchangeRequest = $('#exchangeRequestCheckbox').attr('checked') == true;
-        params.exchangeRequestDefenderPiece = $('#exchangeRequestDefenderPiece').text();
-        params.exchangeRequestAccepted = $('#exchangeRequestCheckboxAccepted').attr('checked') == true;
-        params.exchangeRequestAttackerPiece1 = $('#exchangeRequestAttackerPiece1').text();
-        params.exchangeRequestAttackerPiece2 = $('#exchangeRequestAttackerPiece2').text();
+
+        var exchangeRequest = false;
+        if (game.turn() == 'a')
+            exchangeRequest = $('#exchangeRequestAcceptedCheckbox').is(':checked');
+        else
+            exchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
+
         if (game.is_in_moving_state())
-            ret = game.processMove(source, target);
+            ret = game.processMove(source, target, $('#abandonCheckbox').is(':checked'), exchangeRequest);
         else
             ret = game.processSetting(target);
-
-        // see if the move is legal
-        //      var move = game.({
-        //          from: source,
-        //          to: target,
-        //          promotion: 'q' // NOTE: always promote to a queen for example simplicity
-        //      });
-
-        // illegal move
-        //  if (move === null) return 'snapback';
 
         // updateStatus();
         if (ret == false) return 'snapback';
@@ -340,6 +395,9 @@ var init = function() {
 
         // add logic to check if a valid move
 
+        // update the game position at the end of the move
+        board.position(game.fen(), false);
+
     };
 
     /**
@@ -360,7 +418,7 @@ var init = function() {
         onDragMove: onDragMove,
         onMoveEnd: onMoveEnd,
         onDrop: onDrop,
-        onDoubleClick = onSelected,
+        onDoubleClick : onSelected,
         sparePieces: true,
         showErrors: 'console',
         pieceTheme: '../img/theme-simple/{piece}.png'
@@ -383,6 +441,9 @@ var init = function() {
 
         $('#loadSetting1Btn').show();
         $('#startGameBtn').hide();
+        boardEl.find('.highlight-captured').removeClass('highlight-captured');
+        boardEl.find('.highlight-source').removeClass('highlight-source');
+        boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
     }
 
     function onLoadSetting1() {
@@ -448,7 +509,21 @@ var init = function() {
     $('#loadSetting1Btn').on('click', onLoadSetting1);
 
     // flip the board
-    $('#flipOrientationBtn').on('click', board.flip);
+    $('#flipOrientation').on('click', board.flip);
+    $('#exchangeRequestCheckbox').on('click', function () {
+        var checked = $('#exchangeRequestCheckbox').is(':checked');
+        if (!checked) {           
+            $('#exchangeRequestDefenderPiece').text('');
+        }
+    });
+
+    $('#exchangeRequestAcceptedCheckbox').on('click', function () {
+        var checked = $('#exchangeRequestAcceptedCheckbox').is(':checked');
+        if (!checked) {
+            $('#exchangeRequestAttackerPiece1').text('');
+            $('#exchangeRequestAttackerPiece2').text('');
+        }
+    });
 
 
 

@@ -64,7 +64,7 @@ namespace Kharbga {
         MovingToNotAdjacentCell,
         MovedToAValidCell,
         OpponentPieceCaptured,
-        InvalidCellId   
+        InvalidCellId
     };
 
     /**
@@ -133,6 +133,9 @@ namespace Kharbga {
 
         /// Defender lost all pieces.
         DefenderLostAllPieces,
+
+        /// Attacker lost all pieces.
+        AttackerLostAllPieces,
 
         WinnerDeclared
     }
@@ -253,5 +256,33 @@ namespace Kharbga {
         public Player: Player;
     }
 
-  
+    /**
+     * Defines various parameters realted to the current player move
+     */
+    export class GameMoveFlags {
+        public resigned: boolean; 
+        public exchangeRequest: boolean;
+        public exchangeRequestDefenderPiece: string;
+        public exchangeRequestAccepted: boolean;
+        public exchangeRequestAttackerPiece1: string;
+        public exchangeRequestAttackerPiece2: string;
+
+        constructor() {
+            this.resigned = false;
+            this.exchangeRequest = false;
+            this.exchangeRequestAccepted = false;
+            this.exchangeRequestDefenderPiece = '';
+            this.exchangeRequestAttackerPiece1 = '';
+            this.exchangeRequestAttackerPiece2 = '';
+        }
+
+        public reset() {
+            this.resigned = false;
+            this.exchangeRequest = false;
+            this.exchangeRequestAccepted = false;
+            this.exchangeRequestDefenderPiece = '';
+            this.exchangeRequestAttackerPiece1 = '';
+            this.exchangeRequestAttackerPiece2 = '';
+        }
+    } 
 }

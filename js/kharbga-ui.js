@@ -1660,7 +1660,7 @@
                 piece = CURRENT_POSITION[square];
             }
 
-            if (cfg.hasOwnProperty('onSelected') !== true ||
+            if (cfg.hasOwnProperty('onDoubleClick') !== true ||
                 typeof cfg.onSelected !== 'function') return;
 
             // execute their function

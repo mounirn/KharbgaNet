@@ -24,17 +24,11 @@ namespace Kharbga {
         attackerScore = 0;
         defenderScore = 0;
         moveSourceRequired : string = "";
-        moveDestinationsPossible : Array<string> = null;
+        moveDestinationsPossible: Array<string> = null;
+        firstMove = true;
 
-        // 
-        // temp pointer indicating the from cell used in a game move (after setting is completed)
-        //fromCell: BoardCell = null;
-
-        // temp pointers indicating pieces involved in a two exchange
-        defenderIsRequestingExchange: boolean;
-        defenderUntouchableMove: GameMove = null;
-        attackerUntouchable1: GameMove = null;
-        attackerUntouchable2: GameMove = null;
+        // current state of the move params
+        moveFlags: GameMoveFlags;
 
         /// <summary>
         /// Initializes the game to the no started state
@@ -46,6 +40,7 @@ namespace Kharbga {
             this.boardEvents = boardEvents; 
 
             this.board = new Board(boardEvents);
+            this.moveFlags = new GameMoveFlags();
 
         }
 
@@ -56,6 +51,7 @@ namespace Kharbga {
             this.defenderScore = 0;
             this.currentPlayer = this.attacker;
             this.state = GameState.Setting;
+            this.firstMove = true;
 
         }
         /**
@@ -130,6 +126,10 @@ namespace Kharbga {
             return true;
         }
 
+        public move_flags(): GameMoveFlags {
+            return this.moveFlags;
+        }
+
         /**
          * @summary Checks if the fen piece char is an Attacker or a Defender piece.
          * Defender pieces are in lower case.
@@ -172,7 +172,7 @@ namespace Kharbga {
          * @returns true if the game is in setting mode. false, otherwise
          */
         public isInSettingMode() : boolean {
-            return this.state == GameState.Setting;
+            return this.state === GameState.Setting;
         }
 
         /**
@@ -211,16 +211,16 @@ namespace Kharbga {
          * @summary indicates whether the game is done or not
          */
         public game_over(): boolean {
-            if (this.state == GameState.WinnerDeclared)
-                return true;
-            else
+            if (this.state === GameState.Setting || this.state === GameState.Moving )
                 return false;
+            else
+                return true;
         }
         /**
         * @summary indicates whether the game is done or not
         */
         public game_setting_over(): boolean {
-            if (this.state === GameState.Setting)
+            if (this.state === GameState.Setting )
                 return false;
             else return true;
         }
@@ -332,11 +332,37 @@ namespace Kharbga {
          * @summary Acts on the user requested move from one cell to another
          * @param fromCellId - the cell id of the from cell
          * @param toCellId - the cell id of the to cell
+         * @param resigned - current player is indicating resigning
+         * @param exchangeRequest - current player is indicating move as participating in an exchange request 
          */
-        public processMove(fromCellId: string, toCellId: string): boolean {
+        public processMove(fromCellId: string, toCellId: string, resigned: boolean, exchangeRequest: boolean): boolean {
             if (this.state != GameState.Moving)
                 return false;
 
+            let eventData = new GameEventData(this, this.getCurrentPlayer());
+
+            this.moveFlags.resigned = resigned;
+            // check resigned
+            if (this.moveFlags.resigned) {
+
+                if (eventData.player.IsAttacker()) {
+                    //
+                    this.winner = this.defender;
+                    this.state = GameState.AttackerAbandoned;
+                }
+                else {
+                    this.winner = this.attacker;
+                    this.state = GameState.DefenderAbandoned;
+                }
+
+                eventData.player = this.winner; 
+       
+
+                this.gameEvents.winnerDeclaredEvent(eventData);
+
+                return;
+            }
+                   
             // check the pssible moves  
             if (this.valid_move_destination(toCellId) === false)
                 return false;
@@ -368,12 +394,17 @@ namespace Kharbga {
                 this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.InvalidCellId, fromCell, toCell,toCellId);
                 return ret;
             }
-            let eventData = new GameEventData(this, this.getCurrentPlayer());
             eventData.from = fromCell;
             eventData.to = toCell;
-            // deselection move/canceling move from fromCell
-            if (fromCell === toCell) {    
+            eventData.targetCellId = toCell.ID();
+            // deselection move/canceling move from fromCell (could indicate piece exchange requests)
+            if (fromCell === toCell) {
+                
                 this.gameEvents.newMoveCanceledEvent(eventData)
+
+                // check if current player is confirming an exchange request with this move
+                this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
+              //  ret = true;
                 return ret;
             }
 
@@ -384,7 +415,9 @@ namespace Kharbga {
               
                 ret = true;
 
-                // Check when a player needs to relinquish their turn to play
+                // check if current player is defender confirming an requesting exchange request with this move
+                this.CheckUntouchableMoves(toCellId, exchangeRequest,eventData);
+
                 // 
                 // 1. If the last move captured no pieces, player must change turn change turn
                 // 2. If the last move captured 1 or more pieces and the same piece can continue to move and 
@@ -396,9 +429,10 @@ namespace Kharbga {
                     // Check untouchable exchange requests
                     ///todo fix this function checkUntouchables
                     //this.CheckUntouchableMoves(move);
-
+                    eventData.targetCellId = toCellId;
+                    this.gameEvents.newMoveCompletedEvent(eventData);
                     this.PlayerChangeTurn();
-                    this.gameEvents.newMoveCompletedEvent(eventData)
+                    
                 }
                 else {   // Update the scores
                     if (this.currentPlayer.IsAttacker()) {
@@ -410,6 +444,7 @@ namespace Kharbga {
                     // check if the player could still 
                     let stillHavePiecesToCaptureResult = this.board.StillHavePiecesToCapture(toCell);
                     if (stillHavePiecesToCaptureResult.status === false) {
+                        eventData.targetCellId = toCellId;
                         this.gameEvents.newMoveCompletedEvent(eventData)
                         this.PlayerChangeTurn();
                         
@@ -421,9 +456,10 @@ namespace Kharbga {
                         // add event that player should continue to play since they could still capture                       
                         this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData)
                     }
-                    //Check the scores 
-                    this.CheckScores();
+   
                 }
+                //Check the scores 
+                this.CheckScores();
             } else {
                 eventData.move_status = result.status;
                 this.gameEvents.invalidMoveEvent(eventData);
@@ -438,7 +474,7 @@ namespace Kharbga {
         private checkIfSettingsCompleted(): void {
             if (this.board.AllPiecesAreSet()) {
                 this.state = GameState.Moving;
-
+                this.firstMove = true;
                 this.currentPlayer = this.attacker;   // attackers start after finishing the game
                 // check game options here if defender is to start
 
@@ -449,29 +485,79 @@ namespace Kharbga {
         }
 
         /**
-         * @summary checks if the current player can not move 
+         * @summary checks if the current player can not move and issue a player
+         * @events playerPassed
          */
         private checkIfPlayerCanNotMove(): void {
-            ///TODO:
-            /// Check if this case is not at the beginning of the game. 
-            /// Defendant wins the game if they are blocked after the first attacker move and no pieces are captured
-            this.PlayerChangeTurn();
+            var eventData = new GameEventData(this, this.getCurrentPlayer());
+            // check if the player can actually move
+            if (this.state != GameState.Setting && this.CheckIfCurrentPlayerCanPassTurn() === true) {
+
+                // reset to the previous player
+                if (this.currentPlayer.IsAttacker())
+                    this.currentPlayer = this.defender;
+                else
+                    this.currentPlayer = this.attacker;
+
+                this.gameEvents.playerPassedEvent(eventData);
+            }
         }
 
+        /**
+         * Change players turns after a move
+         */
         private PlayerChangeTurn(): void {
+          
             if (this.currentPlayer.IsAttacker())
                 this.currentPlayer = this.defender;
             else
                 this.currentPlayer = this.attacker;
 
             this.moveSourceRequired = "";
-            // raise an event a new player move
-            //NewPlayerTurnEvent(this, null);
-            var eventData = new GameEventData(this, this.getCurrentPlayer());
-            this.gameEvents.newPlayerTurnEvent(eventData);
+            
 
+            var eventData = new GameEventData(this, this.getCurrentPlayer());
+            // check if the player can actually move
+            if (this.state == GameState.Moving) {
+                if (this.currentPlayerIsBlocked() === true) {
+                    if (this.currentPlayer.IsAttacker())
+                        this.state = GameState.AttackerCanNotMove;   // after the first move
+                    else
+                        this.state = GameState.DefenderCanNotMove;
+
+                    // check if this happened on the first move
+                    if (this.firstMove) {
+                        // decleare defender as winner and end the game
+                        this.winner = this.defender;
+
+
+
+                        eventData.player = this.winner;
+                        this.state = GameState.WinnerDeclared;
+                        this.gameEvents.winnerDeclaredEvent(eventData);
+                        return;
+                    } else {
+
+                        this.gameEvents.playerPassedEvent(eventData);
+
+                        this.state = GameState.Moving;
+                        // change player's again
+                        this.PlayerChangeTurn();
+                        return;
+                    }
+                } 
+
+                if (this.firstMove === true)
+                    this.firstMove = false;
+            }
+          
+            // 
+            this.gameEvents.newPlayerTurnEvent(eventData);
         }
 
+        /**
+         * processes that current player abondoned
+         */
         CurrentPlayerAbandoned() {
             if (this.currentPlayer == this.attacker) {
                 this.state = GameState.AttackerAbandoned;
@@ -495,6 +581,15 @@ namespace Kharbga {
 
                 var eventData = new GameEventData(this, this.winner);
                 this.gameEvents.winnerDeclaredEvent(eventData);
+            }
+            else {
+                if (this.attackerScore == 0) {
+                    this.state = GameState.AttackerLostAllPieces;
+                    this.winner = this.defender;
+
+                    var eventData = new GameEventData(this, this.winner);
+                    this.gameEvents.winnerDeclaredEvent(eventData);
+                }
             }
         }
 
@@ -525,7 +620,18 @@ namespace Kharbga {
         /**
          * @summary Checks if the current player can pass --- does not have any possible moves
          */
-        CheckIfCurrentPlayerCanPassTurn(): boolean {
+        private CheckIfCurrentPlayerCanPassTurn(): boolean {
+            let possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
+            if (possibleMoves.length == 0)
+                return true;
+            else
+                return false;
+        }
+
+        /**
+        * @summary Checks if the current player is blocked --- does not have any possible moves
+        */
+        private currentPlayerIsBlocked(): boolean {
             let possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
             if (possibleMoves.length == 0)
                 return true;
@@ -598,49 +704,101 @@ namespace Kharbga {
             return clickedCell.IsSurrounded();
         }
 
-        CheckUntouchableMoves(move: GameMove): void {
-            if (this.defenderIsRequestingExchange == true) {
-                if (this.currentPlayer.IsDefender()) {
-                    this.defenderUntouchableMove = move;
-                    //UntouchableSelectedEvent(this, new GameEventArgs(move.From, move.To, move.Player, true));
+        /**
+         * Checks untouchable cases and updates the move flags 
+         * @param targetCellId 
+         * @param moveExchangeRequest
+         * @param eventData
+         */
+        private CheckUntouchableMoves(targetCellId: string, moveExchangeRequest: boolean, eventData: GameEventData): void {
+     
+            // check player
+            if (this.currentPlayer.IsDefender()) {
+                
+                // case defender turned off exchange request
+                if (moveExchangeRequest == false) {
+                    
+                    this.moveFlags.exchangeRequestDefenderPiece = '';
+                    this.moveFlags.exchangeRequestAccepted = false;
+                    this.moveFlags.exchangeRequestAttackerPiece1 = '';
+                    this.moveFlags.exchangeRequestAttackerPiece2 = ''
+                    if (this.moveFlags.exchangeRequest) {  // cancel if a previous exchange request was set
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;
+                        this.gameEvents.untouchableExchangeCanceledEvent(eventData);
+                    }
+                    else {
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;
+                    }
 
+                    return;
                 }
-                if (this.currentPlayer.IsAttacker() && this.defenderUntouchableMove != null) {
-                    if (this.attackerUntouchable1 == null) {
-                        this.attackerUntouchable1 = move;
-                        //UntouchableSelectedEvent(this, new GameEventArgs(move.From, move.To, move.Player, true));
+                else {
+                    // case defender is requesting an exchange request (first time after reset)
+                    if (this.moveFlags.exchangeRequest == false) {
+                        // case not previous exchange request was indicated    
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;  
+                        this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                        return;
                     }
-                    else if (this.attackerUntouchable2 == null) {
-                        this.attackerUntouchable2 = move;
-                        //UntouchableSelectedEvent(this, new GameEventArgs(move.From, move.To, move.Player, true));
+                    else { // case a previous exchange request was indicated
+                        this.moveFlags.exchangeRequest = moveExchangeRequest;                       
+                        this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
 
-                        this.ProcessUntouchableTwoExchange(this.defenderUntouchableMove.To,
-                            this.attackerUntouchable1.To, this.attackerUntouchable2.To);
+                        /// todo: add a check if it is the same a the previous selected piece
 
-                        // It is the attacker turn after showing the pieces
-                        // this.NewPlayerTurnEvent(this, null);
-                    }
+                        if (this.moveFlags.exchangeRequestAccepted && this.moveFlags.exchangeRequestAttackerPiece1 != ''
+                            && this.moveFlags.exchangeRequestAttackerPiece2 != '') {
+                            let result = this.ProcessUntouchableTwoExchange(this.moveFlags.exchangeRequestDefenderPiece,
+                                this.moveFlags.exchangeRequestAttackerPiece1, this.moveFlags.exchangeRequestAttackerPiece2);
+
+                            if (result == true) {
+                                //
+                                this.gameEvents.untouchableExchangeCompletedEvent(eventData);
+                                // reset the flags
+                                this.moveFlags.reset();
+                                return;
+                            }
+                        }
+                    }                                    
                 }
             }
-            else {
-                this.defenderUntouchableMove = null;
-                this.attackerUntouchable1 = null;
-                this.attackerUntouchable2 = null;
+            else { 
+                // is attacker
+                // case attacker turned off exchange request accepted
+                if (moveExchangeRequest === false) {
+                  
+                    this.moveFlags.exchangeRequestAttackerPiece1 = '';
+                    this.moveFlags.exchangeRequestAttackerPiece2 = ''
+                    this.moveFlags.exchangeRequestDefenderPiece = '';
+                    if (this.moveFlags.exchangeRequest || this.moveFlags.exchangeRequestAccepted) {  // cancel if a previous exchange request was set
+                        this.moveFlags.exchangeRequestAccepted = moveExchangeRequest;
+                        this.gameEvents.untouchableExchangeCanceledEvent(eventData);
+                    }
+                    else {
+                        this.moveFlags.exchangeRequestAccepted = moveExchangeRequest;
+                    }
+                    return;
+                }
+                else {
+                    // attacker is accepting the exchange request
+                    this.moveFlags.exchangeRequestAccepted = true;
+
+                    if (this.moveFlags.exchangeRequestAttackerPiece1 != '') {
+                        this.moveFlags.exchangeRequestAttackerPiece2 = targetCellId;
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                    }
+                    else {
+                        this.moveFlags.exchangeRequestAttackerPiece1 = targetCellId;
+                        
+                        this.gameEvents.untouchableSelectedEvent(eventData);
+                    }
+
+                }
             }
         }
 
-        processRequestingExchange(requestingExchange: boolean): void {
-            // Exchange may not be the right word here
-            // It is probably better to mention sacrifice
-            this.defenderIsRequestingExchange = requestingExchange;
-
-            if (requestingExchange != true) {
-                this.defenderUntouchableMove = null;
-                this.attackerUntouchable1 = null;
-                this.attackerUntouchable2 = null;
-                //UntouchableExchangeCanceled(this, null);
-            }
-        }
 
         /** @summary Processes a request to exchange a defender piece with two of the attacker pieces
          *
@@ -648,15 +806,20 @@ namespace Kharbga {
          * @param attackerPiece1 - the id of the attacker's 1st piece to exchange
          * @param attackerPiece2 - the id of the attacker's 2nd piece to exchange
         */
-        ProcessUntouchableTwoExchange(untouchablePieceId: string, attackerPiece1: string, attackerPiece2: string) {
+        private ProcessUntouchableTwoExchange(untouchablePieceId: string, attackerPiece1: string, attackerPiece2: string) : boolean{
             //steps:
             // - check if the defender piece is able to move and is not reachable
             // - check if the attacker pieces can move freely
             // if ok allow the exchange, other generate an error message using events
-            this.board.RecordExchange(untouchablePieceId, attackerPiece1, attackerPiece2);
-            this.defenderScore--;
-            this.attackerScore--;
-            this.attackerScore--;
+            var ret = this.board.RecordExchange(untouchablePieceId, attackerPiece1, attackerPiece2);
+
+            if (ret === true) {
+                this.defenderScore--;
+                this.attackerScore--;
+                this.attackerScore--;
+            }
+
+            return ret; 
         }
     }
 }
