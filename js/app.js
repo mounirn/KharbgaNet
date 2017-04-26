@@ -2,6 +2,20 @@
 var init = function() {
     var board,
         boardEl = $('#board');
+    
+    // flag for turning on/off logging 
+    var loggingOn = true; 
+
+    // the client state
+    var appClientState = {
+        sessionId: "",
+        sessionLastAccessTime: new Date(),
+        userScreenName: "Guest",
+        gameChannel: "",
+        serverConnectionId: "",
+        serverOpponentConnectionId: "",
+        role: 0,      //  unknown, attacker, defender, spectator
+    };
 
     var myConnectionId, myOpponentConnectionId;  // the network connection ids
     var serverGameId = null;  // the game id assigned by the server
@@ -27,6 +41,8 @@ var init = function() {
         // malha square
         var malha = boardEl.find('.square-d4');
         malha.addClass('highlight-malha');
+
+        appClientState.gameChannel = serverStartNewGame();
     }
 
     function onNewPlayerTurn(eventData) {
@@ -51,11 +67,21 @@ var init = function() {
     }
 
     function onNewSettingCompleted(eventData) {
-        console.log("event: onNewSettingCompleted - source " + eventData.source.fen());
-        // settings from and to are the same
-        console.log("event: onNewSettingCompleted - from " + eventData.from);
-        console.log("event: onNewSettingCompleted - to " + eventData.to);
+        console.log("event: onNewSettingCompleted - cell " + eventData.targetCellId);
 
+        if (game.turn() == 'a') {
+            $('#attackerSettings').append($('<option>', {
+                value: game.getAttackerScore(),
+                text: eventData.targetCellId
+            }));
+        }
+        else {
+            $('#defenderSettings').append($('<option>', {
+                value: game.getDefenderScore(),
+                text: eventData.targetCellId
+            }));
+        }
+   
         $('#message').html("<div class='alert alert-success'>It is the turn  of the " +
             Kharbga.PlayerRole[eventData.player.role] + " to set the 2nd piece </div>")
 
@@ -63,7 +89,7 @@ var init = function() {
 
 
     }
-
+    
     function onSettingsCompleted(eventData) {
         console.log("event: onSettingsCompleted - source: " + eventData.source.fen());
 
@@ -77,6 +103,8 @@ var init = function() {
         $('.exchangeRequest').show();
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
+
+      
     }
 
     function onNewMoveStarted(eventData) {
@@ -104,6 +132,19 @@ var init = function() {
 
         // update the board position here for the case when processing exchanges
         board.position(game.fen(), true);
+
+        if (game.turn() == 'a') {
+            $('#attackerMoves').append($('<option>', {
+                value: game.getAttackerMoveNumber(),
+                text:  eventData.from.ID() + '-' + eventData.to.ID()
+            }));
+        }
+        else {
+            $('#defenderMoves').append($('<option>', {
+                value: game.getDefenderMoveNumber(),
+                text: eventData.from.ID() + '-' + eventData.to.ID()
+            }));
+        }
     }
 
     function onNewMoveCompletedContinueSamePlayer(eventData) {
@@ -121,6 +162,19 @@ var init = function() {
         sourceRequired.addClass('highlight-source');
 
         updateScores(eventData.source);
+
+        if (game.turn() == 'a') {
+            $('#attackerMoves').append($('<option>', {
+                value: game.getAttackerMoveNumber(),
+                text: eventData.from.ID() + '-' + eventData.to.ID()
+            }));
+        }
+        else {
+            $('#defenderMoves').append($('<option>', {
+                value: game.getDefenderMoveNumber(),
+                text: eventData.from.ID() + '-' + eventData.to.ID()
+            }));
+        }
 
     }
 
@@ -477,20 +531,15 @@ var init = function() {
         onStart();
     }
 
-    /**
-     * Hello from server
-     */
-    function onHello() {
-        console.log("%s - Hello from server", new Date().toLocaleTimeString() );
-
-    }
+  
     function onSendMessage(name, message) {
         console.log("%s - Message from %s: %", new Date().toLocaleTimeString(), name, message);
     }
 
+
     function clickGetPositionBtn() {
         console.log("Current position as an Object:");
-        console.log(board.position());
+        console.log(board.position().toString());
 
         $('#fen').html(board.fen());
         $('#pgn').html(board.position().toString());
@@ -498,25 +547,97 @@ var init = function() {
         console.log("Current position as a FEN string:");
         console.log(board.fen());
     }
+    var loggedIn = false;
+    var userName = "";
+    function onLoginLink(e) {
+        e.preventDefault();
 
+        $('#main-tabs a[href="#account"]').tab('show');      
+
+        $('#login-panel').show().removeClass('hidden');
+        $('#register-panel').hide().addClass('hidden');
+    }
+    function onRegisterLink(e) {
+        e.preventDefault();
+
+        $('#main-tabs a[href="#account"]').tab('show');
+
+        $('#login-panel').hide().addClass('hidden');;
+        $('#register-panel').show().removeClass('hidden');
+
+    }
+    /**
+     * handler for login request 
+     * @param {any} e
+     */
+    function onLoginSubmit(e) {
+        e.preventDefault();
+        var loginInfo = {
+            LoginID: $('#login-id').val(),
+            Password: $('#login-pwd').val(),
+            RememberMe: $('#login-remember').is(':checked')
+        };
+        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
+
+        var result = nsApiClient.userService.validateLogin(loginInfo, function(data, status) {
+            if (data != null) {
+                $('#appInfo').html(JSON.stringify(data));
+                $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");
+            }
+            else {
+                $('#account-message').html("<div class='alert alert-error'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+                $('#appInfo').html(JSON.stringify(status));
+            }  
+        });
+    }
+    /**
+     * handler for refresh app info request
+     * @param {any} e
+     */
+    function onRefreshAppInfo(e) {      
+        e.preventDefault();
+        nsApiClient.appService.getAppInfo(function (data, status) {
+            if (data != null) {
+                $('#help-message').html("<div class='alert alert-info'>" + JSON.stringify(status) + "</div>");
+                $('#appInfo').html(JSON.stringify(data));
+            }
+            else {
+                $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+                $('#appInfo').html('');
+            }
+        });
+
+    }
+    /**
+     * Sets up the MyAccount tab based on the current app client state
+     */
+    function setupMyAccount() {
+        if (loggedIn) {
+            $('#account-info-panel').show().removeClass('hidden');;
+        } else {
+            $('#login-panel').show().removeClass('hidden');;
+            $('#register-panel').hide().addClass('hidden');;
+            $('#account-info-panel').hide().addClass('hidden');;
+        }
+    }
+
+    // setup all the various buttons and links events
+    $('#login-link').on('click', onLoginLink);
+    $('#register-link').on('click', onRegisterLink);
+    $('#login-submit').on('click', onLoginSubmit);
+    $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
     $('#getPositionBtn').on('click', clickGetPositionBtn);
     $('#startGameBtn').on('click', onStart);
     $('#clearBoardBtn').on('click', onClear);
-    $('#clearBoardInstantBtn').on('click', function() {
-        board.clear(false);
-    });
-
+    $('#postMessageBtn').on('click', onPostMessage);
     $('#loadSetting1Btn').on('click', onLoadSetting1);
-
-    // flip the board
-    $('#flipOrientation').on('click', board.flip);
+    $('#flipOrientation').on('click', board.flip);// flip the board
     $('#exchangeRequestCheckbox').on('click', function () {
         var checked = $('#exchangeRequestCheckbox').is(':checked');
         if (!checked) {           
             $('#exchangeRequestDefenderPiece').text('');
         }
     });
-
     $('#exchangeRequestAcceptedCheckbox').on('click', function () {
         var checked = $('#exchangeRequestAcceptedCheckbox').is(':checked');
         if (!checked) {
@@ -525,14 +646,58 @@ var init = function() {
         }
     });
 
-
+    setupMyAccount();
 
     // setup signalR communications
-    $.connection.hub.url = 'http://localhost/NS.API/signalr';
+    $.connection.hub.url = nsApiClient.baseURI + 'signalr';
+
+    console.log("Hub URL: %s", $.connection.hub.url);
+
     var gamesHubProxy = $.connection.gamesHub;
+    $.connection.hub.logging = loggingOn;
+
     gamesHubProxy.client.recordMove = onRecordMove;
-    gamesHubProxy.client.hello = onHello;
+     /**
+     * Hello from server
+     */
+    gamesHubProxy.client.hello = function() {
+        console.log("%s - Hello from server", new Date().toLocaleTimeString());
+    };
+
     gamesHubProxy.client.send = onSendMessage;
+ 
+
+    // game handler
+    gamesHubProxy.client.gameAdded = function (gameInfo) {
+        // add to the games list
+
+    };
+
+    gamesHubProxy.client.gameDeleted = function (gameInfo) {
+        // remove from the games list
+
+    };
+
+    // base hub messages
+    gamesHubProxy.client.joined = function (connectionId, serverTime) {
+        console.log('server: connection %s joined on %s ',connectionId, serverTime);
+    };
+    gamesHubProxy.client.left = function (connectionId, serverTime) {
+        console.log('server: connection %s left on %s ', connectionId, serverTime);
+    };
+    gamesHubProxy.client.rejoined = function (connectionId, serverTime) {
+        console.log('server: connection %s rejoined on %s ', connectionId, serverTime);
+    };
+    gamesHubProxy.client.pong = function (connectionId, serverTime) {
+
+        if (connectionId !== $.connection.hub.id) {
+            console.log('server: INVALID pong from %s received on: %s', connectionId, serverTime);
+        }
+        else {
+            // check if equal to self
+            console.log('server: pong from %s received on: %s', connectionId, serverTime);
+        }
+    };
 
     $.connection.hub.start({ jsonp: true })
         .done(function () {
@@ -542,17 +707,34 @@ var init = function() {
         })
         .fail(function () { console.log('Could not Connect!'); });
 
-    $('#submitMove').on('click', onSubmit);
-
-    function onSubmit() {
+    $('#submitMove').on('click', function onSubmit() {
         gamesHubProxy.server.recordMove("testGameId", myConnectionId, "testMove").done(function () {
             console.log('server Invocation of recoredMove');
-        }).fail(function (error)
+        })
+        .fail(function (error)
         {
             console.log('Invocation of recordMove failed. Error: ' + error);
-            });
-    }
+        });
+    });
 
+    $('#ping-button').on('click', function () {
+        gamesHubProxy.server.ping(new Date());  
+    });
+
+
+    /**
+     * starts a new game on the server
+     * @returns the new game id
+     */
+    function serverStartNewGame() {
+        gamesHubProxy.server.newGame(appClientState.userScreenName);
+    }
+    /**
+     * handler for the Post message request
+     */
+    function onPostMessage() {
+
+    }
     // handler for resizing
     $(window).resize(board.resize);
 

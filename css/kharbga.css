@@ -639,3 +639,19 @@ button.btn {
 thead.center th {
     text-align: center;
 }
+
+/*
+    form validation
+*/
+input[type="text"]:valid {
+    color: green;
+}
+
+    input[type="text"]:valid ~ .input-validation::before {
+        content: "&check;";
+        color: green;
+    }
+
+input[type="text"]:invalid {
+    color: red;
+}

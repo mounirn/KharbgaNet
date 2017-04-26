@@ -23,6 +23,8 @@ namespace Kharbga {
         numberOfSettingsAllowed = 2;
         attackerScore = 0;
         defenderScore = 0;
+        attackerMove = 0;
+        defenderMove = 0;
         moveSourceRequired : string = "";
         moveDestinationsPossible: Array<string> = null;
         firstMove = true;
@@ -49,6 +51,8 @@ namespace Kharbga {
             this.startTime = new Date();
             this.attackerScore = 0;
             this.defenderScore = 0;
+            this.attackerMove = 0;
+            this.defenderMove = 0;
             this.currentPlayer = this.attacker;
             this.state = GameState.Setting;
             this.firstMove = true;
@@ -266,6 +270,9 @@ namespace Kharbga {
         public getAttackerScore(): number { return this.attackerScore; }
         public getDefenderScore(): number { return this.defenderScore; }
 
+        public getAttackerMoveNumber(): number { return this.attackerMove; }
+        public getDefenderMoveNumber(): number { return this.defenderMove; }
+
         /**
          * @returns the startup time of the game
          */
@@ -403,7 +410,7 @@ namespace Kharbga {
                 this.gameEvents.newMoveCanceledEvent(eventData)
 
                 // check if current player is confirming an exchange request with this move
-                this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
+              //  this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
               //  ret = true;
                 return ret;
             }
@@ -417,7 +424,12 @@ namespace Kharbga {
 
                 // check if current player is defender confirming an requesting exchange request with this move
                 this.CheckUntouchableMoves(toCellId, exchangeRequest,eventData);
-
+                if (this.currentPlayer.IsAttacker()) {
+                    this.attackerMove++;
+                }
+                else {
+                    this.defenderMove++;
+                }
                 // 
                 // 1. If the last move captured no pieces, player must change turn change turn
                 // 2. If the last move captured 1 or more pieces and the same piece can continue to move and 
@@ -438,8 +450,9 @@ namespace Kharbga {
                     if (this.currentPlayer.IsAttacker()) {
                         this.defenderScore -= result.capturedPieces;
                     }
-                    else
+                    else {
                         this.attackerScore -= result.capturedPieces;
+                    }
 
                     // check if the player could still 
                     let stillHavePiecesToCaptureResult = this.board.StillHavePiecesToCapture(toCell);
@@ -664,6 +677,7 @@ namespace Kharbga {
                 var eventData = new GameEventData(this, this.getCurrentPlayer());
                 eventData.from = cell;
                 eventData.to = cell;
+                eventData.targetCellId = cell.ID();
                 this.gameEvents.newSettingCompletedEvent(eventData);
 
                 if (this.numberOfSettingsAllowed == 0) {

@@ -9,6 +9,8 @@
 * Display possible moves 
 * Add Undo (Take back) and Redo
 * Highlihting of possible moves
+* play against the computer making randome moves
+
 * Enforce the rule related to blocking the defender after the first move.
   1 The Defender wins if they are blocked from moving after the first move or capture
 * Program the two pieces exchanges UI
@@ -91,3 +93,6 @@ Features:
 
 # Compiling TypeScript 
 - tsc    (src directory)
+
+
+http://www.the-art-of-web.com/html/html5-form-validation/

@@ -605,6 +605,8 @@ var Kharbga;
             this.numberOfSettingsAllowed = 2;
             this.attackerScore = 0;
             this.defenderScore = 0;
+            this.attackerMove = 0;
+            this.defenderMove = 0;
             this.moveSourceRequired = "";
             this.moveDestinationsPossible = null;
             this.firstMove = true;
@@ -619,6 +621,8 @@ var Kharbga;
             this.startTime = new Date();
             this.attackerScore = 0;
             this.defenderScore = 0;
+            this.attackerMove = 0;
+            this.defenderMove = 0;
             this.currentPlayer = this.attacker;
             this.state = Kharbga.GameState.Setting;
             this.firstMove = true;
@@ -742,6 +746,8 @@ var Kharbga;
         Game.prototype.getCurrentPlayer = function () { return this.currentPlayer; };
         Game.prototype.getAttackerScore = function () { return this.attackerScore; };
         Game.prototype.getDefenderScore = function () { return this.defenderScore; };
+        Game.prototype.getAttackerMoveNumber = function () { return this.attackerMove; };
+        Game.prototype.getDefenderMoveNumber = function () { return this.defenderMove; };
         Game.prototype.getStartTime = function () { return this.startTime; };
         Game.prototype.getWinner = function () { return this.winner; };
         Game.prototype.getAttacker = function () { return this.attacker; };
@@ -809,7 +815,6 @@ var Kharbga;
             eventData.targetCellId = toCell.ID();
             if (fromCell === toCell) {
                 this.gameEvents.newMoveCanceledEvent(eventData);
-                this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
                 return ret;
             }
             var result = this.board.RecordPlayerMove(fromCell, toCell);
@@ -818,6 +823,12 @@ var Kharbga;
                 this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
                 ret = true;
                 this.CheckUntouchableMoves(toCellId, exchangeRequest, eventData);
+                if (this.currentPlayer.IsAttacker()) {
+                    this.attackerMove++;
+                }
+                else {
+                    this.defenderMove++;
+                }
                 if (result.capturedPieces == 0) {
                     eventData.targetCellId = toCellId;
                     this.gameEvents.newMoveCompletedEvent(eventData);
@@ -827,8 +838,9 @@ var Kharbga;
                     if (this.currentPlayer.IsAttacker()) {
                         this.defenderScore -= result.capturedPieces;
                     }
-                    else
+                    else {
                         this.attackerScore -= result.capturedPieces;
+                    }
                     var stillHavePiecesToCaptureResult = this.board.StillHavePiecesToCapture(toCell);
                     if (stillHavePiecesToCaptureResult.status === false) {
                         eventData.targetCellId = toCellId;
@@ -972,6 +984,7 @@ var Kharbga;
                 var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
                 eventData.from = cell;
                 eventData.to = cell;
+                eventData.targetCellId = cell.ID();
                 this.gameEvents.newSettingCompletedEvent(eventData);
                 if (this.numberOfSettingsAllowed == 0) {
                     this.numberOfSettingsAllowed = 2;
