@@ -15,6 +15,7 @@ var init = function() {
         serverConnectionId: "",
         serverOpponentConnectionId: "",
         role: 0,      //  unknown, attacker, defender, spectator
+        loggedId : false
     };
 
     var myConnectionId, myOpponentConnectionId;  // the network connection ids
@@ -583,12 +584,71 @@ var init = function() {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
                 $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");
+
+                var session = data.session;           
+
+                if (session != null) {
+                    appClientState.session = session;
+                    appClientState.sessionId = session.SessionId;
+                    appClientState.userScreenName = session.FullName;
+                    appClientState.loggedIn = true;
+                    setCookie(C_NSSID, appClientState.sessionId);
+                }
+                else {
+                    appClientState.loggedIn = false;
+                }
+                setupMyAccount();
             }
             else {
-                $('#account-message').html("<div class='alert alert-error'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-                $('#appInfo').html(JSON.stringify(status));
+                setCookie(C_NSSID, "");
+                appClientState.loggedIn = false;
+                setupMyAccount();
+                appClientState.sessionId = "";
+                appClientState.userScreenName = "";
+                if (status.status === 404 || status.status === 400  )
+                    $('#account-message').html("<div class='alert alert-danger'>Invalid Login ID or password</div>");
+                else
+                    $('#account-message').html("<div class='alert alert-danger'> Failed to login</div>");
+
+                $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
             }  
         });
+    }
+
+    /**
+    * handler for logout request
+    * @param {any} e
+    */
+    function onLogoutSubmit(e) {
+        e.preventDefault();
+        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
+        // add call for backend to delete the session
+        nsApiClient.userService.logout(appClientState.sessionId, function (data,status) {
+            if (data != null ) {
+                $('#appInfo').html(JSON.stringify(data));
+                $('#account-message').html("<div class='alert alert-success'>Logged out successfully </div>");
+
+                
+                appClientState.sessionId = data.SessionId;
+                appClientState.userScreenName = data.FullName;
+                appClientState.loggedIn = false;
+                setCookie(C_NSSID, "");
+                setupMyAccount();
+            }
+            else {
+                setCookie(C_NSSID, "");
+                appClientState.loggedIn = false;
+                setupMyAccount();
+                appClientState.sessionId = "";
+                appClientState.userScreenName = "";
+                $('#account-message').html("<div class='alert alert-danger'>Failed to logout.  </div>");
+                $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+            }  
+        });
+        appClientState.loggedIn = false;
+
+        setupMyAccount();
+
     }
     /**
      * handler for refresh app info request
@@ -608,23 +668,95 @@ var init = function() {
         });
 
     }
+
+    /**
+     * checks the stored cookie on app startup
+     */
+    function checkSessionCookie() {
+        var cookie = getCookie(C_NSSID);
+        if (typeof cookie === "string" && cookie.length > 10)
+            checkSession(cookie);
+    }
+
+    /**
+     * checks a given session with the backend and update 
+     * @param {any} sessionId the session id
+     */
+    function checkSession(sessionId) {
+      
+        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
+
+        var result = nsApiClient.userService.checkSession(sessionId, function (data, status) {
+            if (data != null) {
+                $('#appInfo').html(JSON.stringify(data));
+                $('#account-message').html("<div class='alert alert-success'>Valid Session </div>");
+
+                var session = data.session;
+
+                if (session != null) {
+                    appClientState.session = session;
+                    appClientState.sessionId = session.SessionId;
+                    appClientState.userScreenName = session.FullName;
+                    appClientState.loggedIn = true;
+                    setCookie(C_NSSID, data.SessionId);
+                }
+                else {
+                    appClientState.loggedIn = false;
+                    // setCookie(C_NSSID, "");
+                }
+                setupMyAccount();
+            }
+            else {
+               // setCookie(C_NSSID, "");
+                appClientState.loggedIn = false;
+                setupMyAccount();
+                appClientState.sessionId = "";
+                appClientState.userScreenName = "";
+                if (status.status === 404 || status.status === 400)
+                    $('#account-message').html("<div class='alert alert-danger'>Invalid Session</div>");
+                else
+                    $('#account-message').html("<div class='alert alert-danger'> Failed to access the system</div>");
+
+                $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+            }
+        });
+    }
+
     /**
      * Sets up the MyAccount tab based on the current app client state
      */
     function setupMyAccount() {
-        if (loggedIn) {
-            $('#account-info-panel').show().removeClass('hidden');;
+        if (appClientState.loggedIn === true) {
+            $('#account-info-panel').show().removeClass('hidden');
+            $('#account-welcome').show().removeClass('hidden');
+            $('#account-welcome').html("<strong> Welcome " + appClientState.userScreenName + "</strong>");
+
+            $('#login-li').hide().addClass('hidden');
+            $('#register-li').hide().addClass('hidden');
+
+            $('#logout-li').show().removeClass('hidden');
+
+            $('#login-panel').hide().addClass('hidden');
+            $('#register-panel').hide().addClass('hidden');
         } else {
-            $('#login-panel').show().removeClass('hidden');;
-            $('#register-panel').hide().addClass('hidden');;
-            $('#account-info-panel').hide().addClass('hidden');;
+            $('#login-panel').show().removeClass('hidden');
+            $('#register-panel').hide().addClass('hidden');
+            $('#account-info-panel').hide().addClass('hidden');
+
+            $('#account-welcome').hide().addClass('hidden');
+
+            $('#login-li').show().removeClass('hidden');
+            $('#register-li').show().removeClass('hidden');
+            $('#logout-li').hide().addClass('hidden');
         }
     }
 
     // setup all the various buttons and links events
     $('#login-link').on('click', onLoginLink);
+  
     $('#register-link').on('click', onRegisterLink);
     $('#login-submit').on('click', onLoginSubmit);
+    $('#logout-link').on('click', onLogoutSubmit);
     $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
     $('#getPositionBtn').on('click', clickGetPositionBtn);
     $('#startGameBtn').on('click', onStart);
@@ -722,12 +854,23 @@ var init = function() {
     });
 
 
+    function setCookie(key, value) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+        document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+    }
+
+    function getCookie(key) {
+        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+        return keyValue ? keyValue[2] : null;
+    }
+
     /**
      * starts a new game on the server
      * @returns the new game id
      */
     function serverStartNewGame() {
-        gamesHubProxy.server.newGame(appClientState.userScreenName);
+        gamesHubProxy.server.createGame(appClientState.userScreenName,true);
     }
     /**
      * handler for the Post message request
@@ -735,6 +878,8 @@ var init = function() {
     function onPostMessage() {
 
     }
+
+    checkSessionCookie();
     // handler for resizing
     $(window).resize(board.resize);
 
