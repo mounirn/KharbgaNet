@@ -30,7 +30,8 @@
         var tmp = move.split('-');
         if (tmp.length !== 2) return false;
 
-        return (validSquare(tmp[0]) === true && validSquare(tmp[1]) === true);
+        // MN - update to be able to handle settings (spare.b/w-a3)
+        return ((validSquare(tmp[0]) === true || tmp[0] == 'spare.w' || tmp[0] == 'spare.b') && validSquare(tmp[1]) === true);
     }
 
     function validSquare(square) {
@@ -687,9 +688,9 @@
             // MN : add indication which one is the attacker and which one is the defender
             //   
             if (color === 'black') {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender</strong></div>';
+                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender <span id="game-defender"></span></strong></div>';
             } else {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker</strong></div>';
+                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker <span id="game-attacker"></strong></div>';
             }
             html += '<div class="col-sm-9">'
             for (var i = 0; i < pieces.length; i++) {
@@ -1014,14 +1015,21 @@
             position = deepCopy(position);
 
             for (var i in moves) {
-                if (moves.hasOwnProperty(i) !== true) continue;
+                if (i == 'spare.w' || i == 'spare.b' ) { // setting case
+                    var tmp = i.split('.');
+                    position[moves[i]] = tmp[1] + 'S';
+                }
+                else { // move
+                    if (moves.hasOwnProperty(i) !== true) continue;
 
-                // skip the move if the position doesn't have a piece on the source square
-                if (position.hasOwnProperty(i) !== true) continue;
+                    // skip the move if the position doesn't have a piece on the source square
+                    if (position.hasOwnProperty(i) !== true ) continue;
 
-                var piece = position[i];
-                delete position[i];
-                position[moves[i]] = piece;
+
+                    var piece = position[i];
+                    delete position[i];
+                    position[moves[i]] = piece;
+                }
             }
 
             return position;

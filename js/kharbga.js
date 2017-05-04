@@ -1,13 +1,8 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Kharbga;
 (function (Kharbga) {
     var Board = (function () {
@@ -495,17 +490,28 @@ var Kharbga;
     var GameState;
     (function (GameState) {
         GameState[GameState["NotStarted"] = 0] = "NotStarted";
-        GameState[GameState["Setting"] = 1] = "Setting";
-        GameState[GameState["DefenderCanNotMove"] = 2] = "DefenderCanNotMove";
-        GameState[GameState["AttackerCanNotMove"] = 3] = "AttackerCanNotMove";
-        GameState[GameState["Moving"] = 4] = "Moving";
-        GameState[GameState["DefenderMovingUntouchable"] = 5] = "DefenderMovingUntouchable";
-        GameState[GameState["AttackerAbandoned"] = 6] = "AttackerAbandoned";
-        GameState[GameState["DefenderAbandoned"] = 7] = "DefenderAbandoned";
-        GameState[GameState["DefenderLostAllPieces"] = 8] = "DefenderLostAllPieces";
-        GameState[GameState["AttackerLostAllPieces"] = 9] = "AttackerLostAllPieces";
-        GameState[GameState["WinnerDeclared"] = 10] = "WinnerDeclared";
+        GameState[GameState["Started"] = 1] = "Started";
+        GameState[GameState["Joined"] = 2] = "Joined";
+        GameState[GameState["Setting"] = 3] = "Setting";
+        GameState[GameState["DefenderCanNotMove"] = 4] = "DefenderCanNotMove";
+        GameState[GameState["AttackerCanNotMove"] = 5] = "AttackerCanNotMove";
+        GameState[GameState["Moving"] = 6] = "Moving";
+        GameState[GameState["DefenderMovingUntouchable"] = 7] = "DefenderMovingUntouchable";
+        GameState[GameState["AttackerAbandoned"] = 8] = "AttackerAbandoned";
+        GameState[GameState["DefenderAbandoned"] = 9] = "DefenderAbandoned";
+        GameState[GameState["DefenderLostAllPieces"] = 10] = "DefenderLostAllPieces";
+        GameState[GameState["AttackerLostAllPieces"] = 11] = "AttackerLostAllPieces";
+        GameState[GameState["WinnerDeclared"] = 12] = "WinnerDeclared";
     })(GameState = Kharbga.GameState || (Kharbga.GameState = {}));
+    var GameStatus;
+    (function (GameStatus) {
+        GameStatus[GameStatus["Created"] = 0] = "Created";
+        GameStatus[GameStatus["Joined"] = 1] = "Joined";
+        GameStatus[GameStatus["Active"] = 2] = "Active";
+        GameStatus[GameStatus["Completed"] = 3] = "Completed";
+        GameStatus[GameStatus["Aborted"] = 4] = "Aborted";
+        GameStatus[GameStatus["Disconnected"] = 5] = "Disconnected";
+    })(GameStatus = Kharbga.GameStatus || (Kharbga.GameStatus = {}));
     var GameActionType;
     (function (GameActionType) {
         GameActionType[GameActionType["Setting"] = 0] = "Setting";
@@ -705,6 +711,34 @@ var Kharbga;
         };
         Game.prototype.setGameId = function (id) {
             this.id = id;
+        };
+        Game.prototype.setupWith = function (serverGameState, delayAfterEachMove) {
+            if (delayAfterEachMove === void 0) { delayAfterEachMove = 0; }
+            var ret = false;
+            this.init();
+            this.state = Kharbga.GameState.Setting;
+            var sortedMoves = serverGameState.Moves.sort(function (a, b) {
+                if (a.Number > b.Number) {
+                    return 1;
+                }
+                if (a.Number < b.Number) {
+                    return -1;
+                }
+                return 0;
+            });
+            for (var _i = 0, _a = serverGameState.Moves; _i < _a.length; _i++) {
+                var move = _a[_i];
+                if (move.IsSetting) {
+                    this.processSetting(move.To);
+                }
+            }
+            for (var _b = 0, _c = serverGameState.Moves; _b < _c.length; _b++) {
+                var move = _c[_b];
+                if (!move.IsSetting) {
+                    this.processMove(move.From, move.To, move.Resigned, move.ExchangeRequest);
+                }
+            }
+            return ret;
         };
         Game.prototype.getState = function () { return this.state; };
         Game.prototype.start = function () {
@@ -1124,5 +1158,20 @@ var Kharbga;
         return GameHistory;
     }());
     Kharbga.GameHistory = GameHistory;
+})(Kharbga || (Kharbga = {}));
+var Kharbga;
+(function (Kharbga) {
+    var ServerGameState = (function () {
+        function ServerGameState(id, createdBy, state, status) {
+            this.ID = id;
+            this.CreatedBy = createdBy;
+            this.State = state;
+            this.Status = status;
+            this.Moves = [];
+            this.Players = [];
+        }
+        return ServerGameState;
+    }());
+    Kharbga.ServerGameState = ServerGameState;
 })(Kharbga || (Kharbga = {}));
 //# sourceMappingURL=kharbga.js.map

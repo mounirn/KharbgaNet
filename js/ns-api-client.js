@@ -21,14 +21,10 @@ function NSAppClient(baseURI) {
                 type: "GET",
 
                 // The name of the callback parameter, as specified by the YQL service
-                //jsonp: "callback",
-
-                dataType: "json",
-
-                contentType: "application/json",
+                //jsonp: "callback",             
 
                 //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                headers: { "Content-Type": "application/json", "Accept": "application/json", C_NSSID: sessionId },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid" : sessionId },
 
                 crossDomain: true,
 
@@ -108,7 +104,7 @@ function NSAppClient(baseURI) {
                 contentType: "application/json",
 
                 //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                headers: { "Content-Type": "application/json", "Accept": "application/json", C_NSSID : sessionId  },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid" : sessionId  },
           
                 crossDomain: true,
 
@@ -124,6 +120,48 @@ function NSAppClient(baseURI) {
                 },
                 complete: function (xhr, status) {
                     console.log("ajax - logout complete: status: %s ", JSON.stringify(status));
+
+                }
+            });
+
+        };
+        this.register = function (registerInfo, callback) {
+            var uri = this.serviceBaseURI + "register";
+
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET request
+                type: "POST",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                // Tell jQuery we're expecting JSONP
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+
+                // Tell YQL what we want and that we want JSON
+                data: JSON.stringify(registerInfo),
+                crossDomain: true,
+
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("ajax - register success: status: %s data:", JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("ajax - register error: status: %s, error: %s", JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("ajax - register complete: status: %s ", JSON.stringify(status));
 
                 }
             });
@@ -171,6 +209,54 @@ function NSAppClient(baseURI) {
         }
     }
 
+
+    function ClientService(baseUI){
+        this.serviceBaseURI = baseURI + "api/client/";
+
+        this.getClients = function (sessionId, searchItem, callback) {
+
+            var queryString = {     
+                nameContains: searchItem,
+                
+            };
+            var uri = this.serviceBaseURI + "list/filter";
+
+            $.ajax({
+                url: uri,
+
+                data: queryString,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",             
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("ajax - getClients success: status: %s data:", JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("ajax - getClients error: status: %s, error: %s", JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("ajax - getClients complete: status: %s ", JSON.stringify(status));
+
+                }
+            });
+        };
+    }
+
+    this.clientService = new ClientService(this.baseURI);
+
     this.userService = new UserService(this.baseURI);
 
     this.appService = new AppService(this.baseURI);
@@ -180,6 +266,9 @@ var debugURI = "http://localhost:3121/";
 var prodURI = "http://api.nourisolutions.com/";
 var devURI = "http://localhost/NS.API/";
 var nsApiClient = new NSAppClient(devURI);
+
+
+var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 
 
 const C_NSSID = "_nssid";
 

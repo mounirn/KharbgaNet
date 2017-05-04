@@ -85,6 +85,11 @@ namespace Kharbga {
         // The game at startup. 
         NotStarted,
 
+        /// Started by a player
+        Started,
+
+        /// Joined by another player or computer
+        Joined, 
 
         /// The game starts by the attacker setting his/her pieces on the board with the objective
         /// of capturing the defender's pieces and limiting the defender from building up protected 
@@ -137,7 +142,45 @@ namespace Kharbga {
         /// Attacker lost all pieces.
         AttackerLostAllPieces,
 
-        WinnerDeclared
+        WinnerDeclared,
+
+
+    }
+
+
+    /**
+    * @summary Defines various game status as realting to the network/server
+    */
+    export enum GameStatus {
+        /// <summary>
+        /// The game after just being created by one player
+        /// </summary>
+        Created,
+
+        /// <summary>
+        /// After it gets joined by another player or system
+        /// </summary>
+        Joined,
+
+        /// <summary>
+        /// Active bwtween two players after the first attacker's move
+        /// </summary>
+        Active,
+
+        /// <summary>
+        /// Completed a winner was determined
+        /// </summary>
+        Completed,
+
+        /// <summary>
+        /// Aborted by a user
+        /// </summary>
+        Aborted,
+
+        /// <summary>
+        /// one of the user disconnected
+        /// </summary>
+        Disconnected
     }
 
     /**
@@ -253,7 +296,20 @@ namespace Kharbga {
         }
         public From: string;
         public To: string;
+        public Resigned: boolean;
+        public ExchangeRequest: boolean;
+
         public Player: Player;
+        public IsSetting: boolean;
+
+        public Number: number;
+        public GameName: string;
+        public PlayerName: string;
+
+        public MoveTime: Date;
+        public BeforeFEN: string;
+        public AfterFEN: string;
+        public Message: string;
     }
 
     /**

@@ -10,19 +10,16 @@ var init = function() {
     var appClientState = {
         sessionId: "",
         sessionLastAccessTime: new Date(),
-        userScreenName: "Guest",
-        gameChannel: "",
+        userScreenName: "",
+        serverGameId: "",
         serverConnectionId: "",
         serverOpponentConnectionId: "",
         role: 0,      //  unknown, attacker, defender, spectator
-        loggedId : false
+        loggedId: false,
+        player: null,
+        opponentPlayer: null,
+        loaded: false
     };
-
-    var myConnectionId, myOpponentConnectionId;  // the network connection ids
-    var serverGameId = null;  // the game id assigned by the server
-
-    // the current player turn
-    //var currentPlayer;
 
     /* the game events */
     /**
@@ -36,21 +33,16 @@ var init = function() {
         $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
         updateScores(eventData.source);
 
-         $('.exchangeRequest').hide();
-      //  $('#exchangeRequestCheckbox').hide();
-
         // malha square
-        var malha = boardEl.find('.square-d4');
-        malha.addClass('highlight-malha');
-
-        appClientState.gameChannel = serverStartNewGame();
+        boardEl.find('.square-d4').addClass('highlight-malha');
+       
     }
 
     function onNewPlayerTurn(eventData) {
         console.log("event: onNewPlayerTurn - player: " + eventData.player);
 
 
-        $('#player').html(Kharbga.PlayerRole[eventData.player.role]);
+        $('#player-turn').html(Kharbga.PlayerRole[eventData.player.role]);
         currentPlayer = eventData.player;
 
         $('#message').html("<div class='alert alert-success'>It is the turn  of the <strong>" +
@@ -62,11 +54,12 @@ var init = function() {
      /*   var capturedCells = boardEl.find('.hightlight-captured');
         sourceRequired.removeClass('highlight-captured'); */
         // removed captured cells highlighting 
-        $('.hightlight-captured').removeClass('hightlight-captured');
-      
-
+        $('.hightlight-captured').removeClass('hightlight-captured');     
     }
-
+    /**
+     * handler for when a setting is completed
+     * @param {any} eventData
+     */
     function onNewSettingCompleted(eventData) {
         console.log("event: onNewSettingCompleted - cell " + eventData.targetCellId);
 
@@ -88,7 +81,7 @@ var init = function() {
 
         updateScores(eventData.source);
 
-
+       
     }
     
     function onSettingsCompleted(eventData) {
@@ -104,7 +97,6 @@ var init = function() {
         $('.exchangeRequest').show();
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
-
       
     }
 
@@ -130,7 +122,6 @@ var init = function() {
         updateScores(eventData.source);
         updateMoveFlags(eventData.source.move_flags());
 
-
         // update the board position here for the case when processing exchanges
         board.position(game.fen(), true);
 
@@ -145,7 +136,7 @@ var init = function() {
                 value: game.getDefenderMoveNumber(),
                 text: eventData.from.ID() + '-' + eventData.to.ID()
             }));
-        }
+        }   
     }
 
     function onNewMoveCompletedContinueSamePlayer(eventData) {
@@ -176,7 +167,6 @@ var init = function() {
                 text: eventData.from.ID() + '-' + eventData.to.ID()
             }));
         }
-
     }
 
     /**
@@ -193,7 +183,6 @@ var init = function() {
         console.log("game event: onInvalidMove - game fen: " + eventData.source.fen());
         console.log("event: onNewMoveCompleted - from " + eventData.from.ID());
         console.log("event: onNewMoveCompleted - to " + eventData.to.ID());
-
     }
 
     /**
@@ -247,7 +236,6 @@ var init = function() {
         boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
     }
 
-
     function onInvalidSettingMalha(eventData) {
         console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
         $('#message').html("<div class='alert alert-danger'>Setting on middle cell (Malha) is not allowed</div>")
@@ -263,6 +251,11 @@ var init = function() {
     function updateScores(game) {
         $('#attacker_score').html(game.getAttackerScore().toString());
         $('#defender_score').html(game.getDefenderScore().toString());
+
+        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#fen').html(board.fen());
+        $('#pgn').html(board.position().toString());
+
     }
 
     /* Board Events */
@@ -332,20 +325,15 @@ var init = function() {
         capturedPieceEvent: onCapturedPiece
     };
 
-
     var game = new Kharbga.Game(gameEvents, boardEvents); // KharbgaGame()
-    // set the game state
-    $('#state').html(Kharbga.GameState[game.getState()]);
-    $('#message').html("<div class='alert alert-info'>Click on Start New Game button to start a new game on this computer between two players</div>")
-
+  
     var squareClass = 'square-55d63',
         pieceClass = 'piece-417db',
         squareToHighlight,
         colorToHighlight;
 
 
-    var onDragMove = function(newLocation, oldLocation, source,
-        piece, position, orientation) {
+    var onDragMove = function(newLocation, oldLocation, source, piece, position, orientation) {
         /*      console.log("New location: " + newLocation);
               console.log("Old location: " + oldLocation);
               console.log("Source: " + source);
@@ -356,7 +344,6 @@ var init = function() {
               console.log("game state: " + game.getState());
               console.log("game is in setting mode: " + game.isInSettingMode());
           */
-
     };
 
     // do not pick up pieces if the game is over
@@ -365,6 +352,22 @@ var init = function() {
         if (game.game_over() === true ||
             (game.turn() === 'a' && piece.search(/^b/) !== -1) ||
             (game.turn() === 'd' && piece.search(/^w/) !== -1)) {
+            return false;
+        }
+
+        if (typeof appClientState.player == 'undefined' ) {
+            $('#message').html("<div class='alert alert-info'>Please start or join a game to be able to play.</div>")
+            return false;
+        }
+        if (appClientState.player.IsSpectator === true) {
+            $('#message').html("<div class='alert alert-warning'>As a spectator you are not allowed to make any moves. You could however submit comments if allowed by the players.</div>")
+            return false;
+        }
+        // check if allowed to make the move
+        if (game.turn() === 'a' && appClientState.player.IsAttacker !== true) {
+            return false;
+        }
+        if (game.turn() === 'd' && appClientState.player.IsAttacker !== false) {
             return false;
         }
 
@@ -390,58 +393,44 @@ var init = function() {
     };
 
 
-    function readMoveParams() {
-     
-    }
-
-    function updateMoveFlags(moveFlags) {
-        $('#exchangeRequestCheckbox').attr('checked', moveFlags.exchangeRequest);
-        $('#exchangeRequestAcceptedCheckbox').attr('checked', moveFlags.exchangeRequestAccepted);
-
-        $('#exchangeRequestDefenderPiece').text(moveFlags.exchangeRequestDefenderPiece);
-        $('#exchangeRequestAttackerPiece1').text(moveFlags.exchangeRequestAttackerPiece1);
-        $('#exchangeRequestAttackerPiece2').text(moveFlags.exchangeRequestAttackerPiece2);
-    }
-
     var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
         console.log("onDrop - from: %s - to: %s ", source, target);
-        /*    console.log("Target: " + target);
-        console.log("Piece: " + piece);
-        console.log("New position: " + KharbgaBoard.objToFen(newPos));
-        console.log("Old position: " + KharbgaBoard.objToFen(oldPos));
-        console.log("Orientation: " + orientation);
-        console.log("--------------------");
-*/
-        // readMoveParams();
+        
         $('#gameMove').html(source + "-" + target);
 
         var ret;
 
+        var resigned = $('#abandonCheckbox').is(':checked');
         var exchangeRequest = false;
         if (game.turn() == 'a')
             exchangeRequest = $('#exchangeRequestAcceptedCheckbox').is(':checked');
         else
             exchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
-
+        var isSetting = false;
         if (game.is_in_moving_state())
-            ret = game.processMove(source, target, $('#abandonCheckbox').is(':checked'), exchangeRequest);
-        else
+            ret = game.processMove(source, target, resigned, exchangeRequest);
+        else {
+            isSetting = true;
             ret = game.processSetting(target);
+        }
 
+        if (ret == true) {  // add option to show submit to server button
+            // submit to the server
+            if (appClientState.serverGameId != "") {
+                // notify server pf the setting
+                gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.userScreenName, isSetting, source, target, resigned, exchangeRequest).done(function () {
+                    console.log('server Invocation of recoredMove');
+
+                })
+                    .fail(function (error) {
+                        console.log('Invocation of recordMove failed. Error: ' + error);
+                    });
+            }
+        }
         // updateStatus();
         if (ret == false) return 'snapback';
-
     };
 
-    /**
-     * processes a given move request
-     * @param {string} gameId  -- the game id
-     * @param {string} playerId  -- the player id
-     * @param {string} move   -- the move info
-     */
-    var onRecordMove = function(gameId, playerId, move) {
-        console.log(gameId + ' ' + playerId + ' ' + move);
-    };
 
     var onMoveEnd = function() {
 
@@ -466,11 +455,19 @@ var init = function() {
 
     }
 
+    function updateMoveFlags(moveFlags) {
+        $('#exchangeRequestCheckbox').attr('checked', moveFlags.exchangeRequest);
+        $('#exchangeRequestAcceptedCheckbox').attr('checked', moveFlags.exchangeRequestAccepted);
+
+        $('#exchangeRequestDefenderPiece').text(moveFlags.exchangeRequestDefenderPiece);
+        $('#exchangeRequestAttackerPiece1').text(moveFlags.exchangeRequestAttackerPiece1);
+        $('#exchangeRequestAttackerPiece2').text(moveFlags.exchangeRequestAttackerPiece2);
+    }
     var cfg = {
         draggable: true,
         position: 'start',
         onDragStart: onDragStart,
-        onDragMove: onDragMove,
+      //  onDragMove: onDragMove,
         onMoveEnd: onMoveEnd,
         onDrop: onDrop,
         onDoubleClick : onSelected,
@@ -483,32 +480,46 @@ var init = function() {
     /**
      * Starts a new game
      */
-    function onStart() {
+    function onNewGame() {
+     
+        resetLocalGame();
+        // call the server to start the new game
+        gamesHubProxy.server.createGame(appClientState.userScreenName, true, false);
+    }
+
+    function resetLocalGame() {
+        appClientState.loaded = false;
+        appClientState.serverGameId = "";
         game.reset();
         game.start();
+        board.clear();
         board.start();
 
         $('#state').html(Kharbga.GameState[game.getState()]);
         $('#fen').html(board.fen());
         $('#pgn').html(board.position().toString());
-
+       
         updateScores(game);
 
         $('#loadSetting1Btn').show();
-        $('#startGameBtn').hide();
+        //  $('#startGameBtn').hide();
         boardEl.find('.highlight-captured').removeClass('highlight-captured');
         boardEl.find('.highlight-source').removeClass('highlight-source');
         boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
-    }
+        boardEl.find('.square-d4').addClass('highlight-malha');
 
+        setCookie("_nsgid", "");
+
+    }
     function onLoadSetting1() {
         var fen = "SssSsss/sSSSSSS/ssSsSss/sss1sSS/sSsSSSS/SssSsSS/SssSsSs";
         game.reset();
         game.start();
+        board.clear();
         board.start();
-        board.position(fen, false);
-
+    
         game.set(fen);
+        board.position(fen, false);
 
         $('#state').html(Kharbga.GameState[game.getState()]);
         $('#fen').html(board.fen());
@@ -548,8 +559,7 @@ var init = function() {
         console.log("Current position as a FEN string:");
         console.log(board.fen());
     }
-    var loggedIn = false;
-    var userName = "";
+   
     function onLoginLink(e) {
         e.preventDefault();
 
@@ -573,6 +583,14 @@ var init = function() {
      */
     function onLoginSubmit(e) {
         e.preventDefault();
+        var form = $('#login-form');
+
+        // check if the form is valid
+        if (!form.valid()) {
+            $('#account-message').html("<div class='alert alert-danger'>Please fix the input errors below.</div>");
+            return false;
+        }
+
         var loginInfo = {
             LoginID: $('#login-id').val(),
             Password: $('#login-pwd').val(),
@@ -612,6 +630,66 @@ var init = function() {
 
                 $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
             }  
+        });
+    }
+
+    /**
+     * handler for register request 
+     * @param {any} e
+     */
+    function onRegisterSubmit(e) {
+        e.preventDefault();
+        var form = $('#register-form');
+      
+        // check if the form is valid
+        if (!form.valid()) {
+            $('#account-message').html("<div class='alert alert-danger'>Please fix the input errors below.</div>");
+            return false;
+        }
+
+        var registerInfo = {
+            LoginID: $('#register-login-id').val(),
+            Password: $('#register-pwd').val(),
+            ConfirmPassword: $('#register-pwd-confirm').val(),
+            Name: $('#register-name').val(),
+            Email: $('#register-email').val(),
+            OrgName: $('#register-team').val()
+
+        };
+        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
+
+        var result = nsApiClient.userService.register(registerInfo, function (data, status) {
+            if (data != null) {
+                $('#appInfo').html(JSON.stringify(data));
+                $('#account-message').html("<div class='alert alert-success'>Registered new account successfully. </div>");
+
+                var session = data.session;
+
+                if (session != null) {
+                    appClientState.session = session;
+                    appClientState.sessionId = session.SessionId;
+                    appClientState.userScreenName = session.FullName;
+                    appClientState.loggedIn = true;
+                    setCookie(C_NSSID, appClientState.sessionId);
+                }
+                else {
+                    appClientState.loggedIn = false;
+                }
+                setupMyAccount();
+            }
+            else {
+                setCookie(C_NSSID, "");
+                appClientState.loggedIn = false;
+              //  setupMyAccount();
+                appClientState.sessionId = "";
+                appClientState.userScreenName = "";
+                if (status.status === 404 || status.status === 400)
+                    $('#account-message').html("<div class='alert alert-danger'>Invalid registration info. Errors: " + status.responseText+ " </div>");
+                else
+                    $('#account-message').html("<div class='alert alert-danger'> Failed to register.</div>");
+
+                $('#appInfo').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+            }
         });
     }
 
@@ -676,6 +754,18 @@ var init = function() {
         var cookie = getCookie(C_NSSID);
         if (typeof cookie === "string" && cookie.length > 10)
             checkSession(cookie);
+
+        
+    }
+
+    /**
+   * checks the stored active game id and active playerId
+   */
+    function checkGameCookie() {
+        var cookie = getCookie("_nsgid");
+        if (typeof cookie === "string" && cookie.length > 10)
+            return cookie;
+        return "";
     }
 
     /**
@@ -698,7 +788,7 @@ var init = function() {
                     appClientState.sessionId = session.SessionId;
                     appClientState.userScreenName = session.FullName;
                     appClientState.loggedIn = true;
-                    setCookie(C_NSSID, data.SessionId);
+                    setCookie(C_NSSID, appClientState.sessionId);
                 }
                 else {
                     appClientState.loggedIn = false;
@@ -756,11 +846,12 @@ var init = function() {
   
     $('#register-link').on('click', onRegisterLink);
     $('#login-submit').on('click', onLoginSubmit);
+    $('#register-submit').on('click', onRegisterSubmit);
     $('#logout-link').on('click', onLogoutSubmit);
     $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
     $('#getPositionBtn').on('click', clickGetPositionBtn);
-    $('#startGameBtn').on('click', onStart);
-    $('#clearBoardBtn').on('click', onClear);
+    $('#new-game').on('click', onNewGame);
+   
     $('#postMessageBtn').on('click', onPostMessage);
     $('#loadSetting1Btn').on('click', onLoadSetting1);
     $('#flipOrientation').on('click', board.flip);// flip the board
@@ -788,7 +879,30 @@ var init = function() {
     var gamesHubProxy = $.connection.gamesHub;
     $.connection.hub.logging = loggingOn;
 
-    gamesHubProxy.client.recordMove = onRecordMove;
+    gamesHubProxy.client.moveRecorded = function (status, errorMessage, gameServerInfo, player, isSetting, moveFrom, moveTo, resigned, exchangeRequest){
+        if (status === false) {
+            console.log("server - error recording move: " + errorMessage);
+            $('#message').html("<div class='alert alert-danger'> Failed to process by the server. Error: " + errorMessage+ "</div>");
+            return;
+        }
+        // submit to the local 
+        var turn = 'b';
+        if (game.turn() == 'a')
+            turn = 'w';
+        board.move(moveFrom + "." + turn +  "-" + moveTo);
+
+        // submit to the local game
+        var ret;
+        if (game.is_in_moving_state()) {
+            ret = game.processMove(moveFrom, moveTo, resigned, exchangeRequest);
+        }
+        else {
+            ret = game.processSetting(moveTo);
+        }
+
+        // set the board to the game FEN
+        board.position(game.fen(), false);
+    }
      /**
      * Hello from server
      */
@@ -797,49 +911,282 @@ var init = function() {
     };
 
     gamesHubProxy.client.send = onSendMessage;
- 
 
-    // game handler
-    gamesHubProxy.client.gameAdded = function (gameInfo) {
+
+    function getStatusText(status) {
+        switch (status) {
+            case 0:
+                return "Created";
+            case 1:
+                return "Joined";
+            case 2:
+                return "Active";
+            case 3:
+                return "Completed";
+            case 4:
+                return "Aborted";
+            case 5:
+                return "Disconnected";
+            default:
+                return "Unknown";
+        }
+    }
+    function getStatusCss(status) {
+        switch (status) {
+            case 0:
+                return "list-group-item-warning";
+            case 1:
+                return "list-group-item-success";
+            case 2:
+                return "list-group-item-success";
+            case 3:
+                return "list-group-item-info";
+            case 4:
+                return "list-group-item-info";
+            case 5:
+                return "list-group-item-danger";
+            default:
+                return "list-group-item-danger";
+        }
+    }
+
+    /**
+     * sets up the local player info 
+     * @param {any} player -- the player
+     * @param {any} game -- the game
+     */
+    function setupLocalPlayer(player, game) {
+        if (typeof player == "undefined") {
+            console.log("%s - setCurrentPlayer - Invalid player passed : ", new Date().toLocaleTimeString());
+            return;
+        }
+        appClientState.player = player;
+
+        appClientState.userScreenName = player.Name;
+
+        if (typeof game == "undefined") {
+            console.log("%s - setCurrentPlayer - Invalid game passed : ", new Date().toLocaleTimeString());
+            return;
+        }
+
+        $('#current-game-id').text(game.ID);
+        $('#current-game-status').text(getStatusText(game.Status));
+        $('#game-attacker').text(game.AttackerName);
+        $('#game-defender').text(game.DefenderName);
+
+        // set up the game if the game is not setup 
+        if (appClientState.serverGameId == "") {
+            setupLocalGame(game);
+            appClientState.serverGameId = game.ID;
+
+            setCookie("_nsgid", game.ID);
+        }
+        else {
+            updateLocalGameStatus(game);
+        }
+    }
+    /**
+     * called back when a game is created to the Caller of the started game
+     * called back when a game is joined to the Joiner of the game (including spectator)
+    */
+    gamesHubProxy.client.setCurrentPlayer = setupLocalPlayer;
+
+    // game created
+    // all clients get this message with this game info
+    gamesHubProxy.client.gameCreated = function (gameInfo) {
         // add to the games list
+        if (loggingOn === true) {
+            console.log("%s - Game Added: ", new Date().toLocaleTimeString());
+            console.log(gameInfo);
+        }
+        $('#games-list').append("<a href='#' class='list-group-item list-group-item-warning' id='" + gameInfo.ID + "'> ID: " + gameInfo.ID + " - Status: " + getStatusText(gameInfo.Status) + " - Attacker: " + gameInfo.AttackerName + " - Defender: " + gameInfo.DefenderName + " </a>");
 
+        $('#' + gameInfo.ID).on('click', gameInfo, onGameSelected);       
     };
+
+    // handle when the game is selected by a player. All people will receive a this message
+    // we do not all player to reset their game if a spectator just joins the game
+    gamesHubProxy.client.gameJoined = function (gameInfo) {
+        if (typeof gameInfo == "undefined")
+        {
+            console.log("%s - gameJoined - Invalid Game passed : ", new Date().toLocaleTimeString());
+            return;
+        }
+
+        // add to the games list
+        if (loggingOn === true) {
+            console.log("%s - Game Joined: ", new Date().toLocaleTimeString());
+            console.log(gameInfo);
+        }
+      
+        updateLocalGameStatus(gameInfo);
+      
+    };
+
+    function setupLocalGame(gameInfo) {
+        if (typeof gameInfo == "undefined") {
+            console.log("%s - setupLocalGame - Invalid game passed : ", new Date().toLocaleTimeString());
+            return;
+        }
+        resetLocalGame();
+
+        // set the board and the local game with the current game from the server
+        var gameState = new Kharbga.ServerGameState(gameInfo.ID, gameInfo.CreatedBy, gameInfo.State, gameInfo.Status);
+        gameState.Moves.push(gameInfo.Moves);
+        gameState.Players.push(gameInfo.Players);        
+        game.setupWith(gameInfo);
+
+        board.position(game.fen(), false);
+
+        // player
+        if (game.turn() == 'a')
+            $('#player-turn').html("Attacker");
+        else
+            $('#player-turn').html("Defender");
+
+        updateLocalGameStatus(gameInfo);
+
+        appClientState.serverGameId = gameInfo.ID;
+    }
+
+    function updateLocalGameStatus(gameInfo) {
+        if (typeof gameInfo == "undefined") {
+            console.log("%s - setupLocalGame - Invalid game passed : ", new Date().toLocaleTimeString());
+            return;
+        }  
+
+        // game state
+        $('#current-game-status').text(getStatusText(gameInfo.Status));     
+        $('#' + gameInfo.ID).empty().text(" ID: " + gameInfo.ID + " - Status: " + getStatusText(gameInfo.Status) + " - Attacker: " + gameInfo.AttackerName + " - Defender: " + gameInfo.DefenderName);
+        $('#' + gameInfo.ID).removeClass('list-group-item-info');
+        $('#' + this.ID).addClass(getStatusCss(gameInfo.Status));
+
+        $('#game-attacker').text(gameInfo.AttackerName);
+        $('#game-defender').text(gameInfo.DefenderName);
+    }
 
     gamesHubProxy.client.gameDeleted = function (gameInfo) {
         // remove from the games list
-
+        console.log("%s - Game Deleted: ", new Date().toLocaleTimeString());
+        console.log(gameInfo);
     };
+
+    /**
+     * Refreshes the list of games from the server for display in the homee page
+     */
+    function refreshGames() {
+        $('#games-list').empty();
+        gamesHubProxy.server.getGames().done(function (games) {
+            $.each(games, function () {
+               // if (this.Status == 0 || this.Status = 1)
+                $('#games-list').append("<a href='#' class='list-group-item' id='" + this.ID + "'> ID: " + this.ID + " - Status: " + getStatusText(this.Status) + " - Attacker: " + this.AttackerName + " - Defender: " + this.DefenderName + " </a>");
+
+                $('#' + this.ID).on('click', this, onGameSelected);
+                $('#' + this.ID).addClass(getStatusCss(this.Status));
+
+                
+            });
+        });
+    }
+    // reefresh games from server
+    $('#games-link').on('click', refreshGames);
+    function onGameSelected(e) {
+        if (loggingOn === true) {
+            console.log("%s - onGameSelected: ", new Date().toLocaleTimeString());
+            console.log(e);
+        }
+        var data = e.data;
+        ///todo: add check for the type here
+        if (e.data == null || typeof e.data === undefined) {
+            console.log("%s - onGameSelected - invalid data passed with the entry ", new Date().toLocaleTimeString());
+            return;
+        }
+
+        // switch view to the Play/View tab
+        $('#main-tabs a[href="#home"]').tab('show');   
+        $('#message').html("<div class='alert alert-success'>Game is ready on the server</div>");
+
+     
+        $('#message').html("<div class='alert alert-success'>Setting up game state based on server data</div>")
+        console.log("Setting up game state based on server data");
+   
+
+        var spectator = false;
+           
+        //join the game and indicate if spectator or not
+        gamesHubProxy.server.joinGame(appClientState.userScreenName, data.ID, spectator);                  
+
+        // init the local game with the given server game data      
+        // update the game view with the given game
+    }
+    /**
+   * handler for the Post message request
+   */
+    function onPostMessage() {
+        if (loggingOn === true) {
+            console.log("%s - onPostMessage: ", new Date().toLocaleTimeString());
+            console.log(gameInfo);
+        }
+    }
 
     // base hub messages
-    gamesHubProxy.client.joined = function (connectionId, serverTime) {
-        console.log('server: connection %s joined on %s ',connectionId, serverTime);
+    gamesHubProxy.client.joined = function (connectionInfo, serverTime) {
+        if (loggingOn === true) {
+            console.log('server: connection %s joined on %s ', connectionInfo.ID, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server connected " + connectionInfo.ID + "</li>");
+        }
     };
-    gamesHubProxy.client.left = function (connectionId, serverTime) {
-        console.log('server: connection %s left on %s ', connectionId, serverTime);
+    gamesHubProxy.client.left = function (connectionInfo, serverTime) {
+        if (loggingOn === true) {
+            console.log('server: connection %s left on %s ', connectionInfo.ID, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server disconnected " + connectionInfo.ID + "</li>");
+        }
     };
-    gamesHubProxy.client.rejoined = function (connectionId, serverTime) {
-        console.log('server: connection %s rejoined on %s ', connectionId, serverTime);
+    gamesHubProxy.client.rejoined = function (connectionInfo, serverTime) {
+        if (loggingOn === true) {
+            console.log('server: connection %s rejoined on %s ', connectionInfo.ID, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server rejoined " + connectionInfo.ID + "</li>");
+        }
     };
     gamesHubProxy.client.pong = function (connectionId, serverTime) {
 
         if (connectionId !== $.connection.hub.id) {
-            console.log('server: INVALID pong from %s received on: %s', connectionId, serverTime);
+            console.log('server: INVALID pong from %s received on: %s', connectionId, JSON.stringify(serverTime));
+            $('#messages-list').append("<li class='list-group-item list-group-item-danger'> server: INVALID pong from " + connectionId + " received on:" + new Date().toLocaleTimeString() + " - server time " + serverTime + "</li>");
         }
         else {
             // check if equal to self
             console.log('server: pong from %s received on: %s', connectionId, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + " pong received from " + connectionId + "</li>");
         }
     };
 
     $.connection.hub.start({ jsonp: true })
         .done(function () {
             gamesHubProxy.server.hello();
-            console.log('%s connected, connection ID: %', new Date().toLocaleTimeString(), $.connection.hub.id);
-            myConnectionId = $.connection.hub.id;
+            if (loggingOn === true)
+                console.log('%s connected, connection ID: %', new Date().toLocaleTimeString(), $.connection.hub.id);
+
+            appClientState.serverConnectionId = $.connection.hub.id;
+
+            // 
+            checkSessionCookie();
+
+            // setup the games
+            setupGames();
+
+ 
+            // check local active game cookie
+            var gid = checkGameCookie();
+            if (gid != "")
+                // tell the server to rejoin this connection with the game
+                gamesHubProxy.server.reJoinGame(appClientState.userScreenName, gid);
+            
         })
         .fail(function () { console.log('Could not Connect!'); });
 
     $('#submitMove').on('click', function onSubmit() {
+        /*
         gamesHubProxy.server.recordMove("testGameId", myConnectionId, "testMove").done(function () {
             console.log('server Invocation of recoredMove');
         })
@@ -847,10 +1194,11 @@ var init = function() {
         {
             console.log('Invocation of recordMove failed. Error: ' + error);
         });
+        */
     });
 
-    $('#ping-button').on('click', function () {
-        gamesHubProxy.server.ping(new Date());  
+    $('#ping-link').on('click', function () {
+        gamesHubProxy.server.ping();  
     });
 
 
@@ -865,23 +1213,78 @@ var init = function() {
         return keyValue ? keyValue[2] : null;
     }
 
-    /**
-     * starts a new game on the server
-     * @returns the new game id
-     */
-    function serverStartNewGame() {
-        gamesHubProxy.server.createGame(appClientState.userScreenName,true);
-    }
-    /**
-     * handler for the Post message request
-     */
-    function onPostMessage() {
+  
+   
+    ///todo: automatic setup of an active game
+    function setupGames(activeGameId) {
+        // refresh games from the server
+        refreshGames();
 
+        // set the game state
+        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#message').html("<div class='alert alert-info'>Click on Start New Game button to start a new game on this computer between two players</div>")
+
+       // issue with Kendo UI and jQuery incom. with versions after 1.7
+
+       // setupTeamsComboBox();
+
+        setupTeamsHtml5Combobox();
     }
 
-    checkSessionCookie();
+    function setupFormsValidation() {
+        $('#login-form').validate();
+        $('#register-form').validate();
+    }
+    function setupTeamsHtml5Combobox(){
+        $("#register-team").on('keyup', function () {
+            var result = nsApiClient.clientService.getClients(appClientState.sessionId, this.value, function (data, status) {
+                if (data != null) {
+                    //   $('#appInfo').html(JSON.stringify(data));
+                    $("#register-team-list").empty();
+                    $.each(data, function () {
+                        // if (this.Status == 0 || this.Status = 1)
+                        $("#register-team-list").append("<option id=client_'" + this.SystemId + "' value='" + this.Name + "' ></option>");
+                    });
+                }
+                else {
+                    $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+                }
+            });
+
+        });
+    }
+
+    function setupTeamsComboBox() {
+
+        var teams = $("#register-team").kendoComboBox({
+            filter: "contains",
+            placeholder: "Select Team...",
+            dataTextField: "Name",
+            dataValueField: "ID",
+            dataSource: {
+                type: "json",
+                serverFiltering: true,
+                transport: {
+                   read: {
+                       url: teamsUrl ,
+                       type: "get"
+                    }
+                }
+            }
+        }).data("kendoComboBox");
+    }
+   
+
     // handler for resizing
     $(window).resize(board.resize);
+
+ 
+    setupFormsValidation();
+
+    // automatic login if using coockies 
+    checkSessionCookie();
+
+
 
 }; // end init()
 $(document).ready(init);

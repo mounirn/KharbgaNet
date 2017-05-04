@@ -195,6 +195,52 @@ namespace Kharbga {
         }
 
         /**
+         * sets up the game with the given game state
+         * @param serverGameState  -- the game state
+         * @param delayAfterEachMove -- delay afte making the move in msec
+         */
+        public setupWith(serverGameState: ServerGameState, delayAfterEachMove: number = 0) : boolean{
+            let ret = false;
+
+            this.init();
+            this.state = GameState.Setting;
+
+            // sort by the move number
+            var sortedMoves = serverGameState.Moves.sort((a, b) => {      
+                // add check for dates
+                if (a.Number > b.Number) {
+                    return 1;
+                }
+
+                if (a.Number < b.Number) {
+                    return -1;
+                }
+                return 0;               
+            });
+            
+
+            for (let move of serverGameState.Moves) {
+                if (move.IsSetting) {
+                    
+                    this.processSetting(move.To);
+                }       
+            }
+
+            for (let move of serverGameState.Moves) {
+                if (!move.IsSetting) {
+                    this.processMove(move.From,move.To,move.Resigned,move.ExchangeRequest);
+                }
+            }
+
+            return ret;
+        }
+
+    /*
+        private timedProcessMove(setting: boolean, moveFrom: string, moveTo: string, moveResigned: boolean, moveExchangeRequest: boolean) :boolean {
+            
+        } */
+
+        /**
          * @returns the game state see GameState doc
          */
         public getState(): GameState { return this.state; }
@@ -659,7 +705,7 @@ namespace Kharbga {
          * @param cellId the id of a valid cell
          * @returns true if successful move. false otherwise
          */
-        public recordSetting(cellId: string): boolean {
+        private recordSetting(cellId: string): boolean {
             if (this.state != GameState.Setting)
                 return false;
 

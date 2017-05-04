@@ -96,3 +96,5 @@ Features:
 
 
 http://www.the-art-of-web.com/html/html5-form-validation/
+
+https://jqueryvalidation.org/documentation/

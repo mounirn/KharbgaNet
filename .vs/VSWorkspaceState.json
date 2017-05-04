@@ -1,11 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\app",
+    "\\css",
+    "\\html",
     "\\js",
-    "\\node_modules",
-    "\\node_modules\\angular-ui-router\\release",
-    "\\node_modules\\angular-ui-router\\src"
+    "\\ts"
   ],
-  "SelectedNode": "\\js\\ns-app.js",
+  "SelectedNode": "\\js\\app.js",
   "PreviewInSolutionExplorer": false
 }
