@@ -632,6 +632,7 @@ var Kharbga;
             this.currentPlayer = this.attacker;
             this.state = Kharbga.GameState.Setting;
             this.firstMove = true;
+            this.reset();
         };
         Game.prototype.moves = function () {
             var ret = this.board.GetPossibleMoves(this.currentPlayer);
@@ -1041,6 +1042,9 @@ var Kharbga;
         };
         Game.prototype.is_in_moving_state = function () {
             return this.state == Kharbga.GameState.Moving;
+        };
+        Game.prototype.is_in_setting_state = function () {
+            return this.state == Kharbga.GameState.Setting;
         };
         Game.prototype.is_surrounded_piece = function (selectedPieceId) {
             var clickedCell = this.board.GetCellById(selectedPieceId);

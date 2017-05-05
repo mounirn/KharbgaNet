@@ -1,6 +1,21 @@
 
 # Open Issues / To Do:
 ---
+* resolve the issue when the game is won by abondon -- record the move to the server
+* Save game state in the server
+* Loading a game after refresh is causing an error
+* Abiity to replay with a delay 
+* Ability to start a game with options (w/ computer, as Attacker,as Defender). 
+* Add option to start the game with a time limit for each player (10, 20, 30 min).
+* Fix two exchanges (add checks that the same piece is being seleted for exchange)
+* move the Checkbox related to two exchange close to each player (Attacker/Defender)
+* Keep track of the player status  (player name is being lost)
+* Add info in MyAccount tab: ScreenName, options, Games played
+* Add timer to indicate the time spent by each player. The timer is started to indicate the turn of each player
+* Fix the height of the messsages lsit being added (add scrollbars)
+* Make sure that logging works on the server and this is useful
+* Add UI in the API site to view the log files
+
 * Detect Player blocked condition and allow the player to continue if it is not the first block
 * Add ability to detect the number of times exchange requests are requested using the same piece and attacker is not paying up (limit to 3)
  

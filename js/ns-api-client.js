@@ -192,19 +192,77 @@ function NSAppClient(baseURI) {
                 // Work with the response
                 success: function (data, status, xhr) {
                     console.log("ajax - getAppInfo success: status: %s data:", JSON.stringify(status));
-                    console.log(data); 
-                    callback(data,status);
+                    console.log(data);
+                    callback(data, status);
                 },
-                error: function (xhr,status, errorThrown) {
+                error: function (xhr, status, errorThrown) {
                     console.log("ajax - getAppInfo error: status: %s,  error: %s", JSON.stringify(status), errorThrown);
-                    callback(null, status,errorThrown);
+                    callback(null, status, errorThrown);
                 },
                 complete: function (xhr, status) {
                     console.log("ajax - getAppInfo complete: status: %s", JSON.stringify(status));
-                   
+
                 }
             });
 
+            return ret;
+        };
+
+        this.getConnections = function (queryString, callback) {
+            var uri = this.serviceBaseURI + "connections";
+            var ret = null;
+
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString, 
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("ajax - getConnections success: status: %s data:", JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("ajax - getConnections error: status: %s,  error: %s", JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("ajax - getConnections complete: status: %s", JSON.stringify(status));
+
+                }
+            });
+
+            this.getPlayers = function (queryString, callback) {
+                var uri = this.serviceBaseURI + "players";
+                var ret = null;
+
+                $.ajax({
+                    url: uri,
+                    type: "GET",
+                    data: queryString,
+                    contentType: "application/json",
+                    //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    // Work with the response
+                    success: function (data, status, xhr) {
+                        console.log("ajax - getPlayers success: status: %s data:", JSON.stringify(status));
+                        console.log(data);
+                        callback(data, status);
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.log("ajax - getPlayers error: status: %s,  error: %s", JSON.stringify(status), errorThrown);
+                        callback(null, status, errorThrown);
+                    },
+                    complete: function (xhr, status) {
+                        console.log("ajax - getPlayers complete: status: %s", JSON.stringify(status));
+
+                    }
+                });
+                return ret;
+            }
             return ret;
         }
     }
@@ -265,7 +323,7 @@ function NSAppClient(baseURI) {
 var debugURI = "http://localhost:3121/";
 var prodURI = "http://api.nourisolutions.com/";
 var devURI = "http://localhost/NS.API/";
-var nsApiClient = new NSAppClient(devURI);
+var nsApiClient = new NSAppClient(prodURI);
 
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 

@@ -56,6 +56,7 @@ namespace Kharbga {
             this.currentPlayer = this.attacker;
             this.state = GameState.Setting;
             this.firstMove = true;
+            this.reset();
 
         }
         /**
@@ -752,6 +753,13 @@ namespace Kharbga {
          */
         public is_in_moving_state(): boolean {
             return this.state == GameState.Moving;
+        }
+
+          /**
+         * @returns true if the game is in setting phase
+         */
+        public is_in_setting_state(): boolean {
+            return this.state == GameState.Setting;
         }
 
         /**

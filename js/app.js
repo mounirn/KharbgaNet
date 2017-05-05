@@ -407,11 +407,17 @@ var init = function() {
         else
             exchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
         var isSetting = false;
-        if (game.is_in_moving_state())
+        if (game.is_in_moving_state()) {
             ret = game.processMove(source, target, resigned, exchangeRequest);
+        }
         else {
-            isSetting = true;
-            ret = game.processSetting(target);
+            if (game.is_in_setting_state() ){
+                isSetting = true;
+                ret = game.processSetting(target);
+            }
+            else {
+                ret = false;
+            }
         }
 
         if (ret == true) {  // add option to show submit to server button
@@ -956,7 +962,7 @@ var init = function() {
      * @param {any} game -- the game
      */
     function setupLocalPlayer(player, game) {
-        if (typeof player == "undefined") {
+        if (typeof player == "undefined" || player == null) {
             console.log("%s - setCurrentPlayer - Invalid player passed : ", new Date().toLocaleTimeString());
             return;
         }
@@ -964,7 +970,7 @@ var init = function() {
 
         appClientState.userScreenName = player.Name;
 
-        if (typeof game == "undefined") {
+        if (typeof game == "undefined"  || game == null) {
             console.log("%s - setCurrentPlayer - Invalid game passed : ", new Date().toLocaleTimeString());
             return;
         }
@@ -1007,7 +1013,7 @@ var init = function() {
     // handle when the game is selected by a player. All people will receive a this message
     // we do not all player to reset their game if a spectator just joins the game
     gamesHubProxy.client.gameJoined = function (gameInfo) {
-        if (typeof gameInfo == "undefined")
+        if (typeof gameInfo == "undefined" || gameInfo == null)
         {
             console.log("%s - gameJoined - Invalid Game passed : ", new Date().toLocaleTimeString());
             return;
@@ -1018,13 +1024,15 @@ var init = function() {
             console.log("%s - Game Joined: ", new Date().toLocaleTimeString());
             console.log(gameInfo);
         }
+ 
+        $('#' + gameInfo.ID).addClass(getStatusCss(gameInfo.Status));     
       
         updateLocalGameStatus(gameInfo);
       
     };
 
     function setupLocalGame(gameInfo) {
-        if (typeof gameInfo == "undefined") {
+        if (typeof gameInfo == "undefined" || gameInfo == null) {
             console.log("%s - setupLocalGame - Invalid game passed : ", new Date().toLocaleTimeString());
             return;
         }
@@ -1050,7 +1058,7 @@ var init = function() {
     }
 
     function updateLocalGameStatus(gameInfo) {
-        if (typeof gameInfo == "undefined") {
+        if (typeof gameInfo == "undefined" || gameInfo == null) {
             console.log("%s - setupLocalGame - Invalid game passed : ", new Date().toLocaleTimeString());
             return;
         }  
@@ -1075,6 +1083,8 @@ var init = function() {
      * Refreshes the list of games from the server for display in the homee page
      */
     function refreshGames() {
+        $('#message').html("<div class='alert alert-info'>Refreshing games from the server...</div>")
+
         $('#games-list').empty();
         gamesHubProxy.server.getGames().done(function (games) {
             $.each(games, function () {
@@ -1082,10 +1092,10 @@ var init = function() {
                 $('#games-list').append("<a href='#' class='list-group-item' id='" + this.ID + "'> ID: " + this.ID + " - Status: " + getStatusText(this.Status) + " - Attacker: " + this.AttackerName + " - Defender: " + this.DefenderName + " </a>");
 
                 $('#' + this.ID).on('click', this, onGameSelected);
-                $('#' + this.ID).addClass(getStatusCss(this.Status));
-
-                
+                $('#' + this.ID).addClass(getStatusCss(this.Status));             
             });
+
+            $('#message').html("<div class='alert alert-info'>Done refreshing games from the server.</div>")
         });
     }
     // reefresh games from server
@@ -1119,6 +1129,93 @@ var init = function() {
         // init the local game with the given server game data      
         // update the game view with the given game
     }
+
+    $('#connections-link').on('click', refreshConnections);
+    function refreshConnections() {
+        $('#system-message').html("<div class='alert alert-info'>Refreshing connections from the server...</div>");
+        $('#connections-list').empty();
+        var result = nsApiClient.appService.getConnections({ "active": null }, function (data, status) {
+            if (data != null) {
+                $('#system-message').html("<div class='alert alert-success'>returned connections successfully. </div>");
+                $('#connections-list').html("<div class='panel panel-danger'>  " + JSON.stringify(data) + "  </div>");
+                var html = "<table class='table table-responsive'><thead>";
+                var first = true;
+                $.each(data, function () {
+                    if (first) {
+                        // append the header
+                        html += "<thead><tr>";
+                        html += ("<th>ID</th>");
+                        html += ("<th>User Name</th>");
+                        html += ("<th>Connected</th>");
+                        html += ("<th>Created On</th>");
+                        html += "</tr></thead><tbody>";
+                        first = false;
+                    }
+
+                    html += "<tr>";
+                    html += ("<td>" + this.ID + "</td>");
+                    html += ("<td>" + this.UserName + "</td>");
+                    html += ("<td>" + (this.Connected ? "Yes" : "No") + "</td>");
+                    html += ("<td>" + this.CreatedOn + "</td>");
+                    html += "</tr>";
+
+                });
+
+                html += "</tbody></table>";
+
+                $('#connections-list').html(html);
+            }
+            else {
+                $('#system-message').html("<div class='alert alert-danger'>Failed to retreive connections from the server. Errors: " + status.responseText + " </div>");
+                $('#connections-list').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+            }
+        });
+    }
+    $('#players-link').on('click', refreshPlayers);
+    function refreshPlayers() {
+        $('#system-message').html("<div class='alert alert-info'>Refreshing players from the server...</div>");
+
+        $('#players-list').empty();
+
+        var result = nsApiClient.appService.getPlayers({ "active": null }, function (data, status) {
+            if (data != null) {
+                $('#system-message').html("<div class='alert alert-success'>Returned players successfully. </div>");
+                var html = "<table class='table table-responsive'><thead>";
+                var first = true;
+                $.each(data, function () {
+                    if (first) {
+                        // append the header
+                        html += "<thead><tr>";
+                        html += ("<th>Name</th>");
+                        html += ("<th>Is Spectator</th>");
+                        html += ("<th>Is Attacker</th>");
+                        html += ("<th>Current Game ID</th>");
+                        html += ("<th>Current Connection ID</th>");
+                        html += "</tr></thead><tbody>";
+                        first = false;
+                    }
+
+                    html += "<tr>";
+                    html += ("<td>" + this.Name + "</td>");
+                    html += ("<td>" + (this.IsSpectator == true ? "Yes" : "No") + "</td>");
+                    html += ("<td>" + (this.IsAttacker == true ? "Yes" : "No") + "</td>");
+                    html += ("<td>" + this.CurrentGameId + "</td>");
+                    html += ("<td>" + (this.CurrentConnection != null ? this.CurrentConnection.ID : "") + "</td>");
+                    html += "</tr>";
+
+                });
+
+                html += "</tbody></table>";
+                $('#players-list').html(html);
+            }
+            else {
+                $('#system-message').html("<div class='alert alert-danger'>Failed to retreive connections from the server. Errors: " + status.responseText + " </div>");
+                $('#players-list').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+            }
+        });
+     }
+
+    
     /**
    * handler for the Post message request
    */
@@ -1161,29 +1258,40 @@ var init = function() {
         }
     };
 
-    $.connection.hub.start({ jsonp: true })
-        .done(function () {
-            gamesHubProxy.server.hello();
-            if (loggingOn === true)
-                console.log('%s connected, connection ID: %', new Date().toLocaleTimeString(), $.connection.hub.id);
+    function startSignalR() {
+        $.connection.hub.start({ jsonp: true, transport: ['webSockets', 'longPolling'] })
+            .done(function () {
+                gamesHubProxy.server.hello();
+                if (loggingOn === true)
+                    console.log('%s connected, connection ID: %', new Date().toLocaleTimeString(), $.connection.hub.id);
 
-            appClientState.serverConnectionId = $.connection.hub.id;
+                appClientState.serverConnectionId = $.connection.hub.id;
 
-            // 
-            checkSessionCookie();
+                // 
+                checkSessionCookie();
 
-            // setup the games
-            setupGames();
+                // setup the games
+                setupGames();
 
- 
-            // check local active game cookie
-            var gid = checkGameCookie();
-            if (gid != "")
-                // tell the server to rejoin this connection with the game
-                gamesHubProxy.server.reJoinGame(appClientState.userScreenName, gid);
+                // check local active game cookie
+                var gid = checkGameCookie();
+                if (gid != "")
+                    // tell the server to rejoin this connection with the game
+                    gamesHubProxy.server.reJoinGame(appClientState.userScreenName, gid);
             
-        })
-        .fail(function () { console.log('Could not Connect!'); });
+            })
+            .fail(function () { console.log('Could not Connect!'); });
+    }
+
+    $.connection.hub.disconnected(function () {
+        setTimeout(function () {
+            startSignalR();
+        }, 2000); // Restart connection after 5 seconds.
+    });
+
+    startSignalR();
+
+  
 
     $('#submitMove').on('click', function onSubmit() {
         /*
@@ -1213,8 +1321,6 @@ var init = function() {
         return keyValue ? keyValue[2] : null;
     }
 
-  
-   
     ///todo: automatic setup of an active game
     function setupGames(activeGameId) {
         // refresh games from the server
