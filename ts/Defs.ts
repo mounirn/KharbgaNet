@@ -88,6 +88,9 @@ namespace Kharbga {
         /// Started by a player
         Started,
 
+        //// Pending joinging by another player (not spectator)
+        Pending,  
+
         /// Joined by another player or computer
         Joined, 
 

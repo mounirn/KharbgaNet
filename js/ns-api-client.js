@@ -215,7 +215,7 @@ function NSAppClient(baseURI) {
             $.ajax({
                 url: uri,
                 type: "GET",
-                data: queryString, 
+                data: queryString,
                 contentType: "application/json",
                 //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
                 headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -234,39 +234,64 @@ function NSAppClient(baseURI) {
 
                 }
             });
-
-            this.getPlayers = function (queryString, callback) {
-                var uri = this.serviceBaseURI + "players";
-                var ret = null;
-
-                $.ajax({
-                    url: uri,
-                    type: "GET",
-                    data: queryString,
-                    contentType: "application/json",
-                    //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    // Work with the response
-                    success: function (data, status, xhr) {
-                        console.log("ajax - getPlayers success: status: %s data:", JSON.stringify(status));
-                        console.log(data);
-                        callback(data, status);
-                    },
-                    error: function (xhr, status, errorThrown) {
-                        console.log("ajax - getPlayers error: status: %s,  error: %s", JSON.stringify(status), errorThrown);
-                        callback(null, status, errorThrown);
-                    },
-                    complete: function (xhr, status) {
-                        console.log("ajax - getPlayers complete: status: %s", JSON.stringify(status));
-
-                    }
-                });
-                return ret;
-            }
             return ret;
-        }
-    }
+        };
+        this.getPlayers = function (queryString, callback) {
+            var uri = this.serviceBaseURI + "players";
+            var ret = null;
 
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("ajax - getPlayers success: status: %s data:", JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("ajax - getPlayers error: status: %s,  error: %s", JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("ajax - getPlayers complete: status: %s", JSON.stringify(status));
+
+                }
+            });
+            return ret;
+        };
+        this.getGames = function (queryString, callback) {
+            var uri = this.serviceBaseURI + "games";
+            var ret = null;
+
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("ajax - getGames success: status: %s data:", JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("ajax - getGames error: status: %s,  error: %s", JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("ajax - getGames complete: status: %s", JSON.stringify(status));
+                }
+            });
+            return ret;
+        };
+    }
 
     function ClientService(baseUI){
         this.serviceBaseURI = baseURI + "api/client/";
@@ -323,7 +348,7 @@ function NSAppClient(baseURI) {
 var debugURI = "http://localhost:3121/";
 var prodURI = "http://api.nourisolutions.com/";
 var devURI = "http://localhost/NS.API/";
-var nsApiClient = new NSAppClient(prodURI);
+var nsApiClient = new NSAppClient(devURI);
 
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 

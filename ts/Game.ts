@@ -414,7 +414,7 @@ namespace Kharbga {
 
                 this.gameEvents.winnerDeclaredEvent(eventData);
 
-                return;
+                return true;
             }
                    
             // check the pssible moves  

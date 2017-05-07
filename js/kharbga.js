@@ -822,7 +822,7 @@ var Kharbga;
                 }
                 eventData.player = this.winner;
                 this.gameEvents.winnerDeclaredEvent(eventData);
-                return;
+                return true;
             }
             if (this.valid_move_destination(toCellId) === false)
                 return false;

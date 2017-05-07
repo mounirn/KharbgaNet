@@ -63,11 +63,10 @@
                                         <span class="glyphicon glyphicon-refresh"></span>Refresh
                                     </a>
                                 </div>
+
                             </div>
                             <div class="panel-body">
-                                <span class="center">
-                                <input class="btn btn-success" type="button" id="new-game" value="New Game" /></span>
-
+                                <span class="center"><input class="btn btn-success" type="button" id="new-game" value="New Game" /></span>
                                 <div id="games-list" style="height: 500px;overflow-y:scroll" class="list-group "></div>
                             </div>
                         </div>
@@ -91,8 +90,11 @@
                                                 </a>
                                             </div>
                                             <!-- The Board -->
-                                            <div class="panel-body text-center">
-                                                <div id="board" style="width: 90%"></div>
+                                            <div class="panel-body">
+                                                <div id="board" style="width: 400px"></div>
+
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -163,7 +165,9 @@
                                                         <td colspan="2">
 
                                                             <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game Info" /><br />
-                                                            
+                                                            <div id="movesHistory">
+
+                                                            </div>
                                                         </td>
                                                     </tr>
 
@@ -186,12 +190,11 @@
                             <div class="panel-footer">
                                 <div class="form-group">
                                     <label for="usrMessage">Message:</label>
-                                    <input type="text" class="form-control" id="move-mesage">
+                                    <input type="text" class="form-control" id="usrMessage">
                                     <button id="postMessageBtn" type="submit" class="btn btn-default">Post</button>
                                 </div>
                                 <!-- for testing only -->
                                 <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
-                                <div id="game-moves-history"></div>
                             </div>
  
 
@@ -293,88 +296,44 @@
                     </form>
                 </div>
                 </div>
-                <div id="account-info-panel" class="panel panel-info hidden">
-                    <table class="table table-user-information">
-                        <tbody>
-                            <tr>
-                                <td>Name:</td>
-                                <td><span id="account-name"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Session Id</td>
-                                <td><span id="account-session-id"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Active Game ID</td>
-                                <td><span id="account-game-id"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Role</td>
-                                <td><span id="account-game-role"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>  
-                </div>
             </div>
             <div id="system" class="tab-pane fade">
                 <div id="system-message"></div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
-                        <!--Connections-->
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                Active Connections
-                                <div class="pull-right">
-                                    <a href="#" id="connections-link" value="refresh-connections">
-                                        <span class="glyphicon glyphicon-refresh"></span>Refresh
-                                    </a>
-                                </div>
-
-                            </div>
-                            <div class="panel-body">
-                                <div id="connections-table" style="height: 300px; overflow-y:scroll" >
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <!--Players-->
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                Players
-                                <div class="pull-right">
-                                    <a href="#" id="players-link" value="refresh-players">
-                                        <span class="glyphicon glyphicon-refresh"></span>Refresh
-                                    </a>
-                                </div>
-
-                            </div>
-                            <div class="panel-body">
-                                <div id="players-table" style="height: 300px; overflow-y:scroll" >
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--Games-->
+                <!--Connections-->
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        Games
+                        Active Connections
                         <div class="pull-right">
-                            <a href="#" id="system-games-link" value="refresh-games">
+                            <a href="#" id="connections-link" value="refresh-connections">
                                 <span class="glyphicon glyphicon-refresh"></span>Refresh
                             </a>
                         </div>
-                    </div>
-                    <div class="panel-body">
-                        <div id="games-table" style="height: 300px; overflow-y:scroll" >
 
+                    </div>
+                    <div class="panel-body">         
+                        <div id="connections-list"  style="height: 300px; overflow-y:scroll" class="list-group">
+                            
                         </div>
                     </div>
                 </div>
 
+                <!--Players-->
+                <div class="panel panel-info" >
+                    <div class="panel-heading" >
+                        Players
+                        <div class="pull-right">
+                            <a href="#" id="players-link" value="refresh-players">
+                                <span class="glyphicon glyphicon-refresh"></span>Refresh
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="panel-body">
+                        <div id="players-list"  style="height: 300px; overflow-y:scroll" class="list-group ">
+
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="help" class="tab-pane fade">
                 <div id="help-message"></div>
