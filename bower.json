@@ -1,0 +1,22 @@
+{
+  "name": "Kharbga",
+  "authors": [
+    "Mounir Nouri <mounir@nouriSolutions.com>"
+  ],
+  "description": "A board game from North Africa",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "moment": "^2.18.1",
+    "jquery-validation": "^1.16.0"
+  }
+}

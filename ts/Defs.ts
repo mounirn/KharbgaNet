@@ -147,6 +147,8 @@ namespace Kharbga {
 
         WinnerDeclared,
 
+        WinnerDeclaredDefenderIsBlocked
+
 
     }
 

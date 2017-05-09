@@ -53,7 +53,7 @@
         <div class="tab-content"> <!-- tabs-->
             <div id="home"class="tab-pane fade in active">
                 <div class="row">
-                    <div class="col-sm-2">
+                    <div class="col-sm-6 col-md-3 col-lg-4">
                         <!--Games-->
                         <div class="panel panel-info overflow-y-scroll" style="min-width:130px">
                             <div class="panel-heading" style="min-width:120px">
@@ -67,12 +67,22 @@
                             <div class="panel-body">
                                 <span class="center">
                                 <input class="btn btn-success" type="button" id="new-game" value="New Game" /></span>
-
-                                <div id="games-list" style="height: 500px;overflow-y:scroll" class="list-group "></div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                        New Game <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a id="new-game-attacker" href="#">As Attacker</a></li>
+                                        <li><a id="new-game-defender" href="#">As Defender</a></li>
+                                        <li><a id="new-game-attacker-system" href="#">As Attacker against system</a></li>
+                                        <li><a id="new-game-defender-system" href="#">As Defender against system</a></li>
+                                   </ul>                                    
+                                </div>
+                                <div id="games-list" style="max-height: 400px;overflow-y:scroll" class="list-group "></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-10 ">
+                    <div class="col-sm-6 col-md-9 col-lg-8 ">
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 Current Game ID: <span id="current-game-id"></span> <span id="current-game-status" class="badge"></span>
@@ -81,7 +91,7 @@
                             <div class="panel-body">
                                 <div id="message" class=""></div>
                                 <div class="row">
-                                    <div class="col-sm-7 col-md-7" style="min-width: 420px">
+                                    <div class="col-sm-7 col-lg-7" style="min-width: 420px">
                                         <div class="panel panel-info">
                                             <div class="panel-heading">
                                                 <span class="pull-left"> Board - Turn:  </span>
@@ -96,7 +106,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-5 col-md-5">
+                                    <div class="col-sm-5 col-lg-5" style="min-width: 420px">
                                         <div class="panel panel-info">
                                             <div class="panel-heading">Actions and Player Move Flags</div>
                                             <div class="panel-body">
@@ -470,7 +480,7 @@
 
     <script src="../js/jquery.signalR-2.2.1.js"></script>
     <script src="http://localhost/NS.API/signalR/hubs"></script>  <!-- convert to the real URL-->
- 
+    <script src="../js/moment.min.js"></script>
    
     <script src="../js/kharbga-ui.js"></script>
     <script src="../js/kharbga.js"></script>

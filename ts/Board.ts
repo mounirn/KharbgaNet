@@ -286,26 +286,36 @@ namespace Kharbga {
 
         /**
          * 
-         * @param player 
+         * @param player
+         * @param from Id (optional)
          * @returns the possible moves for this player
          */
-        GetPossibleMoves(player: Player): Array<GameMove> {
+        GetPossibleMoves(player: Player, fromId: string = ""): Array<GameMove> {
             // 0. Get the player occupied cells
             // 1. For each of these cell get adjacent cells
             // 2.   For each adjacent cell, get empty cells
             // 3        For each empty cell, record a possible move from occupied cell to the empty cell
-            let ret = new Array<GameMove>(5);
+            let ret = new Array<GameMove>(0);
             let cellIds = this.CellIds();
             for (let cellId of cellIds) {
+
+
                 let fromCell = this.GetCellById(cellId);
+
+                
                 if (fromCell.IsOccupiedBy(player)) {
                     let adjacentCells = fromCell.GetAdjacentCells();
                     for (let toCell of adjacentCells) {
-                        if (!toCell.IsOccupied) {
+                        if (!toCell.IsOccupied()) {
                             ret.push(new GameMove(fromCell.ID(), toCell.ID(), player));
                         }
                     }
+                    // check if this is the only cell we want
+                    if (fromId == cellId)
+                        break;
                 }
+
+                
             }
             return ret;
         }
@@ -408,6 +418,11 @@ namespace Kharbga {
             if (ac2 == null)
                 return false; 
 
+            if (ac1 == ac2) {
+                // need to be two different pieces
+                return false;
+            }
+
             uc.Clear();
             ac1.Clear();
             ac2.Clear();
@@ -415,7 +430,25 @@ namespace Kharbga {
             return true;
             
         }
-    }
 
+
+        /**
+         * Returns all possible settings for the game at this point
+         */
+        public GetPossibleSettings(): Array<string>{
+            var ret = new Array<string>();
+            
+
+            for (let id of this._cellIds) {
+                let cell = this.cellsById[id] as BoardCell;
+                if (id != 'd4' && cell.IsEmpty() == true)
+                    ret.push(id);
+            }
+
+            return ret;
+        }
+
+    }
+   
 
 }

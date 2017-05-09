@@ -15,7 +15,7 @@ var init = function() {
         serverConnectionId: "",
         serverOpponentConnectionId: "",
         role: 0,      //  unknown, attacker, defender, spectator
-        loggedId: false,
+        loggedIn: false,
         player: null,
         serverGame: null,
         opponentPlayer: null,
@@ -28,7 +28,7 @@ var init = function() {
      * @param {any} eventData -- the event data
      */
     function onNewGameStarted(eventData) {
-        console.log("event: onNewGameStarted - source: " + eventData.source.fen());
+        console.log("%s - event: onNewGameStarted - source: %s ", moment().format('HH:mm:ss.SSS'), eventData.source.fen());
 
         $('#player').html('New Game...');
         $('#message').html("<div class='alert alert-info'>Started a new game.  </div>")
@@ -39,10 +39,13 @@ var init = function() {
 
         // update the board with current game state
         board.position(game.fen(), false);
+
+        //checkBoardAndPlayIfComputer();
     }
+    
 
     function onNewPlayerTurn(eventData) {
-        console.log("event: onNewPlayerTurn - player: " + eventData.player);
+        console.log("%s - event: onNewPlayerTurn - player: %s", getLoggingNow(), eventData.player);
 
 
         $('#player-turn').html(Kharbga.PlayerRole[eventData.player.role]);
@@ -59,28 +62,83 @@ var init = function() {
         // removed captured cells highlighting 
         $('.hightlight-captured').removeClass('hightlight-captured');
 
+     
 
-        if (currentPlayer.IsAttacker === true && game.turn() == 'a') {
+        checkBoardAndPlayIfComputer();
+       
+    }
+
+    /**
+     * Checks the board and play a move if its the computer turn
+     * @param {any} requiredFromPiece -- piece to use as the from 
+     */
+    function checkBoardAndPlayIfComputer(requiredFromPiece) {
+         if (appClientState.player == null) {
+             console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local player is null - returning",
+                 getLoggingNow(), game.turn());
+            return;
+        }
+
+        if (appClientState.player.IsAttacker === true && game.turn() == 'a') {
             boardEl.removeClass("turn-disabled");
             boardEl.prop('disbaled', false);
+            console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is attacker: %s - returning",
+                getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+
+            return;
+        }
+      
+        if (appClientState.player.IsAttacker === false && game.turn() == 'd') {
+            boardEl.removeClass("turn-disabled");
+            boardEl.prop('disbaled', false);
+            console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is attacker: %s - returning",
+                getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+           return;
+        }
+
+
+        boardEl.addClass("turn-disabled");
+        boardEl.prop('disbaled', true);
+        if (appClientState.player.IsSpectator || appClientState.opponentPlayer == null) {
+            console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is spectaror or opponent player is null : %s - returning",
+                getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+
+            return;
+        }
+        // check opponent player is system 
+           if (appClientState.opponentPlayer.IsSystem == false) {
+               console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - opponet player is not system: %s",
+                   getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+
+            return;
+        }
+
+        // the game is not set
+        if (appClientState.serverGameId == "") {
+            return;
+        }
+        console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is attacker: %s - required From Piece: %s",
+            getLoggingNow(), game.turn(), appClientState.player.IsAttacker ? "Yes": "No" , requiredFromPiece);
+
+
+        if (appClientState.opponentPlayer.IsAttacker === true && game.turn() == 'a') {
+            $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
+            setTimeout(computer_play, 1000, requiredFromPiece);// ask the system to play after a couple of seconds
         }
         else {
-            if (currentPlayer.IsAttacker == false && game.turn() == 'd') {
-                boardEl.removeClass("turn-disabled");
-                boardEl.prop('disbaled', false);
-            }
-            else {
-                boardEl.addClass("turn-disabled");
-                boardEl.prop('disbaled', false);
+            if (appClientState.opponentPlayer.IsAttacker === false && game.turn() == 'd') {
+                $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
+                setTimeout(computer_play, 1000, requiredFromPiece);// ask the system to play after a couple of seconds
             }
         }
     }
+
     /**
      * handler for when a setting is completed
      * @param {any} eventData
      */
     function onNewSettingCompleted(eventData) {
-        console.log("event: onNewSettingCompleted - cell " + eventData.targetCellId);
+        console.log("%s - event: onNewSettingCompleted - cell %s ", getLoggingNow(),eventData.targetCellId);
 
         if (game.turn() == 'a') {
             $('#attackerSettings').append($('<option>', {
@@ -102,11 +160,14 @@ var init = function() {
 
         updateScores(eventData.source);
 
+        if (game.is_current_player_setting() ) // to prevent infinite loop
+            checkBoardAndPlayIfComputer();
+
        
     }
     
     function onSettingsCompleted(eventData) {
-        console.log("event: onSettingsCompleted - source: " + eventData.source.fen());
+        console.log("%s - event: onSettingsCompleted - final board state: %s", getLoggingNow(), eventData.source.fen());
 
         $('#message').html("<div class='alert alert-success'>The setting phase is now completed.  It is the Attacker turn to move a piece to the middle cell and attempt to capture the opponent pieces. </div>");
 
@@ -118,6 +179,9 @@ var init = function() {
         $('.exchangeRequest').show();
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
+
+
+        checkBoardAndPlayIfComputer();
       
     }
 
@@ -130,8 +194,8 @@ var init = function() {
     }
 
     function onNewMoveCompleted(eventData) {
-        console.log("event: onNewMoveCompleted - game position: %s - from: %s - to: %s  ",
-            eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
+        console.log("%s - event: onNewMoveCompleted - game position: %s - from: %s - to: %s  ",
+            getLoggingNow(), eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
 
 
         // remove source highlighting
@@ -161,8 +225,8 @@ var init = function() {
     }
 
     function onNewMoveCompletedContinueSamePlayer(eventData) {
-        console.log("event: onNewMoveCompletedContinueSamePlayer - source: %s - from %s - to: %s ",
-            eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
+        console.log("%s - event: onNewMoveCompletedContinueSamePlayer - source: %s - from %s - to: %s ",
+            getLoggingNow(), eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
 
         $('#message').html("<div class='alert alert-success'>Same player must continue playing using the same soldier now on: <strong> " +
             eventData.targetCellId  + "</strong>. There are still pieces that could be captured  </div>" );
@@ -188,6 +252,8 @@ var init = function() {
                 text: eventData.from.ID() + '-' + eventData.to.ID()
             }));
         }
+
+        checkBoardAndPlayIfComputer(moveSourceRequired);
     }
 
     /**
@@ -196,14 +262,13 @@ var init = function() {
      * @param {any} eventData -- the action data
      */
     function onNewMoveCanceled(eventData) {
-        console.log("event: onNewMoveCanceled - target Cell Id: " + eventData.targetCellId);
+        console.log("%s - event: onNewMoveCanceled - target Cell Id: %s ", getLoggingNow(), eventData.targetCellId);
  
     }
 
     function onInvalidGameMove(eventData) {
-        console.log("game event: onInvalidMove - game fen: " + eventData.source.fen());
-        console.log("event: onNewMoveCompleted - from " + eventData.from.ID());
-        console.log("event: onNewMoveCompleted - to " + eventData.to.ID());
+        console.log("%s - event: onInvalidMove - source: %s - from %s - to: %s ",
+            getLoggingNow(), eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
     }
 
     /**
@@ -211,9 +276,9 @@ var init = function() {
      * @param {any} eventData - the game event info
      */
     function onWinnerDeclared(eventData) {
-        console.log("event: onWinnerDeclared - winner: " + eventData.player);
+        console.log("%s - event: onWinnerDeclared - winner: %s ", getLoggingNow(), eventData.player);
 
-        $('#message').html("<div class='alert alert-info'><strong>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role] + " </strong></div>")
+        $('#message').html("<div class='alert alert-success'><strong>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role] + " </strong></div>")
 
         updateScores(eventData.source);
 
@@ -221,15 +286,11 @@ var init = function() {
         
 
         $('#startGameBtn').show();
-        $('#loadSetting1').hide();
-
-        // notify server that the game is over
-
-      //  board.clear();
+        $('#loadSetting1').hide();     
     }
 
     function onUntouchableSelected(eventData) {
-        console.log("event: onUntouchableSelected - cell: " + eventData.targetCellId);
+        console.log("%s - event: onUntouchableSelected - cell: %s", getLoggingNow(), eventData.targetCellId);
      
         var exchangeSquare = boardEl.find('.square-' + eventData.targetCellId);
         exchangeSquare.addClass('highlight-exchange');
@@ -239,7 +300,7 @@ var init = function() {
     }
 
     function onUntouchableExchangeCanceled(eventData) {
-        console.log("event: onUntouchableExchangeCanceled - source: " + eventData.source);
+        console.log("%s - event: onUntouchableExchangeCanceled - source: %s ", getLoggingNow(), eventData.source);
         $('#message').html("<div class='alert alert-warning'>Exchange Request Canceled</div>")
 
         updateScores(eventData.source);
@@ -249,7 +310,7 @@ var init = function() {
     }
 
     function onUntouchableExchangeCompleted(eventData) {
-        console.log("event: onUntouchableExchangeCompleted - source: " + eventData.source);
+        console.log("%s - event: onUntouchableExchangeCompleted - source: %s ", getLoggingNow(),eventData.source);
         $('#message').html("<div class='alert alert-success'>Exchnage Request Completed</div>")
 
 
@@ -261,13 +322,13 @@ var init = function() {
     }
 
     function onInvalidSettingMalha(eventData) {
-        console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
+        console.log("%s - event: onInvalidSettingMalha - targetCellId: %s ", getLoggingNow(), eventData.targetCellId);
         $('#message').html("<div class='alert alert-danger'>Setting on middle cell (Malha) is not allowed</div>")
 
     }
 
     function onInvalidSettingOccupied(eventData) {
-        console.log("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
+        console.log("%s - event: onInvalidSettingOccupied - targetCellId: %s ", getLoggingNow(), eventData.targetCellId);
 
         $('#message').html("<div class='alert alert-danger'>Setting on an occupied cell is not allowed</div>")
     }
@@ -284,18 +345,18 @@ var init = function() {
 
     /* Board Events */
     function onInvalidMove(eventData) {
-        console.log("board event: onInvalidMove - target: %s - type : %s ",
-            eventData.targetCellId, Kharbga.BoardMoveType[eventData.type]);
+        console.log("%s - board event: onInvalidMove - target: %s - type : %s ",
+            getLoggingNow(), eventData.targetCellId, Kharbga.BoardMoveType[eventData.type]);
 
         $('#message').html("<div class='alert alert-danger'>Invalid Move " + Kharbga.BoardMoveType[eventData.type] +" </div>")
     }
 
     function onValidMove(eventData) {
-        console.log("board event: onValidMove - target: " + eventData.targetCellId);
+        console.log("%s - board event: onValidMove - target: %s ", getLoggingNow(), eventData.targetCellId);
     }
 
     function onCapturedPiece(eventData) {
-        console.log("board event: onCapturedPiece - target: " + eventData.targetCellId);
+        console.log("%s - board event: onCapturedPiece - target: %s ", getLoggingNow(), eventData.targetCellId);
 
         //  board.move(eventData.targetCellId + "-spare");
         // remove original piece from source square
@@ -309,7 +370,7 @@ var init = function() {
     }
 
     function onExchangedPiece(eventData) {
-        console.log("board event: onExchangedPiece - target: " + eventData.targetCellId);
+        console.log("%s - board event: onExchangedPiece - target: %s", getLoggingNow(), eventData.targetCellId);
 
         //  board.move(eventData.targetCellId + "-spare");
         // remove original piece from source square
@@ -321,6 +382,11 @@ var init = function() {
         board.position(game.fen(), false);
         updateScores(game);
     }
+
+    function onPlayerPassed(eventData) {
+        console.log("%s - board event: onPlayer Passed - target: %s ", getLoggingNow(), eventData.player.Name);
+        $('#message').html("<div class='alert alert-warning'>Player passed - Player: " + eventData.player.Name + " </div>")
+   }
 
 
     // Setup the game events to pass to the game object
@@ -339,7 +405,8 @@ var init = function() {
         untouchableExchangeCompletedEvent: onUntouchableExchangeCompleted,
         invalidSettingMalhaEvent: onInvalidSettingMalha,
         invalidSettingOccupiedEvent: onInvalidSettingOccupied,
-        invalidMoveEvent: onInvalidGameMove
+        invalidMoveEvent: onInvalidGameMove, 
+        playerPassedEvent : onPlayerPassed
     };
 
     // Setup the board events
@@ -470,18 +537,151 @@ var init = function() {
             // submit to the server
             if (appClientState.serverGameId != "") {
                 // notify server pf the setting
-                gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.userScreenName, isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(),msg).done(function () {
-                    console.log('server Invocation of recoredMove');
-
+                gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.userScreenName,
+                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg
+                ).done(function () {
+                    console.log('%s - Done server Invocation of recoredMove', getLoggingNow());
                 })
-                    .fail(function (error) {
-                        console.log('Invocation of recordMove failed. Error: ' + error);
-                    });
+                .fail(function (error) {
+                    console.log('%s - Invocation of recordMove failed. Error: %s ', getLoggingNow(), error);
+                });
             }
         }
         // updateStatus();
         if (ret == false) return 'snapback';
     };
+
+    /**
+     * play options for the computer
+     */
+    var playOptions = {
+        randomSetting: true,
+        randomMove: true
+
+    };
+
+    /**
+     * returns a random number from the given range
+     * @param {any} lower - range start
+     * @param {any} upper - range to
+     */
+    function getRandom(lower, upper) {
+        // https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+        var percent = (Math.random() * 100);
+        // this will return number between 0-99 because Math.random returns decimal number from 0-0.9929292 something like that
+        //now you have a percentage, use it find out the number between your INTERVAL :upper-lower 
+        var num = ((percent * (upper - lower) / 100));
+        //num will now have a number that falls in your INTERVAL simple maths
+        num += lower;
+        //add lower to make it fall in your INTERVAL
+        //but num is still in decimal
+        //use Math.floor>downward to its nearest integer you won't get upper value ever
+        //use Math.ceil>upward to its nearest integer upper value is possible
+        //Math.round>to its nearest integer 2.4>2 2.5>3   both lower and upper value possible
+        // console.log("upper: %s,lower: %s, num: %s, floor num: %s, ceill num: %s, round num: %s", lower, upper, num, Math.floor(num), Math.ceil(num), Math.round(num));
+        return Math.floor(num);
+    }
+    /**
+     * Generates a computer setting or move
+     */
+    function computer_play(requiredFromPiece) {
+         console.log("%s - computer_play() - required From Piece: %s",  getLoggingNow(),  requiredFromPiece);
+
+        var source = "";
+        var target = "";
+        if (game.is_in_setting_state()) {
+            var settings = game.settings();
+
+            if (typeof settings.length === "undefined" || settings.length <= 0) {
+                $('#message').html("<div class='alert alert-error'>Unable to find a valid setting</div>")
+                return;
+            }
+            soruce = "spare";
+
+            if (playOptions.randomSetting) {
+                var settingId = getRandom(0, settings.length - 1);
+                target = settings[settingId];
+            }
+            else
+                target = settings[0];
+
+
+            console.log("generated computer setting %s", target);
+        }
+        else {
+            if (game.is_in_moving_state()) {
+                var moves = game.moves(requiredFromPiece);
+                if (typeof moves.length === "undefined" || moves.length <= 0) {
+                    $('#message').html("<div class='alert alert-error'>Unable to find a valid move</div>")
+                    return;
+                }
+
+                var moveId = 0;
+                if (playOptions.randomMove)
+                    moveId = getRandom(0, moves.length - 1);
+
+                var move = moves[moveId];
+                source = move.From;
+                target = move.To;
+
+                console.log("%s - Generated computer move from %s to %s", getLoggingNow(), source, target);
+            }
+        }
+
+        $('#gameMove').html(source + "-" + target);
+
+        var ret;
+
+        var msg = "";
+
+        var resigned = $('#abandonCheckbox').is(':checked');
+        var exchangeRequest = true;  // default to true for computer
+        var isAttacker = false;
+        if (game.turn() == 'a') {
+            // set the exchange request if computer
+   //         exchangeRequest = $('#exchangeRequestAcceptedCheckbox').is(':checked');
+            isAttacker = true;
+        }
+        else {
+   //         exchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
+        }
+        var isSetting = false;
+
+        var beforeFEN = game.fen();
+
+        if (game.is_in_moving_state()) {
+            ret = game.processMove(source, target, resigned, exchangeRequest);
+        }
+        else {
+            if (game.is_in_setting_state()) {
+                isSetting = true;
+                ret = game.processSetting(target);
+            }
+            else {
+                ret = false;
+            }
+        }
+
+        if (ret == true) {  // add option to show submit to server button
+            // submit to the server
+            if (appClientState.serverGameId != "") {
+                // notify server pf the setting
+                gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.opponentPlayer.Name,
+                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg
+                ).done(function () {
+                    console.log('%s - Done Server Invocation of recoredMove inside computer_play', getLoggingNow());
+
+                }).fail(function (error) {
+                    console.log('%s - Invocation of recordMove failed. Error: %s', getLoggingNow(), error);
+                });
+            }
+        }
+    
+        // updateStatus();
+        //if (ret == false) return 'snapback';
+        board.position(game.fen(), false); // update the board with the computer move
+    };
+
 
 
     var onMoveEnd = function() {
@@ -503,7 +703,7 @@ var init = function() {
      * @param {any} orientation
      */
     var onSelected = function (target, piece, orientation) {
-        console.log("onSelected - target: %s - piece: %s ", target, piece);
+        console.log("%s - onSelected - target: %s - piece: %s ", getLoggingNow(), target, piece);
 
     }
 
@@ -514,6 +714,13 @@ var init = function() {
         $('#exchangeRequestDefenderPiece').text(moveFlags.exchangeRequestDefenderPiece);
         $('#exchangeRequestAttackerPiece1').text(moveFlags.exchangeRequestAttackerPiece1);
         $('#exchangeRequestAttackerPiece2').text(moveFlags.exchangeRequestAttackerPiece2);
+
+        if (!moveFlags.exchangeRequest)
+            boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
+
+        if (!moveFlags.exchangeRequestAccepted)
+            boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
+
     }
     var cfg = {
         draggable: true,
@@ -532,12 +739,17 @@ var init = function() {
     /**
      * Starts a new game
      */
-    function onNewGame() {
-
+    function onNewGame(e) {
+        if (e.data == null) {
+            $('#message').html("<div class='alert alert-danger'>onNewGame - Invalid arguments</div>");
+            return false;
+        }
        
         resetLocalGame();
         // call the server to start the new game
-        gamesHubProxy.server.createGame(appClientState.userScreenName, true, false);
+        gamesHubProxy.server.createGame(appClientState.userScreenName, e.data.asAttacker, e.data.againstComputer);
+
+        
     }
 
     /**
@@ -604,7 +816,7 @@ var init = function() {
 
   
     function onSendMessage(name, message) {
-        console.log("%s - Message from %s: %", new Date().toLocaleTimeString(), name, message);
+        console.log("%s - onSendMessage from %s: %", getLoggingNow(), name, message);
     }
 
 
@@ -943,8 +1155,12 @@ var init = function() {
     $('#logout-link').on('click', onLogoutSubmit);
     $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
     $('#getPositionBtn').on('click', clickGetPositionBtn);
-    $('#new-game').on('click', onNewGame);
-   
+    $('#new-game').on('click', { asAttacker: true, againstComputer: false }, onNewGame);
+    $('#new-game-attacker').on('click', {asAttacker: true, againstComputer:false}, onNewGame);
+    $('#new-game-defender').on('click', { asAttacker: false, againstComputer: false },onNewGame);
+    $('#new-game-attacker-system').on('click', { asAttacker: true, againstComputer: true }, onNewGame);
+    $('#new-game-defender-system').on('click', { asAttacker: false, againstComputer: true}, onNewGame);
+
     $('#postMessageBtn').on('click', onPostMessage);
     $('#loadSetting1Btn').on('click', onLoadSetting1);
     $('#flipOrientation').on('click', board.flip);// flip the board
@@ -974,47 +1190,57 @@ var init = function() {
 
     gamesHubProxy.client.moveRecorded = function (status, errorMessage, gameServerInfo, player, isAttacker, isSetting, moveFrom, moveTo, resigned, exchangeRequest, beforeFEN, afterFEN, message,serverMove){
         if (status === false) {
-            console.log("server - error recording move: " + errorMessage);
+            console.log("%s - server - error recording move: %s ", getLoggingNow(), errorMessage);
             $('#message').html("<div class='alert alert-danger'> Failed to process by the server. Error: " + errorMessage+ "</div>");
             return;
         }
         if (serverMove == null) {
-            console.log("server - error recording move - invalid game move passed");
+            console.log("%s - server - error recording move - invalid game move passed", getLoggingNow());
             $('#message').html("<div class='alert alert-danger'> Server Record Move - Invalid Game Move </div>");
             return;
         }
         // check the game and the player
         if (gameServerInfo == null) {
-            console.log("server - error recording move - invalid game passed");
+            console.log("%s = server - error recording move - invalid game passed", getLoggingNow());
             $('#message').html("<div class='alert alert-danger'> Server Record Move - Invalid Game </div>");
             return;
         }
 
         if (player == null) {
-            console.log("server - error recording move - invalid player passed");
+            console.log("%s - server - error recording move - invalid player passed", getLoggingNow());
             $('#message').html("<div class='alert alert-danger'> Server Record Move - Invalid Player </div>");
             return;
         }
 
-        if (player.Name != appClientState.userScreenName) { // if my move - just append to the history,  update the local game and board}
+        // if my move or a system - just append to the history since its already recorded locally
+        if (player.IsSystem || player.Name == appClientState.userScreenName) {
+            // apend the move to the game history
+            appendMoveToGameHisotry(serverMove);
+            console.log("%s - server - did not record setting/move in local game", getLoggingNow());
+            return; 
+        }
+    
             // submit to the local 
-            var turn = 'b';
+        /*    var turn = 'b';
             if (game.turn() == 'a')
                 turn = 'w';
-            board.move(moveFrom + "." + turn + "-" + moveTo);
+            board.move(moveFrom + "-" + moveTo); */
 
-            // submit to the local game
-            var ret;
-            if (game.is_in_moving_state()) {
-                ret = game.processMove(moveFrom, moveTo, resigned, exchangeRequest);
-            }
-            else {
-                ret = game.processSetting(moveTo);
-            }
+            // submit to the local game if not made by a system
 
-            // set the board to the game FEN
-            board.position(game.fen(), false);
+        var ret;
+        console.log("%s - server - recording setting/move in local game", getLoggingNow());
+
+        if (game.is_in_moving_state()) {
+            ret = game.processMove(moveFrom, moveTo, resigned, exchangeRequest);
         }
+        else {
+            ret = game.processSetting(moveTo);
+        }
+
+        // set the board to the game FEN
+        board.position(game.fen(), false);
+
 
         // apend the move to the game history
         appendMoveToGameHisotry(serverMove);
@@ -1023,7 +1249,7 @@ var init = function() {
      * Hello from server
      */
     gamesHubProxy.client.hello = function() {
-        console.log("%s - Hello from server", new Date().toLocaleTimeString());
+        console.log("%s - Hello from server", getLoggingNow());
     };
 
     gamesHubProxy.client.send = onSendMessage;
@@ -1076,7 +1302,7 @@ var init = function() {
      */
     function setupLocalPlayer(player, serverGame) {
         if (typeof player == "undefined" || player == null) {
-            console.log("%s - setCurrentPlayer - Invalid player passed : ", new Date().toLocaleTimeString());
+            console.log("%s - setCurrentPlayer - Invalid player passed : ", getLoggingNow());
             return;
         }
         appClientState.player = player;
@@ -1084,8 +1310,18 @@ var init = function() {
 
         appClientState.userScreenName = player.Name;
 
+        if (!player.IsSpectator) {
+            if (appClientState.userScreenName == serverGame.AttackerName) {
+                appClientState.opponentPlayer = serverGame.Defender;
+            }
+            else {
+                if (appClientState.userScreenName == serverGame.DefenderName)
+                    appClientState.opponentPlayer = serverGame.Attacker;
+            }
+        }
+
         if (typeof serverGame == "undefined" || serverGame == null) {
-            console.log("%s - setCurrentPlayer - Invalid game passed : ", new Date().toLocaleTimeString());
+            console.log("%s - setCurrentPlayer - Invalid game passed : ", getLoggingNow());
             return;
         }
         appClientState.serverGame = serverGame;
@@ -1120,12 +1356,14 @@ var init = function() {
     gamesHubProxy.client.gameCreated = function (gameInfo) {
         // add to the games list
         if (loggingOn === true) {
-            console.log("%s - Game Added: ", new Date().toLocaleTimeString());
+            console.log("%s - Game Created: ", getLoggingNow());
             console.log(gameInfo);
         }
         $('#games-list').append("<a href='#' class='list-group-item list-group-item-warning' id='" + gameInfo.ID + "'> ID: " + gameInfo.ID + " - Status: " + getStatusText(gameInfo.Status) + " - Attacker: " + gameInfo.AttackerName + " - Defender: " + gameInfo.DefenderName + " </a>");
 
         $('#' + gameInfo.ID).on('click', gameInfo, onGameSelected);       
+
+        checkBoardAndPlayIfComputer();
     };
 
     // handle when the game is selected by a player. All people will receive a this message
@@ -1133,13 +1371,13 @@ var init = function() {
     gamesHubProxy.client.gameJoined = function (gameInfo) {
         if (typeof gameInfo == "undefined" || gameInfo == null)
         {
-            console.log("%s - gameJoined - Invalid Game passed : ", new Date().toLocaleTimeString());
+            console.log("%s - gameJoined - Invalid Game passed : ", getLoggingNow());
             return;
         }
 
         // add to the games list
         if (loggingOn === true) {
-            console.log("%s - Game Joined: ", new Date().toLocaleTimeString());
+            console.log("%s - Game Joined: ", getLoggingNow());
             console.log(gameInfo);
         }
  
@@ -1156,7 +1394,7 @@ var init = function() {
 
     function setupLocalGame(gameInfo) {
         if (typeof gameInfo == "undefined" || gameInfo == null) {
-            console.log("%s - setupLocalGame - Invalid game passed : ", new Date().toLocaleTimeString());
+            console.log("%s - setupLocalGame - Invalid game passed : ", getLoggingNow());
             return;
         }
 
@@ -1186,7 +1424,7 @@ var init = function() {
 
     function updateLocalGameStatus(gameInfo) {
         if (typeof gameInfo == "undefined" || gameInfo == null) {
-            console.log("%s - setupLocalGame - Invalid game passed : ", new Date().toLocaleTimeString());
+            console.log("%s - setupLocalGame - Invalid game passed : ", getLoggingNow());
             return;
         }  
 
@@ -1202,7 +1440,7 @@ var init = function() {
 
     gamesHubProxy.client.gameDeleted = function (gameInfo) {
         // remove from the games list
-        console.log("%s - Game Deleted: ", new Date().toLocaleTimeString());
+        console.log("%s - Game Deleted: ", getLoggingNow());
         console.log(gameInfo);
     };
 
@@ -1229,13 +1467,13 @@ var init = function() {
     $('#games-link').on('click', refreshGames);
     function onGameSelected(e) {
         if (loggingOn === true) {
-            console.log("%s - onGameSelected: ", new Date().toLocaleTimeString());
+            console.log("%s - onGameSelected: ", getLoggingNow());
             console.log(e);
         }
         var data = e.data;
         ///todo: add check for the type here
         if (e.data == null || typeof e.data === undefined) {
-            console.log("%s - onGameSelected - invalid data passed with the entry ", new Date().toLocaleTimeString());
+            console.log("%s - onGameSelected - invalid data passed with the entry ", getLoggingNow());
             return;
         }
 
@@ -1467,38 +1705,38 @@ var init = function() {
    */
     function onPostMessage() {
         if (loggingOn === true) {
-            console.log("%s - onPostMessage: ", new Date().toLocaleTimeString());
+            console.log("%s - onPostMessage: ", getLoggingNow());
             console.log(gameInfo);
         }
     }
     // base hub messages
     gamesHubProxy.client.joined = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
-            console.log('server: connection %s joined on %s ', connectionInfo.ID, serverTime);
+            console.log('%s - server: connection %s joined on %s ', getLoggingNow(), connectionInfo.ID, serverTime);
             $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server connected " + connectionInfo.ID + "</li>");
         }
     };
     gamesHubProxy.client.left = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
-            console.log('server: connection %s left on %s ', connectionInfo.ID, serverTime);
-            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server disconnected " + connectionInfo.ID + "</li>");
+            console.log('%s - server: connection %s left at %s ', getLoggingNow(), connectionInfo.ID, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server disconnected " + connectionInfo.ID + " - " + connectionInfo.UserName + "</li>");
         }
     };
     gamesHubProxy.client.rejoined = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
-            console.log('server: connection %s rejoined on %s ', connectionInfo.ID, serverTime);
-            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server rejoined " + connectionInfo.ID + "</li>");
+            console.log('%s - server: connection %s rejoined on %s ', getLoggingNow(), connectionInfo.ID, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + getLoggingNow() + ": server rejoined " + connectionInfo.ID + "</li>");
         }
     };
     gamesHubProxy.client.pong = function (connectionId, serverTime) {
         if (connectionId !== $.connection.hub.id) {
-            console.log('server: INVALID pong from %s received on: %s', connectionId, JSON.stringify(serverTime));
+            console.log('%s - server: INVALID pong from %s received on: %s', getLoggingNow(), connectionId, JSON.stringify(serverTime));
             $('#messages-list').append("<li class='list-group-item list-group-item-danger'> server: INVALID pong from " + connectionId + " received on:" + new Date().toLocaleTimeString() + " - server time " + serverTime + "</li>");
         }
         else {
             // check if equal to self
-            console.log('server: pong from %s received on: %s', connectionId, serverTime);
-            $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + " pong received from " + connectionId + "</li>");
+            console.log('%s - server: pong from %s received on: %s', getLoggingNow(), connectionId, serverTime);
+            $('#messages-list').append("<li class='list-group-item'>" + getLoggingNow() + " pong received from " + connectionId + "</li>");
         }
     };
 
@@ -1507,7 +1745,7 @@ var init = function() {
             .done(function () {
                 gamesHubProxy.server.hello();
                 if (loggingOn === true)
-                    console.log('%s connected, connection ID: %', new Date().toLocaleTimeString(), $.connection.hub.id);
+                    console.log('%s - startSignalR - connected, connection ID: %', getLoggingNow(), $.connection.hub.id);
 
                 appClientState.serverConnectionId = $.connection.hub.id;
 
@@ -1515,13 +1753,14 @@ var init = function() {
                 checkSessionCookie();   
                 // moves the setup of the games on startup at the end of the checking session proess
             })
-            .fail(function () { console.log('Could not Connect!'); });
+            .fail(function () { console.log('%s - startSignalR Could not Connect!', getLoggingNow()); });
     }
 
     $.connection.hub.disconnected(function () {
         setTimeout(function () {
+            console.log('%s - RestartSignalR after disconnect!', getLoggingNow());
             startSignalR();
-        }, 2000); // Restart connection after 5 seconds.
+        }, 3000); // Restart connection after 3 seconds.
     });
 
     startSignalR();

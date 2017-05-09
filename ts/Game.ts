@@ -62,9 +62,19 @@ namespace Kharbga {
         /**
          * @returns all possible moves for the current player
          */
-        public moves() : Array<GameMove> {
-            var ret = this.board.GetPossibleMoves(this.currentPlayer);
+        public moves(from : string ="") : Array<GameMove> {
+            var ret = this.board.GetPossibleMoves(this.currentPlayer, from);
             return ret;
+        }
+
+        /**
+         * @returns all possible settings
+         */
+        public settings(): Array<string> {
+            if (this.is_in_setting_state() == true)
+                return this.board.GetPossibleSettings();
+            else
+                return new Array<string>();
         }
         /**
          * @returns the current game position - fen format
@@ -195,6 +205,8 @@ namespace Kharbga {
             this.id = id;
         }
 
+        
+
         /**
          * sets up the game with the given game state
          * @param serverGameState  -- the game state
@@ -204,7 +216,9 @@ namespace Kharbga {
             let ret = false;
 
             this.init();
-            this.state = GameState.Setting;
+
+            if (serverGameState.Status == GameStatus.Joined)
+                this.state = GameState.Setting;
 
             // sort by the move number
             var sortedMoves = serverGameState.Moves.sort((a, b) => {      
@@ -232,6 +246,10 @@ namespace Kharbga {
                     this.processMove(move.From,move.To,move.Resigned,move.ExchangeRequest);
                 }
             }
+
+
+            // check the players
+
 
             return ret;
         }
@@ -593,7 +611,7 @@ namespace Kharbga {
 
 
                         eventData.player = this.winner;
-                        this.state = GameState.WinnerDeclared;
+                        this.state = GameState.WinnerDeclaredDefenderIsBlocked;
                         this.gameEvents.winnerDeclaredEvent(eventData);
                         return;
                     } else {
@@ -635,7 +653,7 @@ namespace Kharbga {
         }
 
         CheckScores(): void {
-            if (this.defenderScore == 0) {
+            if (this.defenderScore <= 0) {
                 this.winner = this.attacker;
                 this.state = GameState.DefenderLostAllPieces;
 
@@ -643,7 +661,7 @@ namespace Kharbga {
                 this.gameEvents.winnerDeclaredEvent(eventData);
             }
             else {
-                if (this.attackerScore == 0) {
+                if (this.attackerScore <= 0) {
                     this.state = GameState.AttackerLostAllPieces;
                     this.winner = this.defender;
 
@@ -699,6 +717,15 @@ namespace Kharbga {
                 return false;
         }
 
+        /**
+         * Checks if the current player still has 
+         */
+        public is_current_player_setting(): boolean {
+            if (this.state != GameState.Setting)
+                return false;
+
+            return this.numberOfSettingsAllowed > 0;
+        }
 
         /**
          * @summary Records the current player request to set a piece. In order for a setting to be accepted, the
@@ -815,7 +842,6 @@ namespace Kharbga {
                         this.gameEvents.untouchableSelectedEvent(eventData);
 
                         /// todo: add a check if it is the same a the previous selected piece
-
                         if (this.moveFlags.exchangeRequestAccepted && this.moveFlags.exchangeRequestAttackerPiece1 != ''
                             && this.moveFlags.exchangeRequestAttackerPiece2 != '') {
                             let result = this.ProcessUntouchableTwoExchange(this.moveFlags.exchangeRequestDefenderPiece,

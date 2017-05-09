@@ -3,6 +3,7 @@
 ---
 * resolve the issue when the game is won by abondon -- record the move to the server
 * Save game state in the server
+* Add logic to detect condition when attacker can not move at the begining of the game (automatic loss - bad setting)
 * Loading a game after refresh is causing an error
 * Abiity to replay with a delay 
 * Ability to start a game with options (w/ computer, as Attacker,as Defender). 
