@@ -88,11 +88,8 @@ namespace Kharbga {
         /// Started by a player
         Started,
 
-        //// Pending joinging by another player (not spectator)
+        //// Pending joining by another player (not spectator)
         Pending,  
-
-        /// Joined by another player or computer
-        Joined, 
 
         /// The game starts by the attacker setting his/her pieces on the board with the objective
         /// of capturing the defender's pieces and limiting the defender from building up protected 
@@ -298,6 +295,8 @@ namespace Kharbga {
             this.From = from;
             this.To = to;
             this.Player = p;
+            this.IsSetting = false;
+            this.ExchangeRequest = false;
         }
         public From: string;
         public To: string;

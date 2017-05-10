@@ -64,6 +64,92 @@ namespace Kharbga {
          */
         public moves(from : string ="") : Array<GameMove> {
             var ret = this.board.GetPossibleMoves(this.currentPlayer, from);
+
+            
+
+
+            return ret;
+        }
+
+        /**
+         * identifies moves that result in a capture of one of the opponent pieces
+         * @param from -- optional from location
+         */
+        public moves_that_capture(from: string = ""): Array<GameMove> {
+            var temp = this.board.GetPossibleMoves(this.currentPlayer, from);
+
+            var ret = new Array<GameMove>();
+            for (let move of temp) {
+                // check if the from cell could capture
+                var fromCell = this.board.GetCellById(move.From);
+                if (fromCell == null)
+                    continue;
+
+                var result = this.board.StillHavePiecesToCapture(fromCell);
+                if (result.status == true) {
+                    if (result.possibleMoves.indexOf(move.To) >= 0)
+                        ret.push(move);
+                }
+            }
+
+            return ret;
+        }
+
+        /**
+         * Identifies moves by capturable pieces (hopefully to save)
+         * @param from
+         */
+        public moves_by_capturables(from: string = ""): Array<GameMove> {
+            var temp = this.board.GetPossibleMoves(this.currentPlayer, from);
+
+            var ret = new Array<GameMove>();
+            for (let move of temp) {           
+                var capturable = this.board.IsCapturable(this.currentPlayer, move.From);
+                if (capturable) {
+                      ret.push(move);
+                }
+            }
+            return ret;
+        }
+        /**
+        * identifies moves that result in saving own pieces
+        * @param from -- optional from location
+        */
+        public moves_that_save(from: string = ""): Array<GameMove> {
+      
+            let result = this.board.HasCapturablePieces(this.currentPlayer, this.currentPlayer.IsAttacker ? this.defender : this.attacker);
+
+            let tempMoves = this.board.GetPossibleMoves(this.currentPlayer, from);
+            let ret = new Array<GameMove>();
+
+            // for each move -- see if the board after the move will result in less capturables     
+            for (let move of tempMoves) {
+                let tempBoard = this.board.Clone();
+                let fromCell = tempBoard.GetCellById(move.From);
+                let toCell = tempBoard.GetCellById(move.To);
+
+                var moveResult = tempBoard.RecordPlayerMove(fromCell, toCell);
+                let result2 = tempBoard.HasCapturablePieces(this.currentPlayer, this.currentPlayer.IsAttacker ? this.defender : this.attacker);
+                if (result2.capturables.length < result.capturables.length) {
+                    // good move?
+                    ret.push(move);
+                }
+               // delete tempBoard;
+            }
+
+            if (ret.length == 0) // 
+                ret = tempMoves;
+            
+            return ret;
+        }
+
+        /**
+        * identifies moves using unreachable pieces
+        * @param from -- optional from location
+        */
+        public moves_unreachables(from: string = ""): Array<GameMove> {
+
+            let ret = this.board.GetPossibleUnreachableMoves(this.currentPlayer,from);
             return ret;
         }
 
@@ -76,6 +162,40 @@ namespace Kharbga {
             else
                 return new Array<string>();
         }
+
+        /**
+         * returns all possible settings near the malha
+         */
+        public settings_near_malha(): Array<string> {
+            var ret = new Array<string>(); 
+
+            let nearMalha = ['c4', 'e4', 'd3', 'd5'];
+            for (let i = 0; i < nearMalha.length; i++) {
+                let cell = this.board.GetCellById(nearMalha[i]);
+                if (cell.IsEmpty())
+                    ret.push(nearMalha[i]);
+            }
+
+            return ret;
+        }
+
+        /**
+         * returns all possible settings close to the opponent of the current player
+         */
+        public settings_near_opponent(): Array<string> {
+            return this.board.GetPossibleSettingsNearOpponent(this.currentPlayer);
+        }
+
+        /**
+         * Checks if the current player still can set a piece
+         */
+        public is_current_player_setting(): boolean {
+            if (this.state != GameState.Setting)
+                return false;
+
+            return this.numberOfSettingsAllowed > 0;
+        }
+
         /**
          * @returns the current game position - fen format
          */
@@ -150,7 +270,7 @@ namespace Kharbga {
          * Defender pieces are in lower case.
          * @param piece - the piece code
          */
-        isDefenderPiece(piece: string): boolean{          
+        private isDefenderPiece(piece: string): boolean{          
             if (piece.toLowerCase() === piece)
                 return true;
             else
@@ -199,7 +319,7 @@ namespace Kharbga {
 
         /**
          * @summary sets the game id
-         * @param id  - the game id as set in storgae
+         * @param id  - the game id as set in storage
          */
         public setGameId(id: string): void {
             this.id = id;
@@ -210,7 +330,7 @@ namespace Kharbga {
         /**
          * sets up the game with the given game state
          * @param serverGameState  -- the game state
-         * @param delayAfterEachMove -- delay afte making the move in msec
+         * @param delayAfterEachMove -- delay after making the move in msec
          */
         public setupWith(serverGameState: ServerGameState, delayAfterEachMove: number = 0) : boolean{
             let ret = false;
@@ -276,11 +396,11 @@ namespace Kharbga {
             this.gameEvents.newPlayerTurnEvent(eventData);
          }
 
-        /**
+        /**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
          * @summary indicates whether the game is done or not
          */
         public game_over(): boolean {
-            if (this.state === GameState.Setting || this.state === GameState.Moving )
+            if (this.state === GameState.Pending || this.state === GameState.Setting || this.state === GameState.Moving )
                 return false;
             else
                 return true;
@@ -301,6 +421,15 @@ namespace Kharbga {
         public turn(): string {
             if (this.currentPlayer.IsAttacker()) return 'a';
             else return 'd';
+        }
+
+        /**
+         * checks the game status and issue the appropriate events
+         */
+        public check(): void {
+            // checks the game status and generates
+            this.checkPass();
+            this.CheckScores();
         }
 
         /**
@@ -435,7 +564,7 @@ namespace Kharbga {
                 return true;
             }
                    
-            // check the pssible moves  
+            // check the possible moves  
             if (this.valid_move_destination(toCellId) === false)
                 return false;
 
@@ -469,7 +598,7 @@ namespace Kharbga {
             eventData.from = fromCell;
             eventData.to = toCell;
             eventData.targetCellId = toCell.ID();
-            // deselection move/canceling move from fromCell (could indicate piece exchange requests)
+            // de-selection move/canceling move from fromCell (could indicate piece exchange requests)
             if (fromCell === toCell) {
                 
                 this.gameEvents.newMoveCanceledEvent(eventData)
@@ -605,7 +734,7 @@ namespace Kharbga {
 
                     // check if this happened on the first move
                     if (this.firstMove) {
-                        // decleare defender as winner and end the game
+                        // declare defender as winner and end the game
                         this.winner = this.defender;
 
 
@@ -634,9 +763,9 @@ namespace Kharbga {
         }
 
         /**
-         * processes that current player abondoned
+         * processes that current player abandoned
          */
-        CurrentPlayerAbandoned() {
+        private processCurrentPlayerAbandoned() {
             if (this.currentPlayer == this.attacker) {
                 this.state = GameState.AttackerAbandoned;
                 this.winner = this.defender;
@@ -652,7 +781,7 @@ namespace Kharbga {
 
         }
 
-        CheckScores(): void {
+        private CheckScores(): void {
             if (this.defenderScore <= 0) {
                 this.winner = this.attacker;
                 this.state = GameState.DefenderLostAllPieces;
@@ -676,7 +805,7 @@ namespace Kharbga {
          *  show an untouchable piece that demands a two exchange.
          * The defender generally passes while demanding exchanges for his/her untouchables/unreachable pieces
          */
-        public recordCurrentPlayerPassed(): boolean {
+        private checkPass(): boolean {
             let bCanPass = this.CheckIfCurrentPlayerCanPassTurn();
 
             // raise an event a new player move
@@ -717,15 +846,7 @@ namespace Kharbga {
                 return false;
         }
 
-        /**
-         * Checks if the current player still has 
-         */
-        public is_current_player_setting(): boolean {
-            if (this.state != GameState.Setting)
-                return false;
-
-            return this.numberOfSettingsAllowed > 0;
-        }
+      
 
         /**
          * @summary Records the current player request to set a piece. In order for a setting to be accepted, the
@@ -841,7 +962,7 @@ namespace Kharbga {
                         this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
                         this.gameEvents.untouchableSelectedEvent(eventData);
 
-                        /// todo: add a check if it is the same a the previous selected piece
+                        /// to-do: add a check if it is the same a the previous selected piece
                         if (this.moveFlags.exchangeRequestAccepted && this.moveFlags.exchangeRequestAttackerPiece1 != ''
                             && this.moveFlags.exchangeRequestAttackerPiece2 != '') {
                             let result = this.ProcessUntouchableTwoExchange(this.moveFlags.exchangeRequestDefenderPiece,
@@ -904,7 +1025,7 @@ namespace Kharbga {
             //steps:
             // - check if the defender piece is able to move and is not reachable
             // - check if the attacker pieces can move freely
-            // if ok allow the exchange, other generate an error message using events
+            // if OK allow the exchange, other generate an error message using events
             var ret = this.board.RecordExchange(untouchablePieceId, attackerPiece1, attackerPiece2);
 
             if (ret === true) {

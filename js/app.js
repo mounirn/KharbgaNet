@@ -19,7 +19,9 @@ var init = function() {
         player: null,
         serverGame: null,
         opponentPlayer: null,
-        loaded: false
+        loaded: false,
+        firstComputerSetting: true,
+        computer_is_playing: false
     };
 
     /* the game events */
@@ -61,75 +63,81 @@ var init = function() {
         sourceRequired.removeClass('highlight-captured'); */
         // removed captured cells highlighting 
         $('.hightlight-captured').removeClass('hightlight-captured');
-
      
-
         checkBoardAndPlayIfComputer();
        
     }
-
+    function getLocalPlayerRole() {
+        if (appClientState == null || appClientState.player == null) return "null";
+        if (appClientState.player.IsAttacker) return "Attacker";
+        else
+            return "Defender";
+    }
     /**
      * Checks the board and play a move if its the computer turn
      * @param {any} requiredFromPiece -- piece to use as the from 
      */
     function checkBoardAndPlayIfComputer(requiredFromPiece) {
          if (appClientState.player == null) {
-             console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local player is null - returning",
-                 getLoggingNow(), game.turn());
+             console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local player is null - returning",
+                 getLoggingNow(),getComputerRole(), game.turn());
             return;
-        }
+         }
+         if (game.turn() == 'a' && appClientState.player.IsAttacker === true ) {
+                boardEl.removeClass("turn-disabled");
+                boardEl.prop('disabled', false);
+                console.log("%s - checkBoardAndPlayIfComputer (as %s)- game turn: %s - local real player role is: %s - returning",
+                    getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole());
 
-        if (appClientState.player.IsAttacker === true && game.turn() == 'a') {
-            boardEl.removeClass("turn-disabled");
-            boardEl.prop('disbaled', false);
-            console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is attacker: %s - returning",
-                getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+                return;
+         }
 
-            return;
-        }
-      
-        if (appClientState.player.IsAttacker === false && game.turn() == 'd') {
-            boardEl.removeClass("turn-disabled");
-            boardEl.prop('disbaled', false);
-            console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is attacker: %s - returning",
-                getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
-           return;
-        }
-
-
+         if (game.turn() == 'd' && appClientState.player.IsAttacker === false ) {
+                boardEl.removeClass("turn-disabled");
+                boardEl.prop('disabled', false);
+                console.log("%s - checkBoardAndPlayIfComputer (as %s)- game turn: %s - local real player role is: %s - returning",
+                    getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole());
+                return;
+         }
+   
         boardEl.addClass("turn-disabled");
-        boardEl.prop('disbaled', true);
+        boardEl.prop('disabled', true);
         if (appClientState.player.IsSpectator || appClientState.opponentPlayer == null) {
-            console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is spectaror or opponent player is null : %s - returning",
-                getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+            console.log("%s - checkBoardAndPlayIfComputer (as %s)- game turn: %s - local real player is spectator or opponent player is null - returning",
+                getLoggingNow(), getComputerRole(),game.turn());
 
             return;
         }
         // check opponent player is system 
-           if (appClientState.opponentPlayer.IsSystem == false) {
-               console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - opponet player is not system: %s",
-                   getLoggingNow(), game.turn(), appClientState.player.IsAttacker);
+       if (appClientState.opponentPlayer.IsSystem == false) {
+            console.log("%s - checkBoardAndPlayIfComputer (as %s)- game turn: %s - opponent player is not system. Local player id: %s",
+                getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole());
 
             return;
         }
 
         // the game is not set
-        if (appClientState.serverGameId == "") {
+       if (appClientState.serverGameId == "") {
+           console.log("%s - checkBoardAndPlayIfComputer (as %s)- game turn: %s - Null Server Game ID. Local player id: %s",
+               getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole());
             return;
         }
-        console.log("%s - checkBoardAndPlayIfComputer - game turn: %s - local real player is attacker: %s - required From Piece: %s",
-            getLoggingNow(), game.turn(), appClientState.player.IsAttacker ? "Yes": "No" , requiredFromPiece);
+        console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local real player is: %s - required From Piece: %s",
+            getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole() , requiredFromPiece);
 
 
-        if (appClientState.opponentPlayer.IsAttacker === true && game.turn() == 'a') {
+        if (appClientState.opponentPlayer.IsAttacker === true && game.turn() == 'a' ) {
             $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
-            setTimeout(computer_play, 1000, requiredFromPiece);// ask the system to play after a couple of seconds
+            setTimeout(computer_play, 4000, requiredFromPiece);// ask the system to play after a couple of seconds
         }
         else {
-            if (appClientState.opponentPlayer.IsAttacker === false && game.turn() == 'd') {
+            if (appClientState.opponentPlayer.IsAttacker === false && game.turn() == 'd' ) {
                 $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
-                setTimeout(computer_play, 1000, requiredFromPiece);// ask the system to play after a couple of seconds
+                setTimeout(computer_play, 4000, requiredFromPiece);// ask the system to play after a couple of seconds
             }
+            else
+                console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local real player is: %s - required From Piece: %s -- did not trigger play",
+                    getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole(), requiredFromPiece);
         }
     }
 
@@ -160,8 +168,8 @@ var init = function() {
 
         updateScores(eventData.source);
 
-        if (game.is_current_player_setting() ) // to prevent infinite loop
-            checkBoardAndPlayIfComputer();
+       
+         checkBoardAndPlayIfComputer();
 
        
     }
@@ -417,7 +425,7 @@ var init = function() {
 
     };
 
-    var game = new Kharbga.Game(gameEvents, boardEvents); // KharbgaGame()
+    var game = new Kharbga.Game(gameEvents, boardEvents); 
   
     var squareClass = 'square-55d63',
         pieceClass = 'piece-417db',
@@ -517,9 +525,7 @@ var init = function() {
         var isSetting = false;
 
         var beforeFEN = game.fen();
-       
-        
-
+               
         if (game.is_in_moving_state()) {
             ret = game.processMove(source, target, resigned, exchangeRequest);
         }
@@ -534,29 +540,42 @@ var init = function() {
         }
 
         if (ret == true) {  // add option to show submit to server button
+            lastMoveId = createMoveId(); 
             // submit to the server
             if (appClientState.serverGameId != "") {
                 // notify server pf the setting
                 gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.userScreenName,
-                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg
+                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg, lastMoveId
                 ).done(function () {
-                    console.log('%s - Done server Invocation of recoredMove', getLoggingNow());
+                    console.log('%s - Done server Invocation of recoredMove ( moveId : %s)', getLoggingNow(),lastMoveId);
                 })
                 .fail(function (error) {
-                    console.log('%s - Invocation of recordMove failed. Error: %s ', getLoggingNow(), error);
+                    console.log('%s - Invocation of recordMove ( moveId : %s) failed. Error: %s ', getLoggingNow(), lastMoveId, error);
                 });
             }
         }
         // updateStatus();
         if (ret == false) return 'snapback';
     };
+    var lastMoveId = "";
+    // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+    function createMoveId() {
+        return 'xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx'.replace(/x/g, function (c) {
+            var r = Math.random() * 16 | 0;
+            return r.toString(16);
+        });
+    }
 
     /**
      * play options for the computer
      */
     var playOptions = {
         randomSetting: true,
-        randomMove: true
+        firstSettingMustIncludeMalhaAdjacent: true,
+        randomMove: true,
+        searchMovesThatCaptureOpponent: true,
+        searchMovesThatSaveSelf: true,
+        preferMovesThatCaptureOverMovesThatSave: true
 
     };
 
@@ -581,19 +600,83 @@ var init = function() {
         // console.log("upper: %s,lower: %s, num: %s, floor num: %s, ceill num: %s, round num: %s", lower, upper, num, Math.floor(num), Math.ceil(num), Math.round(num));
         return Math.floor(num);
     }
+
+    /**
+     * @returns the computer role in the current game
+     */
+    function getComputerRole() {
+        if (appClientState.opponentPlayer == null)
+            return "null appClientState.opponentPlayer";
+
+        if (appClientState.opponentPlayer.IsAttacker) return "Attacker";
+        else 
+            return "Defender";
+    }
     /**
      * Generates a computer setting or move
+     * @param requiredFromPiece - piece to use for moving
      */
     function computer_play(requiredFromPiece) {
-         console.log("%s - computer_play() - required From Piece: %s",  getLoggingNow(),  requiredFromPiece);
+        console.log("%s - computer_play() as %s - required From Piece: %s", getComputerRole(), getLoggingNow(), requiredFromPiece);
+        appClientState.computer_is_playing = true;
+
+        if (game.turn() == 'a' && appClientState.player.IsAttacker === true) {
+            boardEl.removeClass("turn-disabled");
+            boardEl.prop('disabled', false);
+            console.log("%s - computer_play() (as %s)- game turn: %s - local real player role is: %s - returning",
+                getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole());
+
+            return;
+        }
+
+        if (game.turn() == 'd' && appClientState.player.IsAttacker === false) {
+            boardEl.removeClass("turn-disabled");
+            boardEl.prop('disabled', false);
+            console.log("%s - ccomputer_play() (as %s)- game turn: %s - local real player role is: %s - returning",
+                getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole());
+            return;
+        }
 
         var source = "";
         var target = "";
+        var exchangeRequest = false;  // default to true for computer if playing unreachable pieces
         if (game.is_in_setting_state()) {
-            var settings = game.settings();
+            var settings = [];
+            if (playOptions.firstSettingMustIncludeMalhaAdjacent && appClientState.firstComputerSetting == true && appClientState.opponentPlayer.IsAttacker) {
+                settings = game.settings_near_malha(); // cells adjacent to Malha
+            }
+            else {
+                temp_settings = game.settings_near_opponent();
 
-            if (typeof settings.length === "undefined" || settings.length <= 0) {
-                $('#message').html("<div class='alert alert-error'>Unable to find a valid setting</div>")
+                if (appClientState.opponentPlayer.IsAttacker) {
+                    var settings2 = game.settings_near_malha();
+                    // check if settings includes any of these and prefer to set on these 
+                    for (var si = 0; si < settings2.length; si++) {
+                        if (temp_settings.indexOf(settings2[si]) > 0)
+                            settings.push(settings2[si]);
+                    }
+                }
+                if (settings.length == 0) { // if none are left check prefer these next ones
+                    var settings3 = ['d1', 'e1', 'c1', 'a5', 'a4', 'a3', 'c7', 'd7', 'e7', 'g5', 'g4', 'g3', 'b5', 'c6', 'b3', 'c2', 'e2', 'f3', 'e6', 'f5'];
+                    // check if settings includes any of these and prefer to set on these 
+                    for (var si = 0; si < settings3.length; si++) {
+                        if (temp_settings.indexOf(settings3[si]) > 0)
+                            settings.push(settings3[si]);
+                    }
+                    if (settings.length == 0)
+                        settings = temp_settings;
+                } 
+           
+            }
+            if (settings.length == 0)  // whatever is left
+                settings = game.settings();
+
+            if (settings== null || typeof settings.length === "undefined" || settings.length <= 0) {
+                $('#message').html("<div class='alert alert-error'>Unable to find a valid setting</div>");
+
+                // if computer can not play -- resign or pass
+                game.check();
+                appClientState.computer_is_playing = false;
                 return;
             }
             soruce = "spare";
@@ -605,37 +688,62 @@ var init = function() {
             else
                 target = settings[0];
 
-
-            console.log("generated computer setting %s", target);
+            appClientState.firstComputerSetting = false;
+            console.log("%s - Generated computer setting:  %s", getLoggingNow(), target);
         }
         else {
             if (game.is_in_moving_state()) {
-                var moves = game.moves(requiredFromPiece);
-                if (typeof moves.length === "undefined" || moves.length <= 0) {
-                    $('#message').html("<div class='alert alert-error'>Unable to find a valid move</div>")
-                    return;
+                var moves = null;
+                if (playOptions.searchMovesThatCaptureOpponent) {
+                    moves = game.moves_that_capture(requiredFromPiece);
+                }
+                if (playOptions.searchMovesThatSaveSelf) {
+                    var movesThatSave = game.moves_that_save(requiredFromPiece);
+
+                    if (!playOptions.preferMovesThatCaptureOverMovesThatSave && movesThatSave.length > 0)
+                        moves = movesThatSave;
                 }
 
+                if (moves == null || moves.length == 0) {  // no capture able and no savable
+                    moves = game.moves_unreachables(requiredFromPiece);
+                    if (moves != null && moves.length > 0)
+                        exchangeRequest = true;
+                }
+
+                if (moves == null || moves.length == 0) { // no unreachable?{
+                    moves = game.moves(requiredFromPiece);
+                }
+
+                
+                if (moves == null || typeof moves.length === "undefined" || moves.length <= 0) {
+                    $('#message').html("<div class='alert alert-danger'>Unable to find a valid move - Contact Support!</div>");
+
+                    // if computer can not play -- resign or pass
+                    game.check();
+                    appClientState.computer_is_playing = false;
+                    return;
+                }
+                
                 var moveId = 0;
                 if (playOptions.randomMove)
                     moveId = getRandom(0, moves.length - 1);
 
+                // todo -- add check for game to rank the moves by score and play the one with the highest score
+
                 var move = moves[moveId];
                 source = move.From;
                 target = move.To;
-
                 console.log("%s - Generated computer move from %s to %s", getLoggingNow(), source, target);
             }
         }
 
         $('#gameMove').html(source + "-" + target);
 
-        var ret;
+        var ret = false;
 
         var msg = "";
 
         var resigned = $('#abandonCheckbox').is(':checked');
-        var exchangeRequest = true;  // default to true for computer
         var isAttacker = false;
         if (game.turn() == 'a') {
             // set the exchange request if computer
@@ -662,34 +770,37 @@ var init = function() {
             }
         }
 
-        if (ret == true) {  // add option to show submit to server button
+        if (ret == true) {  
+            
+            lastMoveId = createMoveId(); 
             // submit to the server
             if (appClientState.serverGameId != "") {
                 // notify server pf the setting
                 gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.opponentPlayer.Name,
-                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg
+                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg, lastMoveId
                 ).done(function () {
-                    console.log('%s - Done Server Invocation of recoredMove inside computer_play', getLoggingNow());
+                    console.log('%s - Done Server Invocation of recoredMove ( moveId : %s) inside computer_play - for opponent player %s',
+                        getLoggingNow(), lastMoveId, appClientState.opponentPlayer.Name);
+
+                    board.position(game.fen(), false); // update the board with the computer move
 
                 }).fail(function (error) {
-                    console.log('%s - Invocation of recordMove failed. Error: %s', getLoggingNow(), error);
+                    console.log('%s - Invocation of recordMove ( moveId : %s) failed. Error: %s', getLoggingNow(), lastMoveId, error);
                 });
             }
+
+            board.position(game.fen(), false); // update the board with the computer move
         }
-    
-        // updateStatus();
-        //if (ret == false) return 'snapback';
-        board.position(game.fen(), false); // update the board with the computer move
+
+        appClientState.computer_is_playing = false;
     };
-
-
 
     var onMoveEnd = function() {
 
+        // remove exchange request highlighting if 
+
         //boardEl.find('.square-' + squareToHighlight)
         //    .addClass('highlight-' + colorToHighlight);
-
-        // add logic to check if a valid move
 
         // update the game position at the end of the move
         board.position(game.fen(), false);
@@ -747,9 +858,13 @@ var init = function() {
        
         resetLocalGame();
         // call the server to start the new game
-        gamesHubProxy.server.createGame(appClientState.userScreenName, e.data.asAttacker, e.data.againstComputer);
+        gamesHubProxy.server.createGame(appClientState.userScreenName, e.data.asAttacker, e.data.againstComputer)
+        .done(function () {
+            console.log('%s - Done Server Invocation of create game', getLoggingNow());
 
-        
+        }).fail(function (error) {
+            console.log('%s - Invocation of createGame failed. Error: %s', getLoggingNow(), error);
+        });        
     }
 
     /**
@@ -761,6 +876,7 @@ var init = function() {
         game = new Kharbga.Game(gameEvents, boardEvents);
         appClientState.loaded = false;
         appClientState.serverGameId = "";
+        appClientState.firstComputerSetting = true;
         game.reset();
         game.start();
         board.clear();
@@ -782,15 +898,19 @@ var init = function() {
         setCookie("_nsgid", "");
 
     }
+    /**
+     * Loads a sample game setting
+     */
     function onLoadSetting1() {
         var fen = "SssSsss/sSSSSSS/ssSsSss/sss1sSS/sSsSSSS/SssSsSS/SssSsSs";
+        game = new Kharbga.Game(gameEvents, boardEvents);
         game.reset();
         game.start();
         board.clear();
         board.start();
     
         game.set(fen);
-        board.position(fen, false);
+        board.position(game.fen(), false);
 
         $('#state').html(Kharbga.GameState[game.getState()]);
         $('#fen').html(board.fen());
@@ -1212,11 +1332,11 @@ var init = function() {
             return;
         }
 
-        // if my move or a system - just append to the history since its already recorded locally
-        if (player.IsSystem || player.Name == appClientState.userScreenName) {
+        // if the move is already submitted to the local game (by real player or computer) just add to the Move history and 
+        if (lastMoveId == serverMove.ClientID) {
             // apend the move to the game history
             appendMoveToGameHisotry(serverMove);
-            console.log("%s - server - did not record setting/move in local game", getLoggingNow());
+            console.log("%s - server - did not record setting/move in local game for local moveId: %s", getLoggingNow(), lastMoveId);
             return; 
         }
     
@@ -1226,10 +1346,10 @@ var init = function() {
                 turn = 'w';
             board.move(moveFrom + "-" + moveTo); */
 
-            // submit to the local game if not made by a system
+       // submit to the local game if not already submitted by self (drop)
 
         var ret;
-        console.log("%s - server - recording setting/move in local game", getLoggingNow());
+        console.log("%s - server - recording setting/move in local game for server Move ID: %s", getLoggingNow(), serverMove.ClientID);
 
         if (game.is_in_moving_state()) {
             ret = game.processMove(moveFrom, moveTo, resigned, exchangeRequest);
@@ -1385,6 +1505,9 @@ var init = function() {
       
         updateLocalGameStatus(gameInfo);
         setupGameMovesHistory(gameInfo);
+
+        // 
+        checkBoardAndPlayIfComputer();
     };
 
     gamesHubProxy.client.appendMove = function (gameId, move) {
@@ -1447,7 +1570,9 @@ var init = function() {
     /**
      * Refreshes the list of games from the server for display in the homee page
      */
-    function refreshGames() {
+    function refreshGames(e) {
+        if (e != null)
+             e.preventDefault();
         $('#message').html("<div class='alert alert-info'>Refreshing games from the server...</div>")
 
         $('#games-list').empty();
@@ -1466,6 +1591,7 @@ var init = function() {
     // reefresh games from server
     $('#games-link').on('click', refreshGames);
     function onGameSelected(e) {
+        e.preventDefault();
         if (loggingOn === true) {
             console.log("%s - onGameSelected: ", getLoggingNow());
             console.log(e);
@@ -1496,7 +1622,8 @@ var init = function() {
     }
 
     $('#connections-link').on('click', refreshConnections);
-    function refreshConnections() {
+    function refreshConnections(e) {
+        e.preventDefault();
         $('#system-message').html("<div class='alert alert-info'>Refreshing connections from the server...</div>");
         $('#connections-table').empty();
         var result = nsApiClient.appService.getConnections({ "active": null }, function (data, status) {
@@ -1539,7 +1666,8 @@ var init = function() {
     /**
      * returns the list of active players (cached) from the server
      */
-    function refreshPlayers() {
+    function refreshPlayers(e) {
+        e.preventDefault();
         $('#system-message').html("<div class='alert alert-info'>Refreshing players from the server...</div>");
 
         $('#players-table').empty();
@@ -1586,7 +1714,8 @@ var init = function() {
     /**
      * returns the list of active games (cached) by the server
      */
-    function refreshGames2() {
+    function refreshGames2(e) {
+        e.preventDefault();
         $('#system-message').html("<div class='alert alert-waring'>Refreshing active games from the server...</div>");
         $('#games-table').empty().html('');
 
