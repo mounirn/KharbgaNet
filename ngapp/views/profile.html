@@ -1,0 +1,24 @@
+<div data-ng-controller="userController">
+    <div id="account-message" data-ng-bind="message"></div>
+    <div id="account-info-panel" class="panel panel-info">
+        <div class="panel-heading">My Account Information</div>
+        <div class="panel-body">
+            <table class="table table-user-information">
+                <tbody>
+                    <tr>
+                        <th>Name</th>
+                        <td><span id="account-name" data-ng-bind="user.name"></span></td>
+                    </tr>            
+                    <tr>
+                        <th>Active Game ID</th>
+                        <td><span id="account-game-id" data-ng-bind="user.currentGameId"></span></td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td><span id="account-game-role" data-ng-bind="user.role"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

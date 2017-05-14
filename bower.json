@@ -1,5 +1,5 @@
 {
-  "name": "Kharbga",
+  "name": "kharbga",
   "authors": [
     "Mounir Nouri <mounir@nouriSolutions.com>"
   ],
@@ -17,6 +17,10 @@
   ],
   "dependencies": {
     "moment": "^2.18.1",
-    "jquery-validation": "^1.16.0"
+    "jquery-validation": "^1.16.0",
+    "angular": "^1.6.4",
+    "angular-local-storage": "^0.5.2",
+    "angular-resource": "^1.6.4",
+    "angular-ui-router": "^1.0.3"
   }
 }

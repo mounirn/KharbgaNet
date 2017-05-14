@@ -1,0 +1,16 @@
+<div id="about" ng-controller="appController">
+    <div id="app-message" ng-bind="message"></div>  
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            App Information
+            <div class="pull-right">
+                <a href="" ng-click="refresh()" id="refreshAppInfo-submit" value="Refresh">
+                    <span class="glyphicon glyphicon-refresh"></span> Refresh
+                </a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="appInfo" ng-bind="appInfo"> </div>
+        </div>
+    </div>
+</div>   

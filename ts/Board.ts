@@ -574,11 +574,15 @@ namespace Kharbga {
                 // need to be two different pieces
                 return false;
             }
-
+            var eventData = new BoardEventData(uc, uc, uc.ID(), BoardMoveType.DefenderPieceExchanged);
             uc.Clear();
+            this.boardEvents.exchangedPieceEvent(eventData);
             ac1.Clear();
+            eventData = new BoardEventData(ac1, ac1, ac1.ID(), BoardMoveType.DefenderPieceExchanged);
+            this.boardEvents.exchangedPieceEvent(eventData);
             ac2.Clear();
-
+            eventData = new BoardEventData(ac2, ac2, ac2.ID(), BoardMoveType.DefenderPieceExchanged);
+            this.boardEvents.exchangedPieceEvent(eventData);
             return true;
             
         }

@@ -16,6 +16,10 @@
 * Fix the height of the messsages lsit being added (add scrollbars)
 * Make sure that logging works on the server and this is useful
 * Add UI in the API site to view the log files
+* Computer Play
+	- Check that Pieces that are capturable and give these priority to move
+	- Check that the result of a move does not result in a capturable piece
+	- Check that the result of a move results in less capturables 
 
 * Detect Player blocked condition and allow the player to continue if it is not the first block
 * Add ability to detect the number of times exchange requests are requested using the same piece and attacker is not paying up (limit to 3)

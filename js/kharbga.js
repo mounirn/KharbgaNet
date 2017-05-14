@@ -368,9 +368,15 @@ var Kharbga;
             if (ac1 == ac2) {
                 return false;
             }
+            var eventData = new Kharbga.BoardEventData(uc, uc, uc.ID(), Kharbga.BoardMoveType.DefenderPieceExchanged);
             uc.Clear();
+            this.boardEvents.exchangedPieceEvent(eventData);
             ac1.Clear();
+            eventData = new Kharbga.BoardEventData(ac1, ac1, ac1.ID(), Kharbga.BoardMoveType.DefenderPieceExchanged);
+            this.boardEvents.exchangedPieceEvent(eventData);
             ac2.Clear();
+            eventData = new Kharbga.BoardEventData(ac2, ac2, ac2.ID(), Kharbga.BoardMoveType.DefenderPieceExchanged);
+            this.boardEvents.exchangedPieceEvent(eventData);
             return true;
         };
         Board.prototype.GetPossibleSettings = function () {
@@ -746,6 +752,8 @@ var Kharbga;
         BoardMoveType[BoardMoveType["MovedToAValidCell"] = 7] = "MovedToAValidCell";
         BoardMoveType[BoardMoveType["OpponentPieceCaptured"] = 8] = "OpponentPieceCaptured";
         BoardMoveType[BoardMoveType["InvalidCellId"] = 9] = "InvalidCellId";
+        BoardMoveType[BoardMoveType["DefenderPieceExchanged"] = 10] = "DefenderPieceExchanged";
+        BoardMoveType[BoardMoveType["AttackerPieceExchanged"] = 11] = "AttackerPieceExchanged";
     })(BoardMoveType = Kharbga.BoardMoveType || (Kharbga.BoardMoveType = {}));
     ;
     var PieceState;

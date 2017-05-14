@@ -1,0 +1,39 @@
+<div data-ng-controller="userController">
+    <div id="account-message" data-ng-bind="message"> </div>
+    <div data-ng-show="invalidInput" class='alert alert-danger'>Please enter valid data in all required fields</div>
+    <div data-ng-show="invalidLogin" class='alert alert-danger'>Invalid Login ID or Password</div>
+    <div data-ng-show="systemError" class='alert alert-danger'>System Error</div>
+    <div id="login-panel" class="panel panel-info">
+        <div class="panel-heading">Login</div>
+        <div class="panel-body">
+            <form class="form-horizontal" id="login-form" name="loginForm" novalidate>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="login-id">Login ID:</label>
+                    <div class="col-sm-10 input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                        <input type="text" data-ng-model="loginData.LoginID" class="form-control" id="login-id" placeholder="Enter login id" required size="30" minlength="6" maxlength="30">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="login-pwd">Password:</label>
+                    <div class="col-sm-10 input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                        <input type="password" data-ng-model="loginData.Password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label><input type="checkbox" data-ng-model="loginData.RememberMe" id="login-remember"> Remember me</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button id="login-submit" data-ng-click="login()" type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

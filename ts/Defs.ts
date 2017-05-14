@@ -64,7 +64,9 @@ namespace Kharbga {
         MovingToNotAdjacentCell,
         MovedToAValidCell,
         OpponentPieceCaptured,
-        InvalidCellId
+        InvalidCellId, 
+        DefenderPieceExchanged,
+        AttackerPieceExchanged
     };
 
     /**
@@ -165,7 +167,7 @@ namespace Kharbga {
         Joined,
 
         /// <summary>
-        /// Active bwtween two players after the first attacker's move
+        /// Active between two players after the first attacker's move
         /// </summary>
         Active,
 
@@ -317,7 +319,7 @@ namespace Kharbga {
     }
 
     /**
-     * Defines various parameters realted to the current player move
+     * Defines various parameters related to the current player move
      */
     export class GameMoveFlags {
         public resigned: boolean; 

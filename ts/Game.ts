@@ -971,7 +971,7 @@ namespace Kharbga {
                             if (result == true) {
                                 //
                                 this.gameEvents.untouchableExchangeCompletedEvent(eventData);
-                                // reset the flags
+                                // reset the flags after posting the event
                                 this.moveFlags.reset();
                                 return;
                             }

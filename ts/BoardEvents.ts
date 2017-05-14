@@ -17,5 +17,6 @@ namespace Kharbga {
         invalidMoveEvent(eventData: BoardEventData): void;
         validMoveEvent(eventData: BoardEventData): void;
         capturedPieceEvent(eventData: BoardEventData): void;
+        exchangedPieceEvent(eventData: BoardEventData): void;
     }
 }

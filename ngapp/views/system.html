@@ -1,0 +1,123 @@
+<div id="system" class=" " data-ng-controller="systemController">
+    <div id="system-message" data-ng-bind="message"></div>
+    <div data-ng-show="systemError" class='alert alert-danger'>System Error - Please try again later. If the error persists, please contact us for support</div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <!--Connections-->
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Active Connections
+                    <div class="pull-right">
+                        <a href="" data-ng-click="refreshConnections()" id="connections-link" value="refresh-connections">
+                            <span class="glyphicon glyphicon-refresh"></span>Refresh
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="connections-table" style="max-height: 300px; overflow-y:scroll">
+                        <table data-ng-show="hasConnections" class='table table-responsive'>
+                            <thead>
+                                <tr>
+                                    <th ng-click="orderByMe('ID')">ID</th>
+                                    <th ng-click="orderByMe('UserName')">User Name</th>
+                                    <th ng-click="orderByMe('Connected')">Connected</th>
+                                    <th ng-click="orderByMe('CreatedOn')">Created On</th>
+                                    <th ng-click="orderByMe('IP Address')">IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>                   
+                                <tr data-ng-repeat="c in connections |filter:{ Connected: true } | orderBy : myOrderBy">
+                                    <td>{{c.ID}}</td>
+                                    <td>{{c.UserName }}</td>
+                                    <td>{{c.Connected? 'Yes' : 'No' }}</td>
+                                    <td>{{c.CreatedOn}}</td>
+                                    <td>{{c.IPAddress}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <!--Players-->
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Active Players
+                    <div class="pull-right">
+                        <a href="" data-ng-click="refreshPlayers()" id="players-link" value="refresh-players">
+                            <span class="glyphicon glyphicon-refresh"></span>Refresh
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="players-table" style="max-height: 300px; overflow-y:scroll">
+                        <table data-ng-show="hasPlayers" class='table table-responsive table-sortable'>
+                            <thead>
+                                <tr>
+
+                                    <th ng-click="orderByMe('Name')">Name</th>
+                                    <th ng-click="orderByMe('IsSpectator')">Is Spectator</th>
+                                    <th ng-click="orderByMe('IsAttacker')">Is Attacker</th>
+                                    <th ng-click="orderByMe('CurrentGameId')">Current Game ID</th>
+                                    <th ng-click="orderByMe('CurrentConnection')">Current Connection ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-ng-repeat="item in players | orderBy : myOrderBy ">
+                                    <td>{{item.Name}}</td>
+                                    <td>{{item.IsSpectator? 'Yes': 'No' }}</td>
+                                    <td>{{item.IsAttacker? 'Yes': 'No' }}</td>
+                                    <td>{{item.CurrentGameId}}</td>
+                                    <td>{{item.CurrentConnection !=null? item.CurrentConnection.ID: '' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Games-->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Games
+            <div class="pull-right">
+                <a href="" data-ng-click="refreshGames()" id="system-games-link" value="refresh-games">
+                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                </a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="games-table" style="max-height: 300px; overflow-y:scroll">
+                <table data-ng-show="hasGames" class='table table-responsive'>
+                    <thead>
+                        <tr>
+                            <th ng-click="orderByMe('ID')" >ID
+                                <span class="fa fa-sort columnSortIcons" ng-if="reverse"></span>
+                                <span class="fa fa-sort-down columnSortIcons" ng-if="!(reverse)"></span>
+                                <span class="fa fa-sort-up columnSortIcons" ng-if="reverse"></span>
+                            </th>
+                            <th ng-click="orderByMe('AttackerName')" >Attacker</th>
+                            <th ng-click="orderByMe('DefenderName')" >Defender</th>
+                            <th ng-click="orderByMe('Status')" >Status</th>
+                            <th ng-click="orderByMe('State')" >State</th>
+                            <th ng-click="orderByMe('FEN')" >Current FEN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="item in games | orderBy:myOrderBy:reverse" id="tr{{item.ID}}">
+                            <td>{{item.ID}}</td>
+                            <td>{{item.AttackerName }}</td>
+                            <td>{{item.DefenderName }}</td>
+                            <td>{{item.Status | toStatusString }}</td>
+                            <td>{{item.State | toStateString }}</td>
+                            <td>{{item.FEN }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
