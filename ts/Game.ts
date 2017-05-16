@@ -25,7 +25,7 @@ namespace Kharbga {
         defenderScore = 0;
         attackerMove = 0;
         defenderMove = 0;
-        moveSourceRequired : string = "";
+        moveSourceRequired: string = "";
         moveDestinationsPossible: Array<string> = null;
         firstMove = true;
 
@@ -39,7 +39,7 @@ namespace Kharbga {
             this.state = GameState.NotStarted;
 
             this.gameEvents = gameEvents;
-            this.boardEvents = boardEvents; 
+            this.boardEvents = boardEvents;
 
             this.board = new Board(boardEvents);
             this.moveFlags = new GameMoveFlags();
@@ -62,10 +62,10 @@ namespace Kharbga {
         /**
          * @returns all possible moves for the current player
          */
-        public moves(from : string ="") : Array<GameMove> {
+        public moves(from: string = ""): Array<GameMove> {
             var ret = this.board.GetPossibleMoves(this.currentPlayer, from);
 
-            
+
 
 
             return ret;
@@ -103,10 +103,10 @@ namespace Kharbga {
             var temp = this.board.GetPossibleMoves(this.currentPlayer, from);
 
             var ret = new Array<GameMove>();
-            for (let move of temp) {           
+            for (let move of temp) {
                 var capturable = this.board.IsCapturable(this.currentPlayer, move.From);
                 if (capturable) {
-                      ret.push(move);
+                    ret.push(move);
                 }
             }
             return ret;
@@ -116,7 +116,7 @@ namespace Kharbga {
         * @param from -- optional from location
         */
         public moves_that_save(from: string = ""): Array<GameMove> {
-      
+
             let result = this.board.HasCapturablePieces(this.currentPlayer, this.currentPlayer.IsAttacker ? this.defender : this.attacker);
 
             let tempMoves = this.board.GetPossibleMoves(this.currentPlayer, from);
@@ -134,12 +134,12 @@ namespace Kharbga {
                     // good move?
                     ret.push(move);
                 }
-               // delete tempBoard;
+                // delete tempBoard;
             }
 
             if (ret.length == 0) // 
                 ret = tempMoves;
-            
+
             return ret;
         }
 
@@ -149,7 +149,7 @@ namespace Kharbga {
         */
         public moves_unreachables(from: string = ""): Array<GameMove> {
 
-            let ret = this.board.GetPossibleUnreachableMoves(this.currentPlayer,from);
+            let ret = this.board.GetPossibleUnreachableMoves(this.currentPlayer, from);
             return ret;
         }
 
@@ -167,7 +167,7 @@ namespace Kharbga {
          * returns all possible settings near the malha
          */
         public settings_near_malha(): Array<string> {
-            var ret = new Array<string>(); 
+            var ret = new Array<string>();
 
             let nearMalha = ['c4', 'e4', 'd3', 'd5'];
             for (let i = 0; i < nearMalha.length; i++) {
@@ -207,7 +207,7 @@ namespace Kharbga {
          * @summary Sets the game with the given fen setting
          * @param fen
          */
-        public set(fen: string) : boolean {
+        public set(fen: string): boolean {
             if (this.validFen(fen) !== true) {
                 return false;
             }
@@ -234,8 +234,8 @@ namespace Kharbga {
                     // piece
                     else {
                         var square = BoardCell.COLUMNS[colIndex] + currentRow;
-                        var isAttackerPiece = this.isDefenderPiece(row[j]) === false; 
-                    
+                        var isAttackerPiece = this.isDefenderPiece(row[j]) === false;
+
                         var result = this.board.RecordPlayerSetting(square, isAttackerPiece);
                         if (result != PlayerSettingStatus.OK) {
                             //
@@ -248,7 +248,7 @@ namespace Kharbga {
                             else
                                 this.defenderScore++;
                         }
-                      //  position[square] = fenToPieceCode(row[j]);
+                        //  position[square] = fenToPieceCode(row[j]);
                         colIndex++;
                     }
                 }
@@ -270,7 +270,7 @@ namespace Kharbga {
          * Defender pieces are in lower case.
          * @param piece - the piece code
          */
-        private isDefenderPiece(piece: string): boolean{          
+        private isDefenderPiece(piece: string): boolean {
             if (piece.toLowerCase() === piece)
                 return true;
             else
@@ -281,7 +281,7 @@ namespace Kharbga {
          * @param fen - the fen string
          */
         // TODO: this whole function could probably be replaced with a single regex
-        validFen(fen:string ) : boolean {
+        validFen(fen: string): boolean {
             if (typeof fen !== 'string') return false;
 
             // cut off any move, castling, etc info from the end
@@ -306,7 +306,7 @@ namespace Kharbga {
         /**
          * @returns true if the game is in setting mode. false, otherwise
          */
-        public isInSettingMode() : boolean {
+        public isInSettingMode(): boolean {
             return this.state === GameState.Setting;
         }
 
@@ -325,14 +325,14 @@ namespace Kharbga {
             this.id = id;
         }
 
-        
+
 
         /**
          * sets up the game with the given game state
          * @param serverGameState  -- the game state
          * @param delayAfterEachMove -- delay after making the move in msec
          */
-        public setupWith(serverGameState: ServerGameState, delayAfterEachMove: number = 0) : boolean{
+        public setupWith(serverGameState: ServerGameState, delayAfterEachMove: number = 0): boolean {
             let ret = false;
 
             this.init();
@@ -341,7 +341,7 @@ namespace Kharbga {
                 this.state = GameState.Setting;
 
             // sort by the move number
-            var sortedMoves = serverGameState.Moves.sort((a, b) => {      
+            var sortedMoves = serverGameState.Moves.sort((a, b) => {
                 // add check for dates
                 if (a.Number > b.Number) {
                     return 1;
@@ -350,20 +350,20 @@ namespace Kharbga {
                 if (a.Number < b.Number) {
                     return -1;
                 }
-                return 0;               
+                return 0;
             });
-            
+
 
             for (let move of serverGameState.Moves) {
                 if (move.IsSetting) {
-                    
+
                     this.processSetting(move.To);
-                }       
+                }
             }
 
             for (let move of serverGameState.Moves) {
                 if (!move.IsSetting) {
-                    this.processMove(move.From,move.To,move.Resigned,move.ExchangeRequest);
+                    this.processMove(move.From, move.To, move.Resigned, move.ExchangeRequest);
                 }
             }
 
@@ -374,10 +374,10 @@ namespace Kharbga {
             return ret;
         }
 
-    /*
-        private timedProcessMove(setting: boolean, moveFrom: string, moveTo: string, moveResigned: boolean, moveExchangeRequest: boolean) :boolean {
-            
-        } */
+        /*
+            private timedProcessMove(setting: boolean, moveFrom: string, moveTo: string, moveResigned: boolean, moveExchangeRequest: boolean) :boolean {
+                
+            } */
 
         /**
          * @returns the game state see GameState doc
@@ -394,13 +394,13 @@ namespace Kharbga {
             var eventData = new GameEventData(this, this.getCurrentPlayer());
             this.gameEvents.newGameStartedEvent(eventData);
             this.gameEvents.newPlayerTurnEvent(eventData);
-         }
+        }
 
         /**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
          * @summary indicates whether the game is done or not
          */
         public game_over(): boolean {
-            if (this.state === GameState.Pending || this.state === GameState.Setting || this.state === GameState.Moving )
+            if (this.state === GameState.Pending || this.state === GameState.Setting || this.state === GameState.Moving)
                 return false;
             else
                 return true;
@@ -409,7 +409,7 @@ namespace Kharbga {
         * @summary indicates whether the game is done or not
         */
         public game_setting_over(): boolean {
-            if (this.state === GameState.Setting )
+            if (this.state === GameState.Setting)
                 return false;
             else return true;
         }
@@ -422,6 +422,51 @@ namespace Kharbga {
             if (this.currentPlayer.IsAttacker()) return 'a';
             else return 'd';
         }
+
+        /**
+         * Checks if the cell is valid and empty
+         * @param cellId
+         */
+        public is_empty(cellId: string): boolean {
+            let cell = this.board.GetCellById(cellId);
+            if (cell!= null)
+                return cell.IsEmpty();
+
+            else
+            {
+                // console.log("");
+                return false;
+            }
+
+        }
+        /**
+          * Checks if the cell is valid
+          * @param cellId
+          */
+        public is_valid(cellId: string): boolean {
+            let cell = this.board.GetCellById(cellId);
+            if (cell != null)
+                return true;
+            else {
+                 return false;
+            }
+
+        }
+
+        /**
+       * Checks if the cell is valid and occupied by current player
+       * @param cellId
+       */
+        public is_occupied_current_player(cellId: string): boolean {
+            let cell = this.board.GetCellById(cellId);
+            if (cell != null)
+                return cell.IsOccupiedBy(this.currentPlayer);
+            else {
+                return false;
+            }
+
+        }
+
 
         /**
          * checks the game status and issue the appropriate events

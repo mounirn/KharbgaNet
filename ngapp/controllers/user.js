@@ -37,13 +37,13 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 data: $scope.loginData
             }).then(function (response) {
                 localStorageService.set('sessionData', response.data.session);
+                $state.go('Play', {})
                 setupUser(response.data.session);
 
                 $scope.message = "";     
        
                 $scope.invalidLogin = false;
                 $scope.message = "";
-                setTimeout(function () { $state.go('Play', {}); }, 1);              
 
             }, function (response) {
                    if (response.status === 404 || response.status === 400)
@@ -64,13 +64,17 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 $scope.user.lastAccess = sessionData.LastAccess;
                 $scope.user.orgId = sessionData.ClientId;
                 $scope.user.isAdmin = sessionData.IsAdmin;
+              //  $state.reload();
+                $.nsAppKharbga.setSessionId(sessionData.SessionId);
+
             }   
             else {
 
                 $scope.user = { name: "", sessionId: "", currentGameId: "", role: "", loggedIn: false, lastAccess: '', isAdmin: false, orgId: 0 };
                 $state.go('Login', {});
                 $location.path(loginUrl);
-               //  $state.reload(); 
+              //  $state.reload(); 
+                $.nsAppKharbga.setSessionId('');
             }
 
             $rootScope.user = $scope.user;

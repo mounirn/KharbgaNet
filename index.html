@@ -84,12 +84,12 @@
                           <li data-ng-hide="user.loggedIn"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span>Login</a></li>
                           <li data-ng-show="user.loggedIn"><a  href="" data-ng-click="logout()"><span class="glyphicon glyphicon-user"></span>Logout</a></li>
                       </ul>
-                      <p id="account-welcome" data-ng-show="user.loggedIn" class="navbar-text navbar-right text-success"><a ui-sref="profile">Welcome {{user.name}}</a></p>
+                      <p id="account-welcome" data-ng-show="user.loggedIn" class="navbar-text navbar-right text-success"><a href="" ui-sref="profile">Welcome <span data-ng-bind="user.name"></span></a></p>
                       
                   </div>
               </div>
           </nav>
-          <h2>Welcome to Kharbga.Net</h2>
+          <h2>Welcome <strong>{{user.name}}</strong> to Kharbga.Net</h2>
           <ui-view></ui-view>
           <footer>
               <div class="container row">

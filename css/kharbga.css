@@ -106,7 +106,7 @@
     box-shadow: inset 0 0 2px 2px orange;
 }
 
-highlight-move {
+.highlight-move {
     -webkit-box-shadow: inset 0 0 3px 3px yellow;
     -moz-box-shadow: inset 0 0 3px 3px yellow;
     box-shadow: inset 0 0 3px 3px yellow;

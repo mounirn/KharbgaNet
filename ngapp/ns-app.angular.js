@@ -80,8 +80,8 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
 /* App Constants */
 nsApp.constant('appConstants', {
     Settings: {
-        appName:  "Kharbga",
-        ApiServiceBaseUri: "http://localhost/NS.API/",
+        appName: "Kharbga",
+        ApiServiceBaseUri: nsApiClient.baseURI,
         DefaultUrl: '/play', 
         ClientId: 'nsAppKharbga'
     },

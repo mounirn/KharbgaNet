@@ -438,6 +438,11 @@
                 cfg.draggable = false;
             }
 
+            // default for orientation is white
+            if (cfg.dragAndDropOk !== true) {
+                cfg.dragAndDropOk = false;
+            }
+
             // default for dropOffBoard is 'snapback'
             if (cfg.dropOffBoard !== 'trash') {
                 cfg.dropOffBoard = 'snapback';
@@ -1182,6 +1187,7 @@
                     deepCopy(CURRENT_POSITION), CURRENT_ORIENTATION) === false) {
                 return;
             }
+           
 
             // set state
             DRAGGING_A_PIECE = true;
@@ -1511,14 +1517,28 @@
             if (cfg.draggable !== true) return;
 
             var square = $(this).attr('data-square');
-
-            // no piece on this square
-            if (validSquare(square) !== true ||
-                CURRENT_POSITION.hasOwnProperty(square) !== true) {
+            var piece = CURRENT_POSITION[square];
+            // if the selected square has a piece on it
+            if (isTouchDevice() || cfg.dragAndDropOk == false) {
+                // MN 
+                // call custom onClick function - do not use drag and drop
+           /*     if (typeof cfg.onClick === 'function' &&
+                    cfg.onClick(square, CURRENT_POSITION[square],
+                        deepCopy(CURRENT_POSITION), CURRENT_ORIENTATION) === false) {
+                    //  return;
+                }
+            */
                 return;
             }
-
-            beginDraggingPiece(square, CURRENT_POSITION[square], e.pageX, e.pageY);
+            else {
+                // no piece on this square
+                if (validSquare(square) !== true ||
+                    CURRENT_POSITION.hasOwnProperty(square) !== true) {
+                    return;
+                }
+                // allow begin drag if not a touch device and allowed by configuration
+                beginDraggingPiece(square, CURRENT_POSITION[square], e.pageX, e.pageY);
+            }
         }
 
         function touchstartSquare(e) {
@@ -1533,9 +1553,22 @@
                 return;
             }
 
-            e = e.originalEvent;
-            beginDraggingPiece(square, CURRENT_POSITION[square],
-                e.changedTouches[0].pageX, e.changedTouches[0].pageY);
+            // call the onClick event
+
+            // MN 
+            // their custom onClick function 
+            if (typeof cfg.onClick === 'function' &&
+                cfg.onClick(square, CURRENT_POSITION[square],
+                    deepCopy(CURRENT_POSITION), CURRENT_ORIENTATION) === false) {
+                //  return;
+            }
+//            else {
+//  MN -DISABLE DRAP AND DROP FOR touch devices
+//                e = e.originalEvent;
+//                beginDraggingPiece(square, CURRENT_POSITION[square],
+//                    e.changedTouches[0].pageX, e.changedTouches[0].pageY);
+ //           }
+
         }
 
         function mousedownSparePiece(e) {
@@ -1647,11 +1680,41 @@
                 CURRENT_ORIENTATION);
         }
 
+
+        /**
+      * Handler for clicking a cell indicating selecting the square or a the piece for setting or move
+      * @param {any} e  -- the cell event
+      */
+        function clickSquare(e) {
+            // do not fire this event if we are dragging a piece
+            // NOTE: this should never happen, but it's a safeguard
+            if (DRAGGING_A_PIECE !== false) return;
+
+            // get the square
+            var square = $(e.currentTarget).attr('data-square');
+
+            // NOTE: this should never happen; defensive
+            if (validSquare(square) !== true) return;
+
+            // get the piece on this square
+            var piece = false;
+            if (CURRENT_POSITION.hasOwnProperty(square) === true) {
+                piece = CURRENT_POSITION[square];
+            }
+
+            if (cfg.hasOwnProperty('onClick') !== true ||
+                typeof cfg.onClick !== 'function') return;
+
+            // execute their function
+            cfg.onClick(square, piece, deepCopy(CURRENT_POSITION),
+                CURRENT_ORIENTATION);
+        }
+
         /**
          * Handler for double clicking a cell indicating selecting the square or a the piece for setting or exchange
          * @param {any} e  -- the cell event
          */
-        function ondoubleclickSquare(e) {
+        function doubleclickSquare(e) {
             // do not fire this event if we are dragging a piece
             // NOTE: this should never happen, but it's a safeguard
             if (DRAGGING_A_PIECE !== false) return;
@@ -1669,10 +1732,10 @@
             }
 
             if (cfg.hasOwnProperty('onDoubleClick') !== true ||
-                typeof cfg.onSelected !== 'function') return;
+                typeof cfg.onDoubleClick !== 'function') return;
 
             // execute their function
-            cfg.onSelected(square, piece, deepCopy(CURRENT_POSITION),
+            cfg.onDoubleClick(square, piece, deepCopy(CURRENT_POSITION),
                 CURRENT_ORIENTATION);
         }
 
@@ -1694,7 +1757,8 @@
             boardEl.on('mouseleave', '.' + CSS.square, mouseleaveSquare);
 
             // double click handler -- MN
-            boardEl.on('ondblclick', '.' + CSS.square, ondoubleclickSquare);
+            boardEl.on('click', '.' + CSS.square, clickSquare);
+            boardEl.on('dblclick', '.' + CSS.square, doubleclickSquare);
 
             // IE doesn't like the events on the window object, but other browsers
             // perform better that way
