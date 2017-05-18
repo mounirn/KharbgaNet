@@ -1,24 +1,66 @@
-<div data-ng-controller="userController">
-    <div id="account-message" data-ng-bind="message"></div>
-    <div id="account-info-panel" class="panel panel-info">
-        <div class="panel-heading">My Account Information</div>
-        <div class="panel-body">
-            <table class="table table-user-information">
-                <tbody>
-                    <tr>
-                        <th>Name</th>
-                        <td><span id="account-name" data-ng-bind="user.name"></span></td>
-                    </tr>            
-                    <tr>
-                        <th>Active Game ID</th>
-                        <td><span id="account-game-id" data-ng-bind="user.currentGameId"></span></td>
-                    </tr>
-                    <tr>
-                        <th>Role</th>
-                        <td><span id="account-game-role" data-ng-bind="user.role"></span></td>
-                    </tr>
-                </tbody>
-            </table>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3>View and Manage your User Profile</h3>
+    </div>
+    <div class="panel-body">
+
+        <div id="account-message" data-ng-bind="message"></div>
+        <ul id="main-tabs" class="nav nav-tabs hidden">
+            <li class="active" ng-class="{active: true}"><a data-toggle="tab" href="#myAccountInfo">My Account</a></li>
+            <li ng-class="{active: false}"><a data-toggle="tab" href="#myTeam">My Team</a></li>
+
+        </ul>
+        <div class="xtab-content">
+            <!-- tabs-->
+            <div id="myAccountInfo" class="xtab-pane fade in active">
+                <div id="account-info-panel" class="panel panel-info" data-ng-controller="userController">
+                    <div class="panel-heading">My Account </div>
+                    <div class="panel-body">
+                        <div class="table table-user-information">
+                            <dl class="dl-horizontal">
+                                <dt>Screen Name</dt>
+                                <dd><span id="account-name" data-ng-bind="user.name"></span></dd>
+
+                                <dt>Email</dt>
+                                <dd><span id="account-name" data-ng-bind="sessionData.emailAddress"></span></dd>
+
+                                <dt>Active Game ID</dt>
+                                <dd><span id="account-game-id" data-ng-bind="user.currentGame.ID"></span></dd>
+
+                                <dt>Role</dt>
+                                <dd><span id="account-game-role" data-ng-bind="user.role"></span></dd>
+
+                                <dt>My Team ID</dt>
+                                <dd><span id="account-game-role" data-ng-bind="sessionData.clientId"></span></dd>
+
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="myTeam" class="xtab-pane fade in">
+                <div id="account-info-panel" class="panel panel-info" data-ng-controller="userController">
+                    <div class="panel-heading">My Team</div>
+                    <div class="panel-body">
+                        <div class="table table-user-information">
+                            <dl class="dl-horizontal">
+                                <dt>Name</dt>
+                                <dd><span data-ng-bind="user.team.name"></span></dd>
+
+                                <dt>Email</dt>
+                                <dd><span data-ng-bind="user.team.emailAddress"></span></dd>
+
+                                <dt>URL</dt>
+                                <dd><span data-ng-bind="user.team.url"></span></dd>
+
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
+

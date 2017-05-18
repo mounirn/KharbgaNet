@@ -24,6 +24,8 @@ nsApp.controller('helpController', ['$scope', '$http', 'appConstants', function 
     };
 
 
+
+
     // refresh
     _refreshMessages();
 

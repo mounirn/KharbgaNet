@@ -26,12 +26,12 @@
                                 </tr>
                             </thead>
                             <tbody>                   
-                                <tr data-ng-repeat="c in connections |filter:{ Connected: true } | orderBy : myOrderBy">
-                                    <td>{{c.ID}}</td>
-                                    <td>{{c.UserName }}</td>
-                                    <td>{{c.Connected? 'Yes' : 'No' }}</td>
-                                    <td>{{c.CreatedOn}}</td>
-                                    <td>{{c.IPAddress}}</td>
+                                <tr data-ng-repeat="c in connections | filter:{ connected: true } | orderBy : myOrderBy">
+                                    <td>{{c.id}}</td>
+                                    <td>{{c.userName }}</td>
+                                    <td>{{c.connected? 'Yes' : 'No' }}</td>
+                                    <td>{{c.createdOn}}</td>
+                                    <td>{{c.ipAddress}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -65,11 +65,11 @@
                             </thead>
                             <tbody>
                                 <tr data-ng-repeat="item in players | orderBy : myOrderBy ">
-                                    <td>{{item.Name}}</td>
-                                    <td>{{item.IsSpectator? 'Yes': 'No' }}</td>
-                                    <td>{{item.IsAttacker? 'Yes': 'No' }}</td>
-                                    <td>{{item.CurrentGameId}}</td>
-                                    <td>{{item.CurrentConnection !=null? item.CurrentConnection.ID: '' }}</td>
+                                    <td>{{item.name}}</td>
+                                    <td>{{item.isSpectator? 'Yes': 'No' }}</td>
+                                    <td>{{item.isAttacker? 'Yes': 'No' }}</td>
+                                    <td>{{item.currentGameId}}</td>
+                                    <td>{{item.currentConnection !=null? item.currentConnection.id: '' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -93,26 +93,26 @@
                 <table data-ng-show="hasGames" class='table table-responsive'>
                     <thead>
                         <tr>
-                            <th ng-click="orderByMe('ID')" >ID
+                            <th ng-click="orderByMe('id')" >ID
                                 <span class="fa fa-sort columnSortIcons" ng-if="reverse"></span>
                                 <span class="fa fa-sort-down columnSortIcons" ng-if="!(reverse)"></span>
                                 <span class="fa fa-sort-up columnSortIcons" ng-if="reverse"></span>
                             </th>
-                            <th ng-click="orderByMe('AttackerName')" >Attacker</th>
-                            <th ng-click="orderByMe('DefenderName')" >Defender</th>
-                            <th ng-click="orderByMe('Status')" >Status</th>
-                            <th ng-click="orderByMe('State')" >State</th>
-                            <th ng-click="orderByMe('FEN')" >Current FEN</th>
+                            <th ng-click="orderByMe('attackerName')" >Attacker</th>
+                            <th ng-click="orderByMe('defenderName')" >Defender</th>
+                            <th ng-click="orderByMe('status')" >Status</th>
+                            <th ng-click="orderByMe('state')" >State</th>
+                            <th ng-click="orderByMe('fen')" >Current FEN</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr data-ng-repeat="item in games | orderBy:myOrderBy:reverse" id="tr{{item.ID}}">
-                            <td>{{item.ID}}</td>
-                            <td>{{item.AttackerName }}</td>
-                            <td>{{item.DefenderName }}</td>
-                            <td>{{item.Status | toStatusString }}</td>
-                            <td>{{item.State | toStateString }}</td>
-                            <td>{{item.FEN }}</td>
+                            <td>{{item.id}}</td>
+                            <td>{{item.attackerName }}</td>
+                            <td>{{item.defenderName }}</td>
+                            <td>{{item.status | toStatusString }}</td>
+                            <td>{{item.state | toStateString }}</td>
+                            <td>{{item.fen }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -1554,7 +1554,7 @@
             }
 
             // call the onClick event
-
+/*
             // MN 
             // their custom onClick function 
             if (typeof cfg.onClick === 'function' &&
@@ -1568,7 +1568,7 @@
 //                beginDraggingPiece(square, CURRENT_POSITION[square],
 //                    e.changedTouches[0].pageX, e.changedTouches[0].pageY);
  //           }
-
+            */
         }
 
         function mousedownSparePiece(e) {
@@ -1577,7 +1577,7 @@
 
             var piece = $(this).attr('data-piece');
 
-            beginDraggingPiece('spare', piece, e.pageX, e.pageY);
+      //      beginDraggingPiece('spare', piece, e.pageX, e.pageY);
         }
 
         function touchstartSparePiece(e) {
@@ -1587,8 +1587,8 @@
             var piece = $(this).attr('data-piece');
 
             e = e.originalEvent;
-            beginDraggingPiece('spare', piece,
-                e.changedTouches[0].pageX, e.changedTouches[0].pageY);
+      //      beginDraggingPiece('spare', piece,
+      //           e.changedTouches[0].pageX, e.changedTouches[0].pageY);
         }
 
         function mousemoveWindow(e) {

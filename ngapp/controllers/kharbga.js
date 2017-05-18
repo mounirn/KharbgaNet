@@ -8,7 +8,7 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
 
     $scope.sessionData = localStorageService.get('sessionData');
     if ($scope.sessionData!= null)
-        $.nsAppKharbga.setSessionId($scope.sessionData.SessionId);
+        $.nsAppKharbga.setSessionId($scope.sessionData.sessionId);
     else
         $.nsAppKharbga.setSessionId("");
 
@@ -65,14 +65,10 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
         $.nsAppKharbga.postMessage(msg);
     };
 
-    setTimeout(function () {
+ /*   setTimeout(function () {
         _refreshGames();
-
-        $scope.newGame($rootScope.$stateParams);
-    }, 2000);  // run this after completing loading
-
-    if ($stateParams != null) {
-        
-    }
+   
+    }, 1000);  // run this after completing loading
+*/
 
 }]);

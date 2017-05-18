@@ -1,0 +1,83 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">Contact Us</div>
+    <div class="panel-body">
+        <h1>Send Message</h1>
+        <h2>
+            <span class="solution">To:</span> Nouri Solutions, LLC
+            <span class="spanright">
+                <span class="solution">Time:</span> 2017-05-17 15:27
+            </span>
+        </h2>
+        <section class="center">
+            <div id="processingStatus"></div>
+            <div id="contactUsForm" class="centeredForm" title="Send Message" style="min-width:400px;max-width:500px;">
+                <form action="/v2/message/send/1" method="post">
+                    <input name="__RequestVerificationToken" type="hidden" value="NUiqV4rsyETqgznXZt3UdPXtfJooGPF4jHHpqFvrHbUYtOZ2MuREKGucUpdr9RMjm6e3sNNT4lLKssz66MZW2dXysJRJ-ccBA0UTSuxDmDg1" /><div class="validation-summary-valid" data-valmsg-summary="true">
+                        <ul>
+                            <li style="display:none"></li>
+                        </ul>
+                    </div>        <fieldset>
+                        <legend>Enter your contact information</legend>
+                        <div class="editor-label">
+                            <label for="FromFirstName">First Name</label>
+                        </div>
+                        <div class="editor-field">
+                            <input class="text-box&#32;single-line" data-val="true" data-val-length="The&#32;field&#32;First&#32;Name&#32;must&#32;be&#32;a&#32;string&#32;with&#32;a&#32;maximum&#32;length&#32;of&#32;50." data-val-length-max="50" data-val-required="The&#32;First&#32;Name&#32;field&#32;is&#32;required." id="FromFirstName" name="FromFirstName" type="text" value="" />
+                            <span class="field-validation-valid" data-valmsg-for="FromFirstName" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="editor-label">
+                            <label for="FromLastName">Last Name</label>
+                        </div>
+                        <div class="editor-field">
+                            <input class="text-box&#32;single-line" data-val="true" data-val-length="The&#32;field&#32;Last&#32;Name&#32;must&#32;be&#32;a&#32;string&#32;with&#32;a&#32;maximum&#32;length&#32;of&#32;50." data-val-length-max="50" data-val-required="The&#32;Last&#32;Name&#32;field&#32;is&#32;required." id="FromLastName" name="FromLastName" type="text" value="" />
+                            <span class="field-validation-valid" data-valmsg-for="FromLastName" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="editor-label">
+                            <label for="FromEmail">Email Address</label>
+                        </div>
+                        <div class="editor-field">
+                            <input class="text-box&#32;single-line" data-val="true" data-val-length="The&#32;field&#32;Email&#32;Address&#32;must&#32;be&#32;a&#32;string&#32;with&#32;a&#32;maximum&#32;length&#32;of&#32;70." data-val-length-max="70" data-val-required="The&#32;Email&#32;Address&#32;field&#32;is&#32;required." id="FromEmail" name="FromEmail" type="email" value="" />
+                            <span class="field-validation-valid" data-valmsg-for="FromEmail" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="editor-label">
+                            <label for="FromPhone">Phone Number</label>
+                        </div>
+                        <div class="editor-field">
+                            <input class="text-box&#32;single-line" data-val="true" data-val-length="The&#32;field&#32;Phone&#32;Number&#32;must&#32;be&#32;a&#32;string&#32;with&#32;a&#32;maximum&#32;length&#32;of&#32;16." data-val-length-max="16" data-val-required="The&#32;Phone&#32;Number&#32;field&#32;is&#32;required." id="FromPhone" name="FromPhone" type="tel" value="" />
+                            <span class="field-validation-valid" data-valmsg-for="FromPhone" data-valmsg-replace="true"></span>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Enter your message</legend>
+
+                        <div class="fieldsRow">
+                            <label for="Subject">Subject</label><br />
+                            <select data-val="true" data-val-required="The&#32;Subject&#32;field&#32;is&#32;required." id="Subject" name="Subject">
+                                <option value="0">General Comment</option>
+                                <option value="1">Request a new application</option>
+                                <option value="3">Provide feedback on this web application</option>
+                                <option value="2">Request a change to an existing application</option>
+                            </select>
+                            <span class="field-validation-valid" data-valmsg-for="Subject" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="fieldsRow">
+                            <label for="Message">Message</label><br />
+
+                            <textarea cols="20" data-val="true" data-val-length="The&#32;field&#32;Message&#32;must&#32;be&#32;a&#32;string&#32;with&#32;a&#32;maximum&#32;length&#32;of&#32;512." data-val-length-max="512" data-val-required="The&#32;Message&#32;field&#32;is&#32;required." id="Message" name="Message" rows="2">
+</textarea>
+                            <span class="field-validation-valid" data-valmsg-for="Message" data-valmsg-replace="true"></span>
+                        </div>
+                    </fieldset>
+                    <p class="center">
+                        <input type="submit" value="Send" />
+
+                    </p>
+                </form>
+
+            </div>
+        </section>
+
+    </div>
+</div>

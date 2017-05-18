@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE HTML>
-<html data-ng-app="nsApp" >
+<html data-ng-app="nsApp" data-ng-controller="mainController" >
   <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -22,21 +22,21 @@
     </style>
       <!--[if lt IE 10]>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script type="text/javascript" src="js/lib/rem.min.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nwmatcher/1.2.5/nwmatcher.min.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script>
-        <script type="text/javascript" src="js/nu-ie.js"></script>
     <![endif]-->
 
-    <script src="./js/angular.js"></script>
+  <!-- Local version <script src="./js/angular.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="./js/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
       <script type="text/javascript">
             angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
       </script>
   </head>
-  <body data-ng-controller="sessionController">
+  <body >
       <div class="container-fluid">
           <nav class="navbar navbar-inverse" >
               <div class="container-fluid">
@@ -46,7 +46,7 @@
                           <span class="icon-bar"></span>
                           <span class="icon-bar"></span>
                       </button>
-                      <a class="navbar-brand" ui-sref="home">Kharbga.Net</a>
+                      <a href="" class="navbar-brand" ui-sref="Home">Kharbga.Net</a>
                   </div>
                   <div class="collapse navbar-collapse" id="myNavbar">
                       <ul class="nav navbar-nav">
@@ -56,15 +56,14 @@
                                   <span class="caret"></span>
                               </a>
                               <ul class="dropdown-menu">
-                                  <li><a  href="" data-ng-click="play({asAttacker:true,againstComputer:true})">As Attacker w/ Computer</a></li>
-                                  <li><a href=""  data-ng-click="Play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
-                                  <li><a  href="" data-ng-click="Play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
-                                  <li><a  href="" data-ng-click="Play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
+                                  <li><a href="" data-ng-click="play({asAttacker:true,againstComputer:true})">As Attacker w/ Computer</a></li>
+                                  <li><a href=""  data-ng-click="play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
+                                  <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
+                                  <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
                               </ul>
                           </li>
 
-                          <li><a data-ui-sref="Help" >Rules</a></li>
-
+                          <li><a data-ui-sref="Rules" >Rules</a></li>
                           <li class="dropdown">
                               <a ui-sref="about" class="dropdown-toggle" data-toggle="dropdown" >
                                   System
@@ -77,23 +76,33 @@
                            
                               </ul>
                           </li>
-
-                      </ul>
+                      </ul>    
+                    <!--  <button class="btn btn-default navbar-btn" data-ui-sref="Rules">Rules</button> -->
                       <ul class="nav navbar-nav navbar-right">
-                          <li data-ng-hide="user.loggedIn"><a ui-sref="Register" ><span class="glyphicon glyphicon-user"></span>Sign Up</a></li>
-                          <li data-ng-hide="user.loggedIn"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span>Login</a></li>
-                          <li data-ng-show="user.loggedIn"><a  href="" data-ng-click="logout()"><span class="glyphicon glyphicon-user"></span>Logout</a></li>
+                          <li data-ng-hide="user.loggedIn"><a ui-sref="Register" ><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                          <li data-ng-hide="user.loggedIn"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                          <li class="dropdown" data-ng-show="user.loggedIn">
+
+                              <a href="" ui-sref="profile" data-toggle="dropdown" class="dropdown-toggle">
+                                  <span class="glyphicon glyphicon-user"></span>Welcome <span data-ng-bind="user.name"></span>
+                                  <span class="caret"></span>
+                              </a>
+                              <ul class="dropdown-menu">
+                                  <li><a href="" data-ng-click="logout()">Logout</a></li>
+                                  <li><a href="" ui-sref="My Profile">My Profile</a></li>
+                              </ul>
+                          </li>
+       
                       </ul>
-                      <p id="account-welcome" data-ng-show="user.loggedIn" class="navbar-text navbar-right text-success"><a href="" ui-sref="profile">Welcome <span data-ng-bind="user.name"></span></a></p>
-                      
+                  
                   </div>
               </div>
           </nav>
-          <h2>Welcome <strong>{{user.name}}</strong> to Kharbga.Net</h2>
-          <ui-view></ui-view>
+            <ui-view></ui-view>
           <footer>
               <div class="container row">
                   <div class="col-sm-9">
+                      <a href="" ui-sref="Terms">Terms and Conditions</a> | <a href="" ui-sref="Privacy">Privacy Policy</a> | <a href="" ui-sref="Contact Us">Contact Us</a>
                   </div>
                   <div class="col-sm-3">
                       <strong>Developed by <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
@@ -102,15 +111,19 @@
               <hr />
               <hr>
               <pre>
-      <!-- Here's some values to keep an eye on in the sample in order to understand $state and $stateParams -->
+      <!-- Here's some values to keep an eye on in the sample in order to understand $state and $stateParams 
       $state = {{$state.current.name}}
       $stateParams = {{$stateParams}}
-      $state full url = {{ $state.$current.url.source }}
+      $state full url = {{ $state.$current.url.source }}-->
       <!-- $state.$current is not a public api, we are using it to
-           display the full url for learning purposes-->
+           display the full url for learning purposes -->
 
-       $scope.user name = {{$scope.user.name}}
-       $scope.user isLoggedIn = {{$scope.user.isLoggedIn}}
+       $scope.user name = {{ user.name}}
+       $scope.user isLoggedIn = {{user.loggedIn ? 'Yes' : 'No'}}
+       $scope.user team = {{ user.team}}
+       $scope.user.orgId = {{ user.orgId}}
+       $scope.user.currentGame= {{ user.currentGame}}
+       $scope.user.currentState = {{ user.currentState}}
     </pre>
           </footer>
 
@@ -124,6 +137,8 @@
       <!-- angular-->
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js">  </script>
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.min.js"> </script>
+
+
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <script src="./js/angular-ui-router.js"></script>   
       <script src="./js/angular-local-storage.js"></script>     
@@ -131,11 +146,10 @@
       <!-- signalR -->
       <script src="./js/jquery.signalR-2.2.1.js"></script>
   
-        <!-- TODO TODO -->
-        <script src="http://localhost/NS.API/signalR/hubs"></script>  
-        <!-- convert to the real URL in production
-        <script src="http://api.nourisolutions.com/signalR/hubs"></script>
-       -->
+        <!--  DEV
+        <script src="http://localhost/NS.API/signalR/hubs"></script>  -->
+        <!-- production -->
+        <script src="http://api.nourisolutions.com/signalR/hubs"></script>    
       <script src="./js/ns-app.signalR.js"></script>      
       <!-- Date lib-->
       <script src="./js/moment.min.js"></script>
@@ -155,7 +169,6 @@
       <script src="./ngapp/controllers/user.js"></script>
       <script src="./ngapp/controllers/kharbga.js"></script>
       <script src="./ngapp/controllers/system.js"></script>
-      <script src="./ngapp/controllers/session.js"></script>
       <script src="./ngapp/controllers/help.js"></script>
       <script>
           $(document).ready(function () {

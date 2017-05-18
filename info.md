@@ -3,7 +3,6 @@
 ---
 * resolve the issue when the game is won by abondon -- record the move to the server
 * Save game state in the server
-* Add logic to detect condition when attacker can not move at the begining of the game (automatic loss - bad setting)
 * Loading a game after refresh is causing an error
 * Abiity to replay with a delay 
 * Ability to start a game with options (w/ computer, as Attacker,as Defender). 
@@ -110,6 +109,8 @@ Features:
   10. Enforced the rule that a player must continue moving the same piece until no capture is possible
   11. UI enhacements to the board cell 
   12. Messages improvements indicating which move is required.
+  13. Added logic to detect condition when attacker can not move at the begining of the game (automatic loss - bad setting)
+
 
 # Compiling TypeScript 
 - tsc    (src directory)

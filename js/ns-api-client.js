@@ -341,6 +341,41 @@ function NSAppClient(baseURI) {
                 }
             });
         };
+        this.getClientInfo = function (sessionId, callback) {
+
+            var queryString = {
+            };
+            var uri = this.serviceBaseURI + "my";
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                data: queryString,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+  
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getClientInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getClientInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getClientInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+        };
     }
 
     this.clientService = new ClientService(this.baseURI);
@@ -353,7 +388,7 @@ function NSAppClient(baseURI) {
 var debugURI = "http://localhost:3121/";
 var prodURI = "http://api.nourisolutions.com/";
 var devURI = "http://localhost/NS.API/";
-var nsApiClient = new NSAppClient(devURI);
+var nsApiClient = new NSAppClient(debugURI);
 
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 

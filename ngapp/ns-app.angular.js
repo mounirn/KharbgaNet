@@ -1,4 +1,4 @@
-var nsApp = angular.module('nsApp', ['ui.router', 'LocalStorageModule']);
+var nsApp = angular.module('nsApp', ['ui.router', 'LocalStorageModule', 'ui.bootstrap']);
 /* States */
 nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider', '$urlRouterProvider',
     function ($locationProvider, $urlMatcherFactoryProvider, $stateProvider, $urlRouterProvider) {
@@ -8,7 +8,7 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
     var homeState = {
         name: 'Home',
         url: '/home',
-        templateUrl: 'ngapp/views/kharbga.html'
+        templateUrl: 'ngapp/views/home.html'
     }
     var systemState = {
         name: 'System',
@@ -29,6 +29,12 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
         name: 'My Profile',
         url: '/user/profile',
         templateUrl: 'ngapp/views/profile.html'
+    }
+
+    var logoutState = {
+        name: 'Logout',
+        url: '/user/logout',
+        templateUrl: 'ngapp/views/logout.html'
     }
 
     var registerState = {
@@ -57,9 +63,34 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
 
     var helpState = {
         name: 'Help',
-        url: '^/help',
+        url: '/help',
         templateUrl: 'ngapp/views/help.html'
     }
+
+    var rulesState = {
+        name: 'Rules',
+        url: '/rules',
+        templateUrl: 'ngapp/views/rules.html'
+    }
+
+    var contactUsState = {
+        name: 'Contact Us',
+        url: '/user/contactUs',
+        templateUrl: 'ngapp/views/contactUs.html'
+    }
+
+    var termsState = {
+        name: 'Terms',
+        url: '/user/terms',
+        templateUrl: 'ngapp/views/terms.html'
+    }
+    var privacyState = {
+        name: 'Privacy',
+        url: '/user/privacy',
+        templateUrl: 'ngapp/views/privacy.html'
+    }
+
+
 
 
     $stateProvider.state(homeState);
@@ -72,6 +103,11 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
     $stateProvider.state(playState);
     $stateProvider.state(helpState);
     $stateProvider.state(profileState);
+    $stateProvider.state(rulesState);
+    $stateProvider.state(logoutState);
+    $stateProvider.state(contactUsState);
+    $stateProvider.state(termsState);
+    $stateProvider.state(privacyState);
 
     $urlRouterProvider.otherwise('/home');
 

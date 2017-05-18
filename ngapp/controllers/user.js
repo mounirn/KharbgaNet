@@ -1,8 +1,12 @@
 /* login controller */
-nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window',
-    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window) {
+nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         document.title = "Login/Register";
         $scope.message = "";
+        $scope.sessionData = localStorageService.get('sessionData');
+        $scope.team = {};
+
+        $log.info("userController started");
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
 
@@ -11,11 +15,11 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
         var loginUrl = "/user/login";
         var logoutUrl = "/user/logout";
 
-        $scope.loginData = {
-            userName: "",
-            password: "",
-            useRefreshTokens: false
-        };
+        $scope.loginData = { };
+
+        $scope.registerData = {};
+
+        $scope.teamList = [];
 
        // $scope.errorMessage = "";
 
@@ -36,14 +40,11 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 },
                 data: $scope.loginData
             }).then(function (response) {
-                localStorageService.set('sessionData', response.data.session);
-                $state.go('Play', {})
-                setupUser(response.data.session);
-
-                $scope.message = "";     
-       
+                localStorageService.set('sessionData', response.data.session); 
+                $scope.message = "";           
                 $scope.invalidLogin = false;
-                $scope.message = "";
+
+               setupUser(response.data.session);
 
             }, function (response) {
                    if (response.status === 404 || response.status === 400)
@@ -55,26 +56,72 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
             });
         };
 
-        var setupUser = function (sessionData) {
-            if (sessionData != null && sessionData.IsActive) {
-                $scope.user.loggedIn = true; 
-                $scope.user.name = sessionData.FullName;
-              //  $scope.user.sessionId = sessionData.SessionId;
-                $scope.user.role = sessionData.MainRole;
-                $scope.user.lastAccess = sessionData.LastAccess;
-                $scope.user.orgId = sessionData.ClientId;
-                $scope.user.isAdmin = sessionData.IsAdmin;
-              //  $state.reload();
-                $.nsAppKharbga.setSessionId(sessionData.SessionId);
 
+        $scope.register = function () {
+
+            if ($scope.registerForm.$invalid) {
+                $scope.invalidInput = true;
+                return;
+            }
+            $scope.invalidInput = false;
+            $scope.message = "Processing...";
+
+            $http({
+                method: "POST",
+                url: (serviceBase + 'register'),
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                data: $scope.registerData
+            }).then(function (response) {
+                localStorageService.set('sessionData', response.data.session);
+                $scope.message = "";
+                $scope.invalidLogin = false;
+                $scope.message = "";
+                setupUser(response.data.session);
+
+            }, function (response) {
+                if (response.status === 404 || response.status === 400)
+                    $scope.invalidLogin = true; // ("<div class='alert alert-danger'>Invalid Login ID or password</div>");
+                else
+                    $scope.systemError = true; //("<div class='alert alert-danger'> Failed to login</div>");
+
+                $scope.message = "";
+            });
+        };
+
+        $scope.teamChange = function () {
+            var sessionId = "";
+            if ($scope.sessionData != null)
+                sessionId = $scope.sessionData.sessionId;
+            // calling the API here
+            nsApiClient.clientService.getClients(sessionId, $scope.registerData.orgName, function (data,status) {
+                $scope.teamList = data;               
+            });
+        }
+
+        var setupUser = function (sessionData) {
+            if (sessionData != null && sessionData.isActive) {
+                $scope.user.loggedIn = true; 
+                $scope.user.name = sessionData.fullName;
+              //  $scope.user.sessionId = sessionData.SessionId;
+                $scope.user.role = sessionData.mainRole;
+                $scope.user.lastAccess = sessionData.lastAccess;
+                $scope.user.orgId = sessionData.clientId;
+                $scope.user.isAdmin = sessionData.isAdmin;
+              //  $state.reload();
+
+                $.nsAppKharbga.setSessionId(sessionData.sessionId);
+                _updateTeamInfo();
+                $state.go('Home', {});
             }   
             else {
 
                 $scope.user = { name: "", sessionId: "", currentGameId: "", role: "", loggedIn: false, lastAccess: '', isAdmin: false, orgId: 0 };
+                $.nsAppKharbga.setSessionId('');
                 $state.go('Login', {});
                 $location.path(loginUrl);
-              //  $state.reload(); 
-                $.nsAppKharbga.setSessionId('');
+              //  $state.reload();              
             }
 
             $rootScope.user = $scope.user;
@@ -82,47 +129,36 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
      
         $scope.$watch('loginData', function () {
           //  $scope.message = "";
-        }, true);
+        },
+            true);
 
         $scope.forgetPassword = function () {
 
             //todo:
         }
-        // read the user info from localStorage  if any 
-        var _checkSession =  function () {      
-            var sessionData = localStorageService.get('sessionData');
-       
-            //setupUser(null);
-        //    $scope.message = "Processing...";
-            if (sessionData != null) {
-                var sessionId = sessionData.SessionId;
-                $http({
-                    method: "GET",
-                    url: (serviceBase + 'token'),
-                    headers: {
-                        'Content-Type': "application/json", "_nssid": sessionId
-                    }
-                }).then(function (response) {
-                    localStorageService.set('sessionData', response.data.session);
-                    setupUser(sessionData);  
-                    $scope.systemError = false;
-                    $scope.message = "";
-                }, function (response) {
-                    $scope.systemError = true;
-                    $location.path(loginUrl);
-                 
-                });
-            }
-            else {
-                $location.path(loginUrl);
-                setupUser(sessionData);    
-               
-            }
+
+        // 
+        
+    
+        
+
+        var _updateTeamInfo = function () {
+            var sessionId = "";
+            $scope.sessionData = localStorageService.get('sessionData');
+            if ($scope.sessionData == null)
+                return;
+
+            sessionId = $scope.sessionData.sessionId;
+            nsApiClient.clientService.getClientInfo(sessionId, function (data, status) {
+                $scope.user.team = data;
+                $scope.status = status;
+                $scope.user.currentGame = $.nsAppKharbga.getCurrentGame();
+                $scope.user.currentState = $.nsAppKharbga.getCurrentState();
+                $state.reload();  // refresh the state
+            });
+
         };
 
-        // call on startup
-  //      _checkSession();
-
-   
+    //    $scope.updateTeamInfo = _updateTeamInfo;
 
     }]);

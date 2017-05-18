@@ -2014,7 +2014,7 @@ var KharbgaApp = function () {
 
         var html = "<table  class='table table-responsive'><thead>";
         // append the header
-        html += "<thead><tr>";
+        html += "<thead ><tr>";
         html += ("<th>Number</th>");
         html += ("<th>Player</th>");
         html += ("<th>Is Setting</th>");
@@ -2025,7 +2025,7 @@ var KharbgaApp = function () {
    //     html += ("<th>Before FEN <br>");
    //     html += ("After FEN <br>");
    //     html += ("Message</th>");
-        html += "</tr></thead><tbody id='game-moves-history-table'>";
+        html += "</tr></thead><tbody id='game-moves-history-table'  style='max- height:300px; overflow - y:scroll'>";
        
         $.each(serverGame.Moves, function () {
             html += "<tr>";
@@ -2213,9 +2213,9 @@ var KharbgaApp = function () {
     var setupClientStateWithSession = function (session) {
         if (session != null) {
             appClientState.session = session;
-            appClientState.sessionId = session.SessionId;
-            appClientState.userScreenName = session.FullName;
-            appClientState.loggedIn = session.IsActive;
+            appClientState.sessionId = session.sessionId;
+            appClientState.userScreenName = session.fullName;
+            appClientState.loggedIn = session.isActive;
             setCookie(C_NSSID, appClientState.sessionId);
         }
         else {
@@ -2393,6 +2393,16 @@ var KharbgaApp = function () {
             return;   
         gamesHubProxy.server.postMessage(appClientState.userScreenName, msg.message);
     };
-    
+
+
+    this.getCurrentGame = function () {
+        // 
+         return appClientState.serverGame;
+    }
+
+    this.getCurrentState = function () {
+        // 
+        return appClientState;
+    }
 }; 
 //$(document).ready(initKharbga);   // call when view is activated?
