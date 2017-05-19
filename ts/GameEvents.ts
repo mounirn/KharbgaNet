@@ -41,5 +41,7 @@ namespace Kharbga{
         invalidSettingOccupiedEvent(eventData: GameEventData): void;
 
         invalidMoveEvent(eventData: GameEventData): void;
+
+        moveProcessed(status: boolean, eventData: GameMove): void;
 	}
 }

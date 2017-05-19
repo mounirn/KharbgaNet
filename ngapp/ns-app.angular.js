@@ -201,7 +201,7 @@ nsApp.run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state,
 
 
 nsApp.filter('toStatusString', function () {
-    return function (state) {
+    return function (status) {
         switch (status) {
             case 0:
                 return "Created";

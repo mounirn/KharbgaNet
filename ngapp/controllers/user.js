@@ -24,9 +24,11 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
        // $scope.errorMessage = "";
 
         $scope.login = function () {
-           
-            if ($scope.loginForm.$invalid) {
+
+            var form = $scope.loginForm;
+            if (form.$invalid) {
                 $scope.invalidInput = true; 
+                angular.element("[name='" + form.$name + "']").find('.ng-invalid:visible:first').focus();
                 return;
             }
             $scope.invalidInput = false;
@@ -59,8 +61,11 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
 
         $scope.register = function () {
 
-            if ($scope.registerForm.$invalid) {
+            var form = $scope.registerForm;
+            if (form.$invalid) {
                 $scope.invalidInput = true;
+                
+                angular.element("[name='" + form.$name + "']").find('.ng-invalid:visible:first').focus();
                 return;
             }
             $scope.invalidInput = false;

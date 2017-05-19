@@ -24,8 +24,12 @@
     -moz-box-sizing: content-box;
     box-sizing: content-box;
 }
-
-
+.selected-game {
+    border: 2px solid #404040;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
 /* square */
 .square-55d63 {
     float: left;

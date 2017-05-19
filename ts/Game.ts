@@ -721,6 +721,21 @@ namespace Kharbga {
         }
 
         /**
+         * Handler with call back when the move processing is completed
+         * @param move
+         * @param moveHandler
+         */
+        public processMove2(move: GameMove, moveHandler: IGameEvents) : boolean {
+  
+            var ret = this.processMove(move.From, move.To, move.Resigned, move.ExchangeRequest);
+
+            moveHandler.moveProcessed(ret, move);
+
+            return ret;
+        }
+
+
+        /**
          *  @returns true if the board is ready to start 2nd phase after setting 
          */
         private checkIfSettingsCompleted(): void {

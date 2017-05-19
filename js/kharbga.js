@@ -1287,6 +1287,11 @@ var Kharbga;
             }
             return ret;
         };
+        Game.prototype.processMove2 = function (move, moveHandler) {
+            var ret = this.processMove(move.From, move.To, move.Resigned, move.ExchangeRequest);
+            moveHandler.moveProcessed(ret, move);
+            return ret;
+        };
         Game.prototype.checkIfSettingsCompleted = function () {
             if (this.board.AllPiecesAreSet()) {
                 this.state = Kharbga.GameState.Moving;

@@ -4,8 +4,11 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
         document.title = "Home";
         $scope.message = "";
         $scope.sessionData = localStorageService.get('sessionData');
+        $log.info("mainController started");
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
+
+        $scope.signalRUrl = appConstants.Settings.ApiServiceBaseUri + "signalR/hubs";
 
         // after login
         var defaultUrl = "/user/profile";
@@ -34,8 +37,8 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
                 };
                 $state.go('Home', {});
 
-                $scope.user.currentGame = $.nsAppKharbga.getCurrentGame();
-                $scope.user.currentState = $.nsAppKharbga.getCurrentState();
+                $scope.user.currentGame = {};
+                $scope.user.currentState = {};
              //   $location.path(loginUrl);
 
             }
@@ -109,7 +112,9 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
 
             if ($scope.sessionData != null && $scope.sessionData.isActive) {
                 $state.go('Play', options);
-                setTimeout(function () { $.nsAppKharbga.newGame(options); }, 1000);
+                if (!(options.asSpectator === true) ) {
+                    setTimeout(function () { $.nsAppKharbga.newGame(options); }, 1000);
+                }
                 
             }
             else {

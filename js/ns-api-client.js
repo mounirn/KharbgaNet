@@ -1,11 +1,21 @@
 function getLoggingNow() {
     return moment().format('HH:mm:ss.SSS');
 }
-///
+
 function NSAppClient(baseURI) {
     this.baseURI = baseURI;
     console.log("NSAppClient CTOR - " + this.baseURI);
+    //https://stackoverflow.com/questions/6677035/jquery-scroll-to-element
+    // helper for scrolling to an element
+    $.fn.nsScrollTo = function (speed) {
+        if (typeof (speed) === 'undefined')
+            speed = 1000;
 
+        $('html, body').animate({
+            scrollTop: parseInt($(this).offset().top)
+        }, speed);
+    };
+///
     /**
      * Creates the user service object
      * @param {any} baseURI

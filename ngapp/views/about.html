@@ -1,17 +1,28 @@
 <div id="about" ng-controller="appController">
     <div id="app-message" ng-bind="message"></div>  
-    <div class="panel panel-info">
+    <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3>About this App</h3>
-            <div class="pull-right">
-                <a href="" ng-click="refresh()" id="refreshAppInfo-submit" value="Refresh">
-                    <span class="glyphicon glyphicon-refresh"></span> Refresh
-                </a>
-            </div>
+            <h3>About this System 
+                <a class="pull-right" href="" ng-click="refresh()" id="refreshAppInfo-submit" value="Refresh">
+                <span class="glyphicon glyphicon-refresh"></span> Refresh
+               </a>
+            </h3>
         </div>
         <div class="panel-body">
-            <div data-ng-bind="versionInfo"> </div>
-            <div id="appInfo" data-ng-bind="appInfo"> </div>
+            <dl class="dl-horizontal">
+                <dt>API:</dt>
+                <dd><span data-ng-bind="baseURI"></span></dd>
+                <dt>Version:</dt>
+                <dd><span data-ng-bind="version"></span></dd>
+                <dt>ID:</dt>           
+                <dd><span data-ng-bind="appInfo.appId"> </span></dd>
+                <dt>Client Organization ID:</dt>
+                <dd><span data-ng-bind="appInfo.clientId"> </span></dd>
+                <dt>Last Startup Time:</dt>
+                <dd><span data-ng-bind="appInfo.lastStartupTime"> </span></dd>
+                <dt>Number of Requests Since Last Startup Time:</dt>
+                <dd><span data-ng-bind="appInfo.numberOfRequestsSinceStartup"> </span></dd>
+            </dl>
         </div>
     </div>
 </div>   

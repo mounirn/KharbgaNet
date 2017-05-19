@@ -31,6 +31,52 @@ var KharbgaApp = function () {
         
     };
 
+    var lastMove = {
+        isAttacker: true,
+        isSetting: true,
+        fromRequired: "", 
+        from: "",
+        to : "",
+        captured: "",
+        exchanged: "",
+        resigned: false,
+        exchangeRequest: false
+    };
+
+    var currentMove ={
+        isAttacker: true,
+        isSetting: true,
+        fromRequired: "", 
+        from: "",
+        to: "",
+        captured: "",
+        exchanged: "",
+        resigned: false,
+        exchangeRequest: false,
+        reset: function () {
+            currentMove.isSetting = null;
+            currentMove.isAttacker = null;
+            currentMove.fromRequired = ""; 
+            currentMove.from = "";
+            currentMove.to = "";
+            currentMove.captured = "";
+            currentMove.exchanged = "";
+            currentMove.resigned = false;
+            currentMove.exchangedRequest = false;
+        },
+        copyToLast: function () {
+            lastMove.fromRequired = currentMove.fromRequired;
+            lastMove.from = currentMove.from;
+            lastMove.to = currentMove.to;
+            lastMove.isAttacker = currentMove.isAttacker;
+            lastMove.isSetting = currentMove.isSetting;
+            lastMove.exchanged = currentMove.exchanged;
+            lastMove.captured = currentMove.captured;
+            lastMove.resigned = currentMove.resigned;
+            lastMove.exchangeRequest = currentMove.exchangeRequest;
+        }
+    };
+
     /* the game events */
     /**
      * Handler for the local engine when a new game is started
@@ -46,8 +92,8 @@ var KharbgaApp = function () {
         // update the board with current game state
         updateBoard();
         updateBoardInfo();
-
-
+        currentMove.copyToLast();
+        currentMove.reset();
         //checkBoardAndPlayIfComputer();
     }
     /**
@@ -74,24 +120,16 @@ var KharbgaApp = function () {
         message += "</strong> to play </div>";
         $('#message').html(message);
 
-        // reset after player's move 
-        moveSourceRequired = "";
-
-   //     $('#move-captured').html("C: ");
-   //     $('#move-exchanged').html("X: ");
-
-
-     /*   var capturedCells = boardEl.find('.hightlight-captured');
-        sourceRequired.removeClass('highlight-captured'); */
-        // removed captured cells highlighting 
-        $('.hightlight-captured').removeClass('highlight-captured');
        
         $("#user-message").val('');  // clears the move message
-     
-        checkBoardAndPlayIfComputer();
 
-         setTimeout(removeSelectedCells, 2000);
-       // removeSelectedCells();
+        currentMove.copyToLast();
+        currentMove.reset();
+
+        setTimeout(removeSelectedCells, 2000);
+
+        checkBoardAndPlayIfComputer();
+        
     }
   
     /**
@@ -99,21 +137,23 @@ var KharbgaApp = function () {
      * @param {any} eventData
      */
     function onNewSettingCompleted(eventData) {
-        console.log("%s - event: onNewSettingCompleted - cell %s ", getLoggingNow(),eventData.targetCellId);
-
+        console.log("%s - event: onNewSettingCompleted - cell %s ", getLoggingNow(), eventData.targetCellId);
+        currentMove.isSetting = true;
         if (game.turn() == 'a') {
             $('#attackerSettings').append($('<option>', {
                 value: game.getAttackerScore(),
                 text: eventData.targetCellId
-            }));            
+            }));
+            currentMove.isAttacker = true;
         }
         else {
             $('#defenderSettings').append($('<option>', {
                 value: game.getDefenderScore(),
                 text: eventData.targetCellId
             }));
+            currentMove.isAttacker = false;
         }
-        var message = "<div class='alert alert-success'>It is the turn  of the " + Kharbga.PlayerRole[eventData.player.role];
+        var message = "<div class='alert alert-success'>It is the turn  of the <strong>" + Kharbga.PlayerRole[eventData.player.role];
 
         if (appClientState.player.IsAttacker === true && game.turn() == 'a')
             message += " (Your turn) ";
@@ -121,11 +161,13 @@ var KharbgaApp = function () {
         if (appClientState.player.IsAttacker === false && game.turn() == 'd')
             message += " (Your turn) ";
 
-        message+=" to set the 2nd piece </div>"
+        message+=" </strong>to set the 2nd piece </div>"
         $('#message').html(message);
 
         updateScores(eventData.source);
 
+        currentMove.from = "spare";
+        currentMove.to = eventData.targetCellId;
    
         /* highlight the previous move */
         var source = boardEl.find('.square-' + eventData.targetCellId);
@@ -152,10 +194,7 @@ var KharbgaApp = function () {
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
 
-
         checkBoardAndPlayIfComputer();
-
-       // setTimeout(removeSelectedCells(), 2000);
     }
 
     /**
@@ -177,6 +216,9 @@ var KharbgaApp = function () {
         console.log("%s - event: onNewMoveCompleted - game position: %s - from: %s - to: %s  ",
             getLoggingNow(), eventData.source.fen(), eventData.from.ID(), eventData.to.ID());
 
+        currentMove.isSetting = false;
+        currentMove.from = eventData.from.ID();
+        currentMove.to = eventData.to.ID();
 
         // remove source highlighting
         var sourceRequired = boardEl.find('.highlight-source');
@@ -190,7 +232,6 @@ var KharbgaApp = function () {
         var target = boardEl.find('.square-' + eventData.to.ID());
         target.addClass('highlight-move');
 
-      
         updateScores(eventData.source);
         updateMoveFlags(game.move_flags());
         
@@ -201,15 +242,15 @@ var KharbgaApp = function () {
                 value: game.getAttackerMoveNumber(),
                 text:  eventData.from.ID() + '-' + eventData.to.ID()
             }));
+            currentMove.isAttacker = true;
         }
         else {
             $('#defenderMoves').append($('<option>', {
                 value: game.getDefenderMoveNumber(),
                 text: eventData.from.ID() + '-' + eventData.to.ID()
             }));
-        }  
-
-    
+            currentMove.isAttacker = false;
+        }      
     }
 
     /**
@@ -223,6 +264,9 @@ var KharbgaApp = function () {
         $('#message').html("<div class='alert alert-success'>Same player must continue playing using the same soldier now on: <strong> " +
             eventData.targetCellId  + "</strong>. There are still pieces that could be captured  </div>" );
 
+        currentMove.isSetting = false;
+        currentMove.copyToLast();
+        currentMove.fromRequired = eventData.targetCellId;
         // player must play this piece   
      
         var moveSourceRequired = eventData.targetCellId;
@@ -237,12 +281,14 @@ var KharbgaApp = function () {
                 value: game.getAttackerMoveNumber(),
                 text: eventData.from.ID() + '-' + eventData.to.ID()
             }));
+            currentMove.isAttacker = true;
         }
         else {
             $('#defenderMoves').append($('<option>', {
                 value: game.getDefenderMoveNumber(),
                 text: eventData.from.ID() + '-' + eventData.to.ID()
             }));
+            currentMove.isAttacker = false;
         }
 
         checkBoardAndPlayIfComputer(moveSourceRequired);
@@ -328,8 +374,9 @@ var KharbgaApp = function () {
         updateMoveFlags(moveFlags);
 
         // get the 
-
-        boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
+        setTimeout(function (){ 
+            boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
+        }, 2000);
     }
 
     /**
@@ -376,6 +423,8 @@ var KharbgaApp = function () {
        // capturedSquare.find('.' + pieceClass).remove();
 
         $('#move-captured').append(" " + eventData.targetCellId);
+        currentMove.captured += " ";
+        currentMove.captured += eventData.targetCellId;
 
         updateBoard();
         updateScores(game);
@@ -390,6 +439,8 @@ var KharbgaApp = function () {
         // capturedSquare.find('.' + pieceClass).remove();
 
         $('#move-exchanged').append(" " + eventData.targetCellId);
+        currentMove.exchanged += " ";
+        currentMove.exchanged += eventData.targetCellId;
 
         updateBoard();
         updateScores(game);
@@ -418,7 +469,8 @@ var KharbgaApp = function () {
         invalidSettingMalhaEvent: onInvalidSettingMalha,
         invalidSettingOccupiedEvent: onInvalidSettingOccupied,
         invalidMoveEvent: onInvalidGameMove, 
-        playerPassedEvent : onPlayerPassed
+        playerPassedEvent: onPlayerPassed,
+        moveProcessed: onMoveProcessed,
     };
 
     // Setup the board events
@@ -514,7 +566,6 @@ var KharbgaApp = function () {
                 return true;
             else
                 return false; 
-
         }
 
         if (game.is_in_moving_state() === true) {        
@@ -554,9 +605,10 @@ var KharbgaApp = function () {
      */
     var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
         console.log("onDrop - from: %s - to: %s ", source, target);
-        
+
+        clearLastMoveInfo();
         $('#gameMove').html(source + "-" + target);
-     
+       
         var ret = processAction(source, target);
         // updateStatus();
         if (ret == false) return 'snapback';
@@ -568,57 +620,71 @@ var KharbgaApp = function () {
      * @param {any} target -- the target piece
      */
     function processAction(source, target) {
-        var ret;
+        var ret = false;
+        var gameMove = {};
 
-        var msg = $("#user-message").val();
+        gameMove.Message = $("#user-message").val();
 
-        var resigned = $('#abandonCheckbox').is(':checked');
-        var exchangeRequest = false;
-        var isAttacker = false;
+        gameMove.Resigned = $('#abandonCheckbox').is(':checked');
+        gameMove.ExchangeRequest = false;
+        gameMove.IsAttacker = false;
         if (game.turn() == 'a') {
-            exchangeRequest = $('#exchangeRequestAcceptedCheckbox').is(':checked');
-            isAttacker = true;
+            gameMove.ExchangeRequest = $('#exchangeRequestAcceptedCheckbox').is(':checked');
+            gameMove.IsAttacker = true;
         }
         else {
-            exchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
+            gameMove.ExchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
         }
-        var isSetting = false;
+        gameMove.IsSetting = false;
 
-        var beforeFEN = game.fen();
+        gameMove.BeforeFEN = game.fen();
+        gameMove.From = source;
+        gameMove.To = target;
 
         if (game.is_in_moving_state()) {
             if (source == target)
             {
                 return false;  // same cell is selected
             }
-            ret = game.processMove(source, target, resigned, exchangeRequest);
+            ret = game.processMove2(gameMove, gameEvents);
         }
         else {
             if (game.is_in_setting_state()) {
-                isSetting = true;
+                gameMove.IsSetting = true;
                 ret = game.processSetting(target);
+                onMoveProcessed(ret, gameMove);
             }
             else {
                 ret = false;
             }
         }
 
-        if (ret == true) {  // add option to show submit to server button
-            lastMoveId = createMoveId();
-            // submit to the server
-            if (appClientState.serverGameId != "") {
-                // notify server pf the setting
-                gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.userScreenName,
-                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg, lastMoveId
-                ).done(function () {
-                    console.log('%s - Done server Invocation of recoredMove ( moveId : %s)', getLoggingNow(), lastMoveId);
-                })
-                    .fail(function (error) {
-                        console.log('%s - Invocation of recordMove ( moveId : %s) failed. Error: %s ', getLoggingNow(), lastMoveId, error);
-                    });
-            }
-        }
         return ret; 
+    }
+
+    /**
+     * callback for when the action is processed
+     * @param {any} gameMove
+     */
+    function onMoveProcessed(ok, gameMove) {
+        if (ok === false)
+            return;
+
+        lastMoveId = createMoveId();
+        // submit to the server
+        if (appClientState.serverGameId != "") {
+            // notify server pf the setting
+            gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.userScreenName,
+                gameMove.IsAttacker, gameMove.IsSetting, gameMove.From, gameMove.To, gameMove.Resigned, gameMove.ExchangeRequest,
+                gameMove.BeforeFEN, game.fen(), gameMove.Message, lastMoveId,
+                lastMove.captured, lastMove.exchanged
+            ).done(function () {
+                console.log('%s - Done server Invocation of recoredMove ( moveId : %s)', getLoggingNow(), lastMoveId);
+            })
+                .fail(function (error) {
+                    console.log('%s - Invocation of recordMove ( moveId : %s) failed. Error: %s ', getLoggingNow(), lastMoveId, error);
+                });
+        }
     }
 
 
@@ -684,12 +750,15 @@ var KharbgaApp = function () {
 
         //to do : add check for target
         highlightTarget(square);
+        $('#move-captured').empty();
+        $('#move-exchanged').empty();
 
         var ret = processAction(source, target);
       
         if (ret) {
-            $('#gameMove').html(source + "-" + target);
-            setTimeout(updateBoard, 10);  // update the board after handling on Click event
+            $('#gameMove').html(source + "-" + target);           
+
+            setTimeout(updateBoard, 20);  // update the board after handling on Click event
          //   updateBoard();
          //    removeSelectedCells();
         }
@@ -733,7 +802,12 @@ var KharbgaApp = function () {
     }
 
     var removeSelectedCells = function () {
+
+        $('.hightlight-captured').removeClass('highlight-captured');
+
         boardEl.find('.highlight-move').removeClass('highlight-move');
+
+    
 
      //   boardEl.find('.highlight-move').css('background', '#f0d9b5');// default color
     };
@@ -1040,7 +1114,8 @@ var KharbgaApp = function () {
             if (appClientState.serverGameId != "") {
                 // notify server pf the setting
                 gamesHubProxy.server.recordMove(appClientState.serverGameId, appClientState.opponentPlayer.Name,
-                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg, lastMoveId
+                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg, lastMoveId,
+                    lastMove.captured, lastMove.exchanged
                 ).done(function () {
                     console.log('%s - Done Server Invocation of recoredMove ( moveId : %s) inside computer_play - for opponent player %s',
                         getLoggingNow(), lastMoveId, appClientState.opponentPlayer.Name);
@@ -1065,7 +1140,13 @@ var KharbgaApp = function () {
     function updateBoard() {
         if (board != null)
             // update the board position here for the case when processing exchanges
-            board.position(game.fen(), true);
+            board.position(game.fen(), true); 
+    }
+
+    function clearLastMoveInfo() {
+        $('#gameMove').empty();
+        $('#move-captured').empty();
+        $('#move-exchanged').empty();
     }
 
     /**
@@ -1170,7 +1251,12 @@ var KharbgaApp = function () {
         boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
         boardEl.find('.square-d4').addClass('highlight-malha');
 
+        clearLastMoveInfo();
+
         setCookie("_nsgid", "");
+
+        // hide the panel (?)
+      //  $('#currentGamePanel').hide();
 
     }
     /**
@@ -1449,6 +1535,8 @@ var KharbgaApp = function () {
                 setupMyAccount();
                 appClientState.sessionId = "";
                 appClientState.userScreenName = "";
+
+
                 if (status.status === 404 || status.status === 400)
                     $('#account-message').html("<div class='alert alert-danger'>Invalid Session</div>");
                 else
@@ -1508,13 +1596,18 @@ var KharbgaApp = function () {
 
         if (!appClientState.signalRinitalized)
             return;
-        setupGames();
-
+       
         // check local active game cookie
         var gid = getLastGameCookie();
+        setupGames(gid);
+
         if (gid != "" && gamesHubProxy != null && appClientState.signalRinitalized) {
-                // tell the server to rejoin this connection with the game
-                gamesHubProxy.server.reJoinGame(appClientState.userScreenName, gid);
+
+        //    gamesHubProxy.server.reJoinGame(appClientState.userScreenName, gid, false);
+            // tell the server to rejoin this connection with the game
+            gamesHubProxy.server.joinGame(appClientState.userScreenName, gid, false);
+
+            resetLocalGame(); 
         }
     }
 
@@ -1576,7 +1669,7 @@ var KharbgaApp = function () {
         // if the move is already submitted to the local game (by real player or computer) just add to the Move history and 
         if (lastMoveId == serverMove.ClientID) {
             // append the move to the game history
-            appendMoveToGameHisotry(serverMove);
+            appendMoveToGameHisotryList(serverMove);
             console.log("%s - server - did not record setting/move in local game for local moveId: %s", getLoggingNow(), lastMoveId);
             return; 
         }
@@ -1594,7 +1687,7 @@ var KharbgaApp = function () {
         updateBoard();
 
         // append the move to the game history
-        appendMoveToGameHisotry(serverMove);
+        appendMoveToGameHisotryList(serverMove);
     }
 
 
@@ -1718,10 +1811,9 @@ var KharbgaApp = function () {
             console.log("%s - Game Created: ", getLoggingNow());
             console.log(gameInfo);
         }
-        $('#games-list').append("<a href='#' class='list-group-item list-group-item-warning' id='" + gameInfo.ID + "'> ID: " + gameInfo.ID + " - Status: " + getStatusText(gameInfo.Status) + " - Attacker: " + gameInfo.AttackerName + " - Defender: " + gameInfo.DefenderName + " </a>");
 
-        $('#' + gameInfo.ID).on('click', gameInfo, onGameSelected);       
-
+        appendGameToGamesList(gameInfo);
+       
         checkBoardAndPlayIfComputer();
     };
     // handle when the game is selected by a player. All people will receive a this message
@@ -1738,13 +1830,18 @@ var KharbgaApp = function () {
             console.log("%s - Game Joined: ", getLoggingNow());
             console.log(gameInfo);
         }
- 
+       // show the panel
+      //  $('#currentGamePanel').show();
+
+  
+
         $('#' + gameInfo.ID).addClass(getStatusCss(gameInfo.Status));     
       
         updateLocalGameStatus(gameInfo);
-        setupGameMovesHistory(gameInfo);
+        setupGameMovesHistoryList(gameInfo);
 
-        // 
+        selectActiveGameId(gameInfo.ID);
+       // 
         checkBoardAndPlayIfComputer();
     };
 
@@ -1767,6 +1864,8 @@ var KharbgaApp = function () {
         gameState.Players.push(gameInfo.Players);        
         game.setupWith(gameInfo);
 
+        clearLastMoveInfo();
+
         updateBoard();
 
         // player
@@ -1775,12 +1874,13 @@ var KharbgaApp = function () {
         else
             $('#player-turn').html("Defender");
 
-        updateLocalGameStatus(gameInfo);
 
         appClientState.serverGameId = gameInfo.ID;
 
+        updateLocalGameStatus(gameInfo);
+
         // setup the move history
-        setupGameMovesHistory(gameInfo);
+        setupGameMovesHistoryList(gameInfo);
 
         removeSelectedCells();
     }
@@ -1792,13 +1892,13 @@ var KharbgaApp = function () {
         }  
 
         // game state
-        $('#current-game-status').text(getStatusText(gameInfo.Status));     
-        $('#' + gameInfo.ID).empty().text(" ID: " + gameInfo.ID + " - Status: " + getStatusText(gameInfo.Status) + " - Attacker: " + gameInfo.AttackerName + " - Defender: " + gameInfo.DefenderName);
-        $('#' + gameInfo.ID).removeClass('list-group-item-info');
-        $('#' + this.ID).addClass(getStatusCss(gameInfo.Status));
-
+        $('#current-game-status').text(getStatusText(gameInfo.Status));  
+     //   updateGameInGameList(gameInfo);
+  
         $('#game-attacker').text(gameInfo.AttackerName);
         $('#game-defender').text(gameInfo.DefenderName);
+
+         
     }
 
     var onGameDeleted = function (gameInfo) {
@@ -1807,35 +1907,100 @@ var KharbgaApp = function () {
         console.log(gameInfo);
     };
 
+    /**
+     * Removes the existing item if any and add it and selects 
+     * @param {any} gameInfo
+     */
+    function updateGameInGameList(gameInfo) {
+        // update the color of the list depending on the status
+        $('#' + gameInfo.ID).removeClass('list-group-item-warning');
+        $('#' + gameInfo.ID).removeClass('list-group-item-info');
+        $('#' + gameInfo.ID).removeClass('list-group-item-danger');
+        $('#' + gameInfo.ID).removeClass('list-group-item-success');
+        $('#' + gameInfo.ID).addClass(getStatusCss(gameInfo.Status));  
 
+        // update the status field
+        $('#status-' + gameInfo.ID).text(getStatusText(gameInfo.Status) );
+    }
+
+    /**
+     * Adds an item to the list
+     * @param {any} gameInfo
+     */
+    function appendGameToGamesList(gameInfo) {
+        if (gameInfo == null)
+            return;
+        $('#' + gameInfo.ID).detach();
+
+        var html = "<li id='" + gameInfo.ID + " ' class='list-group-item ";
+
+        // add the class of the item
+        html += getStatusCss(gameInfo.Status);
+        html += "'>";
+        html += "ID: " + gameInfo.ID + "<br>";
+        html += "Status: <span id='status-" + gameInfo.ID + "'>" + getStatusText(gameInfo.Status) + "</span><br>Attacker: ";
+        if (gameInfo.AttackerName == "") {
+             html += "<a href='' id='link-" + gameInfo.ID + "' class=''>Sit</a>";
+        }
+        else {
+            html += gameInfo.AttackerName;
+        }
+        html += "<br>Defender: ";
+        if (gameInfo.DefenderName == "") {
+            html += "<a href=''  id='link-" + gameInfo.ID + "' class='' >Sit</a>";
+        }
+        else {
+            html += gameInfo.DefenderName;
+        }
+        html += "<br><button id='watch-" + gameInfo.ID + "' class='btn btn-default'>Join/Watch</button";
+        html += "</li>";
+
+        $('#games-list').append(html);
+
+        $('#link-' + gameInfo.ID).on('click', gameInfo, onGameSelected);
+        $('#watch-' + gameInfo.ID).on('click', gameInfo, onGameSelected);
+     //   $('#' + gameInfo.ID).addClass(getStatusCss(gameInfo.Status));          
+    }
+
+    function selectActiveGameId(gameId) {
+        $('.selected-game').removeClass('selected-game');
+        $('#' + gameId).addClass('selected-game');
+    }
     /**
      * Refreshes the list of games from the server for display in the home page
      */
     function _refreshGames(e) {
         if (e != null)
              e.preventDefault();
-        $('#message').html("<div class='alert alert-info'>Refreshing games from the server...</div>")
+      //  $('#message').html("<div class='alert alert-info'>Refreshing games from the server...</div>")
 
         $('#games-list').empty();
+        if (loggingOn) {
+            console.log("%s - _refreshingGames from the server : ", getLoggingNow());
+        }
         gamesHubProxy.server.getGames().done(function (games) {
             $.each(games, function () {
-               // if (this.Status == 0 || this.Status = 1)
-                $('#games-list').append("<a href='#' class='list-group-item' id='" + this.ID + "'> ID: " + this.ID + " - Status: " + getStatusText(this.Status) + " - Attacker: " + this.AttackerName + " - Defender: " + this.DefenderName + " </a>");
-
-                $('#' + this.ID).on('click', this, onGameSelected);
-                $('#' + this.ID).addClass(getStatusCss(this.Status));             
+                appendGameToGamesList(this);
             });
-
-            $('#message').html("<div class='alert alert-success'>Done refreshing games from the server.</div>")
+            if (loggingOn) {
+                console.log("%s - _refreshingGames from the server - selecting active game Id: %s ", getLoggingNow(), appClientState.serverGameId);
+            }
+            selectActiveGameId(appClientState.serverGameId);
+         //   $('#message').html("<div class='alert alert-success'>Done refreshing games from the server.</div>")
         });
     }
+
+    
     // refresh games from server
     $('#games-link').on('click', _refreshGames);
 
     // externalize for angular App
     this.refreshGames = _refreshGames;
 
-
+    /**
+     * Handler for when a game is selected for joining 
+     * @param {any} e
+     */
     function onGameSelected(e) {
         e.preventDefault();
         if (loggingOn === true) {
@@ -1866,6 +2031,42 @@ var KharbgaApp = function () {
         resetLocalGame();  // server will sen
         // update the game view with the given game
     }
+
+    /**
+     * handler for when a game is selected for watching and replaying (learning purpose)
+     * @param {any} e
+     */
+    function onWatchGameSelected(e) {
+        e.preventDefault();
+        if (loggingOn === true) {
+            console.log("%s - onGameSelected: ", getLoggingNow());
+            console.log(e);
+        }
+        var data = e.data;
+        ///todo: add check for the type here
+        if (e.data == null || typeof e.data === undefined) {
+            console.log("%s - onGameSelected - invalid data passed with the entry ", getLoggingNow());
+            return;
+        }
+
+        // switch view to the Play/View tab
+        $('#main-tabs a[href="#home"]').tab('show');
+        $('#message').html("<div class='alert alert-success'>Game is ready on the server</div>");
+
+
+        $('#message').html("<div class='alert alert-success'>Setting up game state based on server data</div>")
+        console.log("Setting up game state based on server data");
+
+        var spectator = true;
+
+        //join the game and indicate if spectator or not
+        gamesHubProxy.server.joinGame(appClientState.userScreenName, data.ID, spectator);
+
+        // init the local game with the given server game data    
+        resetLocalGame();  // server will sen
+        // update the game view with the given game
+    }
+
 
     $('#connections-link').on('click', refreshConnections);
     function refreshConnections(e) {
@@ -2086,6 +2287,71 @@ var KharbgaApp = function () {
 
         $('#game-moves-history-table').append(html);
     }
+
+    /**
+     * Sets up the game moves history list with a server game
+     * @param {any} serverGame
+     */
+    function setupGameMovesHistoryList(serverGame) {
+
+        if (serverGame == null) {
+            $('#message').html("<div class='alert alert-danger'>Invalid server game </div>");
+        }
+        $('#game-moves-history').empty();
+
+        var html =  "<ul class='list-group' id='game-moves-history-list' style='max-height:300px; overflow-y:scroll'>";
+        html += "</ul>";
+        $('#game-moves-history').html(html);
+
+        $.each(serverGame.Moves, function () {
+            appendMoveToGameHisotryList(this);
+        });
+    }
+       
+
+
+    /**
+     * Appends the given move to the game history
+     * @param {any} move - move information from the server
+     */
+    function appendMoveToGameHisotryList(move) {
+
+        if (move == null) {
+            $('#message').html("<div class='alert alert-danger'>Invalid server game move </div>");
+        }
+        var html = "";
+        html += "<li class='list-group-item'>";
+        html += ("<strong>" + move.Number + ". </strong>");
+        html += ("" + move.PlayerName);
+        html += ((move.IsAttacker == true ? " (Attacker)" : " (Defender)") + " - ");
+        html += ( (move.IsSetting == true ? "Setting" : "Move") + ": ");
+        html += (move.From + " to ");
+        html += move.To ;
+        if (move.Resigned == true)
+            html +=  " - Resigned";
+        if (move.ExchangeRequest == true)
+            html += " - Exchange Request";  
+        html += "<br>";
+
+        // add another row for the message and fen
+        html += ("<pre style='font-size:small'>FEN Before & After: " + (move.BeforeFEN) + " - ");
+        html += ((move.AfterFEN) );
+        if (move.Captured != "")
+            html += ( "<br>Captured: " + move.Captured);
+
+        if (move.Exchanged != "")
+            html += ("<br>Exchanged: " + move.Exchanged );
+
+        if (move.Message != "")
+            html += ("<br>Message: " + move.Message);
+
+        html += "</pre></li>";
+
+        $('#game-moves-history-list').append(html);
+    }
+
+
+
     /**
    * handler for the Post message request
    */
@@ -2255,10 +2521,11 @@ var KharbgaApp = function () {
 
         // set the game state
         $('#state').html(Kharbga.GameState[game.getState()]);
-        $('#message').html("<div class='alert alert-info'>Click on Start New Game button to start a new game on this computer between two players</div>")
-
+        $('#message').html("<div class='alert alert-success'>Click on the New Game button to start a new game on this computer.</div>")
 
        // setupTeamsComboBox();
+
+        selectActiveGameId(activeGameId);
 
         setupTeamsHtml5Combobox();
     }
@@ -2325,8 +2592,11 @@ var KharbgaApp = function () {
 
     function resizeGame(e) {
 
-        if (board!= null)
-            board.resize(e);
+        if (board == null)
+            return;
+
+        board.resize(e);
+       // $('#currentGamePanel').nsScrollTo();
 
         updateBoardInfo();
     }
@@ -2366,10 +2636,7 @@ var KharbgaApp = function () {
             return;
         }
         board.flip();
-
-        updateBoardInfo();
-
-       
+        updateBoardInfo();       
     };
 
     this.setSessionId = function (sid) {
@@ -2405,4 +2672,3 @@ var KharbgaApp = function () {
         return appClientState;
     }
 }; 
-//$(document).ready(initKharbga);   // call when view is activated?

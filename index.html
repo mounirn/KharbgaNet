@@ -29,7 +29,9 @@
     <![endif]-->
 
   <!-- Local version <script src="./js/angular.js"></script>-->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="./js/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
       <script type="text/javascript">
@@ -51,8 +53,8 @@
                   <div class="collapse navbar-collapse" id="myNavbar">
                       <ul class="nav navbar-nav">
                           <li class="dropdown">
-                              <a class="dropdown-toggle" data-toggle="dropdown" ui-sref="Play">
-                                  Play
+                              <a class="dropdown-toggle" data-toggle="dropdown" href="" >
+                                  Play & Watch
                                   <span class="caret"></span>
                               </a>
                               <ul class="dropdown-menu">
@@ -60,12 +62,14 @@
                                   <li><a href=""  data-ng-click="play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
                                   <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
                                   <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
+                                  <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:false, asSpectator:true})">Watch and Replay Active Games</a></li>
+
                               </ul>
                           </li>
 
                           <li><a data-ui-sref="Rules" >Rules</a></li>
                           <li class="dropdown">
-                              <a ui-sref="about" class="dropdown-toggle" data-toggle="dropdown" >
+                              <a  href="" class="dropdown-toggle" data-toggle="dropdown" >
                                   System
                                   <span class="caret"></span>
                               </a>
@@ -83,7 +87,7 @@
                           <li data-ng-hide="user.loggedIn"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                           <li class="dropdown" data-ng-show="user.loggedIn">
 
-                              <a href="" ui-sref="profile" data-toggle="dropdown" class="dropdown-toggle">
+                              <a href="" ui-sref="My Profile" data-toggle="dropdown" class="dropdown-toggle">
                                   <span class="glyphicon glyphicon-user"></span>Welcome <span data-ng-bind="user.name"></span>
                                   <span class="caret"></span>
                               </a>
@@ -128,8 +132,6 @@
           </footer>
 
       </div>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     
       <script src="./js/jquery.validate.js"></script>
       <script src="./js/additional-methods.js"></script>
@@ -146,11 +148,14 @@
       <!-- signalR -->
       <script src="./js/jquery.signalR-2.2.1.js"></script>
   
+      <!--  DEBUG -->
+        <script src="http://localhost:3121/signalR/hubs"></script> 
+
         <!--  DEV
         <script src="http://localhost/NS.API/signalR/hubs"></script>  -->
-        <!-- production -->
-        <script src="http://api.nourisolutions.com/signalR/hubs"></script>    
-      <script src="./js/ns-app.signalR.js"></script>      
+        <!-- production 
+        <script src="http://api.nourisolutions.com/signalR/hubs"></script>    -->
+     
       <!-- Date lib-->
       <script src="./js/moment.min.js"></script>
       
@@ -172,6 +177,7 @@
       <script src="./ngapp/controllers/help.js"></script>
       <script>
           $(document).ready(function () {
+           //   $("<script>").attr({ src: '{{$scope.signalRUrl}}' }).appendTo("body");
               $.nsAppKharbga = new KharbgaApp();
           });
       </script>

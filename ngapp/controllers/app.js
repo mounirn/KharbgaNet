@@ -4,7 +4,8 @@ nsApp.controller('appController', ['$scope', '$http', 'appConstants', function (
     document.title = "App Info";
     // appSharedService.prepForBroadcast('shouldSelectTab', appConstants.NavTabs.Settings);
     var serviceBase = appConstants.Settings.ApiServiceBaseUri;
- 
+    $scope.baseURI = appConstants.Settings.ApiServiceBaseUri;
+
     $scope.appInfo = {};
 
     var _refresh = function () {
