@@ -98,7 +98,7 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
 
     $scope.post = function () {
         // 
-        var msg = {message: $scope.moveMessage};
+        var msg = {message: $scope.userMessage};
         $.nsAppKharbga.postMessage(msg);
     };
 

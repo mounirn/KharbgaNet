@@ -693,14 +693,19 @@
             // MN : add indication which one is the attacker and which one is the defender
             //   
             if (color === 'black') {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender <span id="game-defender"></span></strong></div>';
+                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender: <span id="game-defender"></span></strong></div>';
             } else {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker <span id="game-attacker"></strong></div>';
+                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker: <span id="game-attacker"></strong></div>';
             }
             html += '<div class="col-sm-9">'
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
             }
+            if (color === 'black') 
+                html += '&nbsp;&nbsp;<span id="defender_score" class="badge">';
+            else
+                html += '&nbsp;&nbsp;<span id="attacker_score" class="badge">';
+
             html += '</div></div>'
 
             return html;

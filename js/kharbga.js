@@ -1145,6 +1145,21 @@ var Kharbga;
                 return false;
             }
         };
+        Game.prototype.valid_move = function (from, to) {
+            var fromCell = this.board.GetCellById(from);
+            if (fromCell == null)
+                return false;
+            if (!fromCell.IsOccupiedBy(this.currentPlayer))
+                return false;
+            var toCell = this.board.GetCellById(to);
+            if (toCell == null)
+                return false;
+            if (!toCell.IsAdjacentTo(fromCell))
+                return false;
+            if (!toCell.IsEmpty())
+                return false;
+            return true;
+        };
         Game.prototype.is_occupied_current_player = function (cellId) {
             var cell = this.board.GetCellById(cellId);
             if (cell != null)

@@ -454,6 +454,33 @@ namespace Kharbga {
         }
 
         /**
+         * Checks if the move is valid for the current player
+         * @param from
+         * @param to
+         */
+        public valid_move(from: string, to: string): boolean {
+            let fromCell = this.board.GetCellById(from);
+            if (fromCell == null)
+                return false;
+
+            if (!fromCell.IsOccupiedBy(this.currentPlayer))
+                return false;
+
+            let toCell = this.board.GetCellById(to);
+            if (toCell == null)
+                return false;
+
+            if (!toCell.IsAdjacentTo(fromCell))
+                return false;
+
+            if (!toCell.IsEmpty())
+                return false;
+
+            return true;
+
+        }
+
+        /**
        * Checks if the cell is valid and occupied by current player
        * @param cellId
        */
