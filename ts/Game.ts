@@ -163,6 +163,10 @@ namespace Kharbga {
                 return new Array<string>();
         }
 
+        public setPlayerNames(attacker: string, defender: string) {
+            this.attacker.Name = attacker;
+            this.defender.Name = defender;
+        }
         /**
          * returns all possible settings near the malha
          */

@@ -117,6 +117,7 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
               //  $state.reload();
 
                 $.nsAppKharbga.setSessionId(sessionData.sessionId);
+                _updateAccountInfo();
                 _updateTeamInfo();
                 $state.go('Home', {});
             }   
@@ -126,6 +127,7 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 $.nsAppKharbga.setSessionId('');
                 $state.go('Login', {});
                 $location.path(loginUrl);
+                $scope.user.account = {};
               //  $state.reload();              
             }
 
@@ -142,11 +144,6 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
             //todo:
         }
 
-        // 
-        
-    
-        
-
         var _updateTeamInfo = function () {
             var sessionId = "";
             $scope.sessionData = localStorageService.get('sessionData');
@@ -159,9 +156,21 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 $scope.status = status;
                 $scope.user.currentGame = $.nsAppKharbga.getCurrentGame();
                 $scope.user.currentState = $.nsAppKharbga.getCurrentState();
-                $state.reload();  // refresh the state
             });
 
+        };
+
+        var _updateAccountInfo = function () {
+            var sessionId = "";
+            $scope.sessionData = localStorageService.get('sessionData');
+            if ($scope.sessionData == null)
+                return;
+
+            sessionId = $scope.sessionData.sessionId;
+            nsApiClient.userService.getAccountInfo(sessionId, function (data, status) {
+                $scope.user.account = data;
+                $scope.status = status;
+            });
         };
 
     //    $scope.updateTeamInfo = _updateTeamInfo;

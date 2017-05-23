@@ -1,9 +1,22 @@
 
 # Open Issues / To Do:
 ---
-* resolve the issue when the game is won by abondon -- record the move to the server
-* Save game state in the server
+
+* Save game state in the server  (azure doc or mongodb or something else)
 * Loading a game after refresh is causing an error
+* When a new game is started and pending another play to join. Please add a message with that info.
+	Game state should be pending and not setting.  Should wait for another player to press play
+	to start the game. 
+	Design something that matches player request for new games
+* Update the game Status when the game is completed
+* Uncheck the 'Resign' chekbox when a new game is started
+* Add a dialog box when the game is over
+* Add the account info
+* fix the computer playing logic:
+	- As Attacker
+		
+	- As Defender (ability to request for two)
+
 * Abiity to replay with a delay 
 * Ability to start a game with options (w/ computer, as Attacker,as Defender). 
 * Add option to start the game with a time limit for each player (10, 20, 30 min).
@@ -110,7 +123,7 @@ Features:
   11. UI enhacements to the board cell 
   12. Messages improvements indicating which move is required.
   13. Added logic to detect condition when attacker can not move at the begining of the game (automatic loss - bad setting)
-
+  14. Resolve the issue when the game is won by abondon -- recorded the move to the server
 
 # Compiling TypeScript 
 - tsc    (src directory)

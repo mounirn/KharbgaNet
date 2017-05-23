@@ -27,7 +27,8 @@ var KharbgaApp = function () {
         firstComputerSetting: true,
         computer_is_playing: false,
         selectedSource: "",
-        signalRinitalized : false
+        signalRinitalized: false,
+        activeGame: false
         
     };
 
@@ -97,12 +98,16 @@ var KharbgaApp = function () {
 
         $('#message').html("<div class='alert alert-success'>Started a new game.  </div>")
 
+        appClientState.activeGame = true;
+        $('#currentGamePanel').show();
+
         // update the board with current game state
         updateBoard(eventData.source);
 
         if (userOptions.displayLastMove)
             currentMove.copyToLastAndReset();
 
+        
         //checkBoardAndPlayIfComputer();
     }
     /**
@@ -214,6 +219,9 @@ var KharbgaApp = function () {
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
 
+        // setup the game players
+       // game.setPlayerNames(appClientState.player.userScreenName, appClientState.opponentPlayer.userScreenName);
+
         checkBoardAndPlayIfComputer();
     }
 
@@ -238,8 +246,8 @@ var KharbgaApp = function () {
         currentMove.to = eventData.to.ID();
 
         // remove source highlighting
-      //  var sourceRequired = boardEl.find('.highlight-source');
-      //  sourceRequired.removeClass('highlight-source');
+         var sourceRequired = boardEl.find('.highlight-source');
+         sourceRequired.removeClass('highlight-source');
 
         boardEl.find('.highlight-captured').removeClass('highlight-captured');
 
@@ -357,6 +365,7 @@ var KharbgaApp = function () {
 
        // $('#startGameBtn').show();
        // $('#loadSetting1').hide();     
+
     }
 
     /**
@@ -461,7 +470,6 @@ var KharbgaApp = function () {
     
         var exchangedSquare = boardEl.find('.square-' + eventData.targetCellId);
         exchangedSquare.addClass('highlight-exchange');
-        // capturedSquare.find('.' + pieceClass).remove();
 
         $('#move-exchanged').append(" " + eventData.targetCellId);
         currentMove.exchanged += " ";
@@ -669,12 +677,19 @@ var KharbgaApp = function () {
         if (game.is_in_moving_state()) {
             if (source == target)
             {
+                removeSelectedCells(); 
+                appClientState.selectedSource = "";
+
                 return false;  // same cell is selected
             }
 
             // check if valid move
-            if (game.valid_move(soruce, target) == false) {
-                
+            if (game.valid_move(source, target) === false) {
+
+                removeSelectedCells();
+                appClientState.selectedSource = "";
+                $('#message').html("<div class='alert alert-warning'>Invalid move from " + source + " to " + target +". You may only move your soldiers to adjacent free cells orthogonally and not diagonally.</div>")
+    
                 return false;
             }
 
@@ -712,6 +727,15 @@ var KharbgaApp = function () {
                 lastMove.captured, lastMove.exchanged
             ).done(function () {
                 console.log('%s - Done server Invocation of recoredMove ( moveId : %s)', getLoggingNow(), lastMoveId);
+
+                $("#user-message").text("");
+
+                // good place to reset the current move
+                // check if game is over
+                if (game.game_over()) {
+                    // trigger server updating the game status into the server
+                    saveGame(game);
+                }
             })
                 .fail(function (error) {
                     console.log('%s - Invocation of recordMove ( moveId : %s) failed. Error: %s ', getLoggingNow(), lastMoveId, error);
@@ -839,7 +863,7 @@ var KharbgaApp = function () {
 
 
     var removLastMoveHighlighting = function () {
-        boardEl.find('.hightlight-captured').removeClass('highlight-captured');
+        boardEl.find('.highlight-captured').removeClass('highlight-captured');
         boardEl.find('.highlight-source').removeClass('highlight-source');
         boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
 
@@ -1177,12 +1201,12 @@ var KharbgaApp = function () {
         }
 
         if (board != null) {
+
             // update the board position here for the case when processing exchanges
             board.position(aGame.fen(), true);
             updateScores(aGame); 
             updateMoveFlags(aGame.move_flags());
             updateBoardInfo();
-
         }
 
 
@@ -1737,6 +1761,7 @@ var KharbgaApp = function () {
             ret = game.processSetting(moveTo);
         }
         updateBoard(game);
+        updateLastActionInfo(serverMove);
 
         // append the move to the game history
         appendMoveToGameHisotryList(serverMove);
@@ -1782,6 +1807,12 @@ var KharbgaApp = function () {
             default:
                 return "list-group-item-danger";
         }
+    }
+
+    function updateLastActionInfo(serverMove) {
+        $('#gameMove').html(serverMove.From + " - " + serverMove.To);
+        $('#move-captured').html(serverMove.Captured);
+        $('#move-exchanged').html(serverMove.Exchanged);
     }
 
     /**
@@ -2457,29 +2488,47 @@ var KharbgaApp = function () {
 
     }
 
+    var onGameStateUpdated = function (satus, message, game, player){
+        if (loggingOn)
+            console.log('%s - server: onGameStatusUpdated - game: %s: %s', getLoggingNow(), game.ID);
+  
+    }
+
     var setupSignalR = function () {
-        $.connection.hub.url = nsApiClient.baseURI + 'signalr';
-        if (loggingOn) console.log("Hub URL: %s", $.connection.hub.url);
-        gamesHubProxy = $.connection.gamesHub;
-        $.connection.hub.logging = loggingOn;  // turn off  (config)
+        try {
+            $.connection.hub.url = nsApiClient.baseURI + 'signalr';
+            if (loggingOn) console.log("Hub URL: %s", $.connection.hub.url);
+            gamesHubProxy = $.connection.gamesHub;
+            $.connection.hub.logging = loggingOn;  // turn off  (config)
 
-        gamesHubProxy.client.moveRecorded = onMoveRecorded;
-        gamesHubProxy.client.send = onSendMessage;
-        gamesHubProxy.client.hello = function () {
-            if (loggingOn)  console.log("%s - Hello from server", getLoggingNow());
-            $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
-        };
+            if (gamesHubProxy == null || typeof gamesHubProxy.client == 'undefined') {
+                $('#message').html("<div class='alert alert-danger'>Server No Available - Please try again later.</div>");
+                return;
+            }
 
-        gamesHubProxy.client.gameDeleted = onGameDeleted;
-        gamesHubProxy.client.appendMove = onAppendMove;
-        gamesHubProxy.client.gameJoined = onGameJoined;
-        gamesHubProxy.client.gameCreated = onGameCreated;
-        gamesHubProxy.client.setCurrentPlayer = onSetupLocalPlayer;
-        gamesHubProxy.client.joined = onJoined;
-        gamesHubProxy.client.left = onLeft;
-        gamesHubProxy.client.rejoined = onRejoined;
-        gamesHubProxy.client.pong = onPong;
-        gamesHubProxy.client.messagePosted = onMessagePosted;
+            gamesHubProxy.client.moveRecorded = onMoveRecorded;
+            gamesHubProxy.client.send = onSendMessage;
+            gamesHubProxy.client.hello = function () {
+                if (loggingOn) console.log("%s - Hello from server", getLoggingNow());
+                $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
+            };
+
+            gamesHubProxy.client.gameDeleted = onGameDeleted;
+            gamesHubProxy.client.appendMove = onAppendMove;
+            gamesHubProxy.client.gameJoined = onGameJoined;
+            gamesHubProxy.client.gameCreated = onGameCreated;
+            gamesHubProxy.client.setCurrentPlayer = onSetupLocalPlayer;
+            gamesHubProxy.client.joined = onJoined;
+            gamesHubProxy.client.left = onLeft;
+            gamesHubProxy.client.rejoined = onRejoined;
+            gamesHubProxy.client.pong = onPong;
+            gamesHubProxy.client.messagePosted = onMessagePosted;
+            gamesHubProxy.client.gameStateUpdated = onGameStateUpdated;
+        }
+        catch(e){
+            $('#main-message').html("<div class='alert alert-danger'>Server Not Available - Please try again later.</div>");
+            console.log(e);
+        }
 
         $.connection.hub.disconnected(function () {
             appClientState.signalRinitalized = false;
@@ -2493,22 +2542,28 @@ var KharbgaApp = function () {
     setupSignalR();
 
     function startSignalR() {
-        $.connection.hub.start({ jsonp: true, transport: ['webSockets', 'longPolling'] })
-            .done(function () {
-                gamesHubProxy.server.hello();
-                if (loggingOn === true)
-                    console.log('%s - startSignalR - connected, connection ID: %', getLoggingNow(), $.connection.hub.id);
+        try {
+            $.connection.hub.start({ jsonp: true, transport: ['webSockets', 'longPolling'] })
+                .done(function () {
+                    gamesHubProxy.server.hello();
+                    if (loggingOn === true)
+                        console.log('%s - startSignalR - connected, connection ID: %', getLoggingNow(), $.connection.hub.id);
 
-                appClientState.serverConnectionId = $.connection.hub.id;
-                appClientState.signalRinitalized = true;
-                // 
-                checkSessionCookie();   
-                // moves the setup of the games on startup at the end of the checking session process
-            })
-            .fail(function () {
-                appClientState.signalRinitalized = false;
-                console.log('%s - startSignalR Could not Connect!', getLoggingNow());
-            });
+                    appClientState.serverConnectionId = $.connection.hub.id;
+                    appClientState.signalRinitalized = true;
+                    // 
+                    checkSessionCookie();
+                    // moves the setup of the games on startup at the end of the checking session process
+                })
+                .fail(function () {
+                    appClientState.signalRinitalized = false;
+                    console.log('%s - startSignalR Could not Connect!', getLoggingNow());
+                });
+        }
+        catch (e) {
+            $('#main-message').html("<div class='alert alert-danger'>Server Not Available - Please try again later.</div>");
+            console.log(e);
+        }
     }
 
     startSignalR();
@@ -2529,6 +2584,13 @@ var KharbgaApp = function () {
     $('#ping-link').on('click', function () {
         gamesHubProxy.server.ping();  
     });
+
+    function saveGame() {
+     //   if (appClientState.userScreenName == game.winner.Name) { // winner gets this honor
+            gamesHubProxy.server.updateGameState(appClientState.userScreenName, appClientState.serverGame.ID,
+                game.getState(), game.winner.IsAttacker(), game.attackerScore, game.defenderScore);
+     //   }
+    }
 
     /**
     * sets up the client state with the given session
@@ -2686,6 +2748,7 @@ var KharbgaApp = function () {
         };
         board = KharbgaBoard('board', cfg);
         boardEl = $('#board');
+        $('#currentGamePanel').hide();
     };
 
     this.flipBoard = function () {

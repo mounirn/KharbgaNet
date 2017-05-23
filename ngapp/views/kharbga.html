@@ -1,8 +1,9 @@
 ﻿<div class="container-fluid" data-ng-controller="kharbgaController">
 <div id="home"class="tab-pane fade in active">
+    <div id="top-message"></div>
     <div class="row">
-         <div class="col-sm-6 col-md-9 col-lg-8 ">
-            <div id="currentGamePanel" class="panel panel-primary" >
+        <div class="col-sm-6 col-md-9 col-lg-8 " id="currentGamePanel">
+            <div  class="panel panel-primary" >
                 <div class="panel-heading">
                     <strong>Current Game ID: </strong><span id="current-game-id"></span>  
 
@@ -34,33 +35,20 @@
                             <div class="panel panel-info">
                                 <div class="panel-heading">Move Flags</div>
                                 <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <input type="checkbox" id="abandonCheckbox"><strong> Abandon</strong>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <input type="checkbox" id="exchangeRequestCheckbox"><strong> Exchange&nbsp;Request:</strong>
-                                        </div>
-
-                                        <div class="col-sm-3">
-                                            <span id="exchangeRequestDefenderPiece" class="badge"></span>
-                                        </div>
-
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox">
-                                            <strong>
-                                                Exchange&nbsp;Request&nbsp;Accepted:
-                                            </strong>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <span id="exchangeRequestAttackerPiece1" class="badge"></span>
-                                            <span id="exchangeRequestAttackerPiece2" class="badge"></span>
-                                        </div>
-                                    </div>
+                                    <dl>
+                                        <dt><input type="checkbox" id="abandonCheckbox"><strong> Resign</strong></dt>
+                                        <dd></dd>
+                                        <dt><input type="checkbox" id="exchangeRequestCheckbox"><strong> Exchange&nbsp;Request:</strong> </dt>
+                                        <dd>
+                                            <span id="exchangeRequestDefenderPiece" class="badge"> </span>
+                                        </dd>
+                                        <dt><input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox"><strong> Exchange&nbsp;Request&nbsp;Accepted:</strong></dt>
+                                        <dd>
+                                            
+                                                <span id="exchangeRequestAttackerPiece1" class="badge"></span>
+                                                <span id="exchangeRequestAttackerPiece2" class="badge"></span>
+                                        </dd>
+                                    </dl>                                                                     
                                 </div>
                             </div>
                             <hr />
@@ -119,6 +107,7 @@
                     </div>
                 </div>
                 <div class="panel-body">
+                    <div id="active-games-message"></div>
                     <div class="btn-group">
                         <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                             New Game <span class="caret"></span>
@@ -156,7 +145,5 @@
         </div>
        </div>
 </div>
-       
-
-     
+          
 </div>

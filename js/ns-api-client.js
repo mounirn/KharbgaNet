@@ -182,6 +182,45 @@ function NSAppClient(baseURI) {
             });
 
         };
+
+        this.getAccountInfo = function (sessionId, callback) {
+            var uri = this.serviceBaseURI + "account/my";
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getAccountInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getAccountInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getAccountInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+
+        };
     }
 
     /**
