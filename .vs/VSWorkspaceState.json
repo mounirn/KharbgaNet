@@ -2,11 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\app",
-    "\\css",
     "\\html",
     "\\js",
-    "\\ts"
+    "\\ngapp",
+    "\\ngapp\\controllers",
+    "\\ngapp\\views"
   ],
-  "SelectedNode": "\\js\\app.js",
+  "SelectedNode": "\\ngapp\\controllers\\user.js",
   "PreviewInSolutionExplorer": false
 }

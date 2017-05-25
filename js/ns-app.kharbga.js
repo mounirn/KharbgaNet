@@ -1440,7 +1440,7 @@ var KharbgaApp = function () {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
                 $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");                    
-                setupClientStateWithSession(data.session);           
+                setupClientStateWithSession(data.object);           
                 setupMyAccount();
                 // check the last game 
                 rejoinLastGameIfAny();
@@ -1592,7 +1592,7 @@ var KharbgaApp = function () {
                 $('#appInfo').html(JSON.stringify(data));
                 $('#account-message').html("");
 
-                var session = data.session;
+                var session = data.object;
 
                 if (session != null) {
                     setupClientStateWithSession(session);

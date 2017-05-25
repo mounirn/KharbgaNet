@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE HTML>
-<html data-ng-app="nsApp" data-ng-controller="mainController" >
+<html data-ng-app="nsApp" data-ng-controller="mainController as ctrl" >
   <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -58,11 +58,11 @@
                                   <span class="caret"></span>
                               </a>
                               <ul class="dropdown-menu">
-                                  <li><a href="" data-ng-click="play({asAttacker:true,againstComputer:true})">As Attacker w/ Computer</a></li>
-                                  <li><a href=""  data-ng-click="play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
-                                  <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
-                                  <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
-                                  <li><a href="" data-ng-click="play({asAttacker:false,againstComputer:false, asSpectator:true})">Watch and Replay Active Games</a></li>
+                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:true,againstComputer:true})">As Attacker w/ Computer</a></li>
+                                  <li><a href=""  data-ng-click="ctrl.play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
+                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
+                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
+                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false, asSpectator:true})">Watch and Replay Active Games</a></li>
 
                               </ul>
                           </li>
@@ -82,27 +82,27 @@
                           </li>
                       </ul>    
                     <!--  <button class="btn btn-default navbar-btn" data-ui-sref="Rules">Rules</button> -->
-                      <ul class="nav navbar-nav navbar-right">
-                          <li data-ng-hide="user.loggedIn"><a ui-sref="Register" ><span class="glyphicon glyphicon-user"></span> Register</a></li>
-                          <li data-ng-hide="user.loggedIn"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                          <li class="dropdown" data-ng-show="user.loggedIn">
+                      <ul class="nav navbar-nav navbar-right" data-ng-controller="sessionController as ctrl">
+                          <li data-ng-hide="sessionData.isActive"><a ui-sref="Register" ><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                          <li data-ng-hide="sessionData.isActive"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                          <li class="dropdown" data-ng-show="sessionData.isActive">
 
-                              <a href="" ui-sref="My Profile" data-toggle="dropdown" class="dropdown-toggle">
-                                  <span class="glyphicon glyphicon-user"></span>Welcome <span data-ng-bind="user.name"></span>
+                              <a href="" data-toggle="dropdown" class="dropdown-toggle">
+                                  <span class="glyphicon glyphicon-user"></span>Welcome 
+                                  <span data-ng-bind="sessionData.fullName"></span>
                                   <span class="caret"></span>
                               </a>
                               <ul class="dropdown-menu">
-                                  <li><a href="" data-ng-click="logout()">Logout</a></li>
+                                  <li><a href="" data-ng-click="ctrl.logout()">Logout</a></li>
                                   <li><a href="" ui-sref="My Profile">My Profile</a></li>
                               </ul>
-                          </li>
-       
-                      </ul>
-                  
+                          </li>       
+                      </ul>                 
                   </div>
               </div>
           </nav>
           <div id="main-message"></div>
+          <div data-ng-show="systemError" class='alert alert-danger hidden'>Server Not Available - Please try your request again later.</div>
           <ui-view></ui-view>
           <footer>
               <div class="container row">
@@ -116,19 +116,18 @@
               <hr />
               <hr>
               <pre>
-      <!-- Here's some values to keep an eye on in the sample in order to understand $state and $stateParams 
-      $state = {{$state.current.name}}
-      $stateParams = {{$stateParams}}
+      <!-- Here's some values to keep an eye on in the sample in order to 
+          understand $state and $stateParams 
+    
       $state full url = {{ $state.$current.url.source }}-->
       <!-- $state.$current is not a public api, we are using it to
            display the full url for learning purposes -->
+       $state = {{$state.current.name}}
+       $stateParams = {{$stateParams}}
 
-       $scope.user name = {{ user.name}}
-       $scope.user isLoggedIn = {{user.loggedIn ? 'Yes' : 'No'}}
-       $scope.user team = {{ user.team}}
-       $scope.user.orgId = {{ user.orgId}}
-       $scope.user.currentGame= {{ user.currentGame}}
-       $scope.user.currentState = {{ user.currentState}}
+       sessionData = {{ sessionData}}
+       user = {{ user}}
+    
     </pre>
           </footer>
 
@@ -176,6 +175,7 @@
       <script src="./ngapp/controllers/kharbga.js"></script>
       <script src="./ngapp/controllers/system.js"></script>
       <script src="./ngapp/controllers/help.js"></script>
+
       <script>
           $(document).ready(function () {
            //   $("<script>").attr({ src: '{{$scope.signalRUrl}}' }).appendTo("body");

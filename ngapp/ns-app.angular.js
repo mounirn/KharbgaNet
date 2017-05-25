@@ -191,12 +191,22 @@ nsApp.factory('appSharedService', function ($rootScope) {
 });
 
 
-nsApp.run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state, $stateParams) {
+nsApp.run(['$rootScope', '$state', '$stateParams', '$log',
+    function ($rootScope, $state, $stateParams, $log) {
     $rootScope.color = 'blue';
     $rootScope.user = { sessionId: "", loggedIn: false };
 
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams;
+
+    $rootScope.sessionData = {};
+
+
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+
+        // called every time the state transition is attempted
+        $log.info("stateChangeStart - event %s, toState: %s, toParams: %s", event, toState, toParams);
+    });
 }]);
 
 
@@ -224,3 +234,4 @@ nsApp.filter('toStatusString', function () {
 nsApp.filter('toStateString', function () {
     return function (state) { return Kharbga.GameState[state]; }; // depends on Kharbga.js
 });
+

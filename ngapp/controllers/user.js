@@ -1,18 +1,17 @@
-/* login controller */
+/* user controller */
 nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         document.title = "Login/Register";
         $scope.message = "";
-        $scope.sessionData = localStorageService.get('sessionData');
-        $scope.team = {};
-
         $log.info("userController started");
+        $scope.sessionData = localStorageService.get('sessionData');
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
 
         // after login
         var defaultUrl = "/user/profile";
         var loginUrl = "/user/login";
+        var homeUrl = "/#!/home";
         var logoutUrl = "/user/logout";
 
         $scope.loginData = { };
@@ -33,7 +32,8 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
             }
             $scope.invalidInput = false;
             $scope.message = "Processing...";
-            
+            $log.info("userController login start");
+
             $http({
                 method: "POST",
                 url: (serviceBase + 'token'),
@@ -42,19 +42,23 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 },
                 data: $scope.loginData
             }).then(function (response) {
-                localStorageService.set('sessionData', response.data.session); 
+     
                 $scope.message = "";           
                 $scope.invalidLogin = false;
+                $log.info("userController login success");
+                // add check for result
+                setupUser(response.data);
 
-               setupUser(response.data.session);
-
-            }, function (response) {
+                }, function (response) {
+                    $log.info("userController login error");
                    if (response.status === 404 || response.status === 400)
                     $scope.invalidLogin = true; // ("<div class='alert alert-danger'>Invalid Login ID or password</div>");
                 else
                     $scope.systemError = true; //("<div class='alert alert-danger'> Failed to login</div>");
-
+                   $scope.session = {};
                    $scope.message = "";
+
+                   setupUser(null);
             });
         };
 
@@ -79,11 +83,11 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 },
                 data: $scope.registerData
             }).then(function (response) {
-                localStorageService.set('sessionData', response.data.session);
                 $scope.message = "";
                 $scope.invalidLogin = false;
+                $scope.systemError = false;
                 $scope.message = "";
-                setupUser(response.data.session);
+                setupUser(response.data);
 
             }, function (response) {
                 if (response.status === 404 || response.status === 400)
@@ -105,33 +109,46 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
             });
         }
 
-        var setupUser = function (sessionData) {
+        var setupUser = function (sessionResult) {
+            var sessionData = null;
+            if (sessionResult != null)
+                sessionData = sessionResult.object; 
+
+            $scope.sessionData = sessionData; 
+        
+
             if (sessionData != null && sessionData.isActive) {
+                localStorageService.set('sessionData', sessionData); 
+
+                $scope.user = {};
                 $scope.user.loggedIn = true; 
-                $scope.user.name = sessionData.fullName;
-              //  $scope.user.sessionId = sessionData.SessionId;
-                $scope.user.role = sessionData.mainRole;
-                $scope.user.lastAccess = sessionData.lastAccess;
-                $scope.user.orgId = sessionData.clientId;
-                $scope.user.isAdmin = sessionData.isAdmin;
-              //  $state.reload();
+                $scope.invalidLogin = false;
 
                 $.nsAppKharbga.setSessionId(sessionData.sessionId);
-                _updateAccountInfo();
-                _updateTeamInfo();
+                _updateAccountInfo(sessionData.sessionId);
+                _updateTeamInfo(sessionData.sessionId);
+                $scope.user.currentGame = $.nsAppKharbga.getCurrentGame();
+                $scope.user.currentState = $.nsAppKharbga.getCurrentState();
+                $rootScope.user = $scope.user;
+                $rootScope.sessionData = $scope.sessionData;
                 $state.go('Home', {});
+                $location.path(homeUrl);
             }   
             else {
-
-                $scope.user = { name: "", sessionId: "", currentGameId: "", role: "", loggedIn: false, lastAccess: '', isAdmin: false, orgId: 0 };
+                localStorageService.remove('sessionData');
                 $.nsAppKharbga.setSessionId('');
-                $state.go('Login', {});
-                $location.path(loginUrl);
-                $scope.user.account = {};
-              //  $state.reload();              
+               
+                $scope.user = { loggedIn: false };
+                $scope.user.currentGame = {};
+                $scope.user.currentState = {};
+                $rootScope.user = $scope.user;
+                $rootScope.sessionData = $scope.sessionData;
+
+               $state.go('Login', {});
             }
 
             $rootScope.user = $scope.user;
+            $rootScope.sessionData = $scope.sessionData;
         };
      
         $scope.$watch('loginData', function () {
@@ -144,35 +161,23 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
             //todo:
         }
 
-        var _updateTeamInfo = function () {
-            var sessionId = "";
-            $scope.sessionData = localStorageService.get('sessionData');
-            if ($scope.sessionData == null)
-                return;
-
-            sessionId = $scope.sessionData.sessionId;
+        var _updateTeamInfo = function (sessionId) {
+        
             nsApiClient.clientService.getClientInfo(sessionId, function (data, status) {
                 $scope.user.team = data;
-                $scope.status = status;
-                $scope.user.currentGame = $.nsAppKharbga.getCurrentGame();
-                $scope.user.currentState = $.nsAppKharbga.getCurrentState();
+                $scope.user.team.status = status;
+             
             });
 
         };
 
-        var _updateAccountInfo = function () {
-            var sessionId = "";
-            $scope.sessionData = localStorageService.get('sessionData');
-            if ($scope.sessionData == null)
-                return;
-
-            sessionId = $scope.sessionData.sessionId;
+        var _updateAccountInfo = function (sessionId) {
+          
             nsApiClient.userService.getAccountInfo(sessionId, function (data, status) {
                 $scope.user.account = data;
-                $scope.status = status;
+                $scope.user.account.status = status;
             });
         };
 
-    //    $scope.updateTeamInfo = _updateTeamInfo;
 
     }]);

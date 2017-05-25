@@ -1,88 +1,159 @@
-/* main controller */
+/* main/home controller */
 nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
-        document.title = "Home";
-        $scope.message = "";
+        this.message = "";
         $scope.sessionData = localStorageService.get('sessionData');
         $log.info("mainController started");
+    
+        this.play = function (options) {
+
+            if ($scope.sessionData != null && $scope.sessionData.isActive) {
+                $state.go('Play', options);
+                if (!(options.asSpectator === true) ) {
+                    setTimeout(function () { $.nsAppKharbga.newGame(options); }, 1000);
+                }               
+            }
+            else {
+                $state.go('Login', options);
+            }
+        };
+
+        /* used by the different child controllers thru $scope and rootScope */
+        $scope.setupSessionData = function (sessionResult) {
+            var sessionData = null;
+            if (sessionResult != null)
+                sessionData = sessionResult.object;
+
+            // $rootScope.sessionData = sessionData;
+
+            if (sessionData != null && sessionData.isActive) {
+                localStorageService.set('sessionData', sessionData);
+
+                $.nsAppKharbga.setSessionId(sessionData.sessionId);
+                $scope.sessionData = localStorageService.get('sessionData');
+               
+            }
+            else {
+                localStorageService.remove('sessionData');
+                $.nsAppKharbga.setSessionId('');
+                $scope.sessionData = localStorageService.get('sessionData');
+            }
+
+            $rootScope.sessionData = sessionData;
+        };
+    }]);
+
+/* login controller */
+nsApp.controller('loginController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
+        this.message = "";
+        $log.info("loginController started");
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
-
-        $scope.signalRUrl = appConstants.Settings.ApiServiceBaseUri + "signalR/hubs";
 
         // after login
         var defaultUrl = "/user/profile";
         var loginUrl = "/user/login";
+        var homeUrl = "/#!/home";
         var logoutUrl = "/user/logout";
 
-
-        var setupUser = function (sessionData) {
-
-            $scope.sessionData = sessionData; 
-
-            if (sessionData != null && sessionData.isActive) {
-                $scope.user.loggedIn = true;
-                $scope.user.name = sessionData.fullName;
-                //  $scope.user.sessionId = sessionData.SessionId;
-                $scope.user.role = sessionData.mainRole;
-                $scope.user.lastAccess = sessionData.lastAccess;
-                $scope.user.orgId = sessionData.clientId;
-                $scope.user.isAdmin = sessionData.isAdmin;
-                _updateTeamInfo();
+        this.loginData = {};
+        this.login = function () {
+            var form = $scope.loginForm;
+            if (form.$invalid) {
+                this.invalidInput = true;
+                angular.element("[name='" + form.$name + "']").find('.ng-invalid:visible:first').focus();
+                return;
             }
-            else {
-                $scope.user = {
-                    name: "", sessionId: "", currentGameId: "", role: "", loggedIn: false,
-                    lastAccess: '', isAdmin: false, orgId: 0
-                };
+            this.invalidInput = false;
+            this.message = "Processing...";
+            $log.info("loginController login start");
+
+            $http({
+                method: "POST",
+                url: (serviceBase + 'token'),
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                data: this.loginData
+            }).then(function (response) {
+
+                this.message = "";
+                this.invalidLogin = false;
+                $log.info("loginController login success");
+                // add check for result
+                $scope.setupSessionData(response.data);
+
                 $state.go('Home', {});
 
-                $scope.user.currentGame = {};
-                $scope.user.currentState = {};
-             //   $location.path(loginUrl);
+            }, function (response) {
+                $log.info("loginController login error");
+                if (response.status === 404 || response.status === 400)
+                    this.invalidLogin = true; // ("<div class='alert alert-danger'>Invalid Login ID or password</div>");
+                else
+                    this.systemError = true; //("<div class='alert alert-danger'> Failed to login</div>");
 
-            }
+                this.message = response.errorText;
 
-            $rootScope.user = $scope.user;
+                $scope.setupSessionData(null);  
+            });
         };
 
-        // read the user info from localStorage  if any 
-        var _checkSession =  function () {      
+    }]);
+
+
+/* session controller */
+nsApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
+        this.message = "";
+        this.data = localStorageService.get('sessionData');
+        $log.info("sessionController started");
+
+        var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
+
+        // read the session info from localStorage if any 
+        this.checkSession = function () {
             var sessionData = localStorageService.get('sessionData');
-       
-            //setupUser(null);
-        //    $scope.message = "Processing...";
-            if (sessionData != null) {
-                var sessionId = sessionData.sessionId;
-                $http({
-                    method: "GET",
-                    url: (serviceBase + 'token'),
-                    headers: {
-                        'Content-Type': "application/json", "_nssid": sessionId
-                    }
-                }).then(function (response) {
-                    localStorageService.set('sessionData', response.data.session);
-                    setupUser(sessionData);  
-                    $scope.systemError = false;
-                    $scope.message = "";
 
-                 
-                }, function (response) {
-                    $scope.systemError = true;
-                    setupUser(null);  
-                });
+            if (sessionData == null || angular.isUndefined(sessionData)) {
+                this.invalidSession = true;
+                return;
             }
-            else {
-                setupUser(sessionData);    
-               
-            }
+            var sessionId = sessionData.sessionId;
+            $http({
+                method: "GET",
+                url: (serviceBase + 'token'),
+                headers: {
+                    'Content-Type': "application/json", "_nssid": sessionId
+                }
+            }).then(function (response) {
+                this.systemError = false;
+                this.message = "";
+                this.invalidSession = false;
+
+                $scope.setupSessionData(response.data);  
+                this.data = localStorageService.get('sessionData');
+
+            },
+            function (response) {
+                if (response.status === 404 || response.status === 400)
+                    this.invalidSession = true;
+                else
+                    this.systemError = true;
+
+                this.message = response.statusText;
+                $scope.setupSessionData(response.data);  
+                this.data = localStorageService.get('sessionData');
+
+            });
         };
 
-        var _logout = function () {
+        this.logout = function () {
             //  $scope.message = "Processing...";
             var sessionData = localStorageService.get('sessionData');
-            var sessionId = sessionData.sessionId;
-            if (sessionData) {
+
+            if (sessionData != null) {
+                var sessionId = sessionData.sessionId;
                 $http({
                     method: "DELETE",
                     url: (serviceBase + 'token'),
@@ -92,7 +163,6 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
                 }).then(function (response) {
                     localStorageService.remove('sessionData');
 
-                    setupUser(null);
                     $scope.message = "";
                     $state.go('Logout', {});
 
@@ -100,48 +170,76 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
                     $scope.message = response.statusText;
                 });
             }
+         
+            $scope.setupSessionData(null);
+            $state.go('Logout', {}); 
         };
 
         // call on startup
-        _checkSession();
+        this.checkSession();
 
-        $scope.logout = _logout;
+    }]);
 
-        $scope.play = function (options) {
-            $scope.sessionData = localStorageService.get('sessionData');
-
-            if ($scope.sessionData != null && $scope.sessionData.isActive) {
-                $state.go('Play', options);
-                if (!(options.asSpectator === true) ) {
-                    setTimeout(function () { $.nsAppKharbga.newGame(options); }, 1000);
-                }
-                
+/* user account controller */
+nsApp.controller('accountController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
+        $log.info("accountController started");
+        $scope.user = {};
+        $scope.action = {};
+        $scope.action.invalid = true;
+        this.updateAccountInfo = function () {
+            var sessionData = localStorageService.get('sessionData');
+            if (sessionData == null) {
+                return;
             }
-            else {
-                $state.go('Login', options);
-            }
+            var sessionId = sessionData.sessionId;
+
+            nsApiClient.userService.getAccountInfo(sessionId, function (data, status) {
+               
+                $scope.user.account = data.object;
+                if (angular.isObject($scope.user.account))
+                    $scope.action.invalid = false;
+
+                $scope.action.status = status;
+
+                // add check for status to trigger a system error event
+            });
         };
 
-        var _updateTeamInfo = function () {
-            var sessionId = "";
-            $scope.sessionData = localStorageService.get('sessionData');
-            if ($scope.sessionData == null)
-                return;
+        this.updateAccountInfo();
 
-            sessionId = $scope.sessionData.sessionId;
+
+    }]);
+
+/* team controller */
+nsApp.controller('teamController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
+        $scope.message = "";
+        $log.info("teamController started");
+        $scope.action = {};
+        $scope.action.invalid = true;
+
+        $scope.team = null;
+
+        this.updateTeamInfo = function () {
+            var sessionData = localStorageService.get('sessionData');
+            if (sessionData == null) {
+                return;
+            }
+            var sessionId = sessionData.sessionId;
+
             nsApiClient.clientService.getClientInfo(sessionId, function (data, status) {
-                $scope.user.team = data;
-                $scope.status = status;
-                $scope.user.currentGame = $.nsAppKharbga.getCurrentGame();
-                $scope.user.currentState = $.nsAppKharbga.getCurrentState();
-              //  $state.reload();  // refresh the state
+
+                $scope.team = data;
+                if (angular.isObject($scope.team))
+                    $scope.action.invalid = false;
+
+                $scope.action.status = status;
+
             });
 
         };
 
-     //   $scope.updateTeamInfo = _updateTeamInfo;
-
-        
-
+        this.updateTeamInfo();
 
     }]);

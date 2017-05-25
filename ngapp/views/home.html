@@ -1,28 +1,30 @@
-<div data-ng-controller="mainController">
+<div data-ng-controller="mainController as ctrl">
     <div class="panel panel-primary">
-        <div class="panel-heading"><h3>Welcome <strong>{{user.name}}</strong> to Kharbga.Net</h3></div>
+        <div class="panel-heading"><h3>Welcome <strong>{{sessionData.fullName}}</strong> to Kharbga.Net</h3></div>
         <div class="panel-body">
-            <p>If this is your first time here, please click <a href="" ui-sref="Rules">here</a> to learn about the game.</p>
-            <p>This system provides a platform for learning and playing this fun board game from North Africa. You could challenge the computer. 
-                But, it is more fun to meet and play with other human players across the world.</p>
-            <p data-ng-hide="user.loggedIn">With a <a href="" ui-sref="Register">registration</a> in the system, you could open an account for a team in your town, neighborhood, or organization or join an existing team.</p>            
+            <p>If this is your first time here, please click <a href="" ui-sref="Rules">here to learn about the game.</a></p>
+            <p>This system provides a platform for learning and playing this fun board game from North Africa. 
+            You could challenge the computer or play with other human players across the world, which is more fun!</p>
+            <p data-ng-hide="sessionData.isActive"><a href="" ui-sref="Register">Registration</a> in the system is free. 
+            You could open an account for a team in your town, neighborhood, or organization or join an existing team.</p>            
             <hr />
-            <p data-ng-hide="user.loggedIn"><button href="" ui-sref="Login" class="btn btn-primary">Click here to login and play with other members</button></p>
-            <p data-ng-show="user.loggedIn"><button href="" ui-sref="Play" class="btn btn-primary">Click here play with other members</button></p>
+            <p data-ng-hide="sessionData.isActive"><a href="" ui-sref="Register" class="">Click here</a> to register.</p>
+            <p data-ng-hide="sessionData.isActive">Click <a href="" ui-sref="Login" class="">here to login</a> if you already have an account.</p>
+            <p data-ng-show="sessionData.isActive">Click <a href="" ui-sref="Play" class="">here to play</a> with other members.</p>
              
             <hr />
             <h4 class="text-primary"><strong>Play Computer</strong></h4> 
-            <button class="btn btn-primary" href="" data-ng-click="play({asAttacker:true,againstComputer:true})">As Attacker</button>
-            <button class="btn btn-primary" href="" data-ng-click="play({asAttacker:false,againstComputer:true})">As Defender</button>
+            <button class="btn btn-primary" href="" data-ng-click="ctrl.play({asAttacker:true,againstComputer:true})">As Attacker</button>
+            <button class="btn btn-primary" href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:true})">As Defender</button>
 
             <hr />
             <h4 class="text-primary"><strong>Challenge Other Members</strong></h4>
-            <button class="btn btn-primary" href="" data-ng-click="play({asAttacker:true,againstComputer:false})">As Attacker</button>
-            <button class="btn btn-primary" href="" data-ng-click="play({asAttacker:false,againstComputer:false})">As Defender</button>
+            <button class="btn btn-primary" href="" data-ng-click="ctrl.play({asAttacker:true,againstComputer:false})">As Attacker</button>
+            <button class="btn btn-primary" href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false})">As Defender</button>
 
             <hr />
             <h4 class="text-primary"><strong>Join or Watch Active Games</strong></h4>
-            <button class="btn btn-primary" href="" data-ng-click="play({asAttacker:false,againstComputer:false, asSpectator:true})">Join, Watch & Replay</button>
+            <button class="btn btn-primary" href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false, asSpectator:true})">Join, Watch & Replay</button>
 
     </div>
 
