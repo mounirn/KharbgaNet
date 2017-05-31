@@ -1,6 +1,13 @@
+// utils
 function getLoggingNow() {
     return moment().format('HH:mm:ss.SSS');
 }
+
+String.prototype.replaceAll2 = function (find, replace) {
+    var str = this;
+    return str.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+};
+
 
 function NSAppClient(baseURI) {
     this.baseURI = baseURI;
@@ -435,9 +442,10 @@ function NSAppClient(baseURI) {
 
 };
 var debugURI = "http://localhost:3121/";
-var prodURI = "http://api.nourisolutions.com/";
+var testURI = "http://api.nourisolutions.com/";
+var prodURI = "https://www.kharbga.com/";
 var devURI = "http://localhost/NS.API/";
-var nsApiClient = new NSAppClient(debugURI);
+var nsApiClient = new NSAppClient(prodURI);
 
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 

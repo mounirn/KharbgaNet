@@ -1,8 +1,9 @@
 <div class="row" data-ng-controller="loginController as ctrl">
     <div class="col-sm-6">
         <div id="account-message" data-ng-bind="message"> </div>
-        <div data-ng-show="ctrl.invalidInput" class='alert alert-danger'>Please enter valid data in all required fields</div>
-        <div data-ng-show="ctrl.invalidLogin" class='alert alert-danger'>Invalid Login ID or Password</div>
+        <div data-ng-show="systemError" class='alert alert-danger'>System Error - Please try again later. If the error persists, please contact us for support</div>
+        <div data-ng-show="invalidInput" class='alert alert-danger'>Please enter valid data in all required fields</div>
+        <div data-ng-show="invalidLogin" class='alert alert-danger'>Invalid Login ID or Password</div>
         <div id="login-panel" class="panel panel-primary">
             <div class="panel-heading">Login</div>
             <div class="panel-body">

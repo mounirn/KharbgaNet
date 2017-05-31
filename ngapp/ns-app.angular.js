@@ -195,6 +195,9 @@ nsApp.run(['$rootScope', '$state', '$stateParams', '$log',
     function ($rootScope, $state, $stateParams, $log) {
     $rootScope.color = 'blue';
     $rootScope.user = { sessionId: "", loggedIn: false };
+    $rootScope.message = "";
+    $rootScope.processing = false;
+    $rootScope.systemError = false;
 
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams;
@@ -203,6 +206,12 @@ nsApp.run(['$rootScope', '$state', '$stateParams', '$log',
 
 
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+
+        if (angular.isObject($.nsAppKharbga)) {
+            // update the rootScope
+            $rootScope.currentGame = $.nsAppKharbga.getCurrentGame();
+            $rootScope.currentState = $.nsAppKharbga.getCurrentState();
+        }
 
         // called every time the state transition is attempted
         $log.info("stateChangeStart - event %s, toState: %s, toParams: %s", event, toState, toParams);

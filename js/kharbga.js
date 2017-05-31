@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Kharbga;
 (function (Kharbga) {
     var Board = (function () {
@@ -981,6 +986,10 @@ var Kharbga;
             else
                 return new Array();
         };
+        Game.prototype.setPlayerNames = function (attacker, defender) {
+            this.attacker.Name = attacker;
+            this.defender.Name = defender;
+        };
         Game.prototype.settings_near_malha = function () {
             var ret = new Array();
             var nearMalha = ['c4', 'e4', 'd3', 'd5'];
@@ -1124,6 +1133,8 @@ var Kharbga;
                 return true;
         };
         Game.prototype.turn = function () {
+            if (this.currentPlayer == null)
+                return '';
             if (this.currentPlayer.IsAttacker())
                 return 'a';
             else

@@ -5,9 +5,8 @@
  * Released under the MIT license
  * https://github.com/oakmac/chessboardjs/blob/master/LICENSE
  *
- * Date: Apr 15, 2017 -- modified by Mounir Nouri for Kharbga
+ * Date: Apr 15, 2017 -- adopted by Mounir Nouri for Kharbga
  */
-
 
 /* clearfix */
 
@@ -17,7 +16,6 @@
 
 
 /* board */
-
 .board-b72b1 {
     border: 2px solid #404040;
     -webkit-box-sizing: content-box;
@@ -54,15 +52,12 @@
 
 
 /* white square */
-
 .white-1e1d7 {
     background-color: #f0d9b5;
     color: #b58863;
 }
 
-
 /* black square */
-
 .black-3c85d {
     background-color: #b58863;
     color: #f0d9b5;
@@ -77,15 +72,14 @@
     box-shadow: inset 0 0 1px 1px #b58863;
 }
 
-
 /* highlighted square */
-
 .highlight1-32417,
 .highlight2-9c5d2 {
     -webkit-box-shadow: inset 0 0 3px 3px yellow;
     -moz-box-shadow: inset 0 0 3px 3px yellow;
     box-shadow: inset 0 0 3px 3px yellow;
 }
+
 .highlight-source-piece {
     -webkit-box-shadow: inset 0 0 2px 2px green;
     -moz-box-shadow: inset 0 0 2px 2px green;
@@ -116,10 +110,7 @@
     box-shadow: inset 0 0 3px 3px yellow;
 }
 
-
-
 /* notation */
-
 .notation-322f9 {
     cursor: default;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -252,6 +243,15 @@ body {
 }
 
 
+.highlight-possible-move {
+    -webkit-box-shadow: inset 0 0 3px 3px blue;
+    -moz-box-shadow: inset 0 0 3px 3px blue;
+    box-shadow: inset 0 0 3px 3px red;
+    background-image: url("./img/dot.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 /* Sample  */
 
 .pln {
@@ -348,7 +348,7 @@ pre.prettyprint {
     border: 1px solid #ccc;
     padding: 10px;
 }
-
+/*   MN -- not used
 ol.linenums {
     margin-top: 0;
     margin-bottom: 0;
@@ -570,7 +570,7 @@ code.number {
 }
 
 pre {
-    font-size: 14px;
+    font-size: 11px;
 }
 
 a {
@@ -646,7 +646,7 @@ button.btn {
     -o-border-radius: 3px;
     border-radius: 3px;
 }
-
+*/
 thead.center th {
     text-align: center;
 }

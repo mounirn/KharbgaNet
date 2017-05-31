@@ -28,7 +28,7 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
         $state.go('Login', {});
     }
 
-    var _refreshGames = function () {
+   /* var _refreshGames = function () {
         if ($scope.sessionData != null) {
             $log.info("Kharbga controller - refreshing server games");
 
@@ -38,6 +38,7 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
             $scope.message = "Please login to play or view active games";
         }
     };
+        */
 
     $scope.getGameStatus = function () {
         if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
@@ -66,7 +67,7 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
     });
   */
 
-    $scope.refreshGames = _refreshGames;
+   // $scope.refreshGames = _refreshGames;
     $scope.flipBoard = function () {
         if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
             return false;
@@ -98,14 +99,56 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
 
     $scope.post = function () {
         // 
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+
         var msg = {message: $scope.userMessage};
         $.nsAppKharbga.postMessage(msg);
     };
+
+    $scope.playBackward = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.playBackward(); 
+    };
+    $scope.playStart = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.playStart(); 
+    };
+    $scope.playPause = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.playPause(); 
+    };
+    $scope.playForward = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.playForward(); 
+    };
+
+
 
     setTimeout(function () {
        // _refreshGames();
    
     }, 1000);  // run this after completing loading
  
+
+}]);
+
+
+/* replay controller */
+nsApp.controller('replayController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
+    function ($scope, $state, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
+
+    $log.info("Kharbga replay controller started");
+    $scope.currentGame = null;
+
+    if ($.nsAppKharbga != null && !angular.isUndefined($.nsAppKharbga)) {
+        $.nsAppKharbga.initBoard({ themePath: './img/theme-basic/{piece}.png' });
+
+        $scope.currentGame = $.nsAppKharbga.getCurrentGame();
+    };
 
 }]);

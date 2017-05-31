@@ -1,8 +1,8 @@
-<div data-ng-controller="mainController">
+<div data-ng-controller="registerController">
     <div id="account-message" data-ng-bind="message"> </div>
     <div data-ng-show="invalidInput" class='alert alert-danger'>Please enter valid data in all required fields</div>
     <div data-ng-show="invalidLogin" class='alert alert-danger'>Invalid Login ID or Password</div>
-    <div data-ng-show="systemError" class='alert alert-danger'>System Error</div>
+  <!--  <div data-ng-show="systemError" class='alert alert-danger'>System Error</div>-->
 
     <div id="register-panel" class="panel panel-primary " >
         <div class="panel-heading">Register</div>
@@ -14,7 +14,7 @@
                         <span class="input-group-addon"><i class="glyphicon glyphicon-tent"></i></span>
                         <input class="form-control" autofocus data-ng-change="teamChange()" data-ng-model="registerData.orgName" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50" />
                         <datalist id="register-team-list" >
-                            <option data-ng-repeat="t in teamList" value="{{t.name}}"></option>
+                            <option data-ng-repeat="team in teamList" value="{{team.name}}"></option>
                         </datalist>
                     </div>
                 </div>

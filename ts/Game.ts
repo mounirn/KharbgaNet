@@ -163,6 +163,11 @@ namespace Kharbga {
                 return new Array<string>();
         }
 
+        /**
+         * Updates the game player names
+         * @param attacker - name
+         * @param defender - name
+         */
         public setPlayerNames(attacker: string, defender: string) {
             this.attacker.Name = attacker;
             this.defender.Name = defender;
@@ -423,6 +428,8 @@ namespace Kharbga {
          * Returns 'a' if attacker, 'd' if defender
          */
         public turn(): string {
+            if (this.currentPlayer == null) return '';
+
             if (this.currentPlayer.IsAttacker()) return 'a';
             else return 'd';
         }

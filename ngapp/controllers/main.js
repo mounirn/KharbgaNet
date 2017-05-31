@@ -46,27 +46,27 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
 /* login controller */
 nsApp.controller('loginController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
-        this.message = "";
         $log.info("loginController started");
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
 
-        // after login
-        var defaultUrl = "/user/profile";
-        var loginUrl = "/user/login";
-        var homeUrl = "/#!/home";
-        var logoutUrl = "/user/logout";
+        $scope.invalidLogin = false;
+        $scope.invalidInput = false;
 
         this.loginData = {};
-        this.login = function () {
+        this.login = function (redirectTo) {
+
             var form = $scope.loginForm;
             if (form.$invalid) {
-                this.invalidInput = true;
+                $scope.invalidInput = true;
                 angular.element("[name='" + form.$name + "']").find('.ng-invalid:visible:first').focus();
                 return;
             }
-            this.invalidInput = false;
-            this.message = "Processing...";
+            $scope.invalidLogin = false;
+            $scope.invalidInput = false;
+
+            $rootScope.processing = true;
+            $rootScope.systemError = false; 
             $log.info("loginController login start");
 
             $http({
@@ -78,23 +78,24 @@ nsApp.controller('loginController', ['$scope', '$state', '$rootScope', '$locatio
                 data: this.loginData
             }).then(function (response) {
 
-                this.message = "";
-                this.invalidLogin = false;
+                $rootScope.processing = false;
+                $scope.invalidLogin = false;
                 $log.info("loginController login success");
                 // add check for result
                 $scope.setupSessionData(response.data);
 
-                $state.go('Home', {});
+                // add check for redirection here
+                $state.go('Home', { redirect: redirectTo });
 
             }, function (response) {
                 $log.info("loginController login error");
                 if (response.status === 404 || response.status === 400)
-                    this.invalidLogin = true; // ("<div class='alert alert-danger'>Invalid Login ID or password</div>");
+                    $scope.invalidLogin = true; 
                 else
-                    this.systemError = true; //("<div class='alert alert-danger'> Failed to login</div>");
+                    $rootScope.systemError = true; 
 
-                this.message = response.errorText;
-
+                $scope.message = response.errorText;
+                $rootScope.processing = false;
                 $scope.setupSessionData(null);  
             });
         };
@@ -203,6 +204,8 @@ nsApp.controller('accountController', ['$scope', '$state', '$rootScope', '$locat
                 $scope.action.status = status;
 
                 // add check for status to trigger a system error event
+
+                $rootScope.user = $scope.user;
             });
         };
 
@@ -236,6 +239,7 @@ nsApp.controller('teamController', ['$scope', '$state', '$rootScope', '$location
 
                 $scope.action.status = status;
 
+                $rootScope.team = $scope.team;
             });
 
         };

@@ -16,7 +16,7 @@
 	- As Attacker
 		
 	- As Defender (ability to request for two)
-
+		piece being played with
 * Abiity to replay with a delay 
 * Ability to start a game with options (w/ computer, as Attacker,as Defender). 
 * Add option to start the game with a time limit for each player (10, 20, 30 min).

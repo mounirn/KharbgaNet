@@ -1,0 +1,117 @@
+﻿<div class="container-fluid" data-ng-controller="replayController">
+<div id="replay" class="active">
+    <div id="top-message"></div>
+     <div  class="panel panel-primary" >
+        <div class="panel-heading">
+            <strong>Game ID: </strong><span id="current-game-id"></span>  
+            <strong>My Role:</strong><span id="account-game-role"></span>
+            <span id="current-game-status" class="badge pull-right"></span>
+        </div>
+        <div class="panel-body">
+            <div id="message" class=""></div>
+            <div id="game-over" class="modal fade gameOver">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title text-center">GAME OVER</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-center text-info text-center"><strong><span id="game-players"></span></strong></p>
+                            <p class="text-center text-success">Winner is: <span id="game-winner"></span></p>
+                            <p class="text-center text-success"><span id="game-result"></span></p>
+                            <p class="text-center text-info">Final Score: <span id="game-score"></span></p>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-info" style="min-width:200px">
+                        <div class="panel-heading">
+                            <span class="pull-left">Turn:  </span> &nbsp; &nbsp;
+                            <span id="player-turn" class="badge"></span>
+
+                            <a class="pull-right" href="" data-ng-click="flipBoard()" id="flipOrientation" value="Flip orientation">
+
+                                <span class="glyphicon glyphicon-repeat"></span> Flip
+                            </a>
+                        </div>
+                        <!-- The Boards -->
+                        <div class="panel-body text-center">
+                            <div id="board" style="width: 100%"></div>                          
+                        </div>
+                        <div id="Board controls">
+                            <div class="row">
+                                <div class="col-sm-2"><span class="glyphicon glyphicon-step-backward"></span> </div>
+                                <div class="col-sm-2"><span class="glyphicon glyphicon-play"></span> </div>
+                                <div class="col-sm-2"><span class="glyphicon glyphicon-pause"></span> </div>
+                                <div class="col-sm-2"><span class="glyphicon glyphicon-step-forward"></span> </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-info" style="font-size:smaller">
+                        <div class="panel-heading">Move Flags</div>
+                        <div class="panel-body">
+                            <dl>
+                                <dt><input type="checkbox" id="abandonCheckbox"><strong> Resign</strong></dt>
+                                <dd></dd>
+                                <dt><input type="checkbox" id="exchangeRequestCheckbox"><strong> Exchange&nbsp;Request:</strong> </dt>
+                                <dd>
+                                    <span id="exchangeRequestDefenderPiece" class="badge"> </span>
+                                </dd>
+                                <dt><input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox"><strong> Exchange&nbsp;Request&nbsp;Accepted:</strong></dt>
+                                <dd>
+
+                                    <span id="exchangeRequestAttackerPiece1" class="badge"></span>
+                                    <span id="exchangeRequestAttackerPiece2" class="badge"></span>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="panel panel-info" style="font-size:smaller">
+                        <div class="panel-heading">Last Action</div>
+                        <div class="panel-body">
+                            <dl class="dl-horizontal">
+                                <dt>Setting/Move: </dt>
+                                <dd><span id="gameMove" class="badge"></span> </dd>
+                                <dt>Captured:</dt>
+                                <dd>
+                                    <span id="move-captured" class="badge"></span>
+                                </dd>
+                                <dt>Exchanged:</dt>
+                                <dd><span id="move-exchanged" class="badge"></span></dd>
+                            </dl>
+
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            Game State <span class="pull-right badge" id="state"></span>
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                                FEN: <span id="fen" class="badge badge-success"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <strong calss="text-center">Moves History</strong>
+        </div>
+        <div class="panel-footer">
+
+            <div id="game-moves-history"></div>
+        </div>
+    </div>
+</div>          
+</div>

@@ -1,13 +1,13 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app",
-    "\\html",
+    "\\Img",
     "\\js",
     "\\ngapp",
     "\\ngapp\\controllers",
-    "\\ngapp\\views"
+    "\\ngapp\\views",
+    "\\ts"
   ],
-  "SelectedNode": "\\ngapp\\controllers\\user.js",
+  "SelectedNode": "\\js\\ns-app.kharbga.js",
   "PreviewInSolutionExplorer": false
 }

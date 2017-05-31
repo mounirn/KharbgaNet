@@ -17,11 +17,14 @@
                     <div class="panel-body">
                         <div class="table table-user-information">
                             <dl class="dl-horizontal">
+                                <dt>Last Access Time:</dt>
+                                <dd><span id="session-last-access" data-ng-bind="ctrl.data.sessionLastAccessTime"></span></dd>
+                                
                                  <dt>User Name:</dt>
-                                <dd><span id="account-name" data-ng-bind="ctrl.data.fullName"></span></dd>
+                                <dd><span id="session-name" data-ng-bind="ctrl.data.fullName"></span></dd>
 
                                 <dt>Email:</dt>
-                                <dd><span id="account-name" data-ng-bind="ctrl.data.emailAddress"></span></dd>
+                                <dd><span id="session-name" data-ng-bind="ctrl.data.emailAddress"></span></dd>
                            
                                 <dt>Role:</dt>
                                 <dd><span id="account-game-role" data-ng-bind="ctrl.data.mainRole"></span></dd>

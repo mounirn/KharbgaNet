@@ -694,23 +694,57 @@
             //   
             if (color === 'black') {
                 html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender: <span id="game-defender"></span></strong></div>';
+                html += '<div class="col-sm-2"><span id="defender-thinking"></div>'; //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">
             } else {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker: <span id="game-attacker"></strong></div>';
+                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker: <span id="game-attacker"></strong> </strong></div><div class="col-sm-2"><span id="attacker-thinking"></div>';
+                html += '<div class="col-sm-2"><span id="attacker-thinking"></div>';//&nbsp;&nbsp;<span id="attacker_clock" class="badge alert alert-info">
             }
-            html += '<div class="col-sm-9">'
+            html += '<div class="col-sm-5">'
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
             }
             if (color === 'black') 
-                html += '&nbsp;&nbsp;<span id="defender_score" class="badge">';
+                html += '</div><div class="col-sm-2">&nbsp;&nbsp;<span id="defender_score" class="badge">';
             else
-                html += '&nbsp;&nbsp;<span id="attacker_score" class="badge">';
+                html += '</div><div class="col-sm-2">&nbsp;&nbsp;<span id="attacker_score" class="badge">';
 
             html += '</div></div>'
 
             return html;
         }
 
+
+        function buildSparePiecesTable(color) {
+            var pieces = ['wS'];
+            if (color === 'black') {
+                pieces = ['bS'];
+            }
+
+            var html = '<table class="table table-responsive xtable-bordered table-condensed"><tr>';
+            // MN : add indication which one is the attacker and which one is the defender
+            //   
+            if (color === 'black') {
+                html += '<td style="padding-top: 5px"><strong>Defender:<br><span id="game-defender"></span></strong></td>';
+                html += '<td><span id="defender-thinking"></td>'; 
+                html += '<td><span id="defender_clock" class="badge alert alert-info"></span></td>';
+            } else {
+                html += '<td style="padding-top: 5px"><strong>Attacker:<br><span id="game-attacker"></span> </strong></td>';
+                html += '<td><span id="attacker-thinking"></td>';
+                html += '<td><span id="attacker_clock" class="badge alert alert-info"></span></td>';
+            }
+            html += '<td>'
+            for (var i = 0; i < pieces.length; i++) {
+                html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
+            }
+            if (color === 'black')
+                html += '</td><td><span id="defender_score" class="badge"></td>';
+            else
+                html += '</td><td><span id="attacker_score" class="badge"></td>';
+
+            html += '</tr></table>'
+
+            return html;
+        }
         //------------------------------------------------------------------------------
         // Animations
         //------------------------------------------------------------------------------
@@ -1010,11 +1044,11 @@
 
             if (cfg.sparePieces === true) {
                 if (CURRENT_ORIENTATION === 'white') {
-                    sparePiecesTopEl.html(buildSparePieces('black'));
-                    sparePiecesBottomEl.html(buildSparePieces('white'));
+                    sparePiecesTopEl.html(buildSparePiecesTable('black'));
+                    sparePiecesBottomEl.html(buildSparePiecesTable('white'));
                 } else {
-                    sparePiecesTopEl.html(buildSparePieces('white'));
-                    sparePiecesBottomEl.html(buildSparePieces('black'));
+                    sparePiecesTopEl.html(buildSparePiecesTable('white'));
+                    sparePiecesBottomEl.html(buildSparePiecesTable('black'));
                 }
             }
         }
@@ -1472,7 +1506,7 @@
         };
 
         widget.resize = function() {
-            // calulate the new square size
+            // calculate the new square size
             SQUARE_SIZE = calculateSquareSize();
 
             // set board width
@@ -1485,11 +1519,12 @@
             });
 
             // spare pieces
-            if (cfg.sparePieces === true) {
+        // MN -removed this passing
+        /*    if (cfg.sparePieces === true) {
                 containerEl.find('.' + CSS.sparePieces)
                     .css('paddingLeft', (SQUARE_SIZE + BOARD_BORDER_SIZE) + 'px');
             }
-
+         */
             // redraw the board
             drawBoard();
         };

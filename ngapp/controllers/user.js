@@ -1,9 +1,8 @@
-/* user controller */
-nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+/* register controller */
+nsApp.controller('registerController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
-        document.title = "Login/Register";
         $scope.message = "";
-        $log.info("userController started");
+        $log.info("registerController started");
         $scope.sessionData = localStorageService.get('sessionData');
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
@@ -14,54 +13,9 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
         var homeUrl = "/#!/home";
         var logoutUrl = "/user/logout";
 
-        $scope.loginData = { };
-
         $scope.registerData = {};
 
         $scope.teamList = [];
-
-       // $scope.errorMessage = "";
-
-        $scope.login = function () {
-
-            var form = $scope.loginForm;
-            if (form.$invalid) {
-                $scope.invalidInput = true; 
-                angular.element("[name='" + form.$name + "']").find('.ng-invalid:visible:first').focus();
-                return;
-            }
-            $scope.invalidInput = false;
-            $scope.message = "Processing...";
-            $log.info("userController login start");
-
-            $http({
-                method: "POST",
-                url: (serviceBase + 'token'),
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                data: $scope.loginData
-            }).then(function (response) {
-     
-                $scope.message = "";           
-                $scope.invalidLogin = false;
-                $log.info("userController login success");
-                // add check for result
-                setupUser(response.data);
-
-                }, function (response) {
-                    $log.info("userController login error");
-                   if (response.status === 404 || response.status === 400)
-                    $scope.invalidLogin = true; // ("<div class='alert alert-danger'>Invalid Login ID or password</div>");
-                else
-                    $scope.systemError = true; //("<div class='alert alert-danger'> Failed to login</div>");
-                   $scope.session = {};
-                   $scope.message = "";
-
-                   setupUser(null);
-            });
-        };
-
 
         $scope.register = function () {
 
@@ -73,6 +27,7 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 return;
             }
             $scope.invalidInput = false;
+            $scope.systemError = false;
             $scope.message = "Processing...";
 
             $http({
@@ -87,15 +42,17 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
                 $scope.invalidLogin = false;
                 $scope.systemError = false;
                 $scope.message = "";
-                setupUser(response.data);
+                $scope.setupSessionData(response.data);
 
             }, function (response) {
                 if (response.status === 404 || response.status === 400)
-                    $scope.invalidLogin = true; // ("<div class='alert alert-danger'>Invalid Login ID or password</div>");
+                    $scope.invalidLogin = true; 
                 else
-                    $scope.systemError = true; //("<div class='alert alert-danger'> Failed to login</div>");
+                    $rootScope.systemError = true; 
 
                 $scope.message = "";
+                $rootScope.processing = false;
+                $scope.setupSessionData(null);  
             });
         };
 
@@ -150,34 +107,5 @@ nsApp.controller('userController', ['$scope', '$state', '$rootScope', '$location
             $rootScope.user = $scope.user;
             $rootScope.sessionData = $scope.sessionData;
         };
-     
-        $scope.$watch('loginData', function () {
-          //  $scope.message = "";
-        },
-            true);
-
-        $scope.forgetPassword = function () {
-
-            //todo:
-        }
-
-        var _updateTeamInfo = function (sessionId) {
-        
-            nsApiClient.clientService.getClientInfo(sessionId, function (data, status) {
-                $scope.user.team = data;
-                $scope.user.team.status = status;
-             
-            });
-
-        };
-
-        var _updateAccountInfo = function (sessionId) {
-          
-            nsApiClient.userService.getAccountInfo(sessionId, function (data, status) {
-                $scope.user.account = data;
-                $scope.user.account.status = status;
-            });
-        };
-
-
+   
     }]);
