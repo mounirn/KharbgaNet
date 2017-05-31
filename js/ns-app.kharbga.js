@@ -2966,12 +2966,7 @@ var KharbgaApp = function () {
     
         $('#play-move-player').html(move.PlayerName + " (" + (move.IsAttacker ? "Attacker": "Defender") + ")");
         $('#play-move-number').html(move.Number + " of " + appClientState.serverGame.Moves.length);
-        if (move.Resigned) {
-            if (move.IsAttacker)
-                $('#play-move-info').html("Attacker Resigned");
-            else
-                $('#play-move-info').html("Defender Resigned");
-        }
+ 
 
         var html = "";
         if (move.IsSetting) {
@@ -2992,6 +2987,12 @@ var KharbgaApp = function () {
 
         if (move.Exchanged != "") {
             html += " - Exchanged: " + move.Exchanged;
+        }
+        if (move.Resigned) {
+            if (move.IsAttacker)
+                html += " - Attacker Resigned";
+            else
+                html +=" - Defender Resigned" ;
         }
 
         $('#play-move-info').html(html);
