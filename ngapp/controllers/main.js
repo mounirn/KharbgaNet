@@ -29,13 +29,13 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
             if (sessionData != null && sessionData.isActive) {
                 localStorageService.set('sessionData', sessionData);
 
-                $.nsAppKharbga.setSessionId(sessionData.sessionId);
+            //    $.nsAppKharbga.setSessionId(sessionData.sessionId);
                 $scope.sessionData = localStorageService.get('sessionData');
                
             }
             else {
                 localStorageService.remove('sessionData');
-                $.nsAppKharbga.setSessionId('');
+             //   $.nsAppKharbga.setSessionId('');
                 $scope.sessionData = localStorageService.get('sessionData');
             }
 
@@ -120,6 +120,7 @@ nsApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$locat
                 this.invalidSession = true;
                 return;
             }
+            $log.info("session controller - checking session");
             var sessionId = sessionData.sessionId;
             $http({
                 method: "GET",
@@ -159,6 +160,7 @@ nsApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$locat
                     method: "DELETE",
                     url: (serviceBase + 'token'),
                     headers: {
+                        
                         'Content-Type': "application/json", "_nssid": sessionId
                     }
                 }).then(function (response) {

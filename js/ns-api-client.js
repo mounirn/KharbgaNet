@@ -444,8 +444,10 @@ function NSAppClient(baseURI) {
 var debugURI = "http://localhost:3121/";
 var testURI = "http://api.nourisolutions.com/";
 var prodURI = "https://www.kharbga.com/";
+var prod2URI = "https://www.kharbga.com/v3/";
+
 var devURI = "http://localhost/NS.API/";
-var nsApiClient = new NSAppClient(prodURI);
+var nsApiClient = new NSAppClient(debugURI);
 
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 

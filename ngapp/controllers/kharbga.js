@@ -20,10 +20,12 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
         $log.info("Kharbga controller - setting session Id");
 
         $.nsAppKharbga.setSessionId($scope.sessionData.sessionId);
+        $log.info("Kharbga controller - setting up games and last game");
+        $.nsAppKharbga.setup();
 
     }
     else {
-        $.nsAppKharbga.setSessionId("");
+         $.nsAppKharbga.setSessionId("");
         // go to the login screen
         $state.go('Login', {});
     }
@@ -106,6 +108,12 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
         $.nsAppKharbga.postMessage(msg);
     };
 
+    $scope.playBegining = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.playBegining();
+    };
+
     $scope.playBackward = function () {
         if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
             return;
@@ -126,12 +134,40 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
             return;
         $.nsAppKharbga.playForward(); 
     };
+    $scope.playEnd = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.playEnd();
+    };
 
+    $scope.soundToggle = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.soundToggle();
+    };
+    $scope.soundUp = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.soundUp();
+    };
+    $scope.soundDown = function () {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.soundDown();
+    };
 
+    $scope.setVolume = function (volume) {
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+        $.nsAppKharbga.setVolume(volume);
+    };
 
     setTimeout(function () {
-       // _refreshGames();
-   
+        if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga))
+            return;
+
+        $.nsAppKharbga.setup();
+
     }, 1000);  // run this after completing loading
  
 

@@ -743,3 +743,16 @@ input:required:valid {
     background-position: right top;
     background-repeat: no-repeat;
 }
+
+/* sound */
+.unmute {
+    background-image: url(../img/unmute.png);
+    background-size: cover;
+    width: 18px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.mute {
+    background-image: url(../img/mute.png);
+}

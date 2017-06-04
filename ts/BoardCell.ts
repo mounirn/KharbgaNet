@@ -14,7 +14,7 @@ namespace Kharbga{
 
         private row: number;   // 0 to 6
         private col: number;   // 0 to 6
-        private id: string;    // this is the location following the notation column label followed by row label
+        public id: string;    // this is the location following the notation column label followed by row label
         // examples: a1, b2, d3, etc. 
 
         private state: BoardCellState = BoardCellState.Empty;
