@@ -1,7 +1,6 @@
 <div id="system" class=" " data-ng-controller="systemController">
     <div id="system-message" data-ng-bind="message"></div>
-    <div data-ng-show="systemError" class='alert alert-danger'>System Error - Please try again later. If the error persists, please contact us for support</div>
-    <div class="row">
+    <div class="row" data-ng-hide="systemError">
         <div class="col-sm-12 col-md-6">
             <!--Connections-->
             <div class="panel panel-info">
@@ -79,7 +78,7 @@
         </div>
     </div>
     <!--Games-->
-    <div class="panel panel-info">
+    <div class="panel panel-info" data-ng-hide="systemError">
         <div class="panel-heading">
             Games
             <div class="pull-right">
@@ -106,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr data-ng-repeat="item in games | orderBy:myOrderBy:reverse" id="tr{{item.ID}}">
+                        <tr data-ng-repeat="item in games | orderBy:myOrderBy:reverse" id="tr{{item.id}}">
                             <td>{{item.id}}</td>
                             <td>{{item.attackerName }}</td>
                             <td>{{item.defenderName }}</td>

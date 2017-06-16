@@ -31,6 +31,12 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
         templateUrl: 'ngapp/views/profile.html'
     }
 
+    var myGamesState = {
+        name: 'My Games',
+        url: '/user/games',
+        templateUrl: 'ngapp/views/myGames.html'
+    }
+
     var logoutState = {
         name: 'Logout',
         url: '/user/logout',
@@ -45,13 +51,13 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
 
     var registerConfirmState = {
         name: 'Confirm Email',
-        url: '/register/confirm',
+        url: '/user/confirm/:userId?email',
         templateUrl: 'ngapp/views/register_confirm.html'
     }
 
     var forgotLoginState = {
         name: 'Forgot Login Info',
-        url: '/register/forgotLogin',
+        url: '/user/forgotLogin',
         templateUrl: 'ngapp/views/forgot_login.html'
     }
 
@@ -59,6 +65,12 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
         name: 'Play',
         url: '/play?',
         templateUrl: 'ngapp/views/kharbga.html'
+    }
+
+    var activeGamesState = {
+        name: 'Active Games',
+        url: '/active/games?',
+        templateUrl: 'ngapp/views/activeGames.html'
     }
 
     var helpState = {
@@ -91,8 +103,6 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
     }
 
 
-
-
     $stateProvider.state(homeState);
     $stateProvider.state(systemState);
     $stateProvider.state(aboutState);
@@ -103,11 +113,13 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
     $stateProvider.state(playState);
     $stateProvider.state(helpState);
     $stateProvider.state(profileState);
+    $stateProvider.state(myGamesState);
     $stateProvider.state(rulesState);
     $stateProvider.state(logoutState);
     $stateProvider.state(contactUsState);
     $stateProvider.state(termsState);
     $stateProvider.state(privacyState);
+    $stateProvider.state(activeGamesState);
 
     $urlRouterProvider.otherwise('/home');
 
@@ -243,4 +255,26 @@ nsApp.filter('toStatusString', function () {
 nsApp.filter('toStateString', function () {
     return function (state) { return Kharbga.GameState[state]; }; // depends on Kharbga.js
 });
+
+nsApp.filter('toStatusCSS', function () {
+    return function (status) {
+      switch (status) {
+            case 0:
+                return "list-group-item-warning";
+            case 1:
+                return "list-group-item-success";
+            case 2:
+                return "list-group-item-success";
+            case 3:
+                return "list-group-item-info";
+            case 4:
+                return "list-group-item-info";
+            case 5:
+                return "list-group-item-danger";
+            default:
+                return "list-group-item-danger";
+        }
+    };
+});
+
 

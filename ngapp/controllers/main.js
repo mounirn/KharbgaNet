@@ -179,7 +179,7 @@ nsApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$locat
         };
 
         // call on startup
-        this.checkSession();
+        //this.checkSession();
 
     }]);
 
@@ -243,9 +243,7 @@ nsApp.controller('teamController', ['$scope', '$state', '$rootScope', '$location
 
                 $rootScope.team = $scope.team;
             });
-
         };
-
         this.updateTeamInfo();
 
     }]);

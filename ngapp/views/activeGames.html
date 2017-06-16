@@ -1,0 +1,49 @@
+﻿<div class="container-fluid" data-ng-controller="activeGamesController">
+<div id="home" class="" style="min-width:200px">
+    <div id="top-message"></div>
+            <!--Games-->
+    <div class="panel panel-primary" >
+            <div class="panel-heading" >
+                <h3>Active Games</h3>
+
+            </div>
+            <div class="panel-body">
+                <div id="active-games-message"></div>
+                <span class="pull-right">
+                    <a href="" data-ng-click="refreshGames()" id="games-link" value="refresh-games">
+                        <span class="glyphicon glyphicon-refresh"></span>Refresh
+                    </a>
+                    </span>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                        New Game <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a id="new-game-attacker" href="" data-ng-click="play({asAttacker:true,againstComputer:false})">As Attacker</a></li>
+                        <li><a id="new-game-defender" href="" data-ng-click="play({asAttacker:false,againstComputer:false})">As Defender</a></li>
+                        <li><a id="new-game-attacker-system" href="" data-ng-click="play({asAttacker:true,againstComputer:true})">As Attacker against system</a></li>
+                        <li><a id="new-game-defender-system" href="" data-ng-click="play({asAttacker:false,againstComputer:true})">As Defender against system</a></li>
+                    </ul>
+                </div>
+              
+                <hr /><p>Select a game from the list below to join or watch or create a new game using the above button.</p>
+                <div >
+                    <ul class="list-group" id="games-list"  data-ng-show="hasGames">
+                        <li class='list-group-item {{item.status | toStatusCSS}}' data-ng-repeat="item in games" id="{{item.id}}">
+                            <a data-ng-show="{{item.attackerName==''}}" href="" id="linka-{{item.id}}" data-ng-click="join(item.id)">Play</a>
+                            <span ndata-ng-show="{{item.attackerName!=''}}">{{item.attackerName}}</span>                   
+                            vs.
+                            <a data-ng-show="{{item.defenderName==''}}"  href="" id="linkd-{{item.id}}" data-ng-click="join(item.id})">Play</a>
+                            <span data-ng-show="{{item.defenderName!=''}}">{{item.defenderName}}</span> 
+
+                            -<strong>status: <span id='status-{{item.id}}'> {{item.status | toStatusString }}</span></strong>
+                            <br>
+                            <button id='watch-{{item.id}}'  data-ng-click="join(item.id)" class='btn btn-default'>Join / Watch</button>
+
+                         </li>
+                    </ul>
+                </div>
+            </div>
+       </div>
+</div>        
+</div>

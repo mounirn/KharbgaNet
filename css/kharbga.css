@@ -756,3 +756,7 @@ input:required:valid {
 .mute {
     background-image: url(../img/mute.png);
 }
+
+.required{
+    color: darkred;
+}

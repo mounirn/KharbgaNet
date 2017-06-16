@@ -62,7 +62,7 @@
                                   <li><a href=""  data-ng-click="ctrl.play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
                                   <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
                                   <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
-                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false, asSpectator:true})">Watch and Replay Active Games</a></li>
+                                  <li><a href="" data-ui-sref="Active Games">Watch and Replay Active Games</a></li>
 
                               </ul>
                           </li>
@@ -94,15 +94,16 @@
                               </a>
                               <ul class="dropdown-menu">
                                   <li><a href="" data-ng-click="ctrl.logout()">Logout</a></li>
-                                  <li><a href="" ui-sref="My Profile">My Profile</a></li>
+                                  <li><a href="" data-ui-sref="My Profile">My Profile</a></li>
+                                  <li><a href="" data-ui-sref="My Games">My Games</a></li>
                               </ul>
                           </li>       
                       </ul>                 
                   </div>
               </div>
           </nav>
-          <div id="main-message" data-ng-show="processing" class="alert alert-info">Processing...</div>
-          <div data-ng-show="systemError" class='alert alert-danger hidden'>Server Not Available - Please try your request again later.</div>
+          <div id="main-processing" data-ng-show="processing" class="alert alert-info">Processing...</div>
+          <div id="main-message" data-ng-show="systemError" class='alert alert-danger'>Server Not Available - Please try your request again later.</div>  
           <ui-view></ui-view>
           <footer>
               <div class="container row">
@@ -150,11 +151,11 @@
       <!-- signalR -->
       <script src="./js/jquery.signalR-2.2.1.js"></script>
       
-      <!--  DEBUG  -->
+      <!--  DEBUG  
         <script src="http://localhost:3121/signalR/hubs"></script>
-
-        <!--  DEV
-        <script src="http://localhost/NS.API/signalR/hubs"></script>  -->
+-->
+        <!--  DEV-->
+        <script src="http://localhost/NS.API/signalR/hubs"></script>  
         <!-- Test
         <script src="http://api.nourisolutions.com/signalR/hubs"></script>    -->
 

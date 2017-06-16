@@ -8,6 +8,13 @@ String.prototype.replaceAll2 = function (find, replace) {
     return str.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
 };
 
+function setSystemError(on) {
+    if (on)
+        $('#main-message').show();
+    else
+        $('#main-message').hide();
+}
+
 
 function NSAppClient(baseURI) {
     this.baseURI = baseURI;
@@ -447,7 +454,7 @@ var prodURI = "https://www.kharbga.com/";
 var prod2URI = "https://www.kharbga.com/v3/";
 
 var devURI = "http://localhost/NS.API/";
-var nsApiClient = new NSAppClient(debugURI);
+var nsApiClient = new NSAppClient(devURI);
 
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 

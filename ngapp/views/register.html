@@ -1,15 +1,12 @@
 <div data-ng-controller="registerController">
     <div id="account-message" data-ng-bind="message"> </div>
-    <div data-ng-show="invalidInput" class='alert alert-danger'>Please enter valid data in all required fields</div>
-    <div data-ng-show="invalidLogin" class='alert alert-danger'>Invalid Login ID or Password</div>
-  <!--  <div data-ng-show="systemError" class='alert alert-danger'>System Error</div>-->
-
+    <div data-ng-show="invalidInput" class='alert alert-danger'>Please enter valid data in all required fields marked by an asterisk (<span class="required">*</span>).</div>
     <div id="register-panel" class="panel panel-primary " >
         <div class="panel-heading">Register</div>
         <div class="panel-body">
             <form id="register-form" name="registerForm" class="cmxform form-horizontal validate-form" novalidate >
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="register-team">Team:</label>
+                    <label class="control-label col-sm-2" for="register-team"><span class="required">*</span>Team:</label>
                     <div class="col-sm-10 input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-tent"></i></span>
                         <input class="form-control" autofocus data-ng-change="teamChange()" data-ng-model="registerData.orgName" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50" />
@@ -19,35 +16,35 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="register-email">Email:</label>
+                    <label class="control-label col-sm-2" for="register-email"><span class="required">*</span>Email:</label>
                     <div class="col-sm-10 input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
                         <input type="email" data-ng-model="registerData.email" class="form-control" id="register-email" placeholder="Enter email" size="50" required pattern="^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$" minlength="3" maxlength="50">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="register-id">Login ID:</label>
+                    <label class="control-label col-sm-2" for="register-id"><span class="required">*</span>Login ID:</label>
                     <div class="col-sm-10 input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                         <input type="text" data-ng-model="registerData.loginId" class="form-control" id="register-login-id" placeholder="Enter your login Id" size="30" required minlength="6" maxlength="30">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="register-pwd">Password:</label>
+                    <label class="control-label col-sm-2" for="register-pwd"><span class="required">*</span>:Password</label>
                     <div class="col-sm-10 input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                         <input type="password" data-ng-model="registerData.password" class="form-control" id="register-pwd" placeholder="Enter password" size="20" required minlength="8" maxlength="20">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="register-pwd-confirm">Confirm Password:</label>
+                    <label class="control-label col-sm-2" for="register-pwd-confirm"><span class="required">*</span>Confirm Password:</label>
                     <div class="col-sm-10 input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                         <input type="password" data-ng-model="registerData.confirmPassword" class="form-control" id="register-pwd-confirm" placeholder="Confirm password" size="20" required minlength="8" maxlength="20">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="register-name">Screen Name:</label>
+                    <label class="control-label col-sm-2" for="register-name"><span class="required">*</span>Screen Name:</label>
                     <div class="col-sm-10 input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
                         <input type="text" class="form-control" data-ng-model="registerData.name" id="register-name" placeholder="Enter screen name" size="20" required minlength="3" maxlength="20">

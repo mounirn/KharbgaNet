@@ -173,7 +173,6 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
 
 }]);
 
-
 /* replay controller */
 nsApp.controller('replayController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
     function ($scope, $state, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
@@ -187,4 +186,94 @@ nsApp.controller('replayController', ['$scope', '$state', '$stateParams', '$root
         $scope.currentGame = $.nsAppKharbga.getCurrentGame();
     };
 
-}]);
+    }]);
+
+
+nsApp.controller('activeGamesController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService', 'appConstants',
+    function ($scope, $state, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
+
+        $log.info("Kharbga active Games controller started");
+
+        var serviceBase = appConstants.Settings.ApiServiceBaseUri + 'api/app/';
+
+        $scope.currentGame = null;
+        $scope.systemError = false;
+        $scope.hasGames = false;
+
+        if ($.nsAppKharbga != null && !angular.isUndefined($.nsAppKharbga)) {
+         //   $.nsAppKharbga.initBoard({ themePath: './img/theme-basic/{piece}.png' });
+
+         //   $scope.currentGame = $.nsAppKharbga.getCurrentGame();
+        };
+
+        $scope.play = function (options) {
+            if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga)) {
+                $scope.systemError = true;
+                return;
+            }
+            if ($scope.sessionData != null && $scope.sessionData.isActive) {
+                $state.go('Play', options);
+                if (!(options.asSpectator === true)) {
+                    setTimeout(function () { $.nsAppKharbga.newGame(options); }, 1000);
+                }
+            }
+            else {
+                $state.go('Login', options);
+            }
+        };
+
+        $scope.join = function (options) {
+            if ($.nsAppKharbga == null || angular.isUndefined($.nsAppKharbga)) {
+                $scope.systemError = true;
+                return;
+            }
+
+            $state.go('Play', options);
+            setTimeout(function () { $.nsAppKharbga.selectGame(options); }, 1000);
+        };
+
+        $scope.sessionData = localStorageService.get('sessionData');
+        if ($scope.sessionData == null) {
+       
+         //   $.nsAppKharbga.setSessionId("");
+            // go to the login screen
+            $state.go('Login', {});
+            return;
+        }
+
+        var _refreshGames = function () {
+            var sessionData = localStorageService.get('sessionData');
+
+            if (sessionData == null || angular.isUndefined(sessionData)) {
+                $scope.invalidSession = true;
+                $state.go('Login', {});
+                return;
+            }
+            $scope.invalidSession = false;
+            $log.info("system controller - refreshing active games");
+            var sessionId = sessionData.sessionId;
+            $scope.message = "Processing...";
+            $http({
+                method: "GET",
+                headers: {
+                    'Content-Type': "application/json", "_nssid": sessionId
+                },
+                url: (serviceBase + 'games' ),
+                data: { active: true }
+            }).then(function (response) {
+                $scope.games = response.data;
+                $scope.message = "";
+                $scope.hasGames = true;
+                $scope.systemError = false;
+            }, function (response) {
+                $scope.message = "";
+                $log.error(response.statusText);
+                $scope.systemError = true;
+                $scope.hasGames = false;
+            });
+        };
+
+        $scope.refreshGames = _refreshGames;
+
+        _refreshGames();
+    }]);

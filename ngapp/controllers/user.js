@@ -109,3 +109,73 @@ nsApp.controller('registerController', ['$scope', '$state', '$rootScope', '$loca
         };
    
     }]);
+
+/* register Confirm controller */
+nsApp.controller('registerConfirmController', ['$scope', '$state', '$stateParams', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $stateParams, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
+        $scope.message = "";
+        $log.info("registerConfirmController started");
+        $scope.sessionData = localStorageService.get('sessionData');
+
+        var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
+
+        $scope.userId = $stateParams.userId; 
+        $scope.email = $stateParams.email;
+
+    }]);
+
+
+/* contactUs controller */
+nsApp.controller('contactUsController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+    function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
+        $scope.message = "";
+        $log.info("contactUsController started");
+        $scope.sessionData = localStorageService.get('sessionData');
+
+        var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";
+
+        $scope.contactUsData = {};
+        if ($scope.SessionData != null) {
+            $scope.contactUsData.sessionId = $scope.SessionData.sessionId;
+        }
+        else {
+            $scope.contactUsData.sessionId = "";
+        }
+        $scope.send = function () {
+
+            var form = $scope.contactUsForm;
+            if (form.$invalid) {
+                $scope.invalidInput = true;
+
+                angular.element("[name='" + form.$name + "']").find('.ng-invalid:visible:first').focus();
+                return;
+            }
+            $scope.invalidInput = false;
+            $scope.systemError = false;
+            $scope.message = "Processing...";
+
+            $http({
+                method: "POST",
+                url: (serviceBase + 'send'),
+                headers: {
+                    'Content-Type': "application/json", '_nssid': $scope.contactUsData.sessionId
+                },
+                data: $scope.contactUsData
+            }).then(function (response) {
+                $scope.message = "";
+                $scope.systemError = false;
+                $scope.message = "";
+
+            }, function (response) {
+                if (response.status === 404 || response.status === 400)
+                    $scope.invalidLogin = true;
+                else
+                    $rootScope.systemError = true;
+
+                $scope.message = "";
+                $rootScope.processing = false;
+            });
+        };
+
+
+    }]);

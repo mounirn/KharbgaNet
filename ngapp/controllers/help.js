@@ -1,5 +1,6 @@
 /* Help controller */
-nsApp.controller('helpController', ['$scope', '$http', 'appConstants', function ($scope, $http, appConstants) {
+nsApp.controller('helpController', ['$scope', '$rootScope', '$http', 'appConstants',
+    function ($scope, $rootScope, $http, appConstants) {
     document.title = appConstants.appName + " - Help";
     // appSharedService.prepForBroadcast('shouldSelectTab', appConstants.NavTabs.Settings);
     var serviceBase = appConstants.Settings.ApiServiceBaseUri + 'api/app/';
@@ -8,18 +9,19 @@ nsApp.controller('helpController', ['$scope', '$http', 'appConstants', function 
   
 
     var _refreshMessages = function () {
-        $scope.message = "Processing...";
+        $rootScope.processing = true;
         $http({
             method: "GET",
             url: (serviceBase + 'games')
         }).then(function (response) {
             $scope.games = response.data;
-            $scope.message = "";
+            $rootScope.processing = false;
             $scope.hasGames = true;
         }, function (response) {
             $scope.message = response.statusText;
-            $scope.systemError = true; 
+            $rootScope.systemError = true; 
             $scope.hasGames = false;
+            $rootScope.processing = false;
         });
     };
 

@@ -1,0 +1,36 @@
+﻿<div class="container-fluid" data-ng-controller="kharbgaController">
+<div id="home"class="tab-pane fade in active">
+    <div id="top-message"></div>
+            <!--Games-->
+    <div class="panel panel-primary" >
+            <div class="panel-heading" >
+                My Games
+                <div class="pull-right">
+                    <a href="" ng-click="refreshGames()" id="games-link" value="refresh-games">
+                        <span class="glyphicon glyphicon-refresh"></span>Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="active-games-message"></div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                        New Game <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a id="new-game-attacker" href="" data-ng-click="newGame({asAttacker:true,againstComputer:false})">As Attacker</a></li>
+                        <li><a id="new-game-defender" href="" data-ng-click="newGame({asAttacker:false,againstComputer:false})">As Defender</a></li>
+                        <li><a id="new-game-attacker-system" href="" data-ng-click="newGame({asAttacker:true,againstComputer:true})">As Attacker against system</a></li>
+                        <li><a id="new-game-defender-system" href="" data-ng-click="newGame({asAttacker:false,againstComputer:true})">As Defender against system</a></li>
+                    </ul>
+                </div>
+                <hr />
+                <div  style="max-height: 400px;overflow-y:scroll" >
+                    <ul class="list-group" id="games-list">
+
+                    </ul>
+                </div>
+            </div>
+       </div>
+</div>        
+</div>
