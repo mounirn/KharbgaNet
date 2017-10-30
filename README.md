@@ -1,11 +1,15 @@
 # kharbga
 
-An online board strategy game based on the ancient games of Kharbga and Seega from North Africa.  The rules of this online game are close to the rules of Seega as documented by various online resources. See references  below. However, the exact rules enforced are based on the version played in the south of Tunisia.
+An online board strategy game based on the ancient games of Kharbga and Seega from North Africa. 
+The rules of this online game are close to the rules of Seega as documented by various online resources. 
+See references below. However, the exact rules enforced by this program are based on the version played in the south of Tunisia.
 
 # Rules
 
 ## Objective
-  The game is played by two players: an Attacker and a Defender .  The objective of each player is to terminate the opponent soldiers.  The game has two main phases: a board setting stage and capturing and soldier's exchanges/sacrifices stage. 
+  The game is played by two players: an Attacker and a Defender.  
+  The objective of each player is to terminate the opponent soldiers (a).  
+  The game has two main phases: a board setting stage, and a capturing and soldier's exchange stage. 
 
 ## Setting the board
   1. The game starts by two players using a board of 7 by 7 squares 
