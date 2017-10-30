@@ -1,4 +1,4 @@
-var nsApp = angular.module('nsApp', ['ui.router', 'LocalStorageModule', 'ui.bootstrap']);
+var nsApp = angular.module('nsApp', ['ui.router', 'LocalStorageModule', 'ui.bootstrap' ]);
 /* States */
 nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider', '$urlRouterProvider',
     function ($locationProvider, $urlMatcherFactoryProvider, $stateProvider, $urlRouterProvider) {
@@ -203,8 +203,8 @@ nsApp.factory('appSharedService', function ($rootScope) {
 });
 
 
-nsApp.run(['$rootScope', '$state', '$stateParams', '$log',
-    function ($rootScope, $state, $stateParams, $log) {
+nsApp.run(['$rootScope', '$state', '$stateParams', '$log', '$location', '$window',
+    function ($rootScope, $state, $stateParams, $log, $location, $window) {
     $rootScope.color = 'blue';
     $rootScope.user = { sessionId: "", loggedIn: false };
     $rootScope.message = "";
@@ -216,6 +216,8 @@ nsApp.run(['$rootScope', '$state', '$stateParams', '$log',
 
     $rootScope.sessionData = {};
 
+    // SEO stuff
+    $window.ga('create', 'UA-6996887-11', 'auto');
 
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 
@@ -227,6 +229,8 @@ nsApp.run(['$rootScope', '$state', '$stateParams', '$log',
 
         // called every time the state transition is attempted
         $log.info("stateChangeStart - event %s, toState: %s, toParams: %s", event, toState, toParams);
+
+        $window.ga('send', 'pageview', $location.path());
     });
 }]);
 

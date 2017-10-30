@@ -1,4 +1,11 @@
+Copyright 2016 Mounir Nouri
+
+For work related to the Kharbga game. 
+
 Copyright 2013 Chris Oakman
+
+For the work related to the Chess UI
+
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
 files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use,

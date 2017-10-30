@@ -1,15 +1,20 @@
 ﻿<!DOCTYPE HTML>
-<html data-ng-app="nsApp" data-ng-controller="mainController as ctrl" >
+<html  lang="en" data-ng-app="nsApp" data-ng-controller="mainController as ctrl" >
   <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="viewport" content="width=device-width">
-      <title data-ng-bind="'Kharbga.Net - ' + $state.current.name " >Kharbga.Net </title>
+      <meta name="google-site-verification" content="lwEQt7T2NYDXNwqHUyL1Ic7hXDR5U5i5YvdRh_NSMyM" />
+      <title data-ng-bind="'Kharbga Network - ' + $state.current.name " >Kharbga.Net </title>
       <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
       <!-- Compressed CSS -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
       <link rel="stylesheet" href="./css/kharbga.css" />
+
+      <!-- Angular Material style sheet -->
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
       <style>
           .active {
               /* color: red;
@@ -33,9 +38,29 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="./js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+      <!-- Angular Material requires Angular.js Libraries -->
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+      <!-- Angular Material Library -->
+      <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
       <script type="text/javascript">
             angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
+      </script>
+
+      <script>
+          (function (i, s, o, g, r, a, m) {
+          i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+              (i[r].q = i[r].q || []).push(arguments)
+          }, i[r].l = 1 * new Date(); a = s.createElement(o),
+              m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+          })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+       //   ga('create', 'UA-6996887-11', 'auto');
+       //   ga('send', 'pageview');
+
       </script>
   </head>
   <body >
