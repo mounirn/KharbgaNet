@@ -5,7 +5,7 @@
     "suppressImplicitAnyIndexErrors": false,
     "removeComments": true,
     "preserveConstEnums": true,
-    "outFile": "./js/kharbga.js",
+    "outFile": "./www/js/kharbga.js",
     "sourceMap": true
   },
   "include": [
