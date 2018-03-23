@@ -6,7 +6,6 @@ See references below. However, the exact rules enforced by this program are base
 
 # Rules
 
-## Objective
   The game is played by two players: an Attacker and a Defender.  
   The objective of each player is to terminate the opponent soldiers (a).  
   The game has two main phases: a board setting stage, and a capturing and soldier's exchange stage. 
@@ -19,8 +18,9 @@ See references below. However, the exact rules enforced by this program are base
   5. The board starts empty.  Players take turns setting the board two soldiers at a time following a strategy to achieve the game objectives. 
   6. The central square, usually marked by a cross is left empty in the setting phase
   7. The defender can not block the attacker from making the first move. 
-  
-## Moving and capturing 
+
+## Moving and capturing
+
   The game starts when setting is completed and all board cells are filled up with each plyer 24 soldiers strategically placed. 
   1. The attacker starts the first move using one of their soldiers into the middle cell. The first move may or may not capture any of the defender's soldiers.
   2. Moves on the board could be orthogonal in any possible direction (up, down, left, or up) but not diagonally from one cell to another adjacent cell. The adjacent cell must be empty. 

@@ -67,6 +67,12 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
         templateUrl: 'ngapp/views/kharbga.html'
     }
 
+    var testTabsState = {
+        name: 'Test Tabs',
+        url: '/test/tabs',
+        templateUrl: 'ngapp/views/ktabs.html'
+    }
+
     var activeGamesState = {
         name: 'Active Games',
         url: '/active/games?',
@@ -111,6 +117,7 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
     $stateProvider.state(registerConfirmState);
     $stateProvider.state(forgotLoginState);
     $stateProvider.state(playState);
+    $stateProvider.state(testTabsState);
     $stateProvider.state(helpState);
     $stateProvider.state(profileState);
     $stateProvider.state(myGamesState);
@@ -281,4 +288,57 @@ nsApp.filter('toStatusCSS', function () {
     };
 });
 
+// directives
+nsApp.directive('tabs',
+    function() {
+        return {
+            restrict: 'E',
+            transclude: true,
+            scope: {},
+            controller: [
+                "$scope", function($scope) {
+                    var panes = $scope.panes = [];
 
+                    $scope.select = function(pane) {
+                        angular.forEach(panes,
+                            function(pane) {
+                                pane.selected = false;
+                            });
+                        pane.selected = true;
+                    }
+
+                    this.addPane = function(pane) {
+                        if (panes.length == 0) $scope.select(pane);
+                        panes.push(pane);
+                    }
+                }
+            ],
+            template:
+                '<div class="tabbable">' +
+                    '<ul class="nav nav-tabs">' +
+                    '<li ng-repeat="pane in panes" ng-class="{active:pane.selected}">' +
+                    '<a href="" ng-click="select(pane)">{{pane.title}}</a>' +
+                    '</li>' +
+                    '</ul>' +
+                    '<div class="tab-content" ng-transclude></div>' +
+                    '</div>',
+            replace: true
+        };
+    });
+
+nsApp.directive('pane',
+    function() {
+        return {
+            require: '^tabs',
+            restrict: 'E',
+            transclude: true,
+            scope: { title: '@' },
+            link: function(scope, element, attrs, tabsCtrl) {
+                tabsCtrl.addPane(scope);
+            },
+            template:
+                '<div class="tab-pane" ng-class="{active: selected}" ng-transclude>' +
+                    '</div>',
+            replace: true
+        };
+    });

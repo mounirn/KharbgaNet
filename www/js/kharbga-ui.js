@@ -348,18 +348,18 @@
             if (typeof containerElOrId === 'string') {
                 // cannot be empty
                 if (containerElOrId === '') {
-                    window.alert('KharbgaBoard Error 1001: ' +
-                        'The first argument to KharbgaBoard() cannot be an empty string.' +
-                        '\n\nExiting...');
+                  //  window.alert('KharbgaBoard Error 1001: ' +
+                  //      'The first argument to KharbgaBoard() cannot be an empty string.' +
+                  //      '\n\nExiting...');
                     return false;
                 }
 
                 // make sure the container element exists in the DOM
                 var el = document.getElementById(containerElOrId);
                 if (!el) {
-                    window.alert('KharbgaBoard Error 1002: Element with id "' +
-                        containerElOrId + '" does not exist in the DOM.' +
-                        '\n\nExiting...');
+                  //  window.alert('KharbgaBoard Error 1002: Element with id "' +
+                  //      containerElOrId + '" does not exist in the DOM.' +
+                  //      '\n\nExiting...');
                     return false;
                 }
 
@@ -374,9 +374,9 @@
                 containerEl = $(containerElOrId);
 
                 if (containerEl.length !== 1) {
-                    window.alert('KharbgaBoard Error 1003: The first argument to ' +
-                        'KharbgaBoard() must be an ID or a single DOM node.' +
-                        '\n\nExiting...');
+                 //   window.alert('KharbgaBoard Error 1003: The first argument to ' +
+                 //       'KharbgaBoard() must be an ID or a single DOM node.' +
+                 //       '\n\nExiting...');
                     return false;
                 }
             }
@@ -385,17 +385,17 @@
             if (!window.JSON ||
                 typeof JSON.stringify !== 'function' ||
                 typeof JSON.parse !== 'function') {
-                window.alert('KharbgaBoard Error 1004: JSON does not exist. ' +
-                    'Please include a JSON polyfill.\n\nExiting...');
+              //  window.alert('KharbgaBoard Error 1004: JSON does not exist. ' +
+              //      'Please include a JSON polyfill.\n\nExiting...');
                 return false;
             }
 
             // check for a compatible version of jQuery
             if (!(typeof window.$ && $.fn && $.fn.jquery &&
                     compareSemVer($.fn.jquery, MINIMUM_JQUERY_VERSION) === true)) {
-                window.alert('KharbgaBoard Error 1005: Unable to find a valid version ' +
-                    'of jQuery. Please include jQuery ' + MINIMUM_JQUERY_VERSION + ' or ' +
-                    'higher on the page.\n\nExiting...');
+              //  window.alert('KharbgaBoard Error 1005: Unable to find a valid version ' +
+              //      'of jQuery. Please include jQuery ' + MINIMUM_JQUERY_VERSION + ' or ' +
+              //      'higher on the page.\n\nExiting...');
                 return false;
             }
 
@@ -720,28 +720,48 @@
                 pieces = ['bS'];
             }
 
-            var html = '<table class="table table-responsive xtable-bordered table-condensed"><tr>';
+            var html = '<table style="text-align:left" class="table table-responsive xtable-bordered xtable-condensed"><tr>';
             // MN : add indication which one is the attacker and which one is the defender
             //   
-            if (color === 'black') {
-                html += '<td style="padding-top: 5px"><strong>Defender:<br><span id="game-defender"></span></strong></td>';
-                html += '<td><span id="defender-thinking"></td>'; 
-                html += '<td><span id="defender_clock" class="badge alert alert-info"></span></td>';
-            } else {
-                html += '<td style="padding-top: 5px"><strong>Attacker:<br><span id="game-attacker"></span> </strong></td>';
-                html += '<td><span id="attacker-thinking"></td>';
-                html += '<td><span id="attacker_clock" class="badge alert alert-info"></span></td>';
-            }
-            html += '<td>'
+             html += '<td>';
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
             }
-            if (color === 'black')
+            if (color === 'black') {
                 html += '</td><td><span id="defender_score" class="badge"></td>';
-            else
-                html += '</td><td><span id="attacker_score" class="badge"></td>';
+                html += '<td><span id="defender_clock" class="badge alert alert-info"></span></td>';
+                html += '<td><span id="defender-thinking"></td>'; 
 
-            html += '</tr></table>'
+            } else {
+                html += '</td><td><span id="attacker_score" class="badge"></td>';
+                html += '<td><span id="attacker_clock" class="badge alert alert-info"></span></td>';
+                html += '<td><span id="attacker-thinking"></td>';
+
+            }
+
+            if (color === 'black') {
+                html += '<td style="padding-top: 5px;"><strong>Defender:<br><span id="game-defender"></span></strong></td>';
+            } else {
+                html += '<td style="padding-top: 5px"><strong>Attacker:<br><span id="game-attacker"></span> </strong></td>';
+            }
+          
+
+            html += '</tr>';
+
+            // add the Exchange Request boxes for the attacker and defender
+            html += '<tr><td colspan="5">';
+            if (color === 'black') {
+                html += '<input type="checkbox" id="exchangeRequestCheckbox"><span style="font-size:smaller"><strong>Exchange&nbsp;Request:</strong></span> ';
+                html += '<span id="exchangeRequestDefenderPiece" class="badge"> </span>';
+            } else {
+                html += '<input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox"><span style="font-size:smaller"><strong>Exchange&nbsp;Request&nbsp;Accepted:</strong></span>';
+                html += '<span id="exchangeRequestAttackerPiece1" class="badge"></span> <span id="exchangeRequestAttackerPiece2" class="badge"></span>';
+            }
+            html += '</td></tr>';
+
+            html += '</table>';
+
+           
 
             return html;
         }

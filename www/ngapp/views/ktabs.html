@@ -1,0 +1,190 @@
+<div data-ng-controller="kharbgaController">
+    <div id="top-message"></div> 
+    <div class="row" style="min-width:300px">
+        <div class="col-sm-7" id="currentGamePanel" style="min-width:300px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <strong>Game ID: </strong><span id="current-game-id"></span>
+                    <span id="current-game-status" class="badge "></span>
+                </div>
+                <div class="panel-body">
+                    <div id="game-over" class="modal fade gameOver">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title text-center">GAME OVER</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-center text-info text-center"><strong><span id="game-players"></span></strong></p>
+                                    <p class="text-center text-success">Winner is: <span id="game-winner"></span></p>
+                                    <p class="text-center text-success"><span id="game-result"></span></p>
+                                    <p class="text-center text-info">Final Score: <span id="game-score"></span></p>
+                                </div>
+                                <div class="modal-footer text-center">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div class="panel panel-info" style="min-width:200px">
+                                <div class="panel-heading">
+                                    <span class="pull-left">Turn:  </span> &nbsp; &nbsp;
+                                    <span id="player-turn" class="badge"></span> &nbsp; &nbsp;
+                                    <!--   <strong>My Role:</strong><span id="account-game-role"></span>-->
+                                    <a class="pull-right" href="" data-ng-click="flipBoard()" id="flipOrientation" value="Flip orientation">
+                                        <span class="glyphicon glyphicon-repeat"></span> Flip
+                                    </a>&nbsp;&nbsp;
+                                    &nbsp;&nbsp;<input type="checkbox" id="abandonCheckbox"><strong> Resign</strong>&nbsp;&nbsp;
+                                </div>
+                                <!-- The Board -->
+                                <div class="panel-body text-center">
+                                    <audio id="sound" preload="auto">
+                                        <source src="./img/button-26.mp3" type="audio/mpeg">
+                                    </audio>
+                                    <div class="row fieldset">
+
+                                        <div class="col-sm-8 col-xs-8">
+                                            <input id="sound-volume" type="range" min="0.0" max="1.0" step="0.2" value="0.5" data-ng-click="setVolume()" />
+                                        </div>
+                                        <div class="col-sm-2 col-xs-2">
+                                            <a href='' data-ng-click="soundToggle()" id="sound-toggle">
+                                                <div id="sound-mute" class="unmute mute"></div>
+                                            </a>
+                                        </div>
+                                        <!--   <div class="col-sm-3 col-xs-3" >
+                                            <a href='' data-ng-click="soundUp()" id="sound-up"><span class="glyphicon glyphicon-volume-up"></span></a>
+                                            <a href='' data-ng-click="soundDown()" id="sound-down"><span class="glyphicon glyphicon-volume-down"></span></a>
+                                        </div>-->
+                                    </div>
+                                    <div id="board" style="width: 100%"></div>
+                                    <p class="text-center">
+                                        <a href='' data-ng-click="playBegining()" id="play-begining"><span class="glyphicon glyphicon-step-backward"></span></a>
+                                        <a href='' data-ng-click="playBackward()" id="play-backward"><span class="glyphicon glyphicon-backward"></span></a>
+                                        <a href='' data-ng-click="playStart()" id="play-start"><span class="glyphicon glyphicon-play"></span></a>
+                                        <a href='' data-ng-click="playPause()" id="play-pause"><span class="glyphicon glyphicon-pause"></span></a>
+                                        <a href='' data-ng-click="playForward()" id="play-forward"><span class="glyphicon glyphicon-forward"></span></a>
+                                        <a href='' data-ng-click="playEnd()" id="play-end"><span class="glyphicon glyphicon-step-forward"></span></a>
+                                    </p>
+                                </div>
+                                <div id="play-controls" class="panel-footer">
+                                    <p class="text-center"><span id="play-move-number" class="badge badge-success"></span><p>
+                                    <p class="text-center"><span id="play-move-player" class="badge badge-info"></span><span id="play-move-info" class="badge badge-info"></span></p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+                  
+                </div>       
+                <div class="panel-footer">
+                
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <strong>Kharbga</strong>
+                </div>
+                <div class="panel-body">
+                    <tabs>
+                        <pane title="Games">
+                            <div class="">
+                                <!--Games-->
+                                <div class="panel panel-primary overflow-y-scroll" style="min-width: 200px">
+                                    <div class="panel-heading">
+                                        Active Games
+                                        <div class="pull-right">
+                                            <a href="" ng-click="refreshGames()" id="games-link" value="refresh-games">
+                                                <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="active-games-message"></div>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                                New Game <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a id="new-game-attacker" href="" data-ng-click="newGame({asAttacker:true,againstComputer:false})">As Attacker</a></li>
+                                                <li><a id="new-game-defender" href="" data-ng-click="newGame({asAttacker:false,againstComputer:false})">As Defender</a></li>
+                                                <li><a id="new-game-attacker-system" href="" data-ng-click="newGame({asAttacker:true,againstComputer:true})">As Attacker against system</a></li>
+                                                <li><a id="new-game-defender-system" href="" data-ng-click="newGame({asAttacker:false,againstComputer:true})">As Defender against system</a></li>
+                                            </ul>
+                                        </div>
+                                        <hr />
+                                        <div style="max-height: 400px; overflow-y: scroll">
+                                            <ul class="list-group" id="games-list"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </pane>
+                        <pane title="Current Game State and Moves History">
+                            <div id="message" class=""></div>
+                            <div class="panel panel-info" style="font-size:smaller">
+                                <div class="panel-heading">Last Action</div>
+                                <div class="panel-body">
+                                    <dl class="dl-horizontal">
+                                        <dt class="pull-left">Setting/Move: </dt>
+                                        <dd><span id="gameMove" class="badge"></span> </dd>
+                                        <dt class="pull-left">Captured:</dt>
+                                        <dd>
+                                            <span id="move-captured" class="badge"></span>
+                                        </dd>
+                                        <dt class="pull-left">Exchanged:</dt>
+                                        <dd><span id="move-exchanged" class="badge"></span></dd>
+                                    </dl>
+
+                                </div>
+                            </div>    
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    Game State: <span class="badge badge-success" id="state"></span>
+                                </div>
+                                <div class="panel-body">
+                                    <p>
+                                        FEN: <span id="fen" class="xbadge xbadge-success"></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <hr />
+                            <strong calss="text-center">Moves History</strong>
+                            <!-- for testing only
+                            <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>-->
+                            <div id="game-moves-history"></div>
+                        </pane>
+       
+
+                        <pane title="Messages">
+                            <!-- Messages-->
+                            <div class="panel panel-primary overflow-y-scroll" style="min-width: 200px">
+                                <div class="panel-heading" style="min-width: 120px">
+                                    Messages
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="user-message" data-ng-model="userMessage" maxlength="80">
+                                        <button id="postMessageBtn" data-ng-click="post()" type="submit" class="btn btn-default">Post</button>
+                                    </div>
+                                    <hr />
+                                    <ul id="messages-list" style="max-height: 400px; overflow-y: scroll" class="list-group"> </ul> <!-- same id in help.html-->
+                                    <hr />
+                                </div>
+                            </div>
+                        </pane>
+ 
+                    </tabs>         
+                </div>
+
+            </div>
+        </div>
+    </div>
+ 
+</div>

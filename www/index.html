@@ -1,31 +1,36 @@
 ﻿<!DOCTYPE HTML>
-<html  lang="en" data-ng-app="nsApp" data-ng-controller="mainController as ctrl" >
-  <head>
-      <meta charset="utf-8" />
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta name="viewport" content="width=device-width">
-      <meta name="google-site-verification" content="lwEQt7T2NYDXNwqHUyL1Ic7hXDR5U5i5YvdRh_NSMyM" />
-      <title data-ng-bind="'Kharbga Network - ' + $state.current.name " >Kharbga.Net </title>
-      <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
-      <!-- Compressed CSS -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-      <link rel="stylesheet" href="./css/kharbga.css" />
+<html lang="en" data-ng-app="nsApp" data-ng-controller="mainController as ctrl">
 
-      <!-- Angular Material style sheet -->
-      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width">
+    <meta name="google-site-verification" content="lwEQt7T2NYDXNwqHUyL1Ic7hXDR5U5i5YvdRh_NSMyM" />
+    <title data-ng-bind="'Kharbga Network - ' + $state.current.name ">Kharbga.Net </title>
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+    <!-- Compressed CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/kharbga.css" />
 
-      <style>
-          .active {
-              /* color: red;
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
+    <!-- Load environment variables -->
+    <script src="./jsconfig/env.js"></script>
+
+    <style>
+        .active {
+            /* color: red;
               font-weight: bolder;*/
-          }
-          body {
+        }
+        
+        body {
             margin: 0px;
             padding: 0px;
-      }
+        }
     </style>
-      <!--[if lt IE 10]>
+    <!--[if lt IE 10]>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nwmatcher/1.2.5/nwmatcher.min.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
@@ -33,115 +38,121 @@
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script>
     <![endif]-->
 
-  <!-- Local version <script src="./js/angular.js"></script>-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <!-- Local version <script src="./js/angular.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="./js/ui-bootstrap-tpls-2.5.0.min.js"></script>
-      <!-- Angular Material requires Angular.js Libraries -->
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
 
-      <!-- Angular Material Library -->
-      <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    <!-- Angular Material Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
-      <script type="text/javascript">
-            angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
-      </script>
+    <script type="text/javascript">
+        angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
+    </script>
 
-      <script>
-          (function (i, s, o, g, r, a, m) {
-          i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-              (i[r].q = i[r].q || []).push(arguments)
-          }, i[r].l = 1 * new Date(); a = s.createElement(o),
-              m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-          })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-       //   ga('create', 'UA-6996887-11', 'auto');
-       //   ga('send', 'pageview');
+        //   ga('create', 'UA-6996887-11', 'auto');
+        //   ga('send', 'pageview');
+    </script>
+</head>
 
-      </script>
-  </head>
-  <body >
-      <div class="container-fluid">
-          <nav class="navbar navbar-inverse" >
-              <div class="container-fluid">
-                  <div class="navbar-header">
-                      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                           <span class="icon-bar"></span>
                           <span class="icon-bar"></span>
                           <span class="icon-bar"></span>
                       </button>
-                      <a href="" class="navbar-brand" ui-sref="Home">Kharbga.Net</a>
-                  </div>
-                  <div class="collapse navbar-collapse" id="myNavbar">
-                      <ul class="nav navbar-nav">
-                          <li class="dropdown">
-                              <a class="dropdown-toggle" data-toggle="dropdown" href="" >
+                    <a href="" class="navbar-brand" ui-sref="Home">Kharbga.Net</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="">
                                   Play & Watch
                                   <span class="caret"></span>
                               </a>
-                              <ul class="dropdown-menu">
-                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:true,againstComputer:true})">As Attacker w/ Computer</a></li>
-                                  <li><a href=""  data-ng-click="ctrl.play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
-                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
-                                  <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
-                                  <li><a href="" data-ui-sref="Active Games">Watch and Replay Active Games</a></li>
+                            <ul class="dropdown-menu">
+                                <li><a href="" data-ng-click="ctrl.play({asAttacker:true,againstComputer:true})">As Attacker w/ Computer</a></li>
+                                <li><a href="" data-ng-click="ctrl.play({asAttacker:true,againstComputer:false})">As Attacker w/ Another Player </a></li>
+                                <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:true})">As Defender w/ Computer</a></li>
+                                <li><a href="" data-ng-click="ctrl.play({asAttacker:false,againstComputer:false})">As Defender w/ Another Player </a></li>
+                                <li><a href="" data-ui-sref="Active Games">Watch and Replay Active Games</a></li>
 
-                              </ul>
-                          </li>
+                            </ul>
+                        </li>
 
-                          <li><a data-ui-sref="Rules" >Rules</a></li>
-                          <li class="dropdown">
-                              <a  href="" class="dropdown-toggle" data-toggle="dropdown" >
+                        <li><a data-ui-sref="Rules">Rules</a></li>
+                        <li class="dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown">
                                   System
                                   <span class="caret"></span>
                               </a>
-                              <ul class="dropdown-menu">
-                                  <li><a data-ui-sref="Help" ui-sref-active="active">Help</a> </li>
-                                  <li data-ng-show="sessionData.mainRole===999"><a data-ui-sref="System" ui-sref-active="active">Info</a> </li>
-                                  <li><a data-ui-sref="About" ui-sref-active="active">About</a></li>
-                           
-                              </ul>
-                          </li>
-                      </ul>    
-                    <!--  <button class="btn btn-default navbar-btn" data-ui-sref="Rules">Rules</button> -->
-                      <ul class="nav navbar-nav navbar-right" data-ng-controller="sessionController as ctrl">
-                          <li data-ng-hide="sessionData.isActive"><a ui-sref="Register" ><span class="glyphicon glyphicon-user"></span> Register</a></li>
-                          <li data-ng-hide="sessionData.isActive"><a ui-sref="Login" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                          <li class="dropdown" data-ng-show="sessionData.isActive">
+                            <ul class="dropdown-menu">
+                                <li><a data-ui-sref="Help" ui-sref-active="active">Help</a> </li>
+                                <li data-ng-show="sessionData.mainRole===999"><a data-ui-sref="System" ui-sref-active="active">Info</a> </li>
+                                <li><a data-ui-sref="About" ui-sref-active="active">About</a></li>
+                                <li><a data-ui-sref="Test Tabs" ui-sref-active="active">Test Tabs</a></li>
 
-                              <a href="" data-toggle="dropdown" class="dropdown-toggle">
-                                  <span class="glyphicon glyphicon-user"></span>Welcome 
-                                  <span data-ng-bind="sessionData.fullName"></span>
-                                  <span class="caret"></span>
-                              </a>
-                              <ul class="dropdown-menu">
-                                  <li><a href="" data-ng-click="ctrl.logout()">Logout</a></li>
-                                  <li><a href="" data-ui-sref="My Profile">My Profile</a></li>
-                                  <li><a href="" data-ui-sref="My Games">My Games</a></li>
-                              </ul>
-                          </li>       
-                      </ul>                 
-                  </div>
-              </div>
-          </nav>
-          <div id="main-processing" data-ng-show="processing" class="alert alert-info">Processing...</div>
-          <div id="main-message" data-ng-show="systemError" class='alert alert-danger'>Server Not Available - Please try your request again later.</div>  
-          <ui-view></ui-view>
-          <footer>
-              <div class="container row">
-                  <div class="col-sm-9">
-                      <a href="" ui-sref="Terms">Terms and Conditions</a> | <a href="" ui-sref="Privacy">Privacy Policy</a> | <a href="" ui-sref="Contact Us">Contact Us</a>
-                  </div>
-                  <div class="col-sm-3">
-                      <strong>Developed by <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
-                  </div>
-              </div>
-              <hr />
-              <hr>
-              <pre data-ng-show="sessionData.mainRole===999">
+                            </ul>
+                        </li>
+                    </ul>
+                    <!--  <button class="btn btn-default navbar-btn" data-ui-sref="Rules">Rules</button> -->
+                    <ul class="nav navbar-nav navbar-right" data-ng-controller="sessionController as ctrl">
+                        <li data-ng-hide="sessionData.isActive"><a ui-sref="Register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                        <li data-ng-hide="sessionData.isActive"><a ui-sref="Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <li class="dropdown" data-ng-show="sessionData.isActive">
+
+                            <a href="" data-toggle="dropdown" class="dropdown-toggle">
+                                <span class="glyphicon glyphicon-user"></span>Welcome
+                                <span data-ng-bind="sessionData.fullName"></span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="" data-ng-click="ctrl.logout()">Logout</a></li>
+                                <li><a href="" data-ui-sref="My Profile">My Profile</a></li>
+                                <li><a href="" data-ui-sref="My Games">My Games</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div id="main-processing" data-ng-show="processing" class="alert alert-info">Processing...</div>
+        <div id="main-message" data-ng-show="systemError" class='alert alert-danger'>Server Not Available - Please try your request again later.</div>
+        <ui-view></ui-view>
+        <footer>
+            <div class="container row">
+                <div class="col-sm-9">
+                    <a href="" ui-sref="Terms">Terms and Conditions</a> | <a href="" ui-sref="Privacy">Privacy Policy</a> | <a href="" ui-sref="Contact Us">Contact Us</a>
+                </div>
+                <div class="col-sm-3">
+                    <strong>Developed by <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+                </div>
+            </div>
+            <hr />
+            <hr>
+            <pre data-ng-show="sessionData.mainRole===999">
       <!-- Here's some values to keep an eye on in the sample in order to 
           understand $state and $stateParams 
     
@@ -157,66 +168,63 @@
        user = {{ user}}
     -->
     </pre>
-          </footer>
+        </footer>
 
-      </div>
-    
-      <script src="./js/jquery.validate.js"></script>
-      <script src="./js/additional-methods.js"></script>
+    </div>
 
-      <!-- angular-->
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js">  </script>
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.min.js"> </script>
+    <script src="./js/jquery.validate.js"></script>
+    <script src="./js/additional-methods.js"></script>
 
-
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-      <script src="./js/angular-ui-router.js"></script>   
-      <script src="./js/angular-local-storage.js"></script>     
-
-      <!-- signalR -->
-      <script src="./js/jquery.signalR-2.2.1.js"></script>
-      
-      <!--  DEBUG  
-        <script src="http://localhost:3121/signalR/hubs"></script>
--->
-        <!--  DEV-->
-        <script src="http://localhost/NS.API/signalR/hubs"></script>  
-        <!-- Test
-        <script src="http://api.nourisolutions.com/signalR/hubs"></script>    -->
-
-      <!-- production
-    <script src="https://www.kharbga.com/signalR/hubs"></script>    -->
-     
-      <!-- production2  
-    <script src="https://www.kharbga.com/v3/signalR/hubs"></script>  -->
+    <!-- angular-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.min.js">
+    </script>
 
 
-     
-      <!-- Date lib-->
-      <script src="./js/moment.min.js"></script>
-      
-      <!-- Kharbga -->
-      <script src="./js/kharbga-ui.js"></script>
-      <script src="./js/kharbga.js"></script>  
-      <script src="./js/ns-app.kharbga.js"></script>
-      <!-- NS API -->
-      <script src="./js/ns-api-client.js"></script>      
-      
-      <!-- NS angular App-->
-      <script src="./ngapp/ns-app.angular.js"></script>
-      <script src="./ngapp/services/sec.js"></script>
-      <script src="./ngapp/controllers/app.js"></script>
-      <script src="./ngapp/controllers/main.js"></script>
-      <script src="./ngapp/controllers/user.js"></script>
-      <script src="./ngapp/controllers/kharbga.js"></script>
-      <script src="./ngapp/controllers/system.js"></script>
-      <script src="./ngapp/controllers/help.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="./js/angular-ui-router.js"></script>
+    <script src="./js/angular-local-storage.js"></script>
 
-      <script>
-          $(document).ready(function () {
-              $.nsAppKharbga = new KharbgaApp();
-          });
-      </script>
-   
-  </body>
-</html>      
+    <!-- signalR -->
+    <script src="./js/jquery.signalR-2.2.1.js"></script>
+
+    <script>
+        var scriptToLoad = window.__env.baseURI + "signalR/hubs";
+        console.log("loading: " + scriptToLoad);
+        var signalRElement = document.createElement('script');
+        signalRElement.setAttribute('src', scriptToLoad);
+        document.body.appendChild(signalRElement)
+        console.log("loading: " + scriptToLoad);
+    </script>
+
+
+    <!-- Date lib-->
+    <script src="./js/moment.min.js"></script>
+
+    <!-- Kharbga -->
+    <script src="./js/kharbga-ui.js"></script>
+    <script src="./js/kharbga.js"></script>
+    <script src="./js/ns-app.kharbga.js"></script>
+    <!-- NS API -->
+    <script src="./js/ns-api-client.js"></script>
+
+    <!-- NS angular App-->
+    <script src="./ngapp/ns-app.angular.js"></script>
+    <script src="./ngapp/services/sec.js"></script>
+    <script src="./ngapp/controllers/app.js"></script>
+    <script src="./ngapp/controllers/main.js"></script>
+    <script src="./ngapp/controllers/user.js"></script>
+    <script src="./ngapp/controllers/kharbga.js"></script>
+    <script src="./ngapp/controllers/system.js"></script>
+    <script src="./ngapp/controllers/help.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $.nsAppKharbga = new KharbgaApp();
+        });
+    </script>
+
+</body>
+
+</html>
