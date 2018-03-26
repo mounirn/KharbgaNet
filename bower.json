@@ -6,7 +6,7 @@
   "description": "A board game from North Africa",
   "main": "",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://www.kharbga.com",
   "private": true,
   "ignore": [
     "**/.*",

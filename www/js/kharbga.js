@@ -688,12 +688,12 @@ var Kharbga;
             }
             return false;
         };
+        BoardCell.TopLabels = ["\u0623", "\u0628", "\u062A", "\u062B", "\u062C", "\u062D", "\u062E"];
+        BoardCell.BottomLabels = ["A", "B", "C", "D", "E", "F", "G"];
+        BoardCell.COLUMNS = 'abcdefg'.split('');
+        BoardCell.ROWS = '1234567'.split('');
         return BoardCell;
     }());
-    BoardCell.TopLabels = ["\u0623", "\u0628", "\u062A", "\u062B", "\u062C", "\u062D", "\u062E"];
-    BoardCell.BottomLabels = ["A", "B", "C", "D", "E", "F", "G"];
-    BoardCell.COLUMNS = 'abcdefg'.split('');
-    BoardCell.ROWS = '1234567'.split('');
     Kharbga.BoardCell = BoardCell;
 })(Kharbga || (Kharbga = {}));
 var Kharbga;
