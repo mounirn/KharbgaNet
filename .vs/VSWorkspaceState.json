@@ -2,12 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\www",
-    "\\www\\html",
+    "\\www\\bootstrap\\css",
+    "\\www\\bootstrap\\js",
     "\\www\\js",
-    "\\www\\ngapp",
-    "\\www\\ngapp\\controllers",
-    "\\www\\ngapp\\views"
+    "\\www\\jsconfig",
+    "\\www\\ngapp"
   ],
-  "SelectedNode": "\\www\\js\\kharbga-ui.js",
+  "SelectedNode": "\\www\\js\\ns-app.kharbga.js",
   "PreviewInSolutionExplorer": false
 }

@@ -1,0 +1,84 @@
+﻿body {
+    background-color: antiquewhite;
+    font-family: Frutiger, Futura, Gills Sans, Helvetica, Lucida, Optima, Palatino, Agfa Rotis, Arial, and Univers;
+}
+
+
+.navbar-inverse {
+    background-color: #4D7D56;
+    border-color: #4D7D56;
+    color: white;
+}
+
+    .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+        background-color: #4D7D56;
+        color: antiquewhite;
+        border-color: #4D7D56;
+    }
+
+    .navbar-inverse .navbar-nav > li > a {
+        color: antiquewhite;
+    }
+
+    .navbar-inverse .navbar-brand {
+        color: antiquewhite;
+    }
+
+.main {
+    background-color: white;
+}
+
+.field-validation-error {
+    color: #B40636;
+}
+/* Word press*/
+@media screen and (max-width: 782px) {
+    input [type=radio], input[type=checkbox] {
+        height: 25px;
+        width: 25px;
+    }
+}
+
+
+a, a:hover {
+    color: #4D7D56;
+}
+
+.img-circle {
+    border-radius: 50%;
+}
+
+strong {
+    color:white ;
+}
+
+.container{
+    background-color:transparent;
+}
+
+.footer {
+    background-color: transparent;
+}
+
+.row {
+    background-color:transparent;
+}
+
+.panel {
+    border-color: #4D7D56;
+}
+
+.panel-primary {
+    background-color: transparent;
+    border-color: #4D7D56;
+}
+
+.panel-heading {
+    background-color: #4D7D56;
+    color:white;
+}
+
+.btn {
+    background-color: #4D7D56;
+    color: white;
+}

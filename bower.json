@@ -6,7 +6,7 @@
   "description": "A board game from North Africa",
   "main": "",
   "license": "MIT",
-  "homepage": "https://www.kharbga.com",
+  "homepage": "",
   "private": true,
   "ignore": [
     "**/.*",
@@ -22,6 +22,7 @@
     "angular-local-storage": "^0.5.2",
     "angular-resource": "^1.6.4",
     "angular-ui-router": "^1.0.3",
-    "angular-ui-bootstrap": "^2.5.0"
+    "angular-ui-bootstrap": "^2.5.0",
+    "jquery": "^3.3.1"
   }
 }
