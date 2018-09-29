@@ -48,10 +48,6 @@ a, a:hover {
     border-radius: 50%;
 }
 
-strong {
-    color:white ;
-}
-
 .container{
     background-color:transparent;
 }
@@ -78,7 +74,17 @@ strong {
     color:white;
 }
 
+.panel-body {
+    background-color: white;
+}
+
 .btn {
     background-color: #4D7D56;
     color: white;
+}
+
+.panel-info > .panel-heading {
+    color: antiquewhite;
+    background-color: #E1781A;
+    border-color: #bce8f1;
 }

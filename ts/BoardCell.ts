@@ -19,10 +19,10 @@ namespace Kharbga{
 
         private state: BoardCellState = BoardCellState.Empty;
 
-        private left: BoardCell = null;
-        private right: BoardCell = null;
-        private up: BoardCell = null;
-        private down: BoardCell = null;
+        public left: BoardCell = null;
+        public right: BoardCell = null;
+        public up: BoardCell = null;
+        public down: BoardCell = null;
 
         private listAdjacentCells: BoardCell[];
 
@@ -108,14 +108,14 @@ namespace Kharbga{
         /**
          * Checks if the current cell is occupied or not
          */
-        public IsOccupied(): boolean {
+        public isOccupied(): boolean {
             return this.state != BoardCellState.Empty;
         }
 
         /**
          * Checks if the current cell is occupied by an attacker piece or not
          */
-        public IsOccupiedByAttacker(): boolean {
+        public isOccupiedByAttacker(): boolean {
             return this.state == BoardCellState.OccupiedByAttacker;
         }
 
@@ -123,7 +123,7 @@ namespace Kharbga{
         /**
          * Checks if the current cell is occupied by a defender piece or not
          */
-        public IsOccupiedByDefender(): boolean {
+        public isOccupiedByDefender(): boolean {
             return this.state == BoardCellState.OccupiedByDefender;
         }
 
@@ -131,7 +131,7 @@ namespace Kharbga{
          * Check id the current cell is the middle cell which is left empty after each player sets their peices on the board
          * Malha means salty in Arabic.  Players are not allowed to set (seed) their piece on the salty land.
          */
-        public IsMalha(): boolean {
+        public isMalha(): boolean {
             if (this.row == 3 && this.col == 3)
                 return true;
             else
@@ -144,7 +144,7 @@ namespace Kharbga{
          * Set a piece on the board with either an attacker or a defender piece
          * @param playerIsAttacker indicates whether an attacker or a defender setting
          */
-        public SetPiece(playerIsAttacker: boolean): void {
+        public setPiece(playerIsAttacker: boolean): void {
             if (playerIsAttacker)
                 this.state = BoardCellState.OccupiedByAttacker;
             else
@@ -155,14 +155,14 @@ namespace Kharbga{
          *  set a piece with the same state as the give cell
          * @param cell
          */
-        public SetSameAs(cell: BoardCell): void {
+        public setSameAs(cell: BoardCell): void {
             this.state = cell.state;
         }
 
         /**
          * Determines the adjacent cells and sets then for easy access from each cell 
          */
-        public SetAdjacentCells(board: Board) {
+        public setAdjacentCells(board: Board) {
             // add check if board is null
 
             if (board == null) {
@@ -204,7 +204,7 @@ namespace Kharbga{
         /**
          * Returns the adjacent cells
          */
-        public GetAdjacentCells(): BoardCell[] {
+        public getAdjacentCells(): BoardCell[] {
             return this.listAdjacentCells;
         }
 
@@ -212,7 +212,7 @@ namespace Kharbga{
          * Checks if the give cell is adjacent to this one
          * @param cell
          */
-        public IsAdjacentTo(cell: BoardCell): boolean {
+        public isAdjacentTo(cell: BoardCell): boolean {
             let ret = false;
             for (var i = 0; i < this.listAdjacentCells.length; i++) {
                 let adjCell = this.listAdjacentCells[i];
@@ -225,31 +225,31 @@ namespace Kharbga{
             return ret;
         }
 
-        public Clear() {
+        public clear() {
             this.state = BoardCellState.Empty;
         }
 
-        public IsOccupiedBy(player: Player): boolean {
+        public isOccupiedBy(player: Player): boolean {
             switch (this.state) {
                 case BoardCellState.Empty:
                     return false;
                 case BoardCellState.OccupiedByAttacker:
-                    return player.IsAttacker();
+                    return player.isAttacker();
                 case BoardCellState.OccupiedByDefender:
-                    return player.IsDefender();
+                    return player.isDefender();
                 default:
                     return false;
             }
         }
 
-        public IsOccupiedByOpponent(player: Player): boolean {
+        public isOccupiedByOpponent(player: Player): boolean {
             switch (this.state) {
                 case BoardCellState.Empty:
                     return false;
                 case BoardCellState.OccupiedByAttacker:
-                    return player.IsDefender();
+                    return player.isDefender();
                 case BoardCellState.OccupiedByDefender:
-                    return player.IsAttacker();
+                    return player.isAttacker();
                 default:
                     return false;
             }
@@ -259,10 +259,10 @@ namespace Kharbga{
          * Checks if any of the adjacent cells are occupied by player
          * @param player
          */
-        public AnyAdjacentOccupiedBy(player: Player): boolean {
+        public anyAdjacentOccupiedBy(player: Player): boolean {
             let ret = false;
             for (let cell of this.listAdjacentCells) {
-                if (cell.IsOccupiedBy(player)) {
+                if (cell.isOccupiedBy(player)) {
                     ret = true;
                     break;
                 }
@@ -274,10 +274,10 @@ namespace Kharbga{
       * Checks if any of the adjacent cells are occupied by player
       * @param player
       */
-        public AnyAdjacentOccupiedByOpponent(player: Player): boolean {
+        public anyAdjacentOccupiedByOpponent(player: Player): boolean {
             let ret = false;
             for (let cell of this.listAdjacentCells) {
-                if (cell.IsOccupiedByOpponent(player)) {
+                if (cell.isOccupiedByOpponent(player)) {
                     ret = true;
                     break;
                 }
@@ -289,17 +289,17 @@ namespace Kharbga{
          * Checks if the cell is empty
          * @returns true if the cell is empty
          */
-        public IsEmpty(): boolean {
+        public isEmpty(): boolean {
             return this.state == BoardCellState.Empty;
         }
 
         /**
          * Checks if the cell is surrounded. A surrounded piece can not move
          */
-        public IsSurrounded(): boolean {
+        public isSurrounded(): boolean {
             var ret = true;
             for (let cell of this.listAdjacentCells) {
-                if (cell.IsEmpty()) {
+                if (cell.isEmpty()) {
                     ret = false;
                     break;
                 }
@@ -311,7 +311,7 @@ namespace Kharbga{
         /**
          * not used 
          */
-        IsDefenderRequestingTwo(): boolean {
+        isDefenderRequestingTwo(): boolean {
             return this.state == BoardCellState.OccupiedByDefenderRequestingTwo;
         }
 
@@ -319,7 +319,7 @@ namespace Kharbga{
          * Checks if the cell is reachable by opponent players from any of the directions possible
          * @returns true if reachable. false if not
          */
-        public IsReachable(player: Player): boolean {
+        public isReachable(player: Player): boolean {
             
             let reachableFromUp = false;  
             let emptyFoundUp = false;
@@ -340,10 +340,10 @@ namespace Kharbga{
             // check up until the edge
             let cell = this.Above();
             while (cell != null) {       
-                if (cell.IsEmpty())
+                if (cell.isEmpty())
                     emptyFoundUp = true;
                 else {
-                    if (cell.IsOccupiedBy(player))
+                    if (cell.isOccupiedBy(player))
                         ownPlayerFoundUp;
                     else {
                         if (!ownPlayerFoundUp) {
@@ -359,10 +359,10 @@ namespace Kharbga{
             // check right until the edge
             cell = this.Right();
             while (cell != null) {           
-                if (cell.IsEmpty())
+                if (cell.isEmpty())
                     emptyFoundRight = true;
                 else {
-                    if (cell.IsOccupiedBy(player))
+                    if (cell.isOccupiedBy(player))
                         ownPlayerFoundRight;
                     else {
                         if (!ownPlayerFoundRight) {
@@ -378,10 +378,10 @@ namespace Kharbga{
             // check left until the edge
             cell = this.Left();
             while (cell!= null) {     
-                if (cell.IsEmpty())
+                if (cell.isEmpty())
                     emptyFoundLeft = true;
                 else {
-                    if (cell.IsOccupiedBy(player))
+                    if (cell.isOccupiedBy(player))
                         ownPlayerFoundLeft;
                     else {
                         if (!ownPlayerFoundLeft) {
@@ -397,10 +397,10 @@ namespace Kharbga{
             // check below until the edge
             cell = this.Below();
             while (cell != null) {
-                if (cell.IsEmpty())
+                if (cell.isEmpty())
                     emptyFoundBelow = true;
                 else {
-                    if (cell.IsOccupiedBy(player))
+                    if (cell.isOccupiedBy(player))
                         ownPlayerFoundBelow;
                     else {
                         if (!ownPlayerFoundBelow) {
@@ -420,28 +420,28 @@ namespace Kharbga{
          * Checks if the cell is capturable by an opponent player from any of the possible 
          * @param player
          */
-        public IsCapturable(player: Player): boolean {
-            if (!this.IsOccupiedBy(player))
+        public isCapturable(player: Player): boolean {
+            if (!this.isOccupiedBy(player))
                 return false; 
 
             // look at adjacent cells 
-            if (this.Above() != null && this.Above().IsEmpty() && this.Below() != null && this.Below().IsOccupiedByOpponent(player)) {
-                if (this.Above().AnyAdjacentOccupiedByOpponent(player))
+            if (this.Above() != null && this.Above().isEmpty() && this.Below() != null && this.Below().isOccupiedByOpponent(player)) {
+                if (this.Above().anyAdjacentOccupiedByOpponent(player))
                     return true;
             }
 
-            if (this.Below() != null && this.Below().IsEmpty() && this.Above() != null && this.Above().IsOccupiedByOpponent(player)) {
-                if (this.Below().AnyAdjacentOccupiedByOpponent(player))
+            if (this.Below() != null && this.Below().isEmpty() && this.Above() != null && this.Above().isOccupiedByOpponent(player)) {
+                if (this.Below().anyAdjacentOccupiedByOpponent(player))
                     return true;
             }
 
-            if (this.Left() != null && this.Left().IsEmpty() && this.Right() != null && this.Right().IsOccupiedByOpponent(player)) {
-                if (this.Left().AnyAdjacentOccupiedByOpponent(player))
+            if (this.Left() != null && this.Left().isEmpty() && this.Right() != null && this.Right().isOccupiedByOpponent(player)) {
+                if (this.Left().anyAdjacentOccupiedByOpponent(player))
                     return true;
             }
 
-            if (this.Right() != null && this.Right().IsEmpty() && this.Left() != null && this.Left().IsOccupiedByOpponent(player)) {
-                if (this.Right().AnyAdjacentOccupiedByOpponent(player))
+            if (this.Right() != null && this.Right().isEmpty() && this.Left() != null && this.Left().isOccupiedByOpponent(player)) {
+                if (this.Right().anyAdjacentOccupiedByOpponent(player))
                     return true;
             }
 

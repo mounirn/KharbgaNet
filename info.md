@@ -1,13 +1,14 @@
 
-# Open Issues / To Do:
+# Open Issues / To Do
+
 ---
 
 * Save game state in the server  (azure doc or mongodb or something else)
 * Loading a game after refresh is causing an error
 * When a new game is started and pending another play to join. Please add a message with that info.
-	Game state should be pending and not setting.  Should wait for another player to press play
-	to start the game. 
-	Design something that matches player request for new games
+* Game state should be pending and not setting.  Should wait for another player to press play
+  to start the game.
+* Design something that matches player request for new games
 * Update the game Status when the game is completed
 * Uncheck the 'Resign' chekbox when a new game is started
 * Add a dialog box when the game is over

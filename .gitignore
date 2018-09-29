@@ -1,4 +1,6 @@
 .gitignore
 node_modules
 bower_components
-.vs
+.vs/*
+.vs/slnx.sqlite
+.vs/KharbgaNet/v15/.suo

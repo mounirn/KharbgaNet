@@ -37,7 +37,7 @@ namespace Kharbga {
             // Process the board to set adjacent cells
             for (let id of this._cellIds) {
                 let cell = this.cellsById[id] as BoardCell;
-                cell.SetAdjacentCells(this);
+                cell.setAdjacentCells(this);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Kharbga {
          * Creates a new board based with the same state
          */
         public Clone() : Board{
-            var ret = new Board(null);
+            let ret = new Board(null);
 
             for (let r = 0; r < 7; r++) {                
                 for (let c = 0; c < 7; c++) {
@@ -53,7 +53,7 @@ namespace Kharbga {
 
                     let clonedCell = ret.GetCell(r, c);
 
-                    clonedCell.SetSameAs(cell);
+                    clonedCell.setSameAs(cell);
                 }
             }
             return ret;
@@ -62,15 +62,15 @@ namespace Kharbga {
          * returns the current game fen 
          */
         public fen(): string {
-            var ret = "";
+            let ret = "";
             for (let r = 6; r >= 0; r--) {
                  for (let c = 0; c < 7; c++) {
                      let cell = this.cells[r][c];
-                     if (cell.IsEmpty())
+                     if (cell.isEmpty())
                          ret += '1';
-                     else if (cell.IsOccupiedByAttacker())
+                     else if (cell.isOccupiedByAttacker())
                          ret += 'S';
-                     else if (cell.IsOccupiedByDefender())
+                     else if (cell.isOccupiedByDefender())
                          ret += 's';
 
                 }
@@ -110,14 +110,14 @@ namespace Kharbga {
         IsOccupiedByAttacker(id: string): boolean {
             let cell = this.GetCellById(id);
             if (cell != null)
-                return cell.IsOccupiedByAttacker();
+                return cell.isOccupiedByAttacker();
             else
                 return false;
         }
         IsOccupiedByDefender(id: string): boolean {
             let cell = this.GetCellById(id);
             if (cell != null)
-                return cell.IsOccupiedByDefender();
+                return cell.isOccupiedByDefender();
             else
                 return false;
         }
@@ -139,7 +139,7 @@ namespace Kharbga {
                 return PlayerSettingStatus.ERR_INVALID_CELL;
             }
 
-            if (cell.IsMalha()) {
+            if (cell.isMalha()) {
                 if (this.boardEvents != null) {
                     // generate event
                     //   BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SettingOnMiddleCell, id, string.Empty, string.Empty));
@@ -149,7 +149,7 @@ namespace Kharbga {
 
                 return PlayerSettingStatus.ERR_MALHA;
             }
-            if (cell.IsOccupied()) {
+            if (cell.isOccupied()) {
                 if (this.boardEvents != null) {
                     //BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SettingOnOccupiedCell, id, string.Empty, string.Empty));
                     var eventData = new BoardEventData(cell, cell, id, BoardMoveType.SettingOnOccupiedCell);
@@ -159,7 +159,7 @@ namespace Kharbga {
                 return PlayerSettingStatus.ERR_OCCUPIED;
             }
 
-            cell.SetPiece(isAttacker);
+            cell.setPiece(isAttacker);
             this.piecesSetCount++;
             return PlayerSettingStatus.OK;
         }
@@ -173,7 +173,7 @@ namespace Kharbga {
         RecordPlayerMove(fromCell: BoardCell, toCell: BoardCell): { status: PlayerMoveStatus, capturedPieces: number } {
 
             // can not move a surrounded cell
-            if (fromCell.IsSurrounded() === true) {
+            if (fromCell.isSurrounded() === true) {
                 if (this.boardEvents != null) {
                     //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SelectedCellThatIsSourroundedForMoving, fromCell.ID, toCell.ID, string.Empty));
                     var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.SelectedCellThatIsSurroundedForMoving);
@@ -184,7 +184,7 @@ namespace Kharbga {
             }
 
             // can not move to an occupied cell
-            if (toCell.IsOccupied() === true) {   
+            if (toCell.isOccupied() === true) {   
                 if (this.boardEvents != null) {
                     //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToAnOccupiedCell, fromCell.ID, toCell.ID, string.Empty));
                     var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToAnOccupiedCell);
@@ -195,7 +195,7 @@ namespace Kharbga {
             }
 
             // the To cell must be adjacent to the From Cell
-            if (fromCell.IsAdjacentTo(toCell) === false) {
+            if (fromCell.isAdjacentTo(toCell) === false) {
                 if (this.boardEvents != null) {
                     var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToNotAdjacentCell);
                     this.boardEvents.invalidMoveEvent(eventData);
@@ -204,8 +204,8 @@ namespace Kharbga {
                 return { status: PlayerMoveStatus.ERR_TO_IS_IS_NOT_AN_ADJACENT_CELL, capturedPieces: 0 };
             }
 
-            toCell.SetSameAs(fromCell);
-            fromCell.Clear();
+            toCell.setSameAs(fromCell);
+            fromCell.clear();
 
             if (this.boardEvents != null) {
                 var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
@@ -225,15 +225,15 @@ namespace Kharbga {
          * @event  captured piece event
          */
         ProcessCapturedPieces(fromCell: BoardCell, toCell: BoardCell): number {
-            var ret = 0;
+            let ret = 0;
             //0. Start with the To piece. 
             //1. Get all cells adjacent and occupied by the opponent (opposite color)
             //2. For each of these opponent cells, check if is "sandwiched" between the To cell type
-            let toCellAdjacentCells = toCell.GetAdjacentCells();
-            var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
+            let toCellAdjacentCells = toCell.getAdjacentCells();
+            let eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
 
             for (let adjCell of toCellAdjacentCells) {
-                if (adjCell.IsEmpty() === true)  // not occupied
+                if (adjCell.isEmpty() === true)  // not occupied
                     continue;
 
                 if (adjCell.State() === toCell.State() )  // occupied by the same piece as player
@@ -242,7 +242,7 @@ namespace Kharbga {
                 // We have an opponent piece 
                 if (toCell.Above() === adjCell) { // checking up
                     if (adjCell.Above() != null && adjCell.Above().State() === toCell.State()) {
-                        adjCell.Clear(); // Remove from the player pieces
+                        adjCell.clear(); // Remove from the player pieces
                         eventData.targetCellId = adjCell.ID();
                         if (this.boardEvents != null) 
                             this.boardEvents.capturedPieceEvent(eventData);
@@ -251,7 +251,7 @@ namespace Kharbga {
                 }
                 else if (toCell.Below() == adjCell) {// checking down     
                     if (adjCell.Below() != null && adjCell.Below().State() === toCell.State()) {
-                        adjCell.Clear();
+                        adjCell.clear();
                         eventData.targetCellId = adjCell.ID();
                         if (this.boardEvents != null) 
                             this.boardEvents.capturedPieceEvent(eventData);
@@ -260,7 +260,7 @@ namespace Kharbga {
                 }
                 else if (toCell.Left() == adjCell) { // checking left;     
                     if (adjCell.Left() != null && adjCell.Left().State() === toCell.State()) {
-                        adjCell.Clear();
+                        adjCell.clear();
                         eventData.targetCellId = adjCell.ID();
                         if (this.boardEvents != null) 
                             this.boardEvents.capturedPieceEvent(eventData);
@@ -269,7 +269,7 @@ namespace Kharbga {
                 }
                 else if (toCell.Right() == adjCell) { // checking right
                     if (adjCell.Right() != null && adjCell.Right().State() === toCell.State()) {
-                        adjCell.Clear();
+                        adjCell.clear();
                         eventData.targetCellId = adjCell.ID();
                         if (this.boardEvents != null) 
                             this.boardEvents.capturedPieceEvent(eventData);
@@ -296,7 +296,7 @@ namespace Kharbga {
             for (let id in Object.keys(this.cellsById)) {
                 let cell = this.GetCellById(id);
                 if (cell != null)
-                    cell.Clear();
+                    cell.clear();
 
             }
         }
@@ -309,7 +309,7 @@ namespace Kharbga {
             let ret = new Array<string>(24);
             for (let cellId in Object.keys(this.cellsById)) {
                 let cell = this.GetCellById(cellId);
-                if (cell.IsOccupiedBy(player)) {
+                if (cell.isOccupiedBy(player)) {
                     ret.push(cell.ID());
                 }
 
@@ -323,7 +323,7 @@ namespace Kharbga {
          * @param from Id (optional)
          * @returns the possible moves for this player 
          */
-        GetPossibleMoves(player: Player, fromId: string = ""): Array<GameMove> {
+        getPossibleMoves(player: Player, fromId: string = ""): Array<GameMove> {
             // 0. Get the player occupied cells
             // 1. For each of these occupied cells, get adjacent cells
             // 2.   For each adjacent cell, get empty cells
@@ -334,10 +334,10 @@ namespace Kharbga {
             for (let cellId of cellIds) {
                 let fromCell = this.GetCellById(cellId);
               
-                if (fromCell.IsOccupiedBy(player)) {
-                    let adjacentCells = fromCell.GetAdjacentCells();
+                if (fromCell.isOccupiedBy(player)) {
+                    let adjacentCells = fromCell.getAdjacentCells();
                     for (let toCell of adjacentCells) {
-                        if (toCell.IsEmpty()) {
+                        if (toCell.isEmpty()) {
                             ret.push(new GameMove(fromCell.ID(), toCell.ID(), player));
                         }
                     }
@@ -368,11 +368,11 @@ namespace Kharbga {
             let cellIds = this.CellIds();
             for (let cellId of cellIds) {
                 let fromCell = this.GetCellById(cellId);
-                if (fromCell.IsOccupiedBy(player)) {
-                    if (!fromCell.IsReachable(player)) { // if not reachable
-                        let adjacentCells = fromCell.GetAdjacentCells();
+                if (fromCell.isOccupiedBy(player)) {
+                    if (!fromCell.isReachable(player)) { // if not reachable
+                        let adjacentCells = fromCell.getAdjacentCells();
                         for (let toCell of adjacentCells) {
-                            if (toCell.IsEmpty()) {
+                            if (toCell.isEmpty()) {
                                 ret.push(new GameMove(fromCell.ID(), toCell.ID(), player));
                             }
                         }
@@ -411,24 +411,24 @@ namespace Kharbga {
 
         public StillHavePiecesToCapture(fromCell: BoardCell): { status: boolean, possibleMoves: Array<string> } {
             // to do: also return the possible move that could make a capture
-            var moves = new Array<string>();
-            var ret = { status: false, possibleMoves: moves }; 
+            let moves = new Array<string>();
+            let ret = { status: false, possibleMoves: moves }; 
 
             // 1. look at all possible moves (to adjacent cells)
             // 2. for each move
             // 3.    check if opponent pieces could be captured by the move
             // 4.          return true if can capture the opponent piece
             // 5. return false if no capturing moves.
-            let adjCells = fromCell.GetAdjacentCells();
+            let adjCells = fromCell.getAdjacentCells();
             for (let cell of adjCells) {
-                if (cell.IsEmpty() == false)
+                if (cell.isEmpty() == false)
                     continue;
 
                 // can move here
                 let toCell = cell;
-                let toCellAjdCells = toCell.GetAdjacentCells();
+                let toCellAjdCells = toCell.getAdjacentCells();
                 for (let adjCell of toCellAjdCells) {
-                    if (adjCell.IsEmpty() == true)  // not occupied
+                    if (adjCell.isEmpty() == true)  // not occupied
                         continue;
 
                     if (adjCell.State() === fromCell.State())  // occupied by the same piece as player
@@ -475,16 +475,16 @@ namespace Kharbga {
          */
         public HasCapturablePieces(player: Player, opponent: Player): { status: boolean, capturables: Array<string> } {
             // to do: also return the possible move that could make a capture
-            var capturables = new Array<string>();
-            var ret = { status: false, "capturables": capturables };
+            let capturables = new Array<string>();
+            let ret = { status: false, "capturables": capturables };
             let cellIds = this.CellIds();
             for (let cellId of cellIds) {
                 let cell = this.GetCellById(cellId);
 
-                if (!cell.IsOccupiedBy(player)) 
+                if (!cell.isOccupiedBy(player)) 
                     continue;
 
-                if (cell.IsSurrounded())
+                if (cell.isSurrounded())
                     continue;
 
                 // 1. look at all player pieces
@@ -496,35 +496,35 @@ namespace Kharbga {
                 // 7. Indicate that this piece is capturable and add to the list of capturables
 
                 // check Left
-                if (cell.Left() != null && cell.Left().IsEmpty()) {
-                    if (cell.Right()!= null && cell.Right().IsOccupiedBy(opponent) == false)
+                if (cell.Left() != null && cell.Left().isEmpty()) {
+                    if (cell.Right()!= null && cell.Right().isOccupiedBy(opponent) == false)
                     {
-                        if (cell.Left().AnyAdjacentOccupiedBy(opponent)) {
+                        if (cell.Left().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                             ret.status = true;
                         }
                     }
                 }
                 // check Right
-                if (cell.Right() != null && cell.Right().IsEmpty()) {
-                    if (cell.Left()!= null && cell.Left().IsOccupiedBy(opponent) == false) {
-                        if (cell.Right().AnyAdjacentOccupiedBy(opponent)) {
+                if (cell.Right() != null && cell.Right().isEmpty()) {
+                    if (cell.Left()!= null && cell.Left().isOccupiedBy(opponent) == false) {
+                        if (cell.Right().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                         }
                     }
                 }
                 // check up
-                if (cell.Above() != null && cell.Above().IsEmpty()) {
-                    if (cell.Below()!= null && cell.Below().IsOccupiedBy(opponent) == false) {
-                        if (cell.Above().AnyAdjacentOccupiedBy(opponent)) {
+                if (cell.Above() != null && cell.Above().isEmpty()) {
+                    if (cell.Below()!= null && cell.Below().isOccupiedBy(opponent) == false) {
+                        if (cell.Above().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                         }
                     }
                 }  
                 // check down
-                if (cell.Below() != null && cell.Below().IsEmpty()) {
-                    if (cell.Above()!= null && cell.Above().IsOccupiedBy(opponent) == false) {
-                        if (cell.Below().AnyAdjacentOccupiedBy(opponent)) {
+                if (cell.Below() != null && cell.Below().isEmpty()) {
+                    if (cell.Above()!= null && cell.Above().isOccupiedBy(opponent) == false) {
+                        if (cell.Below().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                         }
                     }
@@ -547,7 +547,7 @@ namespace Kharbga {
                 console.log("IsCapturable - Invalid cell Id : %s", cellId);
                 return false;
             }
-            return cell.IsCapturable(player);
+            return cell.isCapturable(player);
         }
 
         /**
@@ -574,13 +574,13 @@ namespace Kharbga {
                 // need to be two different pieces
                 return false;
             }
-            var eventData = new BoardEventData(uc, uc, uc.ID(), BoardMoveType.DefenderPieceExchanged);
-            uc.Clear();
+            let eventData = new BoardEventData(uc, uc, uc.ID(), BoardMoveType.DefenderPieceExchanged);
+            uc.clear();
             this.boardEvents.exchangedPieceEvent(eventData);
-            ac1.Clear();
+            ac1.clear();
             eventData = new BoardEventData(ac1, ac1, ac1.ID(), BoardMoveType.DefenderPieceExchanged);
             this.boardEvents.exchangedPieceEvent(eventData);
-            ac2.Clear();
+            ac2.clear();
             eventData = new BoardEventData(ac2, ac2, ac2.ID(), BoardMoveType.DefenderPieceExchanged);
             this.boardEvents.exchangedPieceEvent(eventData);
             return true;
@@ -592,12 +592,12 @@ namespace Kharbga {
          * Returns all possible settings for the game at this point
          */
         public GetPossibleSettings(): Array<string>{
-            var ret = new Array<string>();
+            let ret = new Array<string>();
             
 
             for (let id of this._cellIds) {
                 let cell = this.cellsById[id] as BoardCell;
-                if (id != 'd4' && cell.IsEmpty() == true)
+                if (id != 'd4' && cell.isEmpty() == true)
                     ret.push(id);
             }
 
@@ -608,13 +608,13 @@ namespace Kharbga {
         * Returns all possible settings close to the opponent settings
         */
         public GetPossibleSettingsNearOpponent(player: Player): Array<string> {
-            var ret = new Array<string>();
+            let ret = new Array<string>();
 
             for (let id of this._cellIds) {
                 let cell = this.cellsById[id] as BoardCell;
-                if (id == 'd4' || cell.IsEmpty() != true)
+                if (id == 'd4' || cell.isEmpty() != true)
                     continue;
-                if (cell.AnyAdjacentOccupiedByOpponent(player) )
+                if (cell.anyAdjacentOccupiedByOpponent(player) )
                     ret.push(id);
             }
 

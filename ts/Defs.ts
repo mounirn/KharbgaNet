@@ -1,3 +1,4 @@
+//https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
 namespace Kharbga {
     /**
      * @summary Defines the player types. We could have games where:
@@ -218,28 +219,22 @@ namespace Kharbga {
         }
 
         /// The player selects a color to use for their pieces and profile
-        public Color: string
+        public color: string;
 
         /// The player selects an image to use for their pieces and profile
-        public Image: string
+        public imageUrl: string;
 
         /// The name of the player
-        public Name: string
+        public name: string;
 
         // This is the user's account id
-        public EmailAddress: string
+        public emailAddress: string;
 
         /// A player could be either an attacker or a defender
-        IsAttacker(): boolean { return this.role == PlayerRole.Attacker; }
-        IsDefender(): boolean { return this.role == PlayerRole.Defender; }
+        isAttacker(): boolean { return this.role == PlayerRole.Attacker; }
+        isDefender(): boolean { return this.role == PlayerRole.Defender; }
 
-
-
-        Type(): PlayerType { return this.type; }
-        Role(): PlayerRole { return this.role; }
-
-
-        Reset(): void {
+        reset(): void {
             this.totalTimeThinkingSinceStartOfGame = 0;
         }
     }
@@ -274,15 +269,13 @@ namespace Kharbga {
         constructor() {
             this.state = PieceState.IsNotSetYet;
         }
-        State(): PieceState {
-            return this.state;
-        }
+      
 
 
-        Value(): number {
-            if (this.State() == PieceState.IsOnBoard)
+        value(): number {
+            if (this.state == PieceState.IsOnBoard)
                 return 1;
-            else if (this.State() == PieceState.IsOnBoardUntouchable)
+            else if (this.state == PieceState.IsOnBoardUntouchable)
                 return 100;
             else
                 return 0;
@@ -294,28 +287,28 @@ namespace Kharbga {
      */
     export class GameMove {
         constructor(from: string, to: string, p: Player) {
-            this.From = from;
-            this.To = to;
-            this.Player = p;
-            this.IsSetting = false;
-            this.ExchangeRequest = false;
+            this.from = from;
+            this.to = to;
+            this.player = p;
+            this.isSetting = false;
+            this.exchangeRequest = false;
         }
-        public From: string;
-        public To: string;
-        public Resigned: boolean;
-        public ExchangeRequest: boolean;
+        public from: string;
+        public to: string;
+        public resigned: boolean;
+        public exchangeRequest: boolean;
 
-        public Player: Player;
-        public IsSetting: boolean;
+        public player: Player;
+        public isSetting: boolean;
 
-        public Number: number;
-        public GameName: string;
-        public PlayerName: string;
+        public number: number;
+        public gameName: string;
+        public playerName: string;
 
-        public MoveTime: Date;
-        public BeforeFEN: string;
-        public AfterFEN: string;
-        public Message: string;
+        public moveTime: Date;
+        public beforeFen: string;
+        public afterFen: string;
+        public message: string;
     }
 
     /**

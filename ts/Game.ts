@@ -63,7 +63,7 @@ namespace Kharbga {
          * @returns all possible moves for the current player
          */
         public moves(from: string = ""): Array<GameMove> {
-            var ret = this.board.GetPossibleMoves(this.currentPlayer, from);
+            var ret = this.board.getPossibleMoves(this.currentPlayer, from);
 
 
 
@@ -76,18 +76,18 @@ namespace Kharbga {
          * @param from -- optional from location
          */
         public moves_that_capture(from: string = ""): Array<GameMove> {
-            var temp = this.board.GetPossibleMoves(this.currentPlayer, from);
+            var temp = this.board.getPossibleMoves(this.currentPlayer, from);
 
             var ret = new Array<GameMove>();
             for (let move of temp) {
                 // check if the from cell could capture
-                var fromCell = this.board.GetCellById(move.From);
+                var fromCell = this.board.GetCellById(move.from);
                 if (fromCell == null)
                     continue;
 
                 var result = this.board.StillHavePiecesToCapture(fromCell);
                 if (result.status == true) {
-                    if (result.possibleMoves.indexOf(move.To) >= 0)
+                    if (result.possibleMoves.indexOf(move.to) >= 0)
                         ret.push(move);
                 }
             }
@@ -100,11 +100,11 @@ namespace Kharbga {
          * @param from
          */
         public moves_by_capturables(from: string = ""): Array<GameMove> {
-            var temp = this.board.GetPossibleMoves(this.currentPlayer, from);
+            var temp = this.board.getPossibleMoves(this.currentPlayer, from);
 
             var ret = new Array<GameMove>();
             for (let move of temp) {
-                var capturable = this.board.IsCapturable(this.currentPlayer, move.From);
+                var capturable = this.board.IsCapturable(this.currentPlayer, move.from);
                 if (capturable) {
                     ret.push(move);
                 }
@@ -117,19 +117,21 @@ namespace Kharbga {
         */
         public moves_that_save(from: string = ""): Array<GameMove> {
 
-            let result = this.board.HasCapturablePieces(this.currentPlayer, this.currentPlayer.IsAttacker ? this.defender : this.attacker);
+            let result = this.board.HasCapturablePieces(this.currentPlayer, 
+                this.currentPlayer.isAttacker() ? this.defender : this.attacker);
 
-            let tempMoves = this.board.GetPossibleMoves(this.currentPlayer, from);
+            let tempMoves = this.board.getPossibleMoves(this.currentPlayer, from);
             let ret = new Array<GameMove>();
 
             // for each move -- see if the board after the move will result in less capturables     
             for (let move of tempMoves) {
                 let tempBoard = this.board.Clone();
-                let fromCell = tempBoard.GetCellById(move.From);
-                let toCell = tempBoard.GetCellById(move.To);
+                let fromCell = tempBoard.GetCellById(move.from);
+                let toCell = tempBoard.GetCellById(move.to);
 
                 var moveResult = tempBoard.RecordPlayerMove(fromCell, toCell);
-                let result2 = tempBoard.HasCapturablePieces(this.currentPlayer, this.currentPlayer.IsAttacker ? this.defender : this.attacker);
+                let result2 = tempBoard.HasCapturablePieces(this.currentPlayer, 
+                    this.currentPlayer.isAttacker() ? this.defender : this.attacker);
                 if (result2.capturables.length < result.capturables.length) {
                     // good move?
                     ret.push(move);
@@ -169,8 +171,8 @@ namespace Kharbga {
          * @param defender - name
          */
         public setPlayerNames(attacker: string, defender: string) {
-            this.attacker.Name = attacker;
-            this.defender.Name = defender;
+            this.attacker.name = attacker;
+            this.defender.name = defender;
         }
         /**
          * returns all possible settings near the malha
@@ -181,7 +183,7 @@ namespace Kharbga {
             let nearMalha = ['c4', 'e4', 'd3', 'd5'];
             for (let i = 0; i < nearMalha.length; i++) {
                 let cell = this.board.GetCellById(nearMalha[i]);
-                if (cell.IsEmpty())
+                if (cell.isEmpty())
                     ret.push(nearMalha[i]);
             }
 
@@ -334,8 +336,6 @@ namespace Kharbga {
             this.id = id;
         }
 
-
-
         /**
          * sets up the game with the given game state
          * @param serverGameState  -- the game state
@@ -346,40 +346,37 @@ namespace Kharbga {
 
             this.init();
 
-            if (serverGameState.Status == GameStatus.Joined)
+            if (serverGameState.status == GameStatus.Joined)
                 this.state = GameState.Setting;
 
             // sort by the move number
-            var sortedMoves = serverGameState.Moves.sort((a, b) => {
+            var sortedMoves = serverGameState.moves.sort((a, b) => {
                 // add check for dates
-                if (a.Number > b.Number) {
+                if (a.number > b.number) {
                     return 1;
                 }
 
-                if (a.Number < b.Number) {
+                if (a.number < b.number) {
                     return -1;
                 }
                 return 0;
             });
 
 
-            for (let move of serverGameState.Moves) {
-                if (move.IsSetting) {
+            for (let move of serverGameState.moves) {
+                if (move.isSetting) {
 
-                    this.processSetting(move.To);
+                    this.processSetting(move.to);
                 }
             }
 
-            for (let move of serverGameState.Moves) {
-                if (!move.IsSetting) {
-                    this.processMove(move.From, move.To, move.Resigned, move.ExchangeRequest);
+            for (let move of serverGameState.moves) {
+                if (!move.isSetting) {
+                    this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
                 }
             }
-
 
             // check the players
-
-
             return ret;
         }
 
@@ -430,7 +427,7 @@ namespace Kharbga {
         public turn(): string {
             if (this.currentPlayer == null) return '';
 
-            if (this.currentPlayer.IsAttacker()) return 'a';
+            if (this.currentPlayer.isAttacker()) return 'a';
             else return 'd';
         }
 
@@ -441,7 +438,7 @@ namespace Kharbga {
         public is_empty(cellId: string): boolean {
             let cell = this.board.GetCellById(cellId);
             if (cell!= null)
-                return cell.IsEmpty();
+                return cell.isEmpty();
 
             else
             {
@@ -474,17 +471,17 @@ namespace Kharbga {
             if (fromCell == null)
                 return false;
 
-            if (!fromCell.IsOccupiedBy(this.currentPlayer))
+            if (!fromCell.isOccupiedBy(this.currentPlayer))
                 return false;
 
             let toCell = this.board.GetCellById(to);
             if (toCell == null)
                 return false;
 
-            if (!toCell.IsAdjacentTo(fromCell))
+            if (!toCell.isAdjacentTo(fromCell))
                 return false;
 
-            if (!toCell.IsEmpty())
+            if (!toCell.isEmpty())
                 return false;
 
             return true;
@@ -498,7 +495,7 @@ namespace Kharbga {
         public is_occupied_current_player(cellId: string): boolean {
             let cell = this.board.GetCellById(cellId);
             if (cell != null)
-                return cell.IsOccupiedBy(this.currentPlayer);
+                return cell.isOccupiedBy(this.currentPlayer);
             else {
                 return false;
             }
@@ -594,8 +591,8 @@ namespace Kharbga {
          */
         public reset(): void {
             this.board.Clear();
-            this.attacker.Reset();
-            this.defender.Reset();
+            this.attacker.reset();
+            this.defender.reset();
             this.attackerScore = 0;
             this.defenderScore = 0;
             this.winner = null;
@@ -629,7 +626,7 @@ namespace Kharbga {
             // check resigned
             if (this.moveFlags.resigned) {
 
-                if (eventData.player.IsAttacker()) {
+                if (eventData.player.isAttacker()) {
                     //
                     this.winner = this.defender;
                     this.state = GameState.AttackerAbandoned;
@@ -661,13 +658,13 @@ namespace Kharbga {
             }
             
             // check if the piece selected is owned by the current player
-            if (fromCell.IsOccupiedBy(this.getCurrentPlayer()) === false) {
+            if (fromCell.isOccupiedBy(this.getCurrentPlayer()) === false) {
                 // Invalid piece selected (empty square or opponent piece)
                 this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedEmptyOrOpponentPieceForMoving, fromCell, null,fromCellId);
                 return ret;
             }
             // Check if the piece selected could actually move
-            if (fromCell.IsSurrounded()) {
+            if (fromCell.isSurrounded()) {
                this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.SelectedCellThatIsSurroundedForMoving, fromCell, null, fromCellId);
                 return ret;
             }
@@ -701,7 +698,7 @@ namespace Kharbga {
 
                 // check if current player is defender confirming an requesting exchange request with this move
                 this.CheckUntouchableMoves(toCellId, exchangeRequest,eventData);
-                if (this.currentPlayer.IsAttacker()) {
+                if (this.currentPlayer.isAttacker()) {
                     this.attackerMove++;
                 }
                 else {
@@ -724,7 +721,7 @@ namespace Kharbga {
                     
                 }
                 else {   // Update the scores
-                    if (this.currentPlayer.IsAttacker()) {
+                    if (this.currentPlayer.isAttacker()) {
                         this.defenderScore -= result.capturedPieces;
                     }
                     else {
@@ -765,7 +762,7 @@ namespace Kharbga {
          */
         public processMove2(move: GameMove, moveHandler: IGameEvents) : boolean {
   
-            var ret = this.processMove(move.From, move.To, move.Resigned, move.ExchangeRequest);
+            var ret = this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
 
             moveHandler.moveProcessed(ret, move);
 
@@ -799,7 +796,7 @@ namespace Kharbga {
             if (this.state != GameState.Setting && this.CheckIfCurrentPlayerCanPassTurn() === true) {
 
                 // reset to the previous player
-                if (this.currentPlayer.IsAttacker())
+                if (this.currentPlayer.isAttacker())
                     this.currentPlayer = this.defender;
                 else
                     this.currentPlayer = this.attacker;
@@ -813,7 +810,7 @@ namespace Kharbga {
          */
         private PlayerChangeTurn(): void {
           
-            if (this.currentPlayer.IsAttacker())
+            if (this.currentPlayer.isAttacker())
                 this.currentPlayer = this.defender;
             else
                 this.currentPlayer = this.attacker;
@@ -825,7 +822,7 @@ namespace Kharbga {
             // check if the player can actually move
             if (this.state == GameState.Moving) {
                 if (this.currentPlayerIsBlocked() === true) {
-                    if (this.currentPlayer.IsAttacker())
+                    if (this.currentPlayer.isAttacker())
                         this.state = GameState.AttackerCanNotMove;   // after the first move
                     else
                         this.state = GameState.DefenderCanNotMove;
@@ -909,7 +906,7 @@ namespace Kharbga {
             // raise an event a new player move
             if (bCanPass) {
                 // Add check to see if it is OK for the player to pass
-                if (this.currentPlayer.IsAttacker) {
+                if (this.currentPlayer.isAttacker()) {
                     this.currentPlayer = this.defender;
                 }
                 else {
@@ -926,7 +923,7 @@ namespace Kharbga {
          * @summary Checks if the current player can pass --- does not have any possible moves
          */
         private CheckIfCurrentPlayerCanPassTurn(): boolean {
-            let possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
+            let possibleMoves = this.board.getPossibleMoves(this.currentPlayer);
             if (possibleMoves.length == 0)
                 return true;
             else
@@ -937,7 +934,7 @@ namespace Kharbga {
         * @summary Checks if the current player is blocked --- does not have any possible moves
         */
         private currentPlayerIsBlocked(): boolean {
-            let possibleMoves = this.board.GetPossibleMoves(this.currentPlayer);
+            let possibleMoves = this.board.getPossibleMoves(this.currentPlayer);
             if (possibleMoves.length == 0)
                 return true;
             else
@@ -956,13 +953,13 @@ namespace Kharbga {
             if (this.state != GameState.Setting)
                 return false;
 
-            let recorded = this.board.RecordPlayerSetting(cellId, this.getCurrentPlayer().IsAttacker());
+            let recorded = this.board.RecordPlayerSetting(cellId, this.getCurrentPlayer().isAttacker());
             if (recorded == PlayerSettingStatus.OK) {
                 let cell = this.board.GetCellById(cellId);
                 this.numberOfSettingsAllowed--;
                 this.history.AddSetting(this.currentPlayer, cell.ID());          
 
-                if (this.getCurrentPlayer().IsAttacker() === true)
+                if (this.getCurrentPlayer().isAttacker() === true)
                     this.attackerScore++;
                 else
                     this.defenderScore++;
@@ -1015,7 +1012,7 @@ namespace Kharbga {
         public is_surrounded_piece(selectedPieceId: string): boolean {
             let clickedCell = this.board.GetCellById(selectedPieceId);
 
-            return clickedCell.IsSurrounded();
+            return clickedCell.isSurrounded();
         }
 
         /**
@@ -1027,7 +1024,7 @@ namespace Kharbga {
         private CheckUntouchableMoves(targetCellId: string, moveExchangeRequest: boolean, eventData: GameEventData): void {
      
             // check player
-            if (this.currentPlayer.IsDefender()) {
+            if (this.currentPlayer.isDefender()) {
                 
                 // case defender turned off exchange request
                 if (moveExchangeRequest == false) {

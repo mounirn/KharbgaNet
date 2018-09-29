@@ -408,11 +408,11 @@ div#right_footer a {
 div#right_footer a:hover {
     text-decoration: underline;
 }
-
+/*
 div.row {
     background: #fff;
 }
-
+*/
 h1,
 h2,
 h3,
@@ -608,7 +608,7 @@ table#markup_example_tbl td {
     padding: 20px;
     padding-bottom: 250px;
 }
-
+/*
 #example_html_container input,
 input.btn,
 button.btn {

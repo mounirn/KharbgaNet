@@ -3,10 +3,10 @@
   "authors": [
     "Mounir Nouri <mounir@nouriSolutions.com>"
   ],
-  "description": "A board game from North Africa",
+  "description": "A strategy board game from North Africa",
   "main": "",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "http://www.kharbga.com",
   "private": true,
   "ignore": [
     "**/.*",

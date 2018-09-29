@@ -32,7 +32,7 @@ function NSAppClient(baseURI) {
 ///
     /**
      * Creates the user service object
-     * @param {any} baseURI
+     * @param {any} baseURI - the base URI
      */
     function UserService(baseURI) {
         this.serviceBaseURI = baseURI + "api/user/";
@@ -239,14 +239,13 @@ function NSAppClient(baseURI) {
 
     /**
      * creates the app service object
-     * @param {any} baseURI
+     * @param {any} baseURI - base URI
      */
     function AppService(baseURI) {
         this.serviceBaseURI = baseURI + "api/app/";
         console.log("%s - App Service CTOR - %s ", getLoggingNow(), this.serviceBaseURI);
 
-        /**
-         */
+      
         this.getAppInfo = function (callback) {
             var uri = this.serviceBaseURI + "info";
             var ret = null;
@@ -275,90 +274,7 @@ function NSAppClient(baseURI) {
 
             return ret;
         };
-
-        this.getConnections = function (queryString, callback) {
-            var uri = this.serviceBaseURI + "connections";
-            var ret = null;
-            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
-            $.ajax({
-                url: uri,
-                type: "GET",
-                data: queryString,
-                contentType: "application/json",
-                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                // Work with the response
-                success: function (data, status, xhr) {
-                    console.log("%s - ajax - getConnections success: status: %s data:", getLoggingNow(),JSON.stringify(status));
-                    console.log(data);
-                    callback(data, status);
-                },
-                error: function (xhr, status, errorThrown) {
-                    console.log("%s - ajax - getConnections error: status: %s,  error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
-                    callback(null, status, errorThrown);
-                },
-                complete: function (xhr, status) {
-                    console.log("%s - ajax - getConnections complete: status: %s", getLoggingNow(),JSON.stringify(status));
-
-                }
-            });
-            return ret;
-        };
-        this.getPlayers = function (queryString, callback) {
-            var uri = this.serviceBaseURI + "players";
-            var ret = null;
-            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
-            $.ajax({
-                url: uri,
-                type: "GET",
-                data: queryString,
-                contentType: "application/json",
-                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                // Work with the response
-                success: function (data, status, xhr) {
-                    console.log("%s - ajax - getPlayers success: status: %s data:", getLoggingNow(),JSON.stringify(status));
-                    console.log(data);
-                    callback(data, status);
-                },
-                error: function (xhr, status, errorThrown) {
-                    console.log("%s - ajax - getPlayers error: status: %s,  error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
-                    callback(null, status, errorThrown);
-                },
-                complete: function (xhr, status) {
-                    console.log("%s - ajax - getPlayers complete: status: %s", getLoggingNow(),JSON.stringify(status));
-
-                }
-            });
-            return ret;
-        };
-        this.getGames = function (queryString, callback) {
-            var uri = this.serviceBaseURI + "games";
-            var ret = null;
-            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
-            $.ajax({
-                url: uri,
-                type: "GET",
-                data: queryString,
-                contentType: "application/json",
-                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                // Work with the response
-                success: function (data, status, xhr) {
-                    console.log("%s - ajax - getGames success: status: %s data:", getLoggingNow(),JSON.stringify(status));
-                    console.log(data);
-                    callback(data, status);
-                },
-                error: function (xhr, status, errorThrown) {
-                    console.log("%s - ajax - getGames error: status: %s,  error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
-                    callback(null, status, errorThrown);
-                },
-                complete: function (xhr, status) {
-                    console.log("%s - ajax - getGames complete: status: %s", getLoggingNow(),JSON.stringify(status));
-                }
-            });
-            return ret;
-        };
+  
     }
 
     function ClientService(baseUI){
@@ -441,13 +357,104 @@ function NSAppClient(baseURI) {
         };
     }
 
+    function GameService(baseURI) {
+        this.serviceBaseURI = baseURI + "api/game/";
+        console.log("%s - Game Service CTOR - %s ", getLoggingNow(), this.serviceBaseURI);
+
+        this.getConnections = function (sessionId, queryString, callback) {
+            var uri = this.serviceBaseURI + "connections";
+            var ret = null;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("%s - ajax - getConnections success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("%s - ajax - getConnections error: status: %s,  error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getConnections complete: status: %s", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+            return ret;
+        };
+        this.getPlayers = function (sessionId, queryString, callback) {
+            var uri = this.serviceBaseURI + "players";
+            var ret = null;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("%s - ajax - getPlayers success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("%s - ajax - getPlayers error: status: %s,  error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getPlayers complete: status: %s", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+            return ret;
+        };
+        this.getGames = function (sessionId, queryString, callback) {
+            var uri = this.serviceBaseURI + "list";
+            var ret = null;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("%s - ajax - getGames success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("%s - ajax - getGames error: status: %s,  error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getGames complete: status: %s", getLoggingNow(),JSON.stringify(status));
+                }
+            });
+            return ret;
+        };
+    }
+
     this.clientService = new ClientService(this.baseURI);
 
     this.userService = new UserService(this.baseURI);
 
     this.appService = new AppService(this.baseURI);
 
-};
+    this.gameService = new GameService(this.baseURI);
+
+}
 
 var nsApiClient = new NSAppClient(__env.baseURI);
 

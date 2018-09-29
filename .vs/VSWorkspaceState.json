@@ -1,13 +1,12 @@
 {
   "ExpandedNodes": [
-    "",
+    "\\Global settings (C:\\Users\\mounir\\AppData\\Local\\Microsoft\\VisualStudio\\15.0_f2a20b69\\OpenFolder)",
     "\\www",
-    "\\www\\bootstrap\\css",
-    "\\www\\bootstrap\\js",
-    "\\www\\js",
-    "\\www\\jsconfig",
-    "\\www\\ngapp"
+    "\\www\\css",
+    "\\www\\js\\kendo",
+    "\\www\\lib\\bootstrap\\css",
+    "\\www\\ngapp",
+    "\\www\\ngapp\\views"
   ],
-  "SelectedNode": "\\www\\js\\ns-app.kharbga.js",
   "PreviewInSolutionExplorer": false
 }

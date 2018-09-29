@@ -1,5 +1,6 @@
 ﻿<!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -11,7 +12,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <link rel="stylesheet" href="../css/kharbga.css" />
- <!--  <link rel="stylesheet" href="../css/kendo/2012.2.710/kendo.nouris.min.css" />--> 
+    <!--  <link rel="stylesheet" href="../css/kendo/2012.2.710/kendo.nouris.min.css" />-->
 
 </head>
 
@@ -43,15 +44,16 @@
                 </div>
             </div>
         </nav>
-        <h1>Welcome to Kharbga</h1>  
+        <h1>Welcome to Kharbga</h1>
         <ul id="main-tabs" class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#home">Play</a></li>
             <li><a data-toggle="tab" href="#account">My Account</a></li>
             <li><a data-toggle="tab" href="#system">System</a></li>
             <li><a data-toggle="tab" href="#help">Help</a></li>
         </ul>
-        <div class="tab-content"> <!-- tabs-->
-            <div id="home"class="tab-pane fade in active">
+        <div class="tab-content">
+            <!-- tabs-->
+            <div id="home" class="tab-pane fade in active">
                 <div class="row">
                     <div class="col-sm-6 col-md-3 col-lg-4">
                         <!--Games-->
@@ -74,7 +76,7 @@
                                         <li><a id="new-game-defender" href="#">As Defender</a></li>
                                         <li><a id="new-game-attacker-system" href="#">As Attacker against system</a></li>
                                         <li><a id="new-game-defender-system" href="#">As Defender against system</a></li>
-                                   </ul>                                    
+                                    </ul>
                                 </div>
                                 <div id="games-list" style="max-height: 400px;overflow-y:scroll" class="list-group "></div>
                             </div>
@@ -83,7 +85,7 @@
                     <div class="col-sm-6 col-md-9 col-lg-8 ">
                         <div class="panel panel-info">
                             <div class="panel-heading">
-                                Current Game ID: <span id="current-game-id"></span> 
+                                Current Game ID: <span id="current-game-id"></span>
                                 <span id="current-game-status" class="badge pull-right"></span>
                             </div>
                             <div class="panel-body">
@@ -93,12 +95,11 @@
                                         <div class="panel panel-info">
                                             <div class="panel-heading">
                                                 <span class="pull-left"> Board - Turn:  </span> &nbsp; &nbsp;
-                                                <span id="player-turn" class="badge"></span>
-                                                &nbsp; &nbsp;
-                                                  
+                                                <span id="player-turn" class="badge"></span> &nbsp; &nbsp;
+
                                                 <span id="state" class="badge"></span>
                                                 <a class="pull-right" href="#" id="flipOrientation" value="Flip orientation">
-                                                    
+
                                                     <span class="glyphicon glyphicon-repeat"></span> Flip
                                                 </a>
                                             </div>
@@ -155,12 +156,12 @@
                                                     </thead>
                                                     <tr>
                                                         <td>Score: </td>
-                                                        <td><span id="attacker_score" class="badge"></span>  </td>
+                                                        <td><span id="attacker_score" class="badge"></span> </td>
                                                         <td>Score: </td>
                                                         <td><span id="defender_score" class="badge"> </span> </td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Settings:  </td>
+                                                        <td>Settings: </td>
                                                         <td> <select id="attackerSettings"> </select></td>
                                                         <td>Settings: </td>
                                                         <td><select id="defenderSettings"> </select></td>
@@ -175,7 +176,7 @@
                                                         <td colspan="2">
 
                                                             <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game Info" /><br />
-                                                            
+
                                                         </td>
                                                     </tr>
 
@@ -205,14 +206,14 @@
                                 <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
                                 <div id="game-moves-history"></div>
                             </div>
- 
 
 
 
-                            </div>
-                       
-                    </div> 
-                 </div>
+
+                        </div>
+
+                    </div>
+                </div>
             </div>
             <div id="account" class="tab-pane fade">
                 <div id="account-message"></div>
@@ -231,7 +232,7 @@
                                 <label class="control-label col-sm-2" for="login-pwd">Password:</label>
                                 <div class="col-sm-10 input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                    <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required  size="30" minlength="6" maxlength="30" >
+                                    <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -257,8 +258,8 @@
                                 <label class="control-label col-sm-2" for="register-team">Team:</label>
                                 <div class="col-sm-10 input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-tent"></i></span>
-                                    <input class="form-control" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50"/>
-                                    <datalist id="register-team-list" >                                       
+                                    <input class="form-control" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50" />
+                                    <datalist id="register-team-list">                                       
                                     </datalist>
                                 </div>
                             </div>
@@ -298,12 +299,12 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <button id="register-submit" type="submit" class="btn btn-default">Submit</button>
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button id="register-submit" type="submit" class="btn btn-default">Submit</button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
                 </div>
                 <div id="account-info-panel" class="panel panel-info hidden">
                     <table class="table table-user-information">
@@ -325,7 +326,7 @@
                                 <td><span id="account-game-role"></span></td>
                             </tr>
                         </tbody>
-                    </table>  
+                    </table>
                 </div>
             </div>
             <div id="system" class="tab-pane fade">
@@ -344,7 +345,7 @@
 
                             </div>
                             <div class="panel-body">
-                                <div id="connections-table" style="height: 300px; overflow-y:scroll" >
+                                <div id="connections-table" style="height: 300px; overflow-y:scroll">
 
                                 </div>
                             </div>
@@ -363,7 +364,7 @@
 
                             </div>
                             <div class="panel-body">
-                                <div id="players-table" style="height: 300px; overflow-y:scroll" >
+                                <div id="players-table" style="height: 300px; overflow-y:scroll">
 
                                 </div>
                             </div>
@@ -381,7 +382,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div id="games-table" style="height: 300px; overflow-y:scroll" >
+                        <div id="games-table" style="height: 300px; overflow-y:scroll">
 
                         </div>
                     </div>
@@ -430,25 +431,25 @@
                 </div>
 
 
-                
+
                 <div class="panel panel-info">
-                        <div class="panel-heading">App Info
-                            <div class="pull-right">
-                                <a href="#" id="refreshAppInfo-submit" value="Refresh">
-                                    <span class="glyphicon glyphicon-refresh"></span> Refresh
-                                </a>
-                            </div>
-                        
+                    <div class="panel-heading">App Info
+                        <div class="pull-right">
+                            <a href="#" id="refreshAppInfo-submit" value="Refresh">
+                                <span class="glyphicon glyphicon-refresh"></span> Refresh
+                            </a>
+                        </div>
+
                     </div>
-                    <div class="panel-body"> 
+                    <div class="panel-body">
                         <div id="appInfo"> </div>
                     </div>
                 </div>
-                
-                
-                
-            </div>        
-        </div> 
+
+
+
+            </div>
+        </div>
         <footer>
             <hr />
             <div class="container row">
@@ -467,23 +468,21 @@
     <!-- local version
     <script src="../js/jquery.js"></script>-->
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>     
-    <!-- <script src="../js/jquery/jquery.js"></script> 3.0 version downloaded 
-    <script src="../js/bootstrap-combobox.min.js"></script>--> 
-    <!-- https://jqueryvalidation.org/documentation/ -CDN: 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/additional-methods.min.js"></script>-->
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
     <script src="../js/jquery.validate.js"></script>
     <script src="../js/additional-methods.js"></script>
     <!-- compiled TS-->
- <!--  <script src="../js/kendo/2012.2.710/jquery.min.js"></script> --> <!-- kendo ui 1.7 version-->
-  <!--    <script src="../js/kendo/2012.2.710/kendo.all.min.js"></script>--> 
+    <!--  <script src="../js/kendo/2012.2.710/jquery.min.js"></script> -->
+    <!-- kendo ui 1.7 version-->
+    <!--    <script src="../js/kendo/2012.2.710/kendo.all.min.js"></script>-->
+    <script src="../jsconfig/env.js"></script>
 
-    <script src="../js/jquery.signalR-2.2.1.js"></script>
-    <script src="http://localhost/NS.API/signalR/hubs"></script>  <!-- convert to the real URL-->
+    <script src="../js/jquery.signalR-2.3.0.js"></script>
+    <script src="http://localhost/NS.API/signalR/hubs"></script>
+    <!-- convert to the real URL-->
     <script src="../js/moment.min.js"></script>
-   
+
     <script src="../js/kharbga-ui.js"></script>
     <script src="../js/kharbga.js"></script>
     <script src="../js/ns-api-client.js"></script>
@@ -492,12 +491,15 @@
 
     <script type="text/javascript">
         //<![CDATA[
-        $(document).ready(function () {
+        $(document).ready(function() {
             //  $('.combobox').combobox()
             var kApp = new KharbgaApp();
-            kApp.initBoard({ themePath: '../img/theme-simple/{piece}.png'});
+            kApp.initBoard({
+                themePath: '../img/theme-simple/{piece}.png'
+            });
         });
-      //]]>
+        //]]>
     </script>
 </body>
+
 </html>
