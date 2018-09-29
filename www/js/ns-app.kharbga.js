@@ -96,13 +96,10 @@ var KharbgaApp = function () {
     // the client state
     var appClientState = {
         sessionId: "",
-        userScreenName: "",
-       
+        userScreenName: "",   
         role: 0,      //  unknown, attacker, defender, spectator
-        loggedIn: false,
-        player: null,  // to be updated as the game is started
+        loggedIn: false,     
         serverGame: gameState,  // to be updated by the server as games started or selected 
-        opponentPlayer: null,  // to be updated by the server as games are joined
         loaded: false,
         firstComputerSetting: true,
         computer_is_playing: false,
@@ -2962,7 +2959,6 @@ var KharbgaApp = function () {
         $('#state').html(Kharbga.GameState[game.getState()]);
       //  $('#message').html("<div class='alert alert-success'>Click on the New Game button to start a new game on this computer.</div>")
 
-       // setupTeamsComboBox();
 
         selectActiveGameId(activeGameId);
 
@@ -2981,7 +2977,7 @@ var KharbgaApp = function () {
                     $("#register-team-list").empty();
                     $.each(data, function () {
                         // if (this.Status == 0 || this.Status = 1)
-                        $("#register-team-list").append("<option id=client_'" + this.SystemId + "' value='" + this.Name + "' ></option>");
+                        $("#register-team-list").append("<option id=client_'" + this.systemId + "' value='" + this.name + "' ></option>");
                     });
                 }
                 else {
@@ -2991,25 +2987,6 @@ var KharbgaApp = function () {
         });
     }
 
-    function setupTeamsComboBox() {
-
-        var teams = $("#register-team").kendoComboBox({
-            filter: "contains",
-            placeholder: "Select Team...",
-            dataTextField: "Name",
-            dataValueField: "ID",
-            dataSource: {
-                type: "json",
-                serverFiltering: true,
-                transport: {
-                   read: {
-                       url: teamsUrl ,
-                       type: "get"
-                    }
-                }
-            }
-        }).data("kendoComboBox");
-    }
 
     function updateBoardInfo(){
         if (game.is_in_setting_state() === true)
@@ -3017,17 +2994,15 @@ var KharbgaApp = function () {
         else
             boardEl.find('.square-d4').removeClass('highlight-malha');
 
-        if (appClientState.serverGame != null) {
-            if (appClientState.serverGame.AttackerName == appClientState.userScreenName )
-                $('#game-attacker').text(appClientState.serverGame.AttackerName + " (me)" );
-            else
-                $('#game-attacker').text(appClientState.serverGame.AttackerName);
+        if (gameState.attackerName == appClientState.userScreenName )
+            $('#game-attacker').text(gameState.attackerName + " (me)" );
+        else
+            $('#game-attacker').text(gameState.attackerName);
 
-            if (appClientState.serverGame.DefenderName == appClientState.userScreenName)
-                $('#game-defender').text(appClientState.serverGame.DefenderName + " (me)" );
-            else
-                $('#game-defender').text(appClientState.serverGame.DefenderName );
-        }
+        if (gameState.defenderName == appClientState.userScreenName)
+            $('#game-defender').text(gameState.defenderName + " (me)" );
+        else
+            $('#game-defender').text(gameState.defenderName );
         //      
         updateScores(game);
 

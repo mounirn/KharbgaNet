@@ -1,6 +1,4 @@
-Kharbga 
-
-also known by Kharbaga  -- >  a different game see Weekipedia
+Kharbga - also known by Kharbaga  -- >  a different game see Wikipedia
 
 Seega - the egyptian game is the closest to the rules played in Tunisia. 
 http://nabataea.net/seega.html
@@ -71,7 +69,7 @@ http://jeuxstrategie.free.fr/Seega_complet.php
 
 
 FEN for Kharbga  -- 
-https://en.wikipedia.org/wiki/Forsyth–Edwards_Notation
+https://en.wikipedia.org/wiki/Forsythï¿½Edwards_Notation
 
 Adapted for Kharbga
 
@@ -126,10 +124,10 @@ https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
  kharbga
  par hamdiii le Mar 28 Juil 2009, 14:33
 
-.A l’origine kharbga est un jeu ancestral très populaire joué en Afrique du nord,
-Crase a CDMIND jeu ce jeux existe actuellement sous forme numérique sur CD-ROM dans la gamme CDMIND GAMES et sous forme d’un jeu de table appelé kharbga en 2 clics 
-Aussi CDMIND organise un championnat en Tunisie pour la 1ère fois, 
-Pour plus d’information visité les sites :
+.A lï¿½origine kharbga est un jeu ancestral trï¿½s populaire jouï¿½ en Afrique du nord,
+Crase a CDMIND jeu ce jeux existe actuellement sous forme numï¿½rique sur CD-ROM dans la gamme CDMIND GAMES et sous forme dï¿½un jeu de table appelï¿½ kharbga en 2 clics 
+Aussi CDMIND organise un championnat en Tunisie pour la 1ï¿½re fois, 
+Pour plus dï¿½information visitï¿½ les sites :
 www.kharbga2clics.com 
 www.cdmind.com
 
@@ -193,7 +191,7 @@ must move away and back again to effect a capture.
 
 13. The game is won by the player who has captured all his enemy's pieces.
 
-The game is often played on a 7×7 board with 24 pieces for each player, and on a 9×9 board with 40 pieces each.
+The game is often played on a 7ï¿½7 board with 24 pieces for each player, and on a 9ï¿½9 board with 40 pieces each.
 
 Some writers have noted that it is possible to force a draw by creating a straight, impenetrable barrier 
 of pieces with no enemies behind. To prevent this, players may agree beforehand that such a situation gives 
