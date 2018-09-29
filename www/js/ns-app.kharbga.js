@@ -189,10 +189,7 @@ var KharbgaApp = function () {
             currentMove.copyToLastAndReset();
 
         
-        //checkBoardAndPlayIfComputer();
-        // start the background timer for the computer if we have a computer playing
-        if (!user.isSpectator && gameState.getComputerPlayer() != null)
-            appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,1000);
+     
     }
     /**
      * private event handler when a new player turn
@@ -827,7 +824,7 @@ var KharbgaApp = function () {
             return;
         }
     
-        // start signalR if not initalized
+        // start signalR if not initialized
         if (!appClientState.signalReInitialized) 
             startSignalR();
 
@@ -839,7 +836,7 @@ var KharbgaApp = function () {
                 appClientState.userScreenName,
                 gameMove.isAttacker, gameMove.isSetting, gameMove.from, gameMove.to, 
                 gameMove.resigned, gameMove.exchangeRequest,
-                gameMove.beforeFEN, game.fen(), gameMove.message, lastMoveId,
+                gameMove.beforeFen, game.fen(), gameMove.message, lastMoveId,
                 lastMove.captured, lastMove.exchanged
             ).done(function () {
                 console.log('%s - Done server Invocation of recordedMove ( moveId : %s)', getLoggingNow(), lastMoveId);
@@ -1059,6 +1056,8 @@ var KharbgaApp = function () {
      * Checks the board and play a move if its the computer turn
      */
     function checkBoardAndPlayIfComputer() {
+        console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s",
+            getLoggingNow(), getComputerRole(), game.turn());
         if (user == null) {
             console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local player is null - returning",
                 getLoggingNow(), getComputerRole(), game.turn());
@@ -1102,17 +1101,17 @@ var KharbgaApp = function () {
             return;
         }
         console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local real player is: %s - required From Piece: %s",
-            getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole(), requiredFromPiece);
+            getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole(), game.move_source_required());
 
  
         $('#main-message').html("<div class='alert alert-warning'>Computer Player Thinking... </div>");
         var computerPlayer = gameState.getComputerPlayer();
-        if (computerPlayer === true && game.turn() == 'a') {
+        if (computerPlayer.isAttacker === true && game.turn() == 'a') {
            // $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
            computer_play();
         }
         else {
-            if (computerPlayer === false && game.turn() == 'd') {
+            if (computerPlayer.isAttacker === false && game.turn() == 'd') {
                 computer_play();
             }
         }
@@ -1124,10 +1123,12 @@ var KharbgaApp = function () {
      * Generates a computer setting or move
      */
     function computer_play() {
-        console.log("%s - computer_play() as %s - required From Piece: %s", getComputerRole(), getLoggingNow(), requiredFromPiece);
-        
+        var computerPlayer = gameState.getComputerPlayer();
         var moveSourceRequired = game.move_source_required();
-
+        console.log("%s - computer_play() as %s - required From Piece: %s", getComputerRole(), 
+            getLoggingNow(), moveSourceRequired);
+        
+        
         appClientState.computer_is_playing = true;
 
         var source = "";
@@ -1136,13 +1137,13 @@ var KharbgaApp = function () {
         if (game.is_in_setting_state()) {
             var settings = [];
             if (playOptions.firstSettingMustIncludeMalhaAdjacent &&
-                 appClientState.firstComputerSetting == true && opponent.isAttacker) {
+                 appClientState.firstComputerSetting == true && computerPlayer.isAttacker) {
                 settings = game.settings_near_malha(); // cells adjacent to Malha
             }
             else {
                 temp_settings = game.settings_near_opponent();
 
-                if (opponent.isAttacker) {
+                if (computerPlayer.isAttacker) {
                     var settings2 = game.settings_near_malha();
                     // check if settings includes any of these and prefer to set on these 
                     for (var si = 0; si < settings2.length; si++) {
@@ -1189,17 +1190,17 @@ var KharbgaApp = function () {
             if (game.is_in_moving_state()) {
                 var moves = null;
                 if (playOptions.searchMovesThatCaptureOpponent) {
-                    moves = game.moves_that_capture(requiredFromPiece);
+                    moves = game.moves_that_capture(moveSourceRequired);
                 }
                 if (playOptions.searchMovesThatSaveSelf) {
-                    var movesThatSave = game.moves_that_save(requiredFromPiece);
+                    var movesThatSave = game.moves_that_save(moveSourceRequired);
 
                     if (!playOptions.preferMovesThatCaptureOverMovesThatSave && movesThatSave.length > 0)
                         moves = movesThatSave;
                 }
 
                 if (moves == null || moves.length == 0) {  // no capture able and no savable
-                    moves = game.moves_unreachables(requiredFromPiece);
+                    moves = game.moves_unreachables(moveSourceRequired);
                     if (moves != null && moves.length > 0)
                         exchangeRequest = true;
                 }
@@ -1233,7 +1234,8 @@ var KharbgaApp = function () {
         }
        
         // check if a given source piece must be played
-        if (typeof (requiredFromPiece) != 'undefined' && requiredFromPiece != null && requiredFromPiece.length != 0 && source !== requiredFromPiece) {
+        if (typeof (moveSourceRequired) != 'undefined' && moveSourceRequired != null && 
+            moveSourceRequired.length != 0 && source !== moveSourceRequired) {
         
             appClientState.computer_is_playing = false;
             return;
@@ -1255,7 +1257,7 @@ var KharbgaApp = function () {
         }
         var isSetting = false;
 
-        var beforeFEN = game.fen();
+        var beforeFen = game.fen();
 
         if (game.is_in_moving_state()) {
             ret = game.processMove(source, target, resigned, exchangeRequest);
@@ -1273,12 +1275,12 @@ var KharbgaApp = function () {
         if (ret == true) {
 
             lastMoveId = createMoveId();
-            var computerPlayer = gameState.getComputerPlayer();
+            
             // submit to the server
             if (gameState.id != "" && appClientState.useServer === true && computerPlayer!= null) {
                 // notify server pf the setting
                 gamesHubProxy.server.recordMove(appClientState.sessionId,gameState.id, computerPlayer.name,
-                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFEN, game.fen(), msg, lastMoveId,
+                    isAttacker, isSetting, source, target, resigned, exchangeRequest, beforeFen, game.fen(), msg, lastMoveId,
                     lastMove.captured, lastMove.exchanged
                 ).done(function () {
                     console.log('%s - Done Server Invocation of recordedMove ( moveId : %s) inside computer_play - for opponent player %s',
@@ -1293,7 +1295,7 @@ var KharbgaApp = function () {
                 });
             }
             else { 
-
+                
                 board.position(game.fen(), false); // update the board with the computer move
                 playSound();
             }
@@ -1496,6 +1498,9 @@ var KharbgaApp = function () {
     // all clients get this message with this game info
     
     var onGameCreated = function (status, error, gameInfo, playerInfo) {
+        if (loggingOn)
+            console.log("On game Created - status: %s", status);
+
         if (status === false) {
             console.log("%s - error creating game: ", getLoggingNow());
             console.log("%s - error: %s ", getLoggingNow(), error);
@@ -1530,10 +1535,13 @@ var KharbgaApp = function () {
         else {
             updateLocalGameStatus(gameInfo);
         }
-
-        // 
-       // checkBoardAndPlayIfComputer();
-
+   
+        // start the background timer for the computer if we have a computer playing
+        var computerPlayer = gameState.getComputerPlayer();
+        if (user.isSpectator === false &&  computerPlayer!= null){
+            console.log("starting computer play timer...");
+            appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,4000);
+        }
     };
 
 
@@ -1846,7 +1854,6 @@ var KharbgaApp = function () {
         });
       
     }
-
 
     $('#game-state-link').on('click', _refreshGameState);
 
@@ -2253,7 +2260,17 @@ var KharbgaApp = function () {
 
         selectActiveGameId(gameInfo.id);
        // 
-        checkBoardAndPlayIfComputer();
+       // checkBoardAndPlayIfComputer();
+          //checkBoardAndPlayIfComputer();
+        // start the background timer for the computer if we have a computer playing
+        if (appClientState.backgroundJobId> 0)
+            clearInterval(appClientState.backgroundJobId);
+
+        var computerPlayer = gameState.getComputerPlayer();
+        if (user.isSpectator === false &&  computerPlayer!= null){
+            console.log("starting computer play timer...");
+            appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,4000);
+        }
     };
 
     var onAppendMove = function (gameId, move) {
@@ -2612,6 +2629,7 @@ var KharbgaApp = function () {
                         html += ("<th>Is Spectator</th>");
                         html += ("<th>Is Attacker</th>");
                         html += ("<th>Current Game ID</th>");
+                        html += ("<th>Connected</th>");
                         html += ("<th>Current Connection ID</th>");
                         html += "</tr></thead><tbody>";
                         first = false;
@@ -2622,6 +2640,7 @@ var KharbgaApp = function () {
                     html += ("<td>" + (this.isSpectator === true ? "Yes" : "No") + "</td>");
                     html += ("<td>" + (this.isAttacker === true ? "Yes" : "No") + "</td>");
                     html += ("<td>" + this.currentGameId + "</td>");
+                    html += ("<td>" + (this.connected === true ? "Yes" : "No") + "</td>");
                     html += ("<td>" + (this.currentConnection != null ? this.currentConnection.id : "") + "</td>");
                     html += "</tr>";
 
@@ -2631,7 +2650,7 @@ var KharbgaApp = function () {
                 $('#players-table').html(html);
             }
             else {
-                $('#system-message').html("<div class='alert alert-danger'>Failed to retreive connections from the server. Errors: " + status.responseText + " </div>");
+                $('#system-message').html("<div class='alert alert-danger'>Failed to retrieve connections from the server. Errors: " + status.responseText + " </div>");
                 $('#players-table').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
             }
         });
