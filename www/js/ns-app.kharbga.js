@@ -99,7 +99,6 @@ var KharbgaApp = function () {
         userScreenName: "",   
         role: 0,      //  unknown, attacker, defender, spectator
         loggedIn: false,     
-        serverGame: gameState,  // to be updated by the server as games started or selected 
         loaded: false,
         firstComputerSetting: true,
         computer_is_playing: false,
@@ -108,7 +107,8 @@ var KharbgaApp = function () {
         signalReInitialized: false,
         activeGame: false,  // indicates that a game is progress
         lastReplayPosition: -1,
-        useServer : false  // turn on when wanting to store the data and interact with the server
+        useServer : false,  // turn on when wanting to store the data and interact with the server
+        backgroundJobId: -1 // the background computer player timer
         
     };
     // the last move info
@@ -174,7 +174,8 @@ var KharbgaApp = function () {
      * @param {any} eventData -- the event data
      */
     function onNewGameStarted(eventData) {
-        console.log("%s - event: onNewGameStarted - source: %s ", getLoggingNow(), eventData.source.fen());
+        if (loggingOn) 
+            console.log("%s - event: onNewGameStarted - source: %s ", getLoggingNow(), eventData.source.fen());
 
         $('#message').html("<div class='alert alert-success'>Started a new game.  </div>");
 
@@ -189,16 +190,19 @@ var KharbgaApp = function () {
 
         
         //checkBoardAndPlayIfComputer();
+        // start the background timer for the computer if we have a computer playing
+        if (!user.isSpectator && gameState.getComputerPlayer() != null)
+            appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,1000);
     }
     /**
      * private event handler when a new player turn
      * @param {any} eventData: the event data
      */
     function onNewPlayerTurn(eventData) {
-        console.log("%s - event: onNewPlayerTurn - player: %s", getLoggingNow(), eventData.player);
+        if (loggingOn)
+            console.log("%s - event: onNewPlayerTurn - player: %s", getLoggingNow(), eventData.player);
 
         $('#player-turn').html(Kharbga.PlayerRole[eventData.player.role]);
-      //  currentPlayer = eventData.player;
 
         var message = "<div class='alert alert-success'>It is the turn  of the <strong>" +
             Kharbga.PlayerRole[eventData.player.role];
@@ -226,7 +230,7 @@ var KharbgaApp = function () {
             },userOptions.highlightLastMoveMilliSecondsBeforeTimeout);           
         }
 
-       // setTimeout(checkBoardAndPlayIfComputer,1000);            
+        //setTimeout(checkBoardAndPlayIfComputer,1000);            
     }
   
     /**
@@ -234,7 +238,8 @@ var KharbgaApp = function () {
      * @param {any} eventData: the event data
      */
     function onNewSettingCompleted(eventData) {
-        console.log("%s - event: onNewSettingCompleted - cell %s ", getLoggingNow(), eventData.targetCellId);
+        if (loggingOn)
+            console.log("%s - event: onNewSettingCompleted - cell %s ", getLoggingNow(), eventData.targetCellId);
         currentMove.isSetting = true;
         if (game.turn() == 'a') {
             $('#attackerSettings').append($('<option>', {
@@ -273,7 +278,7 @@ var KharbgaApp = function () {
         var source = boardEl.find('.square-' + eventData.targetCellId);
         source.addClass('highlight-move');
        
-      //  setTimeout(checkBoardAndPlayIfComputer,1000);      
+        //setTimeout(checkBoardAndPlayIfComputer,1000);      
     }
 
     /**      
@@ -320,7 +325,7 @@ var KharbgaApp = function () {
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
 
-       //  setTimeout(checkBoardAndPlayIfComputer,1000);      
+       //setTimeout(checkBoardAndPlayIfComputer,1000);      
     }
 
     /**
@@ -415,7 +420,7 @@ var KharbgaApp = function () {
         }
 
         appClientState.moveSourceRequired = moveSourceRequired;
-      //  setTimeout(checkBoardAndPlayIfComputer,1000,moveSourceRequired);      
+        //setTimeout(checkBoardAndPlayIfComputer,1000,moveSourceRequired);      
       //  checkBoardAndPlayIfComputer(moveSourceRequired);
     }
 
@@ -925,7 +930,7 @@ var KharbgaApp = function () {
         if (ret) {
             $('#gameMove').html(source + "-" + target);
 
-            setTimeout(updateBoard, 200);  // update the board after handling on Click event
+            setTimeout(updateBoard, 200,game);  // update the board after handling on Click event
             //   updateBoard();
             //    removeSelectedCells();
         }
@@ -1052,9 +1057,8 @@ var KharbgaApp = function () {
 
     /**
      * Checks the board and play a move if its the computer turn
-     * @param {any} requiredFromPiece -- piece to use as the from 
      */
-    function checkBoardAndPlayIfComputer(requiredFromPiece) {
+    function checkBoardAndPlayIfComputer() {
         if (user == null) {
             console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local player is null - returning",
                 getLoggingNow(), getComputerRole(), game.turn());
@@ -1100,30 +1104,30 @@ var KharbgaApp = function () {
         console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local real player is: %s - required From Piece: %s",
             getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole(), requiredFromPiece);
 
-
-        if (opponent.isAttacker === true && game.turn() == 'a') {
+ 
+        $('#main-message').html("<div class='alert alert-warning'>Computer Player Thinking... </div>");
+        var computerPlayer = gameState.getComputerPlayer();
+        if (computerPlayer === true && game.turn() == 'a') {
            // $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
-            setTimeout(computer_play, 5000, requiredFromPiece);// ask the system to play after a couple of seconds
+           computer_play();
         }
         else {
-            if (opponent.isAttacker === false && game.turn() == 'd') {
-             //   $('#message').html("<div class='alert alert-warning'>Thinking... </div>");
-                setTimeout(computer_play, 5000, requiredFromPiece);// ask the system to play after a couple of seconds
+            if (computerPlayer === false && game.turn() == 'd') {
+                computer_play();
             }
-            else
-                console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local real player is: %s - required From Piece: %s -- did not trigger play",
-                    getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole(), requiredFromPiece);
         }
+        $('#main-message').html("");
     }
 
   
     /**
      * Generates a computer setting or move
-     * @param requiredFromPiece - piece to use for moving
      */
-    function computer_play(requiredFromPiece) {
+    function computer_play() {
         console.log("%s - computer_play() as %s - required From Piece: %s", getComputerRole(), getLoggingNow(), requiredFromPiece);
-     
+        
+        var moveSourceRequired = game.move_source_required();
+
         appClientState.computer_is_playing = true;
 
         var source = "";
@@ -1201,7 +1205,8 @@ var KharbgaApp = function () {
                 }
 
                 if (moves == null || moves.length == 0) { // no unreachable?{
-                    moves = game.moves(requiredFromPiece);
+                    
+                    moves = game.moves(moveSourceRequired);
                 }
 
                 
@@ -1229,7 +1234,7 @@ var KharbgaApp = function () {
        
         // check if a given source piece must be played
         if (typeof (requiredFromPiece) != 'undefined' && requiredFromPiece != null && requiredFromPiece.length != 0 && source !== requiredFromPiece) {
-          //  computer_play(requiredFromPiece); // find another move
+        
             appClientState.computer_is_playing = false;
             return;
         }
@@ -1313,23 +1318,21 @@ var KharbgaApp = function () {
             board.position(aGame.fen(), true);
             updateBoardInfo();
         }
-
-        if (appClientState.serverGame != null) {
-            // see if we have a server game that is joined
-            if (appClientState.serverGame.status == 0) {
-           //     $('#message').html("<div class='alert alert-warning'>Game is still in pending state for another player to join.</div>");
-                boardEl.css('borderColor: warning');
+     
+        // see if we have a server game that is joined
+        if (gameState.status == 0) {
+        //     $('#message').html("<div class='alert alert-warning'>Game is still in pending state for another player to join.</div>");
+            boardEl.css('border-color: warning');
+        }
+        else {
+            if (gameState.status == 1) {
+                //  $('#message').html("<div class='alert alert-success'>Game is joined by another player.</div>");
+                // enable it
+                boardEl.css('border-color: green');
             }
             else {
-                if (appClientState.serverGame.status == 1) {
-                  //  $('#message').html("<div class='alert alert-success'>Game is joined by another player.</div>");
-                  // enable it
-                    boardEl.css('borderColor: green');
-                }
-                else {
-                    $('#message').html("<div class='alert alert-info'><strong>Game Over.</strong></div>");
-                    boardEl.css('borderColor: red');
-                }
+                $('#message').html("<div class='alert alert-info'><strong>Game Over.</strong></div>");
+                boardEl.css('border-color: red');
             }
         }
     }
@@ -1595,7 +1598,7 @@ var KharbgaApp = function () {
         $('#fen').html(board.fen());
         $('#pgn').html(board.position().toString());
 
-        $('#loadSetting1Btn').hide();
+       // $('#loadSetting1Btn').hide();
     }
     /**
      * Clears the game and the board. The board is a set with an empty position string or fen
@@ -2036,7 +2039,7 @@ var KharbgaApp = function () {
     $('#new-game-defender-system').on('click', { asAttacker: false, againstComputer: true}, onNewGame);
     $('#postMessageBtn').on('click', onPostMessage);
     $('#loadSetting1Btn').on('click', onLoadSetting1);
-    $('#flipOrientation').on('click', this.flipBoard);// flip the board
+    $('#flipOrientation').on('click', onFlipBoard);// flip the board
     $('#exchangeRequestCheckbox').on('click', function () {
         var checked = $('#exchangeRequestCheckbox').is(':checked');
         if (!checked) {           
@@ -2265,16 +2268,8 @@ var KharbgaApp = function () {
         }
 
         resetLocalGame();
-
-        // set the board and the local game with the current game from the server
-      //  var gameState = new Kharbga.ServerGameState(gameInfo.id, gameInfo.createdBy, gameInfo.state, gameInfo.status);
-      //  gameState.moves.push(gameInfo.moves);
-      //  gameState.players.push(gameInfo.players);        
-      //  game.setupWith(gameState);
         game.setupWith(gameInfo);
-
         clearLastMoveInfo();
-
         updateBoard(game);
 
         // player
@@ -2284,12 +2279,9 @@ var KharbgaApp = function () {
             $('#player-turn').html("Defender");
 
 
-        appClientState.serverGame = gameInfo;
         updateLocalGameStatus(gameInfo);
-
         // setup the move history
         setupGameMovesHistoryList(gameInfo);
-
         removeSelectedCells();
     }
 
@@ -3184,13 +3176,16 @@ var KharbgaApp = function () {
 
     this.setupSignalR = _setupSignalR;
 
-    this.flipBoard = function () {
+    function onFlipBoard(e){
         if (board == null) {
             $('#message').html("<div class='alert alert-danger'>Game board is not initialized</div>");
             return;
         }
         board.flip();
-        updateBoardInfo();       
+        updateBoardInfo();   
+    }
+    this.flipBoard = function () {
+        onFlipBoard();
     };
 
     this.setSessionId = function (sid) {
@@ -3240,7 +3235,7 @@ var KharbgaApp = function () {
 
     this.getCurrentGame = function () {
         // 
-        return appClientState.serverGame;
+        return  gameState;
     };
 
     this.getCurrentState = function () {
@@ -3291,7 +3286,7 @@ var KharbgaApp = function () {
         }
     
         $('#play-move-player').html(move.playerName + " (" + (move.isAttacker ? "Attacker": "Defender") + ")");
-        $('#play-move-number').html(move.number + " of " + appClientState.serverGame.moves.length);
+        $('#play-move-number').html(move.number + " of " + gameState.moves.length);
  
 
         var html = "";
@@ -3327,16 +3322,11 @@ var KharbgaApp = function () {
     };
 
     this.playBegining = function () {
-        console.log("playBegining");
-        if (appClientState.serverGame == null)
-            return;
-
-    //    if (appClientState.serverGame.Status != 3)
-    //        return;
-       
+        console.log("playBeginning");
+    
         // we now have a completed game
-        console.log("playBegining - status: %s - Last replay Position: %s",
-            appClientState.serverGame.status, appClientState.lastReplayPosition);
+        console.log("playBeginning - status: %s - Last replay Position: %s",
+            gameState.status, appClientState.lastReplayPosition);
 
         var lastSettingPos = 48;
         if (appClientState.lastReplayPosition > lastSettingPos)
@@ -3345,9 +3335,9 @@ var KharbgaApp = function () {
             appClientState.lastReplayPosition = 0;
 
 
-        board.position(appClientState.serverGame.moves[appClientState.lastReplayPosition].beforeFen, true);
+        board.position(gameState.moves[appClientState.lastReplayPosition].beforeFen, true);
 
-        updateBoardWithMove(appClientState.serverGame.moves[appClientState.lastReplayPosition], true);
+        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
     };
@@ -3356,22 +3346,22 @@ var KharbgaApp = function () {
         if (appClientState.serverGame == null)
             return;
 
-    //    if (appClientState.serverGame.status != 3)
+    //    if (gameState.status != 3)
     //        return;
-        if (appClientState.serverGame.moves.length == 0)
+        if (gameState.moves.length == 0)
             return;
 
-        console.log("playBackward - status: %s", appClientState.serverGame.status);
+        console.log("playBackward - status: %s", gameState.status);
 
         appClientState.lastReplayPosition--;
         if (appClientState.lastReplayPosition < 0) {
             appClientState.lastReplayPosition = 0;
-            board.position(appClientState.serverGame.Moves[appClientState.lastReplayPosition].beforeFen, true);
-            updateBoardWithMove(appClientState.serverGame.moves[appClientState.lastReplayPosition],false);
+            board.position(gameState.Moves[appClientState.lastReplayPosition].beforeFen, true);
+            updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],false);
             return;
         }
-        board.position(appClientState.serverGame.Moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(appClientState.serverGame.moves[appClientState.lastReplayPosition],true);
+        board.position(gameState.Moves[appClientState.lastReplayPosition].afterFen, true);
+        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
 
     };
     var replayId = "";
@@ -3381,18 +3371,18 @@ var KharbgaApp = function () {
         if (appClientState.serverGame == null)
             return;
 
-         if (appClientState.serverGame.status != 3)
+         if (gameState.status != 3)
               return;
 
-        if (appClientState.serverGame.moves == null)
+        if (gameState.moves == null)
             return;
 
-        console.log("playStart - status: %s", appClientState.serverGame.status);
+        console.log("playStart - status: %s", gameState.status);
 
         if (appClientState.lastReplayPosition < 0)
             appClientState.lastReplayPosition = 0;
 
-        if (appClientState.serverGame.Moves.length == 0) {
+        if (gameState.Moves.length == 0) {
             // message
             return;
         }
@@ -3400,8 +3390,8 @@ var KharbgaApp = function () {
         if (replayOn)
             return;
 
-        board.position(appClientState.serverGame.moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(appClientState.serverGame.moves[appClientState.lastReplayPosition], true);
+        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
+        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
         $('#play-start').attr('class', 'disabled');
         $('#play-pause').attr('class', 'enabled');
 
@@ -3415,10 +3405,10 @@ var KharbgaApp = function () {
         if (appClientState.serverGame == null)
             return;
 
-        if (appClientState.serverGame.status != 3)
+        if (gameState.status != 3)
             return;
 
-        console.log("playPause - status: %s", appClientState.serverGame.status);
+        console.log("playPause - status: %s", gameState.status);
 
         clearInterval(replayId);
         replayOn = false;
@@ -3431,24 +3421,24 @@ var KharbgaApp = function () {
         if (appClientState.serverGame == null)
             return;
 
-    //    if (appClientState.serverGame.status != 3)
+    //    if (gameState.status != 3)
      //       return;
 
         // we now have a completed game
         console.log("playForward - status: %s - Last replay Position: %s",
-            appClientState.serverGame.status, appClientState.lastReplayPosition);
+            gameState.status, appClientState.lastReplayPosition);
 
         appClientState.lastReplayPosition++;
-        if (appClientState.serverGame.Moves.length <= appClientState.lastReplayPosition) {
-            appClientState.lastReplayPosition = appClientState.serverGame.Moves.length - 1;
-            board.position(appClientState.serverGame.Moves[appClientState.lastReplayPosition].AfterFEN, true);
-            updateBoardWithMove(appClientState.serverGame.Moves[appClientState.lastReplayPosition],false);
+        if (gameState.Moves.length <= appClientState.lastReplayPosition) {
+            appClientState.lastReplayPosition = gameState.Moves.length - 1;
+            board.position(gameState.Moves[appClientState.lastReplayPosition].AfterFEN, true);
+            updateBoardWithMove(gameState.Moves[appClientState.lastReplayPosition],false);
             clearInterval(replayId);
             replayOn = false;
             return;
         }
-        board.position(appClientState.serverGame.Moves[appClientState.lastReplayPosition].AfterFEN, true);
-        updateBoardWithMove(appClientState.serverGame.Moves[appClientState.lastReplayPosition],true);
+        board.position(gameState.Moves[appClientState.lastReplayPosition].AfterFEN, true);
+        updateBoardWithMove(gameState.Moves[appClientState.lastReplayPosition],true);
 
     };
     this.playEnd = function () {
@@ -3460,19 +3450,19 @@ var KharbgaApp = function () {
 
         // we now have a completed game
         console.log("playEnd - status: %s - Last replay Position: %s",
-            appClientState.serverGame.status, appClientState.lastReplayPosition);
+            gameState.status, appClientState.lastReplayPosition);
 
         var lastSettingPos = 47;
         if (appClientState.lastReplayPosition < lastSettingPos)
             appClientState.lastReplayPosition = lastSettingPos;
         else
-            appClientState.lastReplayPosition = appClientState.serverGame.moves.length - 1;
+            appClientState.lastReplayPosition = gameState.moves.length - 1;
 
-        if (appClientState.serverGame.Moves.length > appClientState.lastReplayPosition)
-            appClientState.lastReplayPosition = appClientState.serverGame.moves.length - 1;
+        if (gameState.Moves.length > appClientState.lastReplayPosition)
+            appClientState.lastReplayPosition = gameState.moves.length - 1;
 
-        board.position(appClientState.serverGame.Moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(appClientState.serverGame.Moves[appClientState.lastReplayPosition], true);
+        board.position(gameState.Moves[appClientState.lastReplayPosition].afterFen, true);
+        updateBoardWithMove(gameState.Moves[appClientState.lastReplayPosition], true);
 
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
