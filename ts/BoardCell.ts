@@ -109,14 +109,14 @@ namespace Kharbga{
          * Checks if the current cell is occupied or not
          */
         public isOccupied(): boolean {
-            return this.state != BoardCellState.Empty;
+            return this.state !== BoardCellState.Empty;
         }
 
         /**
          * Checks if the current cell is occupied by an attacker piece or not
          */
         public isOccupiedByAttacker(): boolean {
-            return this.state == BoardCellState.OccupiedByAttacker;
+            return this.state === BoardCellState.OccupiedByAttacker;
         }
 
 
@@ -162,40 +162,40 @@ namespace Kharbga{
         /**
          * Determines the adjacent cells and sets them for easy access from each cell 
          */
-        public setAdjacentCells(board: Board) {
+        public setAdjacentCells(board: Board): void {
             // add check if board is null
 
             if (board == null) {
                 alert("board is null");
-                //TODO: add debugging logic here
+                // todo: add debugging logic here
                 return;
             }
             this.board = board;
 
-            // On the same row back;
+            // on the same row back;
             if (this.col - 1 >= 0) {
-                this.left = board.GetCell(this.Row(), this.Col() - 1);
+                this.left = board.getCell(this.Row(), this.Col() - 1);
                 if (this.left != null)
                     this.listAdjacentCells.push(this.left);
             }
 
-            // On the same row forward
+            // on the same row forward
             if (this.col + 1 <= 6) {
-                this.right = board.GetCell(this.Row(), this.Col() + 1);
+                this.right = board.getCell(this.Row(), this.Col() + 1);
                 if (this.right != null)
                     this.listAdjacentCells.push(this.right);
             }
 
             // On the same col up;
             if (this.row - 1 >= 0) {
-                this.up = board.GetCell(this.Row() - 1, this.Col());
+                this.up = board.getCell(this.Row() - 1, this.Col());
                 if (this.up != null)
                     this.listAdjacentCells.push(this.up);
             }
 
             // On the same col down;
             if (this.row + 1 <= 6) {
-                this.down = board.GetCell(this.Row() + 1, this.Col());
+                this.down = board.getCell(this.Row() + 1, this.Col());
                 if (this.down != null)
                     this.listAdjacentCells.push(this.down);
             }

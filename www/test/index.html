@@ -106,7 +106,7 @@
 
             assert.equal(board.fen(), "7/7/7/7/7/7/7");
 
-            var cell = board.GetCell(3, 3);
+            var cell = board.getCell(3, 3);
 
             assert.ok(cell.isMalha(), "Malha is ok");
 
@@ -115,10 +115,14 @@
             assert.equal(cell.ID(), "d4");
             for (var i = 0; i < 7; i++) {
                 for (var j = 0; j < 7; j++) {
-                    assert.ok(board.GetCell(i, j).isEmpty(), "All cells are empty");
+                    assert.ok(board.getCell(i, j).isEmpty(), "All cells are empty");
                     var expectedId = Kharbga.BoardCell.COLUMNS[j] + Kharbga.BoardCell.ROWS[i];
 
-                    assert.equal(board.GetCell(i, j).ID(), expectedId);
+                    assert.equal(board.getCell(i, j).ID(), expectedId);
+
+                    var cellById = board.getCellById(expectedId);
+                    assert.equal(cellById.row, i);
+                    assert.equal(cellById.col, j);
                 }
             }
 
@@ -160,6 +164,9 @@
 
             // we are now in moving phase
             assert.equal(game.state, Kharbga.GameState.Moving);
+            assert.equal(game.attackerScore, 24);
+            assert.equal(game.defenderScore, 24);
+
 
         });
     </script>

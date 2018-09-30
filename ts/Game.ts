@@ -78,7 +78,7 @@ namespace Kharbga {
             var ret = new Array<GameMove>();
             for (let move of temp) {
                 // check if the from cell could capture
-                var fromCell = this.board.GetCellById(move.from);
+                var fromCell = this.board.getCellById(move.from);
                 if (fromCell == null)
                     continue;
 
@@ -122,9 +122,9 @@ namespace Kharbga {
 
             // for each move -- see if the board after the move will result in less capturables     
             for (let move of tempMoves) {
-                let tempBoard = this.board.Clone();
-                let fromCell = tempBoard.GetCellById(move.from);
-                let toCell = tempBoard.GetCellById(move.to);
+                let tempBoard = this.board.clone();
+                let fromCell = tempBoard.getCellById(move.from);
+                let toCell = tempBoard.getCellById(move.to);
 
                 var moveResult = tempBoard.RecordPlayerMove(fromCell, toCell);
                 let result2 = tempBoard.HasCapturablePieces(this.currentPlayer, 
@@ -179,7 +179,7 @@ namespace Kharbga {
 
             let nearMalha = ['c4', 'e4', 'd3', 'd5'];
             for (let i = 0; i < nearMalha.length; i++) {
-                let cell = this.board.GetCellById(nearMalha[i]);
+                let cell = this.board.getCellById(nearMalha[i]);
                 if (cell.isEmpty())
                     ret.push(nearMalha[i]);
             }
@@ -433,7 +433,7 @@ namespace Kharbga {
          * @param cellId
          */
         public is_empty(cellId: string): boolean {
-            let cell = this.board.GetCellById(cellId);
+            let cell = this.board.getCellById(cellId);
             if (cell!= null)
                 return cell.isEmpty();
 
@@ -449,7 +449,7 @@ namespace Kharbga {
           * @param cellId
           */
         public is_valid(cellId: string): boolean {
-            let cell = this.board.GetCellById(cellId);
+            let cell = this.board.getCellById(cellId);
             if (cell != null)
                 return true;
             else {
@@ -464,14 +464,14 @@ namespace Kharbga {
          * @param to
          */
         public valid_move(from: string, to: string): boolean {
-            let fromCell = this.board.GetCellById(from);
+            let fromCell = this.board.getCellById(from);
             if (fromCell == null)
                 return false;
 
             if (!fromCell.isOccupiedBy(this.currentPlayer))
                 return false;
 
-            let toCell = this.board.GetCellById(to);
+            let toCell = this.board.getCellById(to);
             if (toCell == null)
                 return false;
 
@@ -490,7 +490,7 @@ namespace Kharbga {
        * @param cellId
        */
         public is_occupied_current_player(cellId: string): boolean {
-            let cell = this.board.GetCellById(cellId);
+            let cell = this.board.getCellById(cellId);
             if (cell != null)
                 return cell.isOccupiedBy(this.currentPlayer);
             else {
@@ -646,7 +646,7 @@ namespace Kharbga {
                 return false;
 
             let ret = false;
-            let fromCell = this.board.GetCellById(fromCellId);
+            let fromCell = this.board.getCellById(fromCellId);
            
             // Not fromCell set yet
             if (fromCell == null) {
@@ -666,7 +666,7 @@ namespace Kharbga {
                 return ret;
             }
 
-            let toCell = this.board.GetCellById(toCellId);
+            let toCell = this.board.getCellById(toCellId);
             if (toCell == null) {
 
                 this.board.RaiseBoardInvalidMoveEvent(BoardMoveType.InvalidCellId, fromCell, toCell,toCellId);
@@ -952,7 +952,7 @@ namespace Kharbga {
 
             let recorded = this.board.RecordPlayerSetting(cellId, this.getCurrentPlayer().isAttacker());
             if (recorded == PlayerSettingStatus.OK) {
-                let cell = this.board.GetCellById(cellId);
+                let cell = this.board.getCellById(cellId);
                 this.numberOfSettingsAllowed--;
                 this.history.AddSetting(this.currentPlayer, cell.ID());          
 
@@ -976,7 +976,7 @@ namespace Kharbga {
             else {
                 // create an invalid setting event
                 var eventData = new GameEventData(this, this.getCurrentPlayer());
-                let cell = this.board.GetCellById(cellId);
+                let cell = this.board.getCellById(cellId);
                 eventData.targetCellId = cellId;
                 eventData.from = cell;
                 eventData.to = cell;
@@ -1007,7 +1007,7 @@ namespace Kharbga {
          * @param selectedPieceId
          */
         public is_surrounded_piece(selectedPieceId: string): boolean {
-            let clickedCell = this.board.GetCellById(selectedPieceId);
+            let clickedCell = this.board.getCellById(selectedPieceId);
 
             return clickedCell.isSurrounded();
         }
