@@ -160,7 +160,7 @@ namespace Kharbga{
         }
 
         /**
-         * Determines the adjacent cells and sets then for easy access from each cell 
+         * Determines the adjacent cells and sets them for easy access from each cell 
          */
         public setAdjacentCells(board: Board) {
             // add check if board is null

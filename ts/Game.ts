@@ -65,9 +65,6 @@ namespace Kharbga {
         public moves(from: string = ""): Array<GameMove> {
             var ret = this.board.getPossibleMoves(this.currentPlayer, from);
 
-
-
-
             return ret;
         }
 

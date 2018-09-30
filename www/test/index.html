@@ -1,0 +1,174 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Refactored date examples</title>
+
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.6.2.css">
+    <script src="https://code.jquery.com/qunit/qunit-2.6.2.js"></script>
+    <script src="../js/kharbga.js"></script>
+
+    <script>
+        var boardEvents = {
+            invalidMoveEvent: function(eventData) {
+                console.log("board.invalidMoveEvent");
+                console.log(eventData);
+            },
+            validMoveEvent: function(eventData) {
+                console.log("board.validMoveEvent");
+                console.log(eventData);
+            },
+            capturedPieceEvent: function(eventData) {
+                console.log("board.capturedPieceEvent");
+                console.log(eventData);
+            },
+            exchangedPieceEvent: function(eventData) {
+                console.log("board.exchangedPieceEvent");
+                console.log(eventData);
+            }
+        };
+        var gameEvents = {
+            newGameStartedEvent: function(eventData) {
+                console.log("newGameStartedEvent");
+                console.log(eventData);
+            },
+            newPlayerTurnEvent: function(eventData) {
+                console.log("newPlayerTurnEvent");
+                console.log(eventData);
+            },
+            // Player passed since they do not have a valid move (if they are blocked) not after the first move
+            playerPassedEvent: function(eventData) {
+                console.log("playerPassedEvent");
+                console.log(eventData);
+            },
+            newSettingCompletedEvent: function(eventData) {
+                console.log("newSettingCompletedEvent");
+                console.log(eventData);
+            },
+            settingsCompletedEvent: function(eventData) {
+                console.log("settingsCompletedEvent");
+                console.log(eventData);
+            },
+            newMoveStartedEvent: function(eventData) {
+                console.log("newMoveStartedEvent");
+                console.log(eventData);
+            },
+            newMoveCompletedEvent: function(eventData) {
+                console.log("newMoveCompletedEvent");
+                console.log(eventData);
+            },
+            newMoveCompletedContinueSamePlayerEvent: function(eventData) {
+                console.log("newMoveCompletedContinueSamePlayerEvent");
+                console.log(eventData);
+            },
+            newMoveCanceledEvent: function(eventData) {
+                console.log("newMoveCanceledEvent");
+                console.log(eventData);
+            },
+            winnerDeclaredEvent: function(eventData) {
+                console.log("winnerDeclaredEvent");
+                console.log(eventData);
+            },
+            untouchableSelectedEvent: function(eventData) {
+                console.log("untouchableSelectedEvent");
+                console.log(eventData);
+            },
+            untouchableExchangeCanceledEvent: function(eventData) {
+                console.log("untouchableExchangeCanceledEvent");
+                console.log(eventData);
+            },
+            untouchableExchangeCompletedEvent: function(eventData) {
+                console.log("untouchableExchangeCompletedEvent");
+                console.log(eventData);
+            },
+            invalidSettingMalhaEvent: function(eventData) {
+                console.log(" invalidSettingMalhaEvent");
+                console.log(eventData);
+            },
+            invalidSettingOccupiedEvent: function(eventData) {
+                console.log("invalidSettingOccupiedEvent");
+                console.log(eventData);
+            },
+
+            invalidMoveEvent: function(eventData) {
+                console.log("invalidMoveEvent");
+                console.log(eventData);
+            },
+            moveProcessed: function(status, eventData) {
+                console.log("moveProcessed - status: %s", status);
+                console.log(eventData);
+            }
+        };
+        QUnit.test("kharbga board and cells", function(assert) {
+
+            var board = new Kharbga.Board(boardEvents);
+            assert.ok(board, "board is not null");
+
+            assert.equal(board.fen(), "7/7/7/7/7/7/7");
+
+            var cell = board.GetCell(3, 3);
+
+            assert.ok(cell.isMalha(), "Malha is ok");
+
+            assert.ok(cell.isEmpty(), "Malha Is Empty");
+
+            assert.equal(cell.ID(), "d4");
+            for (var i = 0; i < 7; i++) {
+                for (var j = 0; j < 7; j++) {
+                    assert.ok(board.GetCell(i, j).isEmpty(), "All cells are empty");
+                    var expectedId = Kharbga.BoardCell.COLUMNS[j] + Kharbga.BoardCell.ROWS[i];
+
+                    assert.equal(board.GetCell(i, j).ID(), expectedId);
+                }
+            }
+
+        });
+
+        QUnit.test("Kharbga game", function(assert) {
+            var game = new Kharbga.Game(gameEvents, boardEvents);
+            assert.ok(game, "game is not null");
+
+            game.init();
+            assert.equal(game.state, Kharbga.GameState.Setting);
+            assert.equal(game.attackerScore, 0);
+            assert.equal(game.defenderScore, 0);
+            assert.equal(game.currentPlayer, game.attacker);
+            assert.notOk(game.winner, "No game winner at the start");
+
+            assert.ok(game.isInSettingMode(), "is in setting mode");
+
+            // setting on malha should not be allowed
+            assert.notOk(game.processSetting("d4"), "not ok to set on malha at the beginning of game");
+            assert.equal(game.fen(), "7/7/7/7/7/7/7");
+
+            // set attacker pieces and check fen
+            assert.ok(game.processSetting("d3"), "attacker setting 1");
+            assert.ok(game.processSetting("d6"), "attacker setting 2");
+            assert.equal(game.fen(), "7/3S3/7/7/3S3/7/7");
+
+            // set defender two pieces
+            assert.ok(game.processSetting("b4"), "defender setting 1")
+            assert.ok(game.processSetting("c4"), "defender setting 2")
+            assert.equal(game.fen(), "7/3S3/7/1ss4/3S3/7/7");
+
+            // set all player pieces randomly 
+            for (var s = 0; s < 46; s++) {
+                var possibleSettings = game.settings();
+                if (possibleSettings != null && possibleSettings.length > 0)
+                    assert.ok(game.processSetting(possibleSettings[0]), "attacker or defender setting ")
+            }
+
+            // we are now in moving phase
+            assert.equal(game.state, Kharbga.GameState.Moving);
+
+        });
+    </script>
+</head>
+
+<body>
+
+    <div id="qunit">
+    </div>
+</body>
+
+</html>

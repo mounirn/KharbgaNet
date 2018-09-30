@@ -3286,20 +3286,23 @@ var KharbgaApp = function () {
                 else
                     boardEl.find('.square-' + move.to).addClass('highlight-exchange');
 
-                var capturedCells = move.Captured.split(' ');
+                if (move.captured != null){
+                    var capturedCells = move.captured.split(' ');
 
-                if (capturedCells != null) {
-                    $.each(capturedCells, function (item, value) {
-                        boardEl.find('.square-' + value).addClass('highlight-captured');
-                    });
+                    if (capturedCells != null) {
+                        $.each(capturedCells, function (item, value) {
+                            boardEl.find('.square-' + value).addClass('highlight-captured');
+                        });
+                    }
                 }
+                if (move.exchanged != null){
+                    var exchangedCells = move.exchanged.split(' ');
 
-                var exchangedCells = move.exchanged.split(' ');
-
-                if (exchangedCells != null) {
-                    $.each(exchangedCells, function (item, value) {
-                        boardEl.find('.square-' + value).addClass('highlight-exchange');
-                    });
+                    if (exchangedCells != null) {
+                        $.each(exchangedCells, function (item, value) {
+                            boardEl.find('.square-' + value).addClass('highlight-exchange');
+                        });
+                    }
                 }
             }
         }
@@ -3387,9 +3390,7 @@ var KharbgaApp = function () {
     var replayOn = false;
     this.playStart = function () {
         console.log("playStart");
-        if (appClientState.serverGame == null)
-            return;
-
+     
          if (gameState.status != 3)
               return;
 
@@ -3401,7 +3402,7 @@ var KharbgaApp = function () {
         if (appClientState.lastReplayPosition < 0)
             appClientState.lastReplayPosition = 0;
 
-        if (gameState.Moves.length == 0) {
+        if (gameState.moves.length == 0) {
             // message
             return;
         }
@@ -3421,9 +3422,7 @@ var KharbgaApp = function () {
     };
     this.playPause = function () {
         console.log("playPause");
-        if (appClientState.serverGame == null)
-            return;
-
+       
         if (gameState.status != 3)
             return;
 
@@ -3437,9 +3436,7 @@ var KharbgaApp = function () {
     };
     this.playForward = function () {
         console.log("playForward");
-        if (appClientState.serverGame == null)
-            return;
-
+      
     //    if (gameState.status != 3)
      //       return;
 
@@ -3448,24 +3445,23 @@ var KharbgaApp = function () {
             gameState.status, appClientState.lastReplayPosition);
 
         appClientState.lastReplayPosition++;
-        if (gameState.Moves.length <= appClientState.lastReplayPosition) {
-            appClientState.lastReplayPosition = gameState.Moves.length - 1;
-            board.position(gameState.Moves[appClientState.lastReplayPosition].AfterFEN, true);
-            updateBoardWithMove(gameState.Moves[appClientState.lastReplayPosition],false);
+        if (gameState.moves.length <= appClientState.lastReplayPosition) {
+            appClientState.lastReplayPosition = gameState.moves.length - 1;
+            board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
+            updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],false);
             clearInterval(replayId);
             replayOn = false;
             return;
         }
-        board.position(gameState.Moves[appClientState.lastReplayPosition].AfterFEN, true);
-        updateBoardWithMove(gameState.Moves[appClientState.lastReplayPosition],true);
+        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
+        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
 
     };
     this.playEnd = function () {
         console.log("playEnd");
         if (appClientState.serverGame == null)
             return;
-
-    
+   
 
         // we now have a completed game
         console.log("playEnd - status: %s - Last replay Position: %s",
@@ -3477,11 +3473,11 @@ var KharbgaApp = function () {
         else
             appClientState.lastReplayPosition = gameState.moves.length - 1;
 
-        if (gameState.Moves.length > appClientState.lastReplayPosition)
+        if (gameState.moves.length > appClientState.lastReplayPosition)
             appClientState.lastReplayPosition = gameState.moves.length - 1;
 
-        board.position(gameState.Moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(gameState.Moves[appClientState.lastReplayPosition], true);
+        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
+        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
 
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
