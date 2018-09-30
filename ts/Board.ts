@@ -590,33 +590,38 @@ namespace Kharbga {
 
 
         /**
-         * Returns all possible settings for the game at this point
+         * @summary Searches for all possible settings for the game
+         * @returns all possible settings for the game at this point
          */
-        public GetPossibleSettings(): Array<string> {
-            let ret = new Array<string>();
+        public GetPossibleSettings(): string[] {
+            let ret: string[] = new Array<string>();
 
 
             for (let id of this._cellIds) {
-                let cell = this.cellsById[id] as BoardCell;
-                if (id != 'd4' && cell.isEmpty() == true)
+                let cell: BoardCell = this.cellsById[id] as BoardCell;
+                if (id !== "d4" && cell.isEmpty() === true) {
                     ret.push(id);
+                }
             }
-
             return ret;
         }
 
         /**
-        * Returns all possible settings close to the opponent settings
-        */
-        public GetPossibleSettingsNearOpponent(player: Player): Array<string> {
-            let ret = new Array<string>();
+         * @summary Searches for all possible settings near opponent pieces
+         * @param {Player} player: the current player
+         * @returns all possible settings close to the opponent settings
+         */
+        public getPossibleSettingsNearOpponent(player: Player): string[] {
+            let ret: string[] = new Array<string>();
 
             for (let id of this._cellIds) {
-                let cell = this.cellsById[id] as BoardCell;
-                if (id == 'd4' || cell.isEmpty() != true)
+                let cell: BoardCell = this.cellsById[id] as BoardCell;
+                if (id === "d4" || cell.isEmpty() !== true) {
                     continue;
-                if (cell.anyAdjacentOccupiedByOpponent(player))
+                }
+                if (cell.anyAdjacentOccupiedByOpponent(player)) {
                     ret.push(id);
+                }
             }
             return ret;
         }
