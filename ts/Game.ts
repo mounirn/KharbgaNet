@@ -83,6 +83,7 @@ namespace Kharbga {
             this.defenderScore = 0;
             this.winner = null;
             this.currentPlayer = this.attacker;
+            this.history.reset();
         }
 
         /**
@@ -94,8 +95,10 @@ namespace Kharbga {
         }
 
         /**
-         * identifies moves that result in a capture of one of the opponent pieces
+         * @summary Searches for moves that result in a capture of one of the
+         * opponent pieces for the current player
          * @param from -- optional from location
+         * @returns a list of possible game moves that could result in capture for the current player
          */
         public moves_that_capture(from: string = ""): GameMove[] {
             var temp: GameMove[] = this.board.getPossibleMoves(this.currentPlayer, from);
@@ -119,7 +122,7 @@ namespace Kharbga {
         }
 
         /**
-         * @summary Identifies moves by capturable pieces (hopefully to save)
+         * @summary Identifies moves by capturable pieces (hopefully to save) for the current player
          * @param from - the from cell position
          * @returns - the possible moves
          */
@@ -672,7 +675,7 @@ namespace Kharbga {
             let result = this.board.RecordPlayerMove(fromCell, toCell);
             if (result.status === PlayerMoveStatus.OK) {
                 let move: GameMove = new GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
-                this.history.AddMove(this.currentPlayer, fromCell.ID(), toCell.ID());
+                this.history.addMove(this.currentPlayer, fromCell.ID(), toCell.ID());
                 ret = true;
 
                 // check if current player is defender confirming an requesting exchange request with this move
@@ -903,11 +906,11 @@ namespace Kharbga {
             if (recorded === PlayerSettingStatus.OK) {
                 let cell: BoardCell = this.board.getCellById(cellId);
                 this.numberOfSettingsAllowed--;
-                this.history.AddSetting(this.currentPlayer, cell.ID());
+                this.history.addSetting(this.currentPlayer, cell.ID());
 
-                if (this.getCurrentPlayer().isAttacker() === true){
+                if (this.getCurrentPlayer().isAttacker() === true) {
                     this.attackerScore++;
-                } else{
+                } else {
                     this.defenderScore++;
                 }
                 var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
