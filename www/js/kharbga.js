@@ -393,20 +393,23 @@ var Kharbga;
             for (var _i = 0, _a = this._cellIds; _i < _a.length; _i++) {
                 var id = _a[_i];
                 var cell = this.cellsById[id];
-                if (id != 'd4' && cell.isEmpty() == true)
+                if (id !== "d4" && cell.isEmpty() === true) {
                     ret.push(id);
+                }
             }
             return ret;
         };
-        Board.prototype.GetPossibleSettingsNearOpponent = function (player) {
+        Board.prototype.getPossibleSettingsNearOpponent = function (player) {
             var ret = new Array();
             for (var _i = 0, _a = this._cellIds; _i < _a.length; _i++) {
                 var id = _a[_i];
                 var cell = this.cellsById[id];
-                if (id == 'd4' || cell.isEmpty() != true)
+                if (id === "d4" || cell.isEmpty() !== true) {
                     continue;
-                if (cell.anyAdjacentOccupiedByOpponent(player))
+                }
+                if (cell.anyAdjacentOccupiedByOpponent(player)) {
                     ret.push(id);
+                }
             }
             return ret;
         };
@@ -921,10 +924,16 @@ var Kharbga;
             this.firstMove = true;
             this.reset();
         };
+        Game.prototype.start = function () {
+            this.init();
+            this.reset();
+            var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+            this.gameEvents.newGameStartedEvent(eventData);
+            this.gameEvents.newPlayerTurnEvent(eventData);
+        };
         Game.prototype.moves = function (from) {
             if (from === void 0) { from = ""; }
-            var ret = this.board.getPossibleMoves(this.currentPlayer, from);
-            return ret;
+            return this.board.getPossibleMoves(this.currentPlayer, from);
         };
         Game.prototype.moves_that_capture = function (from) {
             if (from === void 0) { from = ""; }
@@ -933,12 +942,14 @@ var Kharbga;
             for (var _i = 0, temp_1 = temp; _i < temp_1.length; _i++) {
                 var move = temp_1[_i];
                 var fromCell = this.board.getCellById(move.from);
-                if (fromCell == null)
+                if (fromCell === null) {
                     continue;
+                }
                 var result = this.board.StillHavePiecesToCapture(fromCell);
-                if (result.status == true) {
-                    if (result.possibleMoves.indexOf(move.to) >= 0)
+                if (result.status === true) {
+                    if (result.possibleMoves.indexOf(move.to) >= 0) {
                         ret.push(move);
+                    }
                 }
             }
             return ret;
@@ -982,10 +993,12 @@ var Kharbga;
             return ret;
         };
         Game.prototype.settings = function () {
-            if (this.is_in_setting_state() == true)
+            if (this.is_in_setting_state() === true) {
                 return this.board.GetPossibleSettings();
-            else
-                return new Array();
+            }
+            else {
+                return [];
+            }
         };
         Game.prototype.setPlayerNames = function (attacker, defender) {
             this.attacker.name = attacker;
@@ -993,20 +1006,22 @@ var Kharbga;
         };
         Game.prototype.settings_near_malha = function () {
             var ret = new Array();
-            var nearMalha = ['c4', 'e4', 'd3', 'd5'];
+            var nearMalha = ["c4", "e4", "d3", "d5"];
             for (var i = 0; i < nearMalha.length; i++) {
                 var cell = this.board.getCellById(nearMalha[i]);
-                if (cell.isEmpty())
+                if (cell.isEmpty()) {
                     ret.push(nearMalha[i]);
+                }
             }
             return ret;
         };
         Game.prototype.settings_near_opponent = function () {
-            return this.board.GetPossibleSettingsNearOpponent(this.currentPlayer);
+            return this.board.getPossibleSettingsNearOpponent(this.currentPlayer);
         };
         Game.prototype.is_current_player_setting = function () {
-            if (this.state != Kharbga.GameState.Setting)
+            if (this.state !== Kharbga.GameState.Setting) {
                 return false;
+            }
             return this.numberOfSettingsAllowed > 0;
         };
         Game.prototype.fen = function () {
@@ -1016,8 +1031,8 @@ var Kharbga;
             if (this.validFen(fen) !== true) {
                 return false;
             }
-            fen = fen.replace(/ .+$/, '');
-            var rows = fen.split('/');
+            fen = fen.replace(/ .+$/, "");
+            var rows = fen.split("/");
             var position = {};
             var currentRow = 7;
             for (var i = 0; i < 7; i++) {
@@ -1054,20 +1069,24 @@ var Kharbga;
             return this.moveFlags;
         };
         Game.prototype.isDefenderPiece = function (piece) {
-            if (piece.toLowerCase() === piece)
+            if (piece.toLowerCase() === piece) {
                 return true;
-            else
+            }
+            else {
                 return false;
+            }
         };
         Game.prototype.validFen = function (fen) {
-            if (typeof fen !== 'string')
+            if (typeof fen !== "string") {
                 return false;
-            fen = fen.replace(/ .+$/, '');
-            var chunks = fen.split('/');
-            if (chunks.length !== 7)
+            }
+            fen = fen.replace(/ .+$/, "");
+            var chunks = fen.split("/");
+            if (chunks.length !== 7) {
                 return false;
+            }
             for (var i = 0; i < 7; i++) {
-                if (chunks[i] === '' ||
+                if (chunks[i] === "" ||
                     chunks[i].length > 7 ||
                     chunks[i].search(/[^sS1-7]/) !== -1) {
                     return false;
@@ -1088,8 +1107,9 @@ var Kharbga;
             if (delayAfterEachMove === void 0) { delayAfterEachMove = 0; }
             var ret = false;
             this.init();
-            if (serverGameState.status == Kharbga.GameStatus.Joined)
+            if (serverGameState.status === Kharbga.GameStatus.Joined) {
                 this.state = Kharbga.GameState.Setting;
+            }
             var sortedMoves = serverGameState.moves.sort(function (a, b) {
                 if (a.number > b.number) {
                     return 1;
@@ -1099,14 +1119,14 @@ var Kharbga;
                 }
                 return 0;
             });
-            for (var _i = 0, _a = serverGameState.moves; _i < _a.length; _i++) {
-                var move = _a[_i];
+            for (var _i = 0, sortedMoves_1 = sortedMoves; _i < sortedMoves_1.length; _i++) {
+                var move = sortedMoves_1[_i];
                 if (move.isSetting) {
                     this.processSetting(move.to);
                 }
             }
-            for (var _b = 0, _c = serverGameState.moves; _b < _c.length; _b++) {
-                var move = _c[_b];
+            for (var _a = 0, sortedMoves_2 = sortedMoves; _a < sortedMoves_2.length; _a++) {
+                var move = sortedMoves_2[_a];
                 if (!move.isSetting) {
                     this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
                 }
@@ -1114,13 +1134,6 @@ var Kharbga;
             return ret;
         };
         Game.prototype.getState = function () { return this.state; };
-        Game.prototype.start = function () {
-            this.init();
-            this.reset();
-            var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
-            this.gameEvents.newGameStartedEvent(eventData);
-            this.gameEvents.newPlayerTurnEvent(eventData);
-        };
         Game.prototype.game_over = function () {
             if (this.state === Kharbga.GameState.Pending || this.state === Kharbga.GameState.Setting || this.state === Kharbga.GameState.Moving)
                 return false;
@@ -1330,7 +1343,7 @@ var Kharbga;
         };
         Game.prototype.checkIfPlayerCanNotMove = function () {
             var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
-            if (this.state != Kharbga.GameState.Setting && this.CheckIfCurrentPlayerCanPassTurn() === true) {
+            if (this.state != Kharbga.GameState.Setting && this.checkIfCurrentPlayerCanPassTurn() === true) {
                 if (this.currentPlayer.isAttacker())
                     this.currentPlayer = this.defender;
                 else
@@ -1339,18 +1352,22 @@ var Kharbga;
             }
         };
         Game.prototype.PlayerChangeTurn = function () {
-            if (this.currentPlayer.isAttacker())
+            if (this.currentPlayer.isAttacker()) {
                 this.currentPlayer = this.defender;
-            else
+            }
+            else {
                 this.currentPlayer = this.attacker;
+            }
             this.moveSourceRequired = "";
             var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
-            if (this.state == Kharbga.GameState.Moving) {
+            if (this.state === Kharbga.GameState.Moving) {
                 if (this.currentPlayerIsBlocked() === true) {
-                    if (this.currentPlayer.isAttacker())
+                    if (this.currentPlayer.isAttacker()) {
                         this.state = Kharbga.GameState.AttackerCanNotMove;
-                    else
+                    }
+                    else {
                         this.state = Kharbga.GameState.DefenderCanNotMove;
+                    }
                     if (this.firstMove) {
                         this.winner = this.defender;
                         eventData.player = this.winner;
@@ -1365,13 +1382,14 @@ var Kharbga;
                         return;
                     }
                 }
-                if (this.firstMove === true)
+                if (this.firstMove === true) {
                     this.firstMove = false;
+                }
             }
             this.gameEvents.newPlayerTurnEvent(eventData);
         };
         Game.prototype.processCurrentPlayerAbandoned = function () {
-            if (this.currentPlayer == this.attacker) {
+            if (this.currentPlayer === this.attacker) {
                 this.state = Kharbga.GameState.AttackerAbandoned;
                 this.winner = this.defender;
             }
@@ -1393,13 +1411,13 @@ var Kharbga;
                 if (this.attackerScore <= 0) {
                     this.state = Kharbga.GameState.AttackerLostAllPieces;
                     this.winner = this.defender;
-                    var eventData = new Kharbga.GameEventData(this, this.winner);
-                    this.gameEvents.winnerDeclaredEvent(eventData);
+                    var eventData2 = new Kharbga.GameEventData(this, this.winner);
+                    this.gameEvents.winnerDeclaredEvent(eventData2);
                 }
             }
         };
         Game.prototype.checkPass = function () {
-            var bCanPass = this.CheckIfCurrentPlayerCanPassTurn();
+            var bCanPass = this.checkIfCurrentPlayerCanPassTurn();
             if (bCanPass) {
                 if (this.currentPlayer.isAttacker()) {
                     this.currentPlayer = this.defender;
@@ -1412,73 +1430,87 @@ var Kharbga;
             }
             return bCanPass;
         };
-        Game.prototype.CheckIfCurrentPlayerCanPassTurn = function () {
+        Game.prototype.checkIfCurrentPlayerCanPassTurn = function () {
             var possibleMoves = this.board.getPossibleMoves(this.currentPlayer);
-            if (possibleMoves.length == 0)
+            if (possibleMoves.length === 0) {
                 return true;
-            else
+            }
+            else {
                 return false;
+            }
         };
         Game.prototype.currentPlayerIsBlocked = function () {
             var possibleMoves = this.board.getPossibleMoves(this.currentPlayer);
-            if (possibleMoves.length == 0)
+            if (possibleMoves.length === 0) {
                 return true;
-            else
+            }
+            else {
                 return false;
+            }
         };
         Game.prototype.recordSetting = function (cellId) {
-            if (this.state != Kharbga.GameState.Setting)
+            if (this.state !== Kharbga.GameState.Setting) {
                 return false;
+            }
             var recorded = this.board.RecordPlayerSetting(cellId, this.getCurrentPlayer().isAttacker());
-            if (recorded == Kharbga.PlayerSettingStatus.OK) {
+            if (recorded === Kharbga.PlayerSettingStatus.OK) {
                 var cell = this.board.getCellById(cellId);
                 this.numberOfSettingsAllowed--;
                 this.history.AddSetting(this.currentPlayer, cell.ID());
-                if (this.getCurrentPlayer().isAttacker() === true)
+                if (this.getCurrentPlayer().isAttacker() === true) {
                     this.attackerScore++;
-                else
+                }
+                else {
                     this.defenderScore++;
+                }
                 var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
                 eventData.from = cell;
                 eventData.to = cell;
                 eventData.targetCellId = cell.ID();
                 this.gameEvents.newSettingCompletedEvent(eventData);
-                if (this.numberOfSettingsAllowed == 0) {
+                if (this.numberOfSettingsAllowed === 0) {
                     this.numberOfSettingsAllowed = 2;
                     this.PlayerChangeTurn();
                 }
                 this.checkIfSettingsCompleted();
             }
             else {
-                var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+                var eventData2 = new Kharbga.GameEventData(this, this.getCurrentPlayer());
                 var cell = this.board.getCellById(cellId);
-                eventData.targetCellId = cellId;
-                eventData.from = cell;
-                eventData.to = cell;
-                if (recorded === Kharbga.PlayerSettingStatus.ERR_MALHA)
+                eventData2.targetCellId = cellId;
+                eventData2.from = cell;
+                eventData2.to = cell;
+                if (recorded === Kharbga.PlayerSettingStatus.ERR_MALHA) {
                     this.gameEvents.invalidSettingMalhaEvent(eventData);
-                else if (recorded === Kharbga.PlayerSettingStatus.ERR_OCCUPIED)
-                    this.gameEvents.invalidSettingOccupiedEvent(eventData);
+                }
+                else {
+                    if (recorded === Kharbga.PlayerSettingStatus.ERR_OCCUPIED) {
+                        this.gameEvents.invalidSettingOccupiedEvent(eventData);
+                    }
+                }
             }
-            return recorded == Kharbga.PlayerSettingStatus.OK;
+            return recorded === Kharbga.PlayerSettingStatus.OK;
         };
         Game.prototype.is_in_moving_state = function () {
-            return this.state == Kharbga.GameState.Moving;
+            return this.state === Kharbga.GameState.Moving;
         };
         Game.prototype.is_in_setting_state = function () {
-            return this.state == Kharbga.GameState.Setting;
+            return this.state === Kharbga.GameState.Setting;
         };
         Game.prototype.is_surrounded_piece = function (selectedPieceId) {
             var clickedCell = this.board.getCellById(selectedPieceId);
+            if (clickedCell === null) {
+                return false;
+            }
             return clickedCell.isSurrounded();
         };
         Game.prototype.CheckUntouchableMoves = function (targetCellId, moveExchangeRequest, eventData) {
             if (this.currentPlayer.isDefender()) {
-                if (moveExchangeRequest == false) {
-                    this.moveFlags.exchangeRequestDefenderPiece = '';
+                if (moveExchangeRequest === false) {
+                    this.moveFlags.exchangeRequestDefenderPiece = "";
                     this.moveFlags.exchangeRequestAccepted = false;
-                    this.moveFlags.exchangeRequestAttackerPiece1 = '';
-                    this.moveFlags.exchangeRequestAttackerPiece2 = '';
+                    this.moveFlags.exchangeRequestAttackerPiece1 = "";
+                    this.moveFlags.exchangeRequestAttackerPiece2 = "";
                     if (this.moveFlags.exchangeRequest) {
                         this.moveFlags.exchangeRequest = moveExchangeRequest;
                         this.gameEvents.untouchableExchangeCanceledEvent(eventData);
@@ -1489,7 +1521,7 @@ var Kharbga;
                     return;
                 }
                 else {
-                    if (this.moveFlags.exchangeRequest == false) {
+                    if (this.moveFlags.exchangeRequest === false) {
                         this.moveFlags.exchangeRequest = moveExchangeRequest;
                         this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
                         this.gameEvents.untouchableSelectedEvent(eventData);
@@ -1500,9 +1532,9 @@ var Kharbga;
                         this.moveFlags.exchangeRequestDefenderPiece = targetCellId;
                         this.gameEvents.untouchableSelectedEvent(eventData);
                         if (this.moveFlags.exchangeRequestAccepted && this.moveFlags.exchangeRequestAttackerPiece1 != ''
-                            && this.moveFlags.exchangeRequestAttackerPiece2 != '') {
+                            && this.moveFlags.exchangeRequestAttackerPiece2 !== "") {
                             var result = this.ProcessUntouchableTwoExchange(this.moveFlags.exchangeRequestDefenderPiece, this.moveFlags.exchangeRequestAttackerPiece1, this.moveFlags.exchangeRequestAttackerPiece2);
-                            if (result == true) {
+                            if (result === true) {
                                 this.gameEvents.untouchableExchangeCompletedEvent(eventData);
                                 this.moveFlags.reset();
                                 return;
@@ -1513,9 +1545,9 @@ var Kharbga;
             }
             else {
                 if (moveExchangeRequest === false) {
-                    this.moveFlags.exchangeRequestAttackerPiece1 = '';
-                    this.moveFlags.exchangeRequestAttackerPiece2 = '';
-                    this.moveFlags.exchangeRequestDefenderPiece = '';
+                    this.moveFlags.exchangeRequestAttackerPiece1 = "";
+                    this.moveFlags.exchangeRequestAttackerPiece2 = "";
+                    this.moveFlags.exchangeRequestDefenderPiece = "";
                     if (this.moveFlags.exchangeRequest || this.moveFlags.exchangeRequestAccepted) {
                         this.moveFlags.exchangeRequestAccepted = moveExchangeRequest;
                         this.gameEvents.untouchableExchangeCanceledEvent(eventData);
@@ -1527,7 +1559,7 @@ var Kharbga;
                 }
                 else {
                     this.moveFlags.exchangeRequestAccepted = true;
-                    if (this.moveFlags.exchangeRequestAttackerPiece1 != '') {
+                    if (this.moveFlags.exchangeRequestAttackerPiece1 !== "") {
                         this.moveFlags.exchangeRequestAttackerPiece2 = targetCellId;
                         this.gameEvents.untouchableSelectedEvent(eventData);
                     }

@@ -168,8 +168,11 @@
             assert.equal(game.defenderScore, 24);
 
             // make a move until the game is complete
-            while (game.)
+            while (!game.game_over()) {
+                var move = game.moves();
 
+                assert.ok(game.processMove(move), "move processed");
+            }
 
         });
     </script>

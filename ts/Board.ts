@@ -106,20 +106,25 @@ namespace Kharbga {
             return this.cellsById[id] as BoardCell;
         }
 
-
-        IsOccupiedByAttacker(id: string): boolean {
-            let cell = this.getCellById(id);
-            if (cell != null)
-                return cell.isOccupiedByAttacker();
-            else
-                return false;
+        /**
+         * @summary Checks if a given cell is occupied by the attacker
+         * @param id the id of the cell to check
+         * @returns true if a valid cell and occupied by the attacker, false otherwise
+         */
+        public isOccupiedByAttacker(id: string): boolean {
+            let cell: BoardCell = this.getCellById(id);
+            if (cell == null) {return false;}
+            return cell.isOccupiedByAttacker();
         }
-        IsOccupiedByDefender(id: string): boolean {
-            let cell = this.getCellById(id);
-            if (cell != null)
-                return cell.isOccupiedByDefender();
-            else
-                return false;
+        /**
+         * @summary Checks if a given cell is occupied by the defender
+         * @param id the id of the cell to check
+         * @returns true if a valid cell and occupied by the defender, false otherwise
+         */
+        public isOccupiedByDefender(id: string): boolean {
+            let cell: BoardCell = this.getCellById(id);
+            if (cell == null) {return false;}
+            return cell.isOccupiedByDefender();
         }
 
         /**
@@ -128,22 +133,21 @@ namespace Kharbga {
          * @param isAttacker - indicates whether an attacker or a defender piece to set
          * @returns: the setting status code
          * @event:
-         *      -- A piece from either players is placed on the Malha
-         *      -- A piece is placed on an occupied cell
+         *      -- Invalid Move Event: A piece from either players is placed on the Malha
+         *      -- Invalid Move Event: A piece is placed on an occupied cell
          */
-        RecordPlayerSetting(id: string, isAttacker: boolean): PlayerSettingStatus {
-            let cell = this.getCellById(id);
+        public recordPlayerSetting(id: string, isAttacker: boolean): PlayerSettingStatus {
+            let cell: BoardCell = this.getCellById(id);
             if (cell == null) {
                 console.log("invalid cell id passed: %s", id);
 
                 return PlayerSettingStatus.ERR_INVALID_CELL;
             }
-
+            var eventData: BoardEventData;
             if (cell.isMalha()) {
                 if (this.boardEvents != null) {
                     // generate event
-                    //   BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SettingOnMiddleCell, id, string.Empty, string.Empty));
-                    var eventData = new BoardEventData(cell, cell, id, BoardMoveType.SettingOnMiddleCell);
+                    eventData = new BoardEventData(cell, cell, id, BoardMoveType.SettingOnMiddleCell);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
 
@@ -151,8 +155,7 @@ namespace Kharbga {
             }
             if (cell.isOccupied()) {
                 if (this.boardEvents != null) {
-                    //BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SettingOnOccupiedCell, id, string.Empty, string.Empty));
-                    var eventData = new BoardEventData(cell, cell, id, BoardMoveType.SettingOnOccupiedCell);
+                    eventData= new BoardEventData(cell, cell, id, BoardMoveType.SettingOnOccupiedCell);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
 
@@ -175,8 +178,8 @@ namespace Kharbga {
             // can not move a surrounded cell
             if (fromCell.isSurrounded() === true) {
                 if (this.boardEvents != null) {
-                    //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.SelectedCellThatIsSourroundedForMoving, fromCell.ID, toCell.ID, string.Empty));
-                    var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.SelectedCellThatIsSurroundedForMoving);
+                     var eventData: BoardEventData = new BoardEventData(fromCell, toCell, toCell.ID(),
+                        BoardMoveType.SelectedCellThatIsSurroundedForMoving);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
 
@@ -281,38 +284,39 @@ namespace Kharbga {
         }
 
         /**
+         * @summary checks if all players pieces are set
          * @returns true if the setting by the players is complete. Players take turn to set 24 pieces on the board
          */
-        AllPiecesAreSet(): boolean {
-            return this.piecesSetCount == 48;
+        public allPiecesAreSet(): boolean {
+            return this.piecesSetCount === 48;
         }
 
         /**
          * @summary Clears the board from all player pieces.
          */
-        Clear() {
+        clear(): void {
             this.piecesSetCount = 0;
-
-            for (let id in Object.keys(this.cellsById)) {
-                let cell = this.getCellById(id);
-                if (cell != null)
+            for (let id of this._cellIds) {
+                let cell:BoardCell = this.getCellById(id);
+                if (cell != null){
                     cell.clear();
+                }
 
             }
         }
 
         /**
-         * @returns a list of cells occupied by the given player
-         * @param player 
+         * @summary checks the board to identify a given player current positions
+         * @param player - the player to check
+         * @returns a list of ids of the cells occupied by the given player
          */
-        GetPlayerPieces(player: Player): Array<string> {
-            let ret = new Array<string>(24);
-            for (let cellId in Object.keys(this.cellsById)) {
-                let cell = this.getCellById(cellId);
+        GetPlayerPieces(player: Player): string[] {
+            let ret: string[] = new Array<string>(24);
+            for (let cellId of this._cellIds) {
+                let cell: BoardCell = this.getCellById(cellId);
                 if (cell.isOccupiedBy(player)) {
                     ret.push(cell.ID());
                 }
-
             }
             return ret;
         }
@@ -395,9 +399,9 @@ namespace Kharbga {
          * @param from - the from cell
          * @param to -- the to  cell
          */
-        RaiseBoardInvalidMoveEvent(boardMoveType: BoardMoveType, from: BoardCell, to: BoardCell, invalidCellId: string) {
+        RaiseBoardInvalidMoveEvent(boardMoveType: BoardMoveType, from: BoardCell, to: BoardCell, invalidCellId: string): void {
             if (this.boardEvents != null) {
-                var eventData = new BoardEventData(from, to, invalidCellId, boardMoveType);
+                var eventData: BoardEventData = new BoardEventData(from, to, invalidCellId, boardMoveType);
                 this.boardEvents.invalidMoveEvent(eventData);
             }
         }
@@ -413,7 +417,7 @@ namespace Kharbga {
 
         public StillHavePiecesToCapture(fromCell: BoardCell): { status: boolean, possibleMoves: Array<string> } {
             // to do: also return the possible move that could make a capture
-            let moves = new Array<string>();
+            let moves: string[] = new Array<string>();
             let ret = { status: false, possibleMoves: moves };
 
             // 1. look at all possible moves (to adjacent cells)
@@ -421,11 +425,11 @@ namespace Kharbga {
             // 3.    check if opponent pieces could be captured by the move
             // 4.          return true if can capture the opponent piece
             // 5. return false if no capturing moves.
-            let adjCells = fromCell.getAdjacentCells();
+            let adjCells: BoardCell[] = fromCell.getAdjacentCells();
             for (let cell of adjCells) {
-                if (cell.isEmpty() == false)
+                if (cell.isEmpty() === false) {
                     continue;
-
+                }
                 // can move here
                 let toCell = cell;
                 let toCellAjdCells = toCell.getAdjacentCells();
@@ -471,35 +475,34 @@ namespace Kharbga {
         }
 
         /**
-         * Checks the the given player has capturable pieces by the opponent player
+         * @summary Searches the current player positions for pieces that could be captured by opponent player
          * @param player - the player
-         * @param opponent - the opponent player 
+         * @param opponent - the opponent player
+         * @returns a tuple including the search status and a list of ids of cell that could be captured if success
          */
-        public HasCapturablePieces(player: Player, opponent: Player): { status: boolean, capturables: Array<string> } {
+        public hasCapturablePieces(player: Player, opponent: Player): { status: boolean, capturables: string[] } {
             // to do: also return the possible move that could make a capture
-            let capturables = new Array<string>();
+            let capturables: string[] = new Array<string>();
             let ret = { status: false, "capturables": capturables };
 
             for (let cellId of this._cellIds) {
-                let cell = this.getCellById(cellId);
+                let cell: BoardCell = this.getCellById(cellId);
 
-                if (!cell.isOccupiedBy(player))
-                    continue;
+                if (!cell.isOccupiedBy(player)) { continue; }
 
-                if (cell.isSurrounded())
-                    continue;
+                if (cell.isSurrounded()) { continue; }
 
                 // 1. look at all player pieces
                 // 2. for each piece
                 // 3.    check if piece has an adjacent empty cell
-                // 4.    for each adjacent empty cell 
-                // 5.       check if there is an adjacent opponent cell that could move to it    
+                // 4.    for each adjacent empty cell
+                // 5.       check if there is an adjacent opponent cell that could move to it
                 // 6.       check if the opposite adjacent cell is an opponent cell
                 // 7. Indicate that this piece is capturable and add to the list of capturables
 
                 // check Left
                 if (cell.Left() != null && cell.Left().isEmpty()) {
-                    if (cell.Right() != null && cell.Right().isOccupiedBy(opponent) == false) {
+                    if (cell.Right() != null && cell.Right().isOccupiedBy(opponent) === false) {
                         if (cell.Left().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                             ret.status = true;
@@ -508,7 +511,7 @@ namespace Kharbga {
                 }
                 // check Right
                 if (cell.Right() != null && cell.Right().isEmpty()) {
-                    if (cell.Left() != null && cell.Left().isOccupiedBy(opponent) == false) {
+                    if (cell.Left() != null && cell.Left().isOccupiedBy(opponent) === false) {
                         if (cell.Right().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                         }
@@ -516,7 +519,7 @@ namespace Kharbga {
                 }
                 // check up
                 if (cell.Above() != null && cell.Above().isEmpty()) {
-                    if (cell.Below() != null && cell.Below().isOccupiedBy(opponent) == false) {
+                    if (cell.Below() != null && cell.Below().isOccupiedBy(opponent) === false) {
                         if (cell.Above().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                         }
@@ -524,7 +527,7 @@ namespace Kharbga {
                 }
                 // check down
                 if (cell.Below() != null && cell.Below().isEmpty()) {
-                    if (cell.Above() != null && cell.Above().isOccupiedBy(opponent) == false) {
+                    if (cell.Above() != null && cell.Above().isOccupiedBy(opponent) === false) {
                         if (cell.Below().anyAdjacentOccupiedBy(opponent)) {
                             capturables.push(cellId);
                         }
@@ -541,8 +544,8 @@ namespace Kharbga {
          * @param player the player occupying the cell
          * @param cellId the cell id
          */
-        public IsCapturable(player: Player, cellId: string): boolean {
-            let cell = this.getCellById(cellId);
+        public isCapturable(player: Player, cellId: string): boolean {
+            let cell:BoardCell = this.getCellById(cellId);
 
             if (cell == null) {
                 console.log("IsCapturable - Invalid cell Id : %s", cellId);
@@ -552,30 +555,28 @@ namespace Kharbga {
         }
 
         /**
-         * @summary Records a Defender exchange. The defender's untouchable piece is twice the value of the attacker's piece 
-         * @param untouchablePieceId
-         * @param attackerPiece1Id
-         * @param attackerPiece2Id
+         * @summary Records a Defender exchange. The defender's untouchable piece is twice the value of the attacker's piece
+         * @param untouchablePieceId the defender piece to exchange
+         * @param attackerPiece1Id the attacker 1st piece
+         * @param attackerPiece2Id the attacker 2nd piece
+         * @returns true of successful, false otherwise
          */
-        RecordExchange(untouchablePieceId: string, attackerPiece1Id: string, attackerPiece2Id: string): boolean {
-            let uc = this.getCellById(untouchablePieceId);
-            if (uc == null)
-                return false;
+        public recordExchange(untouchablePieceId: string, attackerPiece1Id: string, attackerPiece2Id: string): boolean {
+            let uc: BoardCell = this.getCellById(untouchablePieceId);
+            if (uc == null) { return false; }
 
-            let ac1 = this.getCellById(attackerPiece1Id);
-            if (ac1 == null)
-                return false;
+            let ac1: BoardCell = this.getCellById(attackerPiece1Id);
+            if (ac1 == null) { return false; }
 
-            let ac2 = this.getCellById(attackerPiece2Id);
+            let ac2: BoardCell = this.getCellById(attackerPiece2Id);
 
-            if (ac2 == null)
-                return false;
+            if (ac2 == null) { return false;}
 
-            if (ac1 == ac2) {
-                // need to be two different pieces
+            if (ac1 === ac2) { // need to be two different piece
+                // need to raise an event here
                 return false;
             }
-            let eventData = new BoardEventData(uc, uc, uc.ID(), BoardMoveType.DefenderPieceExchanged);
+            let eventData: BoardEventData = new BoardEventData(uc, uc, uc.ID(), BoardMoveType.DefenderPieceExchanged);
             uc.clear();
             this.boardEvents.exchangedPieceEvent(eventData);
             ac1.clear();
@@ -585,7 +586,6 @@ namespace Kharbga {
             eventData = new BoardEventData(ac2, ac2, ac2.ID(), BoardMoveType.DefenderPieceExchanged);
             this.boardEvents.exchangedPieceEvent(eventData);
             return true;
-
         }
 
 
@@ -593,7 +593,7 @@ namespace Kharbga {
          * @summary Searches for all possible settings for the game
          * @returns all possible settings for the game at this point
          */
-        public GetPossibleSettings(): string[] {
+        public getPossibleSettings(): string[] {
             let ret: string[] = new Array<string>();
 
 
