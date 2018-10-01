@@ -49,49 +49,7 @@ var KharbgaApp = function () {
     };
   
     // defines the local game state 
-    var gameState = {
-        id: "",
-        attackerName: "",
-        defenderName: "",
-        status: 0,  // see Kharbga.GameStatus
-        state: 0,   // see Kharbga.GameState
-        moves: [],
-        attacker: null,
-        defender: null,    
-        players : [],
-        reset: function(){
-            user.reset();
-            
-            this.attackerName = "";
-            this.defenderName = "";
-            this.moves= [];
-            this.status = 0;
-            this.state = 0;
-            this.attacker = null;
-            this.defender = null;
-            this.players = [];
-
-        }, 
-        update: function(gameInfo) {
-            this.id = gameInfo.id;
-            this.attackerName = gameInfo.attackerName;
-            this.defenderName = gameInfo.defenderName;
-            this.moves= [];
-            this.moves.push(gameInfo.moves);
-            this.status = gameInfo.status;
-            this.state = gameInfo.state;
-            this.attacker = gameInfo.attacker;
-            this.defender = gameInfo.defender;
-            this.players = [this.attacker,this.defender];       
-        },
-        getComputerPlayer: function(){
-            if (this.attacker !== null && this.attacker.isSystem === true)
-                return this.attacker;
-            if (this.defender !== null && this.defender.isSystem === true)
-                return this.defender;
-            return null;
-        }
-    };
+    var gameState = new Kharbga.GameInfo();
 
     // the client state
     var appClientState = {
@@ -2346,7 +2304,7 @@ var KharbgaApp = function () {
 
     /**
      * Updates the item status in the games list
-     * @param {any} gameInfo - the game from the server to use to update the list
+     * @param {Kharbga.GameInfo} gameInfo - the game from the server to use to update the list
      */
     function updateGameInGameList(gameInfo) {
         $('#' + gameInfo.id).remove();
@@ -2414,7 +2372,7 @@ var KharbgaApp = function () {
 
     /**
      * Selects the given game in the list
-     * @param {any} gameId - the game id
+     * @param {string} gameId - the game id
      */
     function selectActiveGameId(gameId) {
         if (typeof gameId == undefined || gameId === "")

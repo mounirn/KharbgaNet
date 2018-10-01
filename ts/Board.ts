@@ -24,7 +24,7 @@ namespace Kharbga {
                 for (let c: number = 0; c < 7; c++) {
                     let cell: BoardCell = new BoardCell(this, r, c);
                     this.cells[r][c] = cell;
-                    this.cellsById[cell.ID()] = cell;
+                    this.cellsById[cell.id] = cell;
                 }
             }
             this._cellIds = Object.keys(this.cellsById);
@@ -178,7 +178,7 @@ namespace Kharbga {
             // can not move a surrounded cell
             if (fromCell.isSurrounded() === true) {
                 if (this.boardEvents != null) {
-                     var eventData: BoardEventData = new BoardEventData(fromCell, toCell, toCell.ID(),
+                     var eventData: BoardEventData = new BoardEventData(fromCell, toCell, toCell.id,
                         BoardMoveType.SelectedCellThatIsSurroundedForMoving);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
@@ -190,7 +190,7 @@ namespace Kharbga {
             if (toCell.isOccupied() === true) {
                 if (this.boardEvents != null) {
                     //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToAnOccupiedCell, fromCell.ID, toCell.ID, string.Empty));
-                    var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToAnOccupiedCell);
+                    var eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovingToAnOccupiedCell);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
 
@@ -200,7 +200,7 @@ namespace Kharbga {
             // the To cell must be adjacent to the From Cell
             if (fromCell.isAdjacentTo(toCell) === false) {
                 if (this.boardEvents != null) {
-                    var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovingToNotAdjacentCell);
+                    var eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovingToNotAdjacentCell);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
 
@@ -211,7 +211,7 @@ namespace Kharbga {
             fromCell.clear();
 
             if (this.boardEvents != null) {
-                var eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
+                var eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovedToAValidCell);
                 this.boardEvents.validMoveEvent(eventData);
             }
             //
@@ -233,7 +233,7 @@ namespace Kharbga {
             //1. Get all cells adjacent and occupied by the opponent (opposite color)
             //2. For each of these opponent cells, check if is "sandwiched" between the To cell type
             let toCellAdjacentCells = toCell.getAdjacentCells();
-            let eventData = new BoardEventData(fromCell, toCell, toCell.ID(), BoardMoveType.MovedToAValidCell);
+            let eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovedToAValidCell);
 
             for (let adjCell of toCellAdjacentCells) {
                 if (adjCell.isEmpty() === true)  // not occupied
@@ -246,7 +246,7 @@ namespace Kharbga {
                 if (toCell.Above() === adjCell) { // checking up
                     if (adjCell.Above() != null && adjCell.Above().State() === toCell.State()) {
                         adjCell.clear(); // Remove from the player pieces
-                        eventData.targetCellId = adjCell.ID();
+                        eventData.targetCellId = adjCell.id;
                         if (this.boardEvents != null)
                             this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
@@ -255,7 +255,7 @@ namespace Kharbga {
                 else if (toCell.Below() == adjCell) {// checking down     
                     if (adjCell.Below() != null && adjCell.Below().State() === toCell.State()) {
                         adjCell.clear();
-                        eventData.targetCellId = adjCell.ID();
+                        eventData.targetCellId = adjCell.id;
                         if (this.boardEvents != null)
                             this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
@@ -264,7 +264,7 @@ namespace Kharbga {
                 else if (toCell.Left() == adjCell) { // checking left;     
                     if (adjCell.Left() != null && adjCell.Left().State() === toCell.State()) {
                         adjCell.clear();
-                        eventData.targetCellId = adjCell.ID();
+                        eventData.targetCellId = adjCell.id;
                         if (this.boardEvents != null)
                             this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
@@ -273,7 +273,7 @@ namespace Kharbga {
                 else if (toCell.Right() == adjCell) { // checking right
                     if (adjCell.Right() != null && adjCell.Right().State() === toCell.State()) {
                         adjCell.clear();
-                        eventData.targetCellId = adjCell.ID();
+                        eventData.targetCellId = adjCell.id;
                         if (this.boardEvents != null)
                             this.boardEvents.capturedPieceEvent(eventData);
                         ret++;
@@ -315,7 +315,7 @@ namespace Kharbga {
             for (let cellId of this._cellIds) {
                 let cell: BoardCell = this.getCellById(cellId);
                 if (cell.isOccupiedBy(player)) {
-                    ret.push(cell.ID());
+                    ret.push(cell.id);
                 }
             }
             return ret;
@@ -342,7 +342,7 @@ namespace Kharbga {
                     let adjacentCells: BoardCell[] = fromCell.getAdjacentCells();
                     for (let toCell of adjacentCells) {
                         if (toCell.isEmpty()) {
-                            ret.push(new GameMove(fromCell.ID(), toCell.ID(), player));
+                            ret.push(new GameMove(fromCell.id, toCell.id, player));
                         }
                     }
 
@@ -378,7 +378,7 @@ namespace Kharbga {
                         let adjacentCells: BoardCell[] = fromCell.getAdjacentCells();
                         for (let toCell of adjacentCells) {
                             if (toCell.isEmpty()) {
-                                ret.push(new GameMove(fromCell.ID(), toCell.ID(), player));
+                                ret.push(new GameMove(fromCell.id, toCell.id, player));
                             }
                         }
 
@@ -445,28 +445,28 @@ namespace Kharbga {
                     {
                         if (adjCell.Above() != null && adjCell.Above().State() === fromCell.State()) {
                             ret.status = true;
-                            ret.possibleMoves.push(toCell.ID());
+                            ret.possibleMoves.push(toCell.id);
                         }
                     }
                     else if (toCell.Below() === adjCell) // checking down
                     {
                         if (adjCell.Below() != null && adjCell.Below().State() == fromCell.State()) {
                             ret.status = true;
-                            ret.possibleMoves.push(toCell.ID());
+                            ret.possibleMoves.push(toCell.id);
                         }
                     }
                     else if (toCell.Left() == adjCell) // checking left;
                     {
                         if (adjCell.Left() != null && adjCell.Left().State() == fromCell.State()) {
                             ret.status = true;
-                            ret.possibleMoves.push(toCell.ID());
+                            ret.possibleMoves.push(toCell.id);
                         }
                     }
                     else if (toCell.Right() == adjCell) // checking right
                     {
                         if (adjCell.Right() != null && adjCell.Right().State() == fromCell.State()) {
                             ret.status = true;
-                            ret.possibleMoves.push(toCell.ID());
+                            ret.possibleMoves.push(toCell.id);
                         }
                     }
                 }
@@ -576,14 +576,14 @@ namespace Kharbga {
                 // need to raise an event here
                 return false;
             }
-            let eventData: BoardEventData = new BoardEventData(uc, uc, uc.ID(), BoardMoveType.DefenderPieceExchanged);
+            let eventData: BoardEventData = new BoardEventData(uc, uc, uc.id, BoardMoveType.DefenderPieceExchanged);
             uc.clear();
             this.boardEvents.exchangedPieceEvent(eventData);
             ac1.clear();
-            eventData = new BoardEventData(ac1, ac1, ac1.ID(), BoardMoveType.DefenderPieceExchanged);
+            eventData = new BoardEventData(ac1, ac1, ac1.id, BoardMoveType.DefenderPieceExchanged);
             this.boardEvents.exchangedPieceEvent(eventData);
             ac2.clear();
-            eventData = new BoardEventData(ac2, ac2, ac2.ID(), BoardMoveType.DefenderPieceExchanged);
+            eventData = new BoardEventData(ac2, ac2, ac2.id, BoardMoveType.DefenderPieceExchanged);
             this.boardEvents.exchangedPieceEvent(eventData);
             return true;
         }

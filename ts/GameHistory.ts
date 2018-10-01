@@ -16,7 +16,7 @@ namespace Kharbga {
          * @param settingCellId
          */
         public addSetting(player: Player, settingCellId: string): void {
-            let move: string = player.isAttacker() ? "A" : "D" + ":" + settingCellId;
+            let move: string = player.isAttacker ? "A" : "D" + ":" + settingCellId;
             this.settings.push(move);
 
         }
@@ -29,10 +29,10 @@ namespace Kharbga {
          */
 
         public addMove(player: Player, fromCellId: string, toCellId: string): void {
-            let move: string = player.isAttacker() ? "A" : "D" + ":" + fromCellId + "-" + toCellId;
+            let move: string = player.isAttacker ? "A" : "D" + ":" + fromCellId + "-" + toCellId;
             this.moves.push(move);
         }
- 
+
         /**
          * @summary resets the game history
          */

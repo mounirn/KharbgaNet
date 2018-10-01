@@ -145,7 +145,7 @@ namespace Kharbga {
         public moves_that_save(from: string = ""): GameMove[] {
 
             let result = this.board.hasCapturablePieces(this.currentPlayer,
-                this.currentPlayer.isAttacker() ? this.defender : this.attacker);
+                this.currentPlayer.isAttacker ? this.defender : this.attacker);
 
             let tempMoves: GameMove[] = this.board.getPossibleMoves(this.currentPlayer, from);
             let ret: GameMove[] = new Array<GameMove>();
@@ -158,7 +158,7 @@ namespace Kharbga {
 
                 var moveResult = tempBoard.RecordPlayerMove(fromCell, toCell);
                 let result2 = tempBoard.hasCapturablePieces(this.currentPlayer,
-                    this.currentPlayer.isAttacker() ? this.defender : this.attacker);
+                    this.currentPlayer.isAttacker ? this.defender : this.attacker);
                 if (result2.capturables.length < result.capturables.length) {
                     // good move?
                     ret.push(move);
@@ -375,7 +375,7 @@ namespace Kharbga {
          * @param delayAfterEachMove -- delay after making the move in msec
          * @returns true if successful, false otherwise
          */
-        public setupWith(serverGameState: ServerGameState, delayAfterEachMove: number = 0): boolean {
+        public setupWith(serverGameState: GameInfo, delayAfterEachMove: number = 0): boolean {
             let ret:boolean = false;
 
             this.init();
@@ -446,7 +446,7 @@ namespace Kharbga {
          */
         public turn(): string {
             if (this.currentPlayer == null) {return ""; }
-            if (this.currentPlayer.isAttacker()) { return "a";} else {return "d";}
+            if (this.currentPlayer.isAttacker) { return "a";} else {return "d";}
         }
 
         /**
@@ -623,7 +623,7 @@ namespace Kharbga {
             // check resigned with the move
             if (this.moveFlags.resigned) {
                 this.processCurrentPlayerAbandoned();
-                if (eventData.player.isAttacker()) {
+                if (eventData.player.isAttacker) {
                     //
                     this.winner = this.defender;
                     this.state = GameState.AttackerAbandoned;
@@ -665,7 +665,7 @@ namespace Kharbga {
             }
             eventData.from = fromCell;
             eventData.to = toCell;
-            eventData.targetCellId = toCell.ID();
+            eventData.targetCellId = toCell.id;
             // de-selection move/canceling move from fromCell (could indicate piece exchange requests)
             if (fromCell === toCell) {
                 this.gameEvents.newMoveCanceledEvent(eventData);
@@ -674,13 +674,13 @@ namespace Kharbga {
 
             let result = this.board.RecordPlayerMove(fromCell, toCell);
             if (result.status === PlayerMoveStatus.OK) {
-                let move: GameMove = new GameMove(fromCell.ID(), toCell.ID(), this.currentPlayer);
-                this.history.addMove(this.currentPlayer, fromCell.ID(), toCell.ID());
+                let move: GameMove = new GameMove(fromCell.id, toCell.id, this.currentPlayer);
+                this.history.addMove(this.currentPlayer, fromCell.id, toCell.id);
                 ret = true;
 
                 // check if current player is defender confirming an requesting exchange request with this move
                 this.checkUntouchableMoves(toCellId, exchangeRequest,eventData);
-                if (this.currentPlayer.isAttacker()) {
+                if (this.currentPlayer.isAttacker) {
                     this.attackerMove++;
                 } else {
                     this.defenderMove++;
@@ -700,7 +700,7 @@ namespace Kharbga {
                     this.gameEvents.newMoveCompletedEvent(eventData);
                     this.checkPlayerTurn();
                 } else {   // update the scores
-                    if (this.currentPlayer.isAttacker()) {
+                    if (this.currentPlayer.isAttacker) {
                         this.defenderScore -= result.capturedPieces;
                     } else {
                         this.attackerScore -= result.capturedPieces;
@@ -715,8 +715,8 @@ namespace Kharbga {
                         this.moveSourceRequiredAfterCapture = "";
                         this.checkPlayerTurn();
                     } else {
-                        eventData.targetCellId = toCell.ID();
-                        this.moveSourceRequiredAfterCapture = toCell.ID();
+                        eventData.targetCellId = toCell.id;
+                        this.moveSourceRequiredAfterCapture = toCell.id;
                         this.moveDestinationsPossibleCapture = stillHavePiecesToCaptureResult.possibleMoves;
                         // add event that player should continue to play since they could still capture
                         this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData);
@@ -766,7 +766,7 @@ namespace Kharbga {
          * @summary Change players turns after a move
          */
         private checkPlayerTurn(): void {
-            if (this.currentPlayer.isAttacker()) {
+            if (this.currentPlayer.isAttacker) {
                 this.currentPlayer = this.defender;
             } else {
                 this.currentPlayer = this.attacker;
@@ -779,7 +779,7 @@ namespace Kharbga {
             // check if the player can actually move
             if (this.state === GameState.Moving) {
                 if (this.currentPlayerIsBlocked() === true) {
-                    if (this.currentPlayer.isAttacker()) {
+                    if (this.currentPlayer.isAttacker) {
                         this.state = GameState.AttackerCanNotMove;   // after the first move
                     } else {
                         this.state = GameState.DefenderCanNotMove;
@@ -855,7 +855,7 @@ namespace Kharbga {
             // raise an event a new player move
             if (bCanPass) {
                 // add check to see if it is OK for the player to pass
-                if (this.currentPlayer.isAttacker()) {
+                if (this.currentPlayer.isAttacker) {
                     this.currentPlayer = this.defender;
                 } else {
                     this.currentPlayer = this.attacker;
@@ -902,13 +902,13 @@ namespace Kharbga {
                 return false;
             }
 
-            let recorded: PlayerSettingStatus = this.board.recordPlayerSetting(cellId, this.getCurrentPlayer().isAttacker());
+            let recorded: PlayerSettingStatus = this.board.recordPlayerSetting(cellId, this.getCurrentPlayer().isAttacker);
             if (recorded === PlayerSettingStatus.OK) {
                 let cell: BoardCell = this.board.getCellById(cellId);
                 this.numberOfSettingsAllowed--;
-                this.history.addSetting(this.currentPlayer, cell.ID());
+                this.history.addSetting(this.currentPlayer, cell.id);
 
-                if (this.getCurrentPlayer().isAttacker() === true) {
+                if (this.getCurrentPlayer().isAttacker === true) {
                     this.attackerScore++;
                 } else {
                     this.defenderScore++;
@@ -916,7 +916,7 @@ namespace Kharbga {
                 var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
                 eventData.from = cell;
                 eventData.to = cell;
-                eventData.targetCellId = cell.ID();
+                eventData.targetCellId = cell.id;
                 this.gameEvents.newSettingCompletedEvent(eventData);
 
                 if (this.numberOfSettingsAllowed === 0) {
@@ -978,7 +978,7 @@ namespace Kharbga {
          */
         private checkUntouchableMoves(targetCellId: string, moveExchangeRequest: boolean, eventData: GameEventData): void {
             // check player
-            if (this.currentPlayer.isDefender()) {
+            if (this.currentPlayer.isAttacker === false) {
                 // case defender turned off exchange request
                 if (moveExchangeRequest === false) {
                     this.moveFlags.exchangeRequestDefenderPiece = "";
