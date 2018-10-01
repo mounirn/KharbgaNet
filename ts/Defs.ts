@@ -32,7 +32,7 @@ namespace Kharbga {
         ERR_OCCUPIED
     }
     /**
-     * @summary defines the the possible returns status when player makes a move 
+     * @summary defines the the possible returns status when player makes a move
      */
     export enum PlayerMoveStatus {
         OK,
@@ -114,31 +114,33 @@ namespace Kharbga {
          */
         DefenderCanNotMove,
 
-        /*  @summary - This state happens after the first move by the defender.
-         *  It is a legal state and the attacker loses the game
-         *  in most cases. In this legal case, the defender can freely move their pieces until the attacker is unblocked and is able to play. 
+        /* @summary - This state happens after the first move by the defender.
+         * It is a legal state and the attacker loses the game
+         * in most cases. In this legal case, the defender can freely move their pieces until the
+         *  attacker is unblocked and is able to play.
          */
-         AttackerCanNotMove,
+        AttackerCanNotMove,
 
-        /// After completing setting, this game goes to this state for players to start the first moves
+        /* After completing setting, this game goes to this state for players to start the first moves
+         */
         Moving,
 
-        /// In this state, the defender is able to freely move a piece in a protected area unreachable by 
-        /// the attacker and is demanding exchanges (one piece of the defender for two pieces of the attacker). An  attacker's 
-        /// piece must be able to freely move in order to be able to participate in an exchange. 
+        // in this state, the defender is able to freely move a piece in a protected area unreachable by
+        // the attacker and is demanding exchanges (one piece of the defender for two pieces of the attacker). An  attacker's 
+        // piece must be able to freely move in order to be able to participate in an exchange.
         DefenderMovingUntouchable,
 
-        /// The attacker abandons play and loses the game when they can not capture all of the defender's pieces. 
-        /// The defender's untouchable pieces are twice the value of the attacker's pieces. 
+        // the attacker abandons play and loses the game when they can not capture all of the defender's pieces. 
+        // the defender's untouchable pieces are twice the value of the attacker's pieces.
         AttackerAbandoned,
 
-        /// The defender abandons play and loses the game when all their pieces are captured 
+        // the defender abandons play and loses the game when all their pieces are captured
         DefenderAbandoned,
 
-        /// Defender lost all pieces.
+        // defender lost all pieces.
         DefenderLostAllPieces,
 
-        /// Attacker lost all pieces.
+        // attacker lost all pieces.
         AttackerLostAllPieces,
 
         WinnerDeclared,
@@ -148,39 +150,26 @@ namespace Kharbga {
 
     }
 
-
     /**
-    * @summary - Defines various game status as realting to the network/server
-    */
+     * @summary - Defines various game status as relating to the network/server
+     */
     export enum GameStatus {
-        /// @summary
-        /// The game after just being created by one player
-        /// </summary>
+        // the game after just being created by one player
         Created,
 
-        /// <summary>
-        /// After it gets joined by another player or system
-        /// </summary>
+        // after it gets joined by another player or system
         Joined,
 
-        /// <summary>
-        /// Active between two players after the first attacker's move
-        /// </summary>
+        // active between two players after the first attacker's move
         Active,
 
-        /// <summary>
-        /// Completed a winner was determined
-        /// </summary>
+        // cCompleted a winner was determined
         Completed,
 
-        /// <summary>
-        /// aborted by a user
-        /// </summary>
+        // aborted by a user
         Aborted,
 
-        /// <summary>
-        /// one of the user disconnected
-        /// </summary>
+        // one of the user disconnected
         Disconnected
     }
 
@@ -195,7 +184,6 @@ namespace Kharbga {
         DefenderRequestTwoAcceptedByAttacker
     }
 
-    
 
     /**
      *  @summary Represents the piece that players use to make their moves on the board
