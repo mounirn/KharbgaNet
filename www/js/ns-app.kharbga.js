@@ -1332,7 +1332,7 @@ var KharbgaApp = function () {
             return;
         }
         if (aGame.game_over() && aGame.winner != null) {
-            if (aGame.winner.isAttacker()) {
+            if (aGame.winner.isAttacker) {
                 $('#attacker-thinking').html("WON");
                 $('#defender-thinking').html("LOST");
             } else {
@@ -1412,7 +1412,7 @@ var KharbgaApp = function () {
                 });
         }
         else{
-            // Create a new game 
+            // Create a new game locally
             gameState.reset();
             gameState.id = createGameId();
             user.reset();

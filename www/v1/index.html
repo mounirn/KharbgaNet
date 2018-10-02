@@ -10,6 +10,7 @@
     <!-- Compressed CSS -->
     <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/kharbga.css" />
+    <link rel="stylesheet" href="../css/site.css">
 </head>
 
 <body>
@@ -27,7 +28,7 @@
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
                         <li class="active dropdown"><a href="#play">Play</a></li>
-                        <li><a href="#">New</a></li>
+                        <li><a href="#play">New</a></li>
                         <li><a href="#rules" data-toggle="modal" data-target="#rulesModal">Rules</a></li>
 
                     </ul>
@@ -43,8 +44,6 @@
         <div id="main-message" class=""></div>
         <ul id="main-tabs" class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#welcome">Welcome</a></li>
-            <li><a data-toggle="tab" href="#currentGame">Play</a></li>
-            <li><a data-toggle="tab" href="#playOptions">Options</a></li>
             <li><a data-toggle="tab" href="#gameState">Game State</a></li>
             <li><a data-toggle="tab" href="#activeGames">Open Games</a></li>
             <li><a data-toggle="tab" href="#account">My Account</a></li>
@@ -62,185 +61,31 @@
                 <img src="../img/players.png" title="Kharbga played in the desert of North Africa">
                 <p><strong>The game played in the desert</strong></p>
             </div>
-            <div id="currentGame" class="tab-pane fade">
-                <div class="row">
-                    <div class="col-sm-6 col-md-6 col-lg-6">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                                    New Game <span class="caret"></span>
-                                </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
-                                <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
-                                <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against system</a></li>
-                                <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against system</a></li>
-                            </ul>
-                        </div>
-                        <div class="panel panel-success">
-                            <div class="panel-heading">
-                                Current Game ID: <span id="current-game-id"></span>
-                                <span id="current-game-status" class="badge pull-right"></span>
-                            </div>
-                            <div class="panel-body">
-                                <div id="message" class=""></div>
-                                <table class="table table-striped ">
-                                    <thead>
-                                        <tr>
-                                            <th>Attacker</th>
-                                            <th></th>
-                                            <th>Defender</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tr>
-                                        <td>Score: </td>
-                                        <td><span id="attacker_score" class="badge"></span> </td>
-                                        <td>Score: </td>
-                                        <td><span id="defender_score" class="badge"> </span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Settings: </td>
-                                        <td> <select id="attackerSettings"> </select></td>
-                                        <td>Settings: </td>
-                                        <td><select id="defenderSettings"> </select></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Moves: </td>
-                                        <td><select id="attackerMoves"> </select> </td>
-                                        <td>Moves: </td>
-                                        <td><select id="defenderMoves"> </select></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
 
-                                            <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game Info" /><br />
-
-                                        </td>
-                                    </tr>
-
-                                </table>
-                            </div>
-                            <div class="panel panel-info">
-                                <div class="panel-heading">Actions and Player Move Flags</div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <input type="checkbox" id="abandonCheckbox"><strong> Abandon</strong>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <input type="checkbox" id="exchangeRequestCheckbox"><strong> Exchange&nbsp;Request:</strong>
-                                        </div>
-
-                                        <div class="col-sm-3">
-                                            <span id="exchangeRequestDefenderPiece" class="badge"></span>
-                                        </div>
-
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox">
-                                            <strong>
-                                                        Exchange&nbsp;Request&nbsp;Accepted:
-                                                    </strong>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <span id="exchangeRequestAttackerPiece1" class="badge"></span>
-                                            <span id="exchangeRequestAttackerPiece2" class="badge"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-6 col-lg-6 ">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <span class="pull-left"> Board - Turn:  </span> &nbsp; &nbsp;
-                                <span id="player-turn" class="badge"></span> &nbsp; &nbsp;
-
-                                <span id="state" class="badge"></span>
-                                <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">
-
-                                    <span class="glyphicon glyphicon-refresh"></span> Flip
-                                </a>
-
-
-                            </div>
-                            <div class="panel-body text-center">
-                                <!-- The Board -->
-                                <div id="board" style="min-width:300px;width:80%"></div>
-                            </div>
-                            <div class="panel-footer">
-                                <div class="form-group">
-                                    <label for="usrMessage">Message:</label>
-                                    <input type="text" class="form-control" id="move-message">
-                                    <button id="postMessageBtn" type="submit" class="btn btn-default">Post</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="playOptions" class="tab-pane fade">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        Settings
-                    </div>
-                    <div class="panel-body">
-                        <p>
-                            <input id="use-server-checkbox" type="checkbox" /> Use Server
-                            <input id="play-on-same-computer" type="checkbox" />Both players play on this board
-                        </p>
-                    </div>
-                </div>
-
-                <div class="panel panel-info">
-                    <div class="panel-heading"><strong>App Client State</strong>
-                        <div class="pull-right">
-                            <a href="#" id="app-state-link" value="Refresh">
-                                <span class="glyphicon glyphicon-refresh"></span> Refresh
-                            </a>
-                        </div>
-
-                    </div>
-                    <div class="panel-body">
-                        <div id="app-state-message"> </div>
-                        <table id="app-state-table" class="table table-striped">
-                            <tbody id="app-state-table-body">
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
             <div id="gameState" class="tab-pane fade">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <p class="text-success"> Last Action: </p>
-                    </div>
-                    <div class="col-sm-9">
-                        <span id="gameMove" class="badge"></span>
-                    </div>
-                </div>
-                <p>FEN: <span id="fen" class="badge badge-success"></span></p>
-
-                <!-- for testing only -->
-                <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
-                <div id="game-moves-history"></div>
-
                 <div class="panel panel-info">
-                    <div class="panel-heading"><strong>Game State</strong>
+                    <div class="panel-heading"><strong>Active Game State</strong>
                         <div class="pull-right">
                             <a href="#" id="game-state-link" value="Refresh">
                                 <span class="glyphicon glyphicon-refresh"></span> Refresh
                             </a>
                         </div>
-
                     </div>
                     <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="text-success"> Last Action: </p>
+                            </div>
+                            <div class="col-sm-9">
+                                <span id="gameMove" class="badge"></span>
+                            </div>
+                        </div>
+                        <p>FEN: <span id="fen" class="badge badge-success"></span></p>
+
+                        <!-- for testing only -->
+                        <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
+                        <strong>Current Game Moves</strong>
+                        <div id="game-moves-history"></div>
                         <div id="game-state-message"> </div>
                         <table id="game-state-table" class="table table-striped">
                             <tbody id="game-state-table-body">
@@ -470,6 +315,36 @@
                         </div>
                     </div>
                 </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Settings
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <input id="use-server-checkbox" type="checkbox" /> Use Server
+                            <input id="play-on-same-computer" type="checkbox" />Both players play on this board
+                        </p>
+                    </div>
+                </div>
+
+                <div class="panel panel-info">
+                    <div class="panel-heading"><strong>App Client State</strong>
+                        <div class="pull-right">
+                            <a href="#" id="app-state-link" value="Refresh">
+                                <span class="glyphicon glyphicon-refresh"></span> Refresh
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="panel-body">
+                        <div id="app-state-message"> </div>
+                        <table id="app-state-table" class="table table-striped">
+                            <tbody id="app-state-table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div id="about" class="tab-pane fade">
                 <div class="panel panel-info">
@@ -492,6 +367,128 @@
                 </div>
             </div>
         </div>
+        <div id="currentGame" class="">
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                New Game <span class="caret"></span>
+                            </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
+                            <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
+                            <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against system</a></li>
+                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against system</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            Current Game ID: <span id="current-game-id"></span>
+                            <span id="current-game-status" class="badge pull-right"></span>
+                        </div>
+                        <div class="panel-body">
+
+                            <table class="table table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th>Attacker</th>
+                                        <th></th>
+                                        <th>Defender</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td>Score: </td>
+                                    <td><span id="attacker_score" class="badge"></span> </td>
+                                    <td>Score: </td>
+                                    <td><span id="defender_score" class="badge"> </span> </td>
+                                </tr>
+                                <tr>
+                                    <td>Settings: </td>
+                                    <td> <select id="attackerSettings"> </select></td>
+                                    <td>Settings: </td>
+                                    <td><select id="defenderSettings"> </select></td>
+                                </tr>
+                                <tr>
+                                    <td>Moves: </td>
+                                    <td><select id="attackerMoves"> </select> </td>
+                                    <td>Moves: </td>
+                                    <td><select id="defenderMoves"> </select></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+
+                                        <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game Info" /><br />
+
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Actions and Player Move Flags</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <input type="checkbox" id="abandonCheckbox"><strong> Abandon</strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <input type="checkbox" id="exchangeRequestCheckbox"><strong> Exchange&nbsp;Request:</strong>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <span id="exchangeRequestDefenderPiece" class="badge"></span>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox">
+                                        <strong>
+                                                    Exchange&nbsp;Request&nbsp;Accepted:
+                                                </strong>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span id="exchangeRequestAttackerPiece1" class="badge"></span>
+                                        <span id="exchangeRequestAttackerPiece2" class="badge"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <span class="pull-left"> Board - Turn:  </span> &nbsp; &nbsp;
+                            <span id="player-turn" class="badge"></span> &nbsp; &nbsp;
+
+                            <span id="state" class="badge"></span>
+                            <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">
+
+                                <span class="glyphicon glyphicon-refresh"></span> Flip
+                            </a>
+
+
+                        </div>
+                        <div class="panel-body text-center">
+                            <!-- The Board -->
+                            <div id="board" style="min-width:300px;width:80%"></div>
+                            <div id="message" class=""></div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="form-group">
+                                <label for="usrMessage">Message:</label>
+                                <input type="text" class="form-control" id="move-message">
+                                <button id="postMessageBtn" type="submit" class="btn btn-default">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Modal Dialogs-->
     <div id="rulesModal" class="modal fade" role="dialog">
@@ -506,6 +503,25 @@
                     <iframe src="../html/rules.html" style="width:100%;min-height:500px;overflow-y:scroll"></iframe>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="game-over" class="modal fade gameOver" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title text-center">GAME OVER</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center text-info text-center"><strong><span id="game-players"></span></strong></p>
+                    <p class="text-center text-success">Winner is: <span id="game-winner"></span></p>
+                    <p class="text-center text-success"><span id="game-result"></span></p>
+                    <p class="text-center text-info">Final Score: <span id="game-score"></span></p>
+                </div>
+                <div class="modal-footer text-center">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>

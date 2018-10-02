@@ -160,7 +160,7 @@ namespace Kharbga{
             // on the same row forward
             if (this.col + 1 <= 6) {
                 this.right = board.getCell(this.row, this.col + 1);
-                if (this.right != null){
+                if (this.right != null) {
                     this.listAdjacentCells.push(this.right);
                 }
             }
@@ -352,7 +352,7 @@ namespace Kharbga{
             cell = this.Right();
             while (cell != null) {
                 if (!cell.isEmpty()) {
-                    if (cell.isOccupiedBy(player)){
+                    if (cell.isOccupiedBy(player)) {
                         ownPlayerFoundRight = true;
                     } else {
                         if (!ownPlayerFoundRight) {
@@ -433,18 +433,17 @@ namespace Kharbga{
             // look at adjacent cells if it could be captured from the left
             if (this.Left() != null && this.Left().isEmpty() && this.Right() != null &&
                 this.Right().isOccupiedByOpponent(player)) {
-                if (this.Left().anyAdjacentOccupiedByOpponent(player)){
+                if (this.Left().anyAdjacentOccupiedByOpponent(player)) {
                     return true;
                 }
             }
             // look at adjacent cells if it could be captured from right
             if (this.Right() != null && this.Right().isEmpty() && this.Left() != null &&
                 this.Left().isOccupiedByOpponent(player)) {
-                if (this.Right().anyAdjacentOccupiedByOpponent(player)){
+                if (this.Right().anyAdjacentOccupiedByOpponent(player)) {
                     return true;
                 }
             }
-
             return false;
         }
 

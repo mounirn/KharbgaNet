@@ -5,6 +5,8 @@
     <title>Refactored date examples</title>
 
     <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.6.2.css">
+    <link rel="stylesheet" href="../css/kharbga.css">
+    <link rel="stylesheet" href="../css/site.css">
     <script src="../lib/jquery/jquery.min.js"></script>
     <script src="https://code.jquery.com/qunit/qunit-2.6.2.js"></script>
     <script src="../js/kharbga-ui.js"></script>
@@ -143,6 +145,12 @@
             boardView = KharbgaBoard('board', cfg);
             boardViewElement = $('#board');
 
+
+            boardView.clear();
+            boardView.start();
+
+
+
             //  resizeGame();
             // _setupSignalR();
         };
@@ -151,6 +159,16 @@
             initBoard(config);
             assert.ok(boardView, "board view");
             assert.ok(boardViewElement, "board view element");
+
+            var fen = "SssSsss/sSSSSSS/ssSsSss/sss1sSS/sSsSSSS/SssSsSS/SssSsSs";
+            var game = new Kharbga.Game(gameEvents, boardEvents);
+            game.reset();
+            game.start();
+            game.set(fen);
+            assert.ok(game, "setup game fen: " + fen);
+
+            boardView.position(game.fen(), false);
+            assert.ok(boardView, "board view game fen: " + game.fen());
 
         });
         QUnit.test("kharbga board and cells", function(assert) {
@@ -249,6 +267,12 @@
                 if (totalMoves === 0)
                     break;
             }
+            initBoard(config);
+            assert.ok(boardView, "boardView is ok - game fen: " + game.fen());
+
+            boardView.clear();
+            boardView.start();
+            boardView.position(game.fen(), false);
 
         });
     </script>

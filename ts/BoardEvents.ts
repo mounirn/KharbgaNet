@@ -19,6 +19,4 @@ namespace Kharbga {
         capturedPieceEvent(eventData: BoardEventData): void;
         exchangedPieceEvent(eventData: BoardEventData): void;
     }
-
-  
 }
