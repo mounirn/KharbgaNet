@@ -1,0 +1,147 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="lwEQt7T2NYDXNwqHUyL1Ic7hXDR5U5i5YvdRh_NSMyM" />
+    <title>Kharbga.Net</title>
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/site.css" />
+    <script src="./lib/jquery/jquery.min.js"></script>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '107740655926360',
+                cookie: true,
+                xfbml: true,
+                version: 'v2.8'
+            });
+
+            FB.AppEvents.logPageView();
+
+            checkLoginState();
+
+        };
+    </script>
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        //   ga('create', 'UA-6996887-11', 'auto');
+        //   ga('send', 'pageview');
+    </script>
+</head>
+
+<body>
+    <script>
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <div class="container-fluid">
+        <img src="./img/kharbga.png" "Kharbga">
+        <h1>Welcome to Kharbga</h1>
+        <p>
+            If you are new here, please <a href="./html/rules.html">click here to view the game rules.</a>
+        </p>
+        <div id="facebook-section" class="text-center">
+            <div id="status">
+
+            </div>
+            <!-- 
+            <div id="loginButton">
+                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+                </fb:login-button>
+
+            </div> -->
+            <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="true" data-auto-logout-link="true" data-use-continue-as="true"></div>
+
+            <div id="logoutButton">
+                <button id="logout" name="Logout" value="Logout" type="submit" title="Logout of App using Facebook"></button>
+            </div>
+        </div <div id="main">
+        <h2>Choose which version to play:</h2>
+        <p>
+            <a href="./v1/index.html">Version 1 - JQuery, TypeScript, ASP.Net, SignalR</a>
+        </p>
+
+        <p>
+            <a href="./v2/index.html">Version 2 - AngularJS, JQuery, TypeScript, ASP.Net, SignalR</a>
+        </p>
+    </div>
+    </div>
+    <script>
+        function checkLoginState() {
+            if (typeof FB === 'object') {
+                FB.getLoginStatus(function(response) {
+                    statusChangeCallback(response);
+                });
+            }
+        }
+
+        function statusChangeCallback(response) {
+            console.log('statusChangeCallback');
+            console.log(response);
+            // The response object is returned with a status field that lets the
+            // app know the current login status of the person.
+            // Full docs on the response object can be found in the documentation
+            // for FB.getLoginStatus().
+            if (response.status === 'connected') {
+                // Logged into your app and Facebook.
+                testAPI();
+                $('#loginButton').hide();
+                $('#logoutButton').show();
+            } else {
+                // The person is not logged into your app or we are unable to tell.
+                $('#loginButton').show();
+                document.getElementById('status').innerHTML = 'Please log ' +
+                    'into this app.';
+
+                $('#logoutButton').hide();
+            }
+        }
+
+        // Here we run a very simple test of the Graph API after login is
+        // successful.  See statusChangeCallback() for when this call is made.
+        function testAPI() {
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function(response) {
+                console.log('Successful login for: ' + response.name);
+                console.log(response);
+                document.getElementById('status').innerHTML =
+                    'Welcome ' + response.name + '!';
+            });
+        }
+
+
+        $(document).ready(function() {
+            $('#logout').click(function() {
+                FB.logout(function(response) {
+                    // Person is now logged out
+                    console.log("Logout ", response);
+                    $('#loginButton').show();
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
