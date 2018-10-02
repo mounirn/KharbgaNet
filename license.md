@@ -1,6 +1,6 @@
 Copyright 2016 Mounir Nouri
 
-For work related to the Kharbga game. 
+For work related to the Kharbga game.
 
 Copyright 2013 Chris Oakman
 

@@ -1,8 +1,6 @@
 
 # Open Issues / To Do
 
----
-
 * Save game state in the server  (azure doc or mongodb or something else)
 * Loading a game after refresh is causing an error
 * When a new game is started and pending another play to join. Please add a message with that info.
@@ -10,54 +8,51 @@
   to start the game.
 * Design something that matches player request for new games
 * Update the game Status when the game is completed
-* Uncheck the 'Resign' chekbox when a new game is started
+* Un check the 'Resign' checkbox when a new game is started
 * Add a dialog box when the game is over
 * Add the account info
 * fix the computer playing logic:
-	- As Attacker
-		
-	- As Defender (ability to request for two)
-		piece being played with
-* Abiity to replay with a delay 
+  * As Attacker
+  * As Defender (ability to request for two)
+    piece being played with
+
+* Ability to replay with a delay
 * Ability to start a game with options (w/ computer, as Attacker,as Defender). 
 * Add option to start the game with a time limit for each player (10, 20, 30 min).
-* Fix two exchanges (add checks that the same piece is being seleted for exchange)
+* Fix two exchanges (add checks that the same piece is being selected for exchange)
 * move the Checkbox related to two exchange close to each player (Attacker/Defender)
 * Keep track of the player status  (player name is being lost)
 * Add info in MyAccount tab: ScreenName, options, Games played
 * Add timer to indicate the time spent by each player. The timer is started to indicate the turn of each player
-* Fix the height of the messsages lsit being added (add scrollbars)
+* Fix the height of the messages list being added (add scroll bars)
 * Make sure that logging works on the server and this is useful
 * Add UI in the API site to view the log files
 * Computer Play
-	- Check that Pieces that are capturable and give these priority to move
-	- Check that the result of a move does not result in a capturable piece
-	- Check that the result of a move results in less capturables 
+  * Check that Pieces that are capturable and give these priority to move
+  * Check that the result of a move does not result in a capturable piece
+  * Check that the result of a move results in less capturables
 
 * Detect Player blocked condition and allow the player to continue if it is not the first block
-* Add ability to detect the number of times exchange requests are requested using the same piece and attacker is not paying up (limit to 3)
- 
+* Add ability to detect the number of times exchange requests are requested using the same piece and attacker     is not paying up (limit to 3)
+
 * Add ability to indicate exchange request by dragging the piece off the board
 * Add app menu Game - User:  Register, Login,  Game:  New, Save, Open, Abandon, 
 * Display possible moves 
 * Add Undo (Take back) and Redo
-* Highlihting of possible moves
-* play against the computer making randome moves
-
+* Highlighting of possible moves
+* play against the computer making random moves
 * Enforce the rule related to blocking the defender after the first move.
   1 The Defender wins if they are blocked from moving after the first move or capture
 * Program the two pieces exchanges UI
-    - Add Two Exchange Request option (available on Defender's move)
-    - The piece played by the defender when a two exchange request mode is on will be marked for exchange
-    - The Attacker must respond either by accepting the exchange or not
-    - If the attacker accepts the exchange, they need to mark accept the exchange checkbox and play two consecutives moves to indicate free piece to use for the exchange
+  * Add Two Exchange Request option (available on Defender's move)
+  * The piece played by the defender when a two exchange request mode is on will be marked for exchange
+  * The Attacker must respond either by accepting the exchange or not
+  * If the attacker accepts the exchange, they need to mark accept the exchange checkbox and play two             consecutive moves to indicate free piece to use for the exchange
 * Option for who starts first (defender or attacker )
-
 * Add instruction for player for how to move
-* Instead of dragging from spare pieces, add option to accept clicking a cell as an indication for setting on that cell 
-* Disable selecting spare pieces 
+* Instead of dragging from spare pieces, add option to accept clicking a cell as an indication for setting on      that cell
+* Disable selecting spare pieces
 * Choose the type of game to play:
-
 	1 players using the same computer 
 	2 players using different computers  (networking functions)
 	3 
@@ -106,30 +101,35 @@
 ---
 ## v 0.1  -- Apr 30, 2017
 
-Features:
-- Online Web Access (www.kharbga.net)
-- Ability to play on a single computer 
+### Features
 
-* Resolved Issues:
+* Online Web Access (www.kharbga.net)
+* Ability to play on a single computer
+
+### Resolved Issues
+
   1. Display the number settings left for each player after each turn. Added messages
   2. Display the number of spare pieces remaining off board  -- not needed?
-  3. Display the player score (number of pieces on board) 
+  3. Display the player score (number of pieces on board)
   4. Enforce settings rules
-  5. Ability to start the board and the game with a specific state of the game (fen)   
+  5. Ability to start the board and the game with a specific state of the game (fen)
   6. Enforce moving and capturing rules
   7. Display the Malha image while on setting
   8. Remove the Malha image after setting is completed
-  9.  Update the game state at the end of the setting phase 
+  9. Update the game state at the end of the setting phase
   10. Enforced the rule that a player must continue moving the same piece until no capture is possible
-  11. UI enhacements to the board cell 
+  11. UI enhancements to the board cell
   12. Messages improvements indicating which move is required.
-  13. Added logic to detect condition when attacker can not move at the begining of the game (automatic loss - bad setting)
-  14. Resolve the issue when the game is won by abondon -- recorded the move to the server
+  13. Added logic to detect condition when attacker can not move at the beginning of the game (automatic loss - bad setting)
+  14. Resolve the issue when the game is won by abandon -- recorded the move to the server
 
-# Compiling TypeScript 
+---
+
+## Compiling TypeScript
+
 - tsc    (src directory)
 
-
-http://www.the-art-of-web.com/html/html5-form-validation/
-
-https://jqueryvalidation.org/documentation/
+## References
+* [http://www.the-art-of-web.com/html/html5-form-validation/]
+* [https://jqueryvalidation.org/documentation/]
+* https://stackoverflow.com/questions/23375043/best-practice-for-reconnecting-signalr-2-0-net-client-to-server-hub

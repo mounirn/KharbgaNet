@@ -4,13 +4,13 @@ An online board strategy game based on the ancient games of Kharbga and Seega fr
 The rules of this online game are close to the rules of Seega as documented by various online resources.
 See references below. However, the exact rules enforced by this program are based on the version played in the south of Tunisia.
 
-# Rules
+## Rules
 
   The game is played by two players: an Attacker and a Defender.  
   The objective of each player is to terminate the opponent soldiers (a).  
-  The game has two main phases: a board setting stage, and a capturing and soldier's exchange stage. 
+  The game has two main phases: a board setting stage, and a capturing and soldier's exchange stage.
 
-## Setting the board
+### Setting the board
 
   1. The game starts by two players using a board of 7 by 7 squares
   2. Each player uses 24 pieces each of different colors representing their soldiers (a)
@@ -20,7 +20,7 @@ See references below. However, the exact rules enforced by this program are base
   6. The central square, usually marked by a cross is left empty in the setting phase
   7. The defender can not block the attacker from making the first move.
 
-## Moving and capturing
+### Moving and capturing
 
   The game starts when setting is completed and all board cells are filled up with each plyer 24 soldiers strategically placed.
   1. The attacker starts the first move using one of their soldiers into the middle cell. The first move may or may not capture any of the defender's soldiers.
@@ -30,7 +30,7 @@ See references below. However, the exact rules enforced by this program are base
   5. If no capture results from the move, players change turns
   6. Pieces are only captured when the opponent makes a move that sandwiches the piece. Pieces are considered safe in these cases: the pieces moves  between two of the opponent's pieces or it the pieces is between two of the opponent's pieces in the original setting of the board
 
-## Setting strategies
+### Setting strategies
 
   1. The objective of the defender is to prevent the attacker from capturing their soldiers and to build up zones where their soldiers are protected and made unreachable by the attacker
 
