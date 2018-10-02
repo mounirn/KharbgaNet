@@ -12,11 +12,12 @@ namespace Kharbga {
         occupiedCells = new Array(24);
         public readonly isAttacker : boolean;
         public readonly isSystem : boolean;
-        public isSpectator: boolean;
+        public readonly isSpectator: boolean;
         totalTimeThinkingSinceStartOfGame: number = 0;
-        constructor(isComputer: boolean, isAttacker: boolean) {
+        constructor(isComputer: boolean, isAttacker: boolean, isSpectator: boolean) {
             this.isAttacker = isAttacker;
             this.isSystem = isComputer;
+            this.isSpectator = isSpectator;
         }
 
         /// the player selects a color to use for their pieces and profile
@@ -42,8 +43,8 @@ namespace Kharbga {
      */
     export class Attacker extends Player {
         constructor() {
-            super(false,true);
-
+            super(false,true,false);
+            this.name = "Attacker";
         }
     }
 
@@ -52,8 +53,28 @@ namespace Kharbga {
      */
     export class Defender extends Player {
         constructor() {
-            super(false,false);
+            super(false,false,false);
+        }
+    }
 
+    /**
+     * @summary Represents a player in the system that automatically generates a possible move
+     *    given an existing game state
+     */
+    export class SystemPlayer extends Player {
+        constructor (asAttacker: boolean) {
+            super(true,asAttacker,false);
+            this.name = "System";
+        }
+    }
+    /**
+     * @summary Represents a spectator watching the game
+     *    given an existing game state
+     */
+    export class Spectator extends Player {
+        constructor () {
+            super(false,false,true);
+            this.name = "Spectator";
         }
     }
 }

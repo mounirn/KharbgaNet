@@ -189,9 +189,8 @@ namespace Kharbga {
             // can not move to an occupied cell
             if (toCell.isOccupied() === true) {
                 if (this.boardEvents != null) {
-                    //  BoardInvalidMoveEvent(this, new BoardMoveEventArgs(BoardMoveType.MovingToAnOccupiedCell, fromCell.ID, toCell.ID, string.Empty));
-                    var eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovingToAnOccupiedCell);
-                    this.boardEvents.invalidMoveEvent(eventData);
+                    let eventData2: BoardEventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovingToAnOccupiedCell);
+                    this.boardEvents.invalidMoveEvent(eventData2);
                 }
 
                 return { status: PlayerMoveStatus.ERR_TO_IS_OCCUPIED, capturedPieces: 0 };
@@ -200,8 +199,8 @@ namespace Kharbga {
             // the To cell must be adjacent to the From Cell
             if (fromCell.isAdjacentTo(toCell) === false) {
                 if (this.boardEvents != null) {
-                    var eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovingToNotAdjacentCell);
-                    this.boardEvents.invalidMoveEvent(eventData);
+                    let eventData3: BoardEventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovingToNotAdjacentCell);
+                    this.boardEvents.invalidMoveEvent(eventData3);
                 }
 
                 return { status: PlayerMoveStatus.ERR_TO_IS_IS_NOT_AN_ADJACENT_CELL, capturedPieces: 0 };
@@ -211,11 +210,11 @@ namespace Kharbga {
             fromCell.clear();
 
             if (this.boardEvents != null) {
-                var eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovedToAValidCell);
-                this.boardEvents.validMoveEvent(eventData);
+                let eventData4: BoardEventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovedToAValidCell);
+                this.boardEvents.validMoveEvent(eventData4);
             }
             //
-            let capturedCount = this.ProcessCapturedPieces(fromCell, toCell);
+            let capturedCount: number = this.ProcessCapturedPieces(fromCell, toCell);
 
             return { status: PlayerMoveStatus.OK, capturedPieces: capturedCount };
         }
@@ -228,54 +227,58 @@ namespace Kharbga {
          * @event  captured piece event
          */
         ProcessCapturedPieces(fromCell: BoardCell, toCell: BoardCell): number {
-            let ret = 0;
-            //0. Start with the To piece. 
-            //1. Get all cells adjacent and occupied by the opponent (opposite color)
-            //2. For each of these opponent cells, check if is "sandwiched" between the To cell type
-            let toCellAdjacentCells = toCell.getAdjacentCells();
-            let eventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovedToAValidCell);
+            let ret: number = 0;
+
+            // 0. start with the To piece.
+            // 1. get all cells adjacent and occupied by the opponent (opposite color)
+            // 2. for each of these opponent cells, check if is "sandwiched" between the To cell type
+            let toCellAdjacentCells: BoardCell[] = toCell.getAdjacentCells();
+            let eventData: BoardEventData = new BoardEventData(fromCell, toCell, toCell.id, BoardMoveType.MovedToAValidCell);
 
             for (let adjCell of toCellAdjacentCells) {
-                if (adjCell.isEmpty() === true)  // not occupied
+                if (adjCell.isEmpty() === true) {// not occupied
                     continue;
+                }
 
-                if (adjCell.State() === toCell.State())  // occupied by the same piece as player
+                if (adjCell.State() === toCell.State()) {  // occupied by the same piece as player
                     continue;
+                }
 
-                // We have an opponent piece 
+                // we have an opponent piece
                 if (toCell.Above() === adjCell) { // checking up
                     if (adjCell.Above() != null && adjCell.Above().State() === toCell.State()) {
-                        adjCell.clear(); // Remove from the player pieces
+                        adjCell.clear(); // remove from the player pieces
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
-                }
-                else if (toCell.Below() == adjCell) {// checking down     
+                } else if (toCell.Below() === adjCell) {// checking down
                     if (adjCell.Below() != null && adjCell.Below().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
-                }
-                else if (toCell.Left() == adjCell) { // checking left;     
+                } else if (toCell.Left() === adjCell) { // checking left;
                     if (adjCell.Left() != null && adjCell.Left().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
-                }
-                else if (toCell.Right() == adjCell) { // checking right
+                } else if (toCell.Right() === adjCell) { // checking right
                     if (adjCell.Right() != null && adjCell.Right().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
                 }
@@ -298,7 +301,7 @@ namespace Kharbga {
             this.piecesSetCount = 0;
             for (let id of this._cellIds) {
                 let cell:BoardCell = this.getCellById(id);
-                if (cell != null){
+                if (cell != null) {
                     cell.clear();
                 }
 
@@ -333,7 +336,7 @@ namespace Kharbga {
             // 2.   For each adjacent cell, get empty cells
             // 3.        For each empty cell, record a possible move from occupied cell to the empty cell
             // 4.   Check if its the optional id
-            let ret: GameMove[];
+            let ret: GameMove[] = new Array<GameMove>();
 
             for (let cellId of this._cellIds) {
                 let fromCell: BoardCell = this.getCellById(cellId);
@@ -407,7 +410,7 @@ namespace Kharbga {
         }
 
         /**
-         * @summary Checks if the player still have more moves to make. If a move captures an opponent piece, 
+         * @summary Checks if the player still have more moves to make. If a move captures an opponent piece,
          * the player is required to continue to move until there is no more moves that could capture pieces.
          * @param fromCell
          * @returns status -  true if there is at least one cell around fromCell from which a move that results in
@@ -431,40 +434,34 @@ namespace Kharbga {
                     continue;
                 }
                 // can move here
-                let toCell = cell;
-                let toCellAjdCells = toCell.getAdjacentCells();
+                let toCell: BoardCell = cell;
+                let toCellAjdCells: BoardCell[] = toCell.getAdjacentCells();
                 for (let adjCell of toCellAjdCells) {
-                    if (adjCell.isEmpty() == true)  // not occupied
+                    if (adjCell.isEmpty() === true) { // not occupied
                         continue;
-
-                    if (adjCell.State() === fromCell.State())  // occupied by the same piece as player
+                    }
+                    if (adjCell.State() === fromCell.State()) {  // occupied by the same piece as player
                         continue;
+                    }
 
-                    // We have an opponent piece adjacent to the cell we are moving to
-                    if (toCell.Above() === adjCell) // checking up
-                    {
+                    // we have an opponent piece adjacent to the cell we are moving to
+                    if (toCell.Above() === adjCell) { // checking up
                         if (adjCell.Above() != null && adjCell.Above().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
-                    }
-                    else if (toCell.Below() === adjCell) // checking down
-                    {
-                        if (adjCell.Below() != null && adjCell.Below().State() == fromCell.State()) {
+                    } else if (toCell.Below() === adjCell) { // checking down
+                        if (adjCell.Below() != null && adjCell.Below().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
-                    }
-                    else if (toCell.Left() == adjCell) // checking left;
-                    {
-                        if (adjCell.Left() != null && adjCell.Left().State() == fromCell.State()) {
+                    } else if (toCell.Left() === adjCell) {// checking left;
+                        if (adjCell.Left() != null && adjCell.Left().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
-                    }
-                    else if (toCell.Right() == adjCell) // checking right
-                    {
-                        if (adjCell.Right() != null && adjCell.Right().State() == fromCell.State()) {
+                    } else if (toCell.Right() === adjCell) {// checking right
+                        if (adjCell.Right() != null && adjCell.Right().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
@@ -534,10 +531,8 @@ namespace Kharbga {
                     }
                 }
             }
-
             return ret;
         }
-
 
         /**
          * Checks if the given cell is capturable

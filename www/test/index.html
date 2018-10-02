@@ -5,7 +5,9 @@
     <title>Refactored date examples</title>
 
     <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.6.2.css">
+    <script src="../lib/jquery/jquery.min.js"></script>
     <script src="https://code.jquery.com/qunit/qunit-2.6.2.js"></script>
+    <script src="../js/kharbga-ui.js"></script>
     <script src="../js/kharbga.js"></script>
 
     <script>
@@ -99,6 +101,58 @@
                 console.log(eventData);
             }
         };
+        var config = {
+            draggable: false,
+            themePath: '../img/theme-simple/{piece}.png',
+        };
+        var onDragStart = function(source, piece, position, orientation) {
+            console.log("onDragStart - from: %s - piece: %s ", source, piece);
+        };
+        var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
+            console.log("onDrop - from: %s - to: %s ", source, target);
+
+        };
+        var onClick = function(square, piece, position, orientation) {
+            console.log("onClick - square: %s - piece: %s ", square, piece);
+        };
+
+        var onMoveEnd = function() {
+            //updateBoard()
+        };
+        var boardView = null;
+
+        function initBoard(config) {
+            var cfg = {
+                draggable: config.draggable,
+                position: 'start',
+                onDragStart: onDragStart,
+                //  onDragMove: onDragMove,
+                onMoveEnd: onMoveEnd,
+                onDrop: onDrop,
+                onClick: onClick,
+                //    onDoubleClick: onDoubleClick,
+                //    onMouseoutSquare: onMouseoutSquare,
+                //    onMouseoverSquare: onMouseoverSquare,
+
+                sparePieces: true,
+                showErrors: 'console',
+                //showErrors
+                pieceTheme: config.themePath,
+
+            };
+            boardView = KharbgaBoard('board', cfg);
+            boardViewElement = $('#board');
+
+            //  resizeGame();
+            // _setupSignalR();
+        };
+        QUnit.test("kharbga board view", function(assert) {
+
+            initBoard(config);
+            assert.ok(boardView, "board view");
+            assert.ok(boardViewElement, "board view element");
+
+        });
         QUnit.test("kharbga board and cells", function(assert) {
 
             var board = new Kharbga.Board(boardEvents);
@@ -112,13 +166,13 @@
 
             assert.ok(cell.isEmpty(), "Malha Is Empty");
 
-            assert.equal(cell.ID(), "d4");
+            assert.equal(cell.id, "d4");
             for (var i = 0; i < 7; i++) {
                 for (var j = 0; j < 7; j++) {
                     assert.ok(board.getCell(i, j).isEmpty(), "All cells are empty");
                     var expectedId = Kharbga.BoardCell.COLUMNS[j] + Kharbga.BoardCell.ROWS[i];
 
-                    assert.equal(board.getCell(i, j).ID(), expectedId);
+                    assert.equal(board.getCell(i, j).id, expectedId);
 
                     var cellById = board.getCellById(expectedId);
                     assert.equal(cellById.row, i);
@@ -158,8 +212,10 @@
             // set all player pieces randomly 
             for (var s = 0; s < 46; s++) {
                 var possibleSettings = game.settings();
-                if (possibleSettings != null && possibleSettings.length > 0)
-                    assert.ok(game.processSetting(possibleSettings[0]), "attacker or defender setting ")
+                if (possibleSettings != null && possibleSettings.length > 0) {
+                    var setting = possibleSettings[0];
+                    assert.ok(game.processSetting(setting), "attacker or defender setting: " + setting);
+                }
             }
 
             // we are now in moving phase
@@ -168,10 +224,30 @@
             assert.equal(game.defenderScore, 24);
 
             // make a move until the game is complete
+            var totalMoves = 100;
             while (!game.game_over()) {
-                var move = game.moves();
+                var moveSourceRequired = game.move_source_required();
+                var moves = game.moves(moveSourceRequired);
 
-                assert.ok(game.processMove(move), "move processed");
+                if (moves == null || moves.length === 0)
+                    break;
+
+                var move = null;
+                if (moveSourceRequired != null && moveSourceRequired.length > 0) {
+                    for (let rec of moves) {
+                        if (rec.from === moveSourceRequired)
+                            move = rec;
+                    }
+                } else
+                    move = moves[0];
+
+                //   var result = game.processMove2(move, gameEvents);
+                //  assert.ok(result, "move processed: " + move.from + "-" + move.to + " " + move.player.name);
+                //   if (result === false)
+                //      break;
+                totalMoves = totalMoves - 1;
+                if (totalMoves === 0)
+                    break;
             }
 
         });
@@ -179,7 +255,12 @@
 </head>
 
 <body>
+    <h1>The Board</h1>
+    <div style="max-width:500px;">
+        <div id="board" style="min-width:300px;width:80%;"></div>
+    </div>
 
+    <h1>Testing</h1>
     <div id="qunit">
     </div>
 </body>

@@ -12,8 +12,19 @@ namespace Kharbga {
         public attacker: Player;
         public defender: Player;
 
-        constructor(id: string, createdBy: string, state: GameState, status: GameStatus,
-                 attacker: Player, defender: Player) {
+        constructor() {
+            this.id = "";
+            this.state = 0;
+            this.status = 0;
+            this.moves = new Array<GameMove>();
+            this.defender = new Defender();
+            this.attacker= new Attacker();
+            this.attackerName = "Attacker";
+            this.defenderName = "Defender";
+            this.players = [this.attacker,this.defender];
+        }
+        public setup(id: string, createdBy: string, state: GameState, status: GameStatus,
+                 attacker: Player, defender: Player): void {
             this.id = id;
             this.createdBy = createdBy;
             this.state = state;
@@ -23,6 +34,7 @@ namespace Kharbga {
 
             this.attacker = attacker;
             this.defender = defender;
+            this.players = [this.attacker,this.defender];
         }
 
         public reset(): void {

@@ -130,23 +130,23 @@ var Kharbga;
             }
             if (toCell.isOccupied() === true) {
                 if (this.boardEvents != null) {
-                    var eventData = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovingToAnOccupiedCell);
-                    this.boardEvents.invalidMoveEvent(eventData);
+                    var eventData2 = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovingToAnOccupiedCell);
+                    this.boardEvents.invalidMoveEvent(eventData2);
                 }
                 return { status: Kharbga.PlayerMoveStatus.ERR_TO_IS_OCCUPIED, capturedPieces: 0 };
             }
             if (fromCell.isAdjacentTo(toCell) === false) {
                 if (this.boardEvents != null) {
-                    var eventData = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovingToNotAdjacentCell);
-                    this.boardEvents.invalidMoveEvent(eventData);
+                    var eventData3 = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovingToNotAdjacentCell);
+                    this.boardEvents.invalidMoveEvent(eventData3);
                 }
                 return { status: Kharbga.PlayerMoveStatus.ERR_TO_IS_IS_NOT_AN_ADJACENT_CELL, capturedPieces: 0 };
             }
             toCell.setSameAs(fromCell);
             fromCell.clear();
             if (this.boardEvents != null) {
-                var eventData = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovedToAValidCell);
-                this.boardEvents.validMoveEvent(eventData);
+                var eventData4 = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovedToAValidCell);
+                this.boardEvents.validMoveEvent(eventData4);
             }
             var capturedCount = this.ProcessCapturedPieces(fromCell, toCell);
             return { status: Kharbga.PlayerMoveStatus.OK, capturedPieces: capturedCount };
@@ -157,43 +157,49 @@ var Kharbga;
             var eventData = new Kharbga.BoardEventData(fromCell, toCell, toCell.id, Kharbga.BoardMoveType.MovedToAValidCell);
             for (var _i = 0, toCellAdjacentCells_1 = toCellAdjacentCells; _i < toCellAdjacentCells_1.length; _i++) {
                 var adjCell = toCellAdjacentCells_1[_i];
-                if (adjCell.isEmpty() === true)
+                if (adjCell.isEmpty() === true) {
                     continue;
-                if (adjCell.State() === toCell.State())
+                }
+                if (adjCell.State() === toCell.State()) {
                     continue;
+                }
                 if (toCell.Above() === adjCell) {
                     if (adjCell.Above() != null && adjCell.Above().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
                 }
-                else if (toCell.Below() == adjCell) {
+                else if (toCell.Below() === adjCell) {
                     if (adjCell.Below() != null && adjCell.Below().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
                 }
-                else if (toCell.Left() == adjCell) {
+                else if (toCell.Left() === adjCell) {
                     if (adjCell.Left() != null && adjCell.Left().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
                 }
-                else if (toCell.Right() == adjCell) {
+                else if (toCell.Right() === adjCell) {
                     if (adjCell.Right() != null && adjCell.Right().State() === toCell.State()) {
                         adjCell.clear();
                         eventData.targetCellId = adjCell.id;
-                        if (this.boardEvents != null)
+                        if (this.boardEvents != null) {
                             this.boardEvents.capturedPieceEvent(eventData);
+                        }
                         ret++;
                     }
                 }
@@ -226,7 +232,7 @@ var Kharbga;
         };
         Board.prototype.getPossibleMoves = function (player, fromId) {
             if (fromId === void 0) { fromId = ""; }
-            var ret;
+            var ret = new Array();
             for (var _i = 0, _a = this._cellIds; _i < _a.length; _i++) {
                 var cellId = _a[_i];
                 var fromCell = this.getCellById(cellId);
@@ -287,10 +293,12 @@ var Kharbga;
                 var toCellAjdCells = toCell.getAdjacentCells();
                 for (var _a = 0, toCellAjdCells_1 = toCellAjdCells; _a < toCellAjdCells_1.length; _a++) {
                     var adjCell = toCellAjdCells_1[_a];
-                    if (adjCell.isEmpty() == true)
+                    if (adjCell.isEmpty() === true) {
                         continue;
-                    if (adjCell.State() === fromCell.State())
+                    }
+                    if (adjCell.State() === fromCell.State()) {
                         continue;
+                    }
                     if (toCell.Above() === adjCell) {
                         if (adjCell.Above() != null && adjCell.Above().State() === fromCell.State()) {
                             ret.status = true;
@@ -298,19 +306,19 @@ var Kharbga;
                         }
                     }
                     else if (toCell.Below() === adjCell) {
-                        if (adjCell.Below() != null && adjCell.Below().State() == fromCell.State()) {
+                        if (adjCell.Below() != null && adjCell.Below().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
                     }
-                    else if (toCell.Left() == adjCell) {
-                        if (adjCell.Left() != null && adjCell.Left().State() == fromCell.State()) {
+                    else if (toCell.Left() === adjCell) {
+                        if (adjCell.Left() != null && adjCell.Left().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
                     }
-                    else if (toCell.Right() == adjCell) {
-                        if (adjCell.Right() != null && adjCell.Right().State() == fromCell.State()) {
+                    else if (toCell.Right() === adjCell) {
+                        if (adjCell.Right() != null && adjCell.Right().State() === fromCell.State()) {
                             ret.status = true;
                             ret.possibleMoves.push(toCell.id);
                         }
@@ -1302,7 +1310,9 @@ var Kharbga;
         };
         Game.prototype.processMove2 = function (move, moveHandler) {
             var ret = this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
-            moveHandler.moveProcessed(ret, move);
+            if (moveHandler != null) {
+                moveHandler.moveProcessed(ret, move);
+            }
             return ret;
         };
         Game.prototype.checkIfSettingsCompleted = function () {
@@ -1445,11 +1455,11 @@ var Kharbga;
                 eventData2.from = cell;
                 eventData2.to = cell;
                 if (recorded === Kharbga.PlayerSettingStatus.ERR_MALHA) {
-                    this.gameEvents.invalidSettingMalhaEvent(eventData);
+                    this.gameEvents.invalidSettingMalhaEvent(eventData2);
                 }
                 else {
                     if (recorded === Kharbga.PlayerSettingStatus.ERR_OCCUPIED) {
-                        this.gameEvents.invalidSettingOccupiedEvent(eventData);
+                        this.gameEvents.invalidSettingOccupiedEvent(eventData2);
                     }
                 }
             }
@@ -1595,7 +1605,18 @@ var Kharbga;
 var Kharbga;
 (function (Kharbga) {
     var GameInfo = (function () {
-        function GameInfo(id, createdBy, state, status, attacker, defender) {
+        function GameInfo() {
+            this.id = "";
+            this.state = 0;
+            this.status = 0;
+            this.moves = new Array();
+            this.defender = new Kharbga.Defender();
+            this.attacker = new Kharbga.Attacker();
+            this.attackerName = "Attacker";
+            this.defenderName = "Defender";
+            this.players = [this.attacker, this.defender];
+        }
+        GameInfo.prototype.setup = function (id, createdBy, state, status, attacker, defender) {
             this.id = id;
             this.createdBy = createdBy;
             this.state = state;
@@ -1604,7 +1625,8 @@ var Kharbga;
             this.players = [];
             this.attacker = attacker;
             this.defender = defender;
-        }
+            this.players = [this.attacker, this.defender];
+        };
         GameInfo.prototype.reset = function () {
             this.attackerName = "";
             this.defenderName = "";
@@ -1686,11 +1708,12 @@ var Kharbga;
 var Kharbga;
 (function (Kharbga) {
     var Player = (function () {
-        function Player(isComputer, isAttacker) {
+        function Player(isComputer, isAttacker, isSpectator) {
             this.occupiedCells = new Array(24);
             this.totalTimeThinkingSinceStartOfGame = 0;
             this.isAttacker = isAttacker;
             this.isSystem = isComputer;
+            this.isSpectator = isSpectator;
         }
         Player.prototype.reset = function () {
             this.totalTimeThinkingSinceStartOfGame = 0;
@@ -1701,7 +1724,9 @@ var Kharbga;
     var Attacker = (function (_super) {
         __extends(Attacker, _super);
         function Attacker() {
-            return _super.call(this, false, true) || this;
+            var _this = _super.call(this, false, true, false) || this;
+            _this.name = "Attacker";
+            return _this;
         }
         return Attacker;
     }(Player));
@@ -1709,19 +1734,30 @@ var Kharbga;
     var Defender = (function (_super) {
         __extends(Defender, _super);
         function Defender() {
-            return _super.call(this, false, false) || this;
+            return _super.call(this, false, false, false) || this;
         }
         return Defender;
     }(Player));
     Kharbga.Defender = Defender;
-})(Kharbga || (Kharbga = {}));
-var Kharbga;
-(function (Kharbga) {
-    var SystemPlayer = (function () {
-        function SystemPlayer() {
+    var SystemPlayer = (function (_super) {
+        __extends(SystemPlayer, _super);
+        function SystemPlayer(asAttacker) {
+            var _this = _super.call(this, true, asAttacker, false) || this;
+            _this.name = "System";
+            return _this;
         }
         return SystemPlayer;
-    }());
+    }(Player));
     Kharbga.SystemPlayer = SystemPlayer;
+    var Spectator = (function (_super) {
+        __extends(Spectator, _super);
+        function Spectator() {
+            var _this = _super.call(this, false, false, true) || this;
+            _this.name = "Spectator";
+            return _this;
+        }
+        return Spectator;
+    }(Player));
+    Kharbga.Spectator = Spectator;
 })(Kharbga || (Kharbga = {}));
 //# sourceMappingURL=kharbga.js.map

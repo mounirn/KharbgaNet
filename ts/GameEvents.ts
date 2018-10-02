@@ -17,11 +17,11 @@ namespace Kharbga{
             this.move_status = PlayerMoveStatus.OK;
         }
     }
-	export interface IGameEvents{
-        newGameStartedEvent(eventData: GameEventData) : void;
+	export interface IGameEvents {
+        newGameStartedEvent(eventData: GameEventData): void;
         newPlayerTurnEvent(eventData: GameEventData): void;
 
-        // Player passed since they do not have a valid move (if they are blocked) not after the first move
+        // player passed since they do not have a valid move (if they are blocked) not after the first move
         playerPassedEvent(eventData: GameEventData): void;
 
         newSettingCompletedEvent(eventData: GameEventData): void;

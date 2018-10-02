@@ -157,10 +157,10 @@ var KharbgaApp = function () {
         if (loggingOn)
             console.log("%s - event: onNewPlayerTurn - player: %s", getLoggingNow(), eventData.player);
 
-        $('#player-turn').html(Kharbga.PlayerRole[eventData.player.role]);
+        $('#player-turn').html(eventData.player.name);
 
         var message = "<div class='alert alert-success'>It is the turn  of the <strong>" +
-            Kharbga.PlayerRole[eventData.player.role];
+            eventData.player.name;
       
         if (user != null && !user.isSpectator)  {
             if (user.isAttacker === true && game.turn() == 'a')
@@ -210,7 +210,7 @@ var KharbgaApp = function () {
             }));
             currentMove.isAttacker = false;
         }
-        var message = "<div class='alert alert-success'>It is the turn  of the <strong>" + Kharbga.PlayerRole[eventData.player.role];
+        var message = "<div class='alert alert-success'>It is the turn  of the <strong>" + eventData.player.name;
 
      // Indicator for local player that it is their turn   
         if (!user.isSpectator){
@@ -403,7 +403,7 @@ var KharbgaApp = function () {
      */
     function onWinnerDeclared(eventData) {
         console.log("%s - event: onWinnerDeclared - winner: %s ", getLoggingNow(), eventData.player);
-        $('#message').html("<div class='alert alert-success'><strong>Game Over. Winner is: " + Kharbga.PlayerRole[eventData.player.role] + " </strong></div>");
+        $('#message').html("<div class='alert alert-success'><strong>Game Over. Winner is: " + eventData.player.name + " </strong></div>");
 
         $('#state').html(Kharbga.GameState[eventData.source.getState()]);
 
@@ -1486,8 +1486,7 @@ var KharbgaApp = function () {
         if (gameState.id == "") {
             setupLocalGame(gameInfo);
             
-            gameState.update(gameInfo);
-
+        
             setCookie("_nsgid", gameInfo.id);
         }
         else {
@@ -1796,7 +1795,7 @@ var KharbgaApp = function () {
                         if (typeof obj[key2] != "function" )
                         {                 
                             var tr = "<tr><th><span style='padding-left:50px;'>.</span>"+toDisplayString(key2) + "</th><td>" + obj[key2]+"</td></tr>";
-                            $('#game-state-table-body').append(tr);
+                            $('#app-state-table-body').append(tr);
                         }
                     });
                 }
@@ -2211,11 +2210,9 @@ var KharbgaApp = function () {
 
         // update the game players info
         game.setPlayerNames(gameInfo.attackerName,gameInfo.defenderName);
-        gameState.update(gameInfo);
-      
-        updateLocalGameStatus(gameInfo);
-        setupGameMovesHistoryList(gameInfo);
-
+        
+        setupLocalGame(gameInfo);
+    
         selectActiveGameId(gameInfo.id);
        // 
        // checkBoardAndPlayIfComputer();
@@ -2236,15 +2233,34 @@ var KharbgaApp = function () {
         appendMoveToGameHistory(move);
     };
 
+    /**
+     * @summary Sets up the local game with the given game info
+     * @param {*} gameInfo 
+     */
     function setupLocalGame(gameInfo) {
         if (typeof gameInfo == "undefined" || gameInfo == null) {
             console.log("%s - setupLocalGame - Invalid game passed : ", getLoggingNow());
             return;
         }
+        // set the game id coockie
+        setCookie("_nsgid", gameInfo.id);
 
+        // clear the local game
         resetLocalGame();
+
+        // update the game players info
+        game.attacker.name = gameInfo.attackerName;
+        game.defender.name = gameInfo.defenderName;
+
+        // update the local game state
+        gameState.update(gameInfo);
+
+        // replay all existing moves
         game.setupWith(gameInfo);
+
         clearLastMoveInfo();
+
+        // update the board display
         updateBoard(game);
 
         // player
@@ -2896,7 +2912,6 @@ var KharbgaApp = function () {
             appClientState.loggedIn = false;
             setCookie(C_NSSID, "");
         }
-
     };
 
     /**

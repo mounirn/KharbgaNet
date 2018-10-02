@@ -87,8 +87,8 @@ namespace Kharbga {
         }
 
         /**
-         * Identifies all possible moves
-         * @returns all possible moves for the current player
+         * @summary Identifies all possible moves
+         * @returns {GameMove[]} all possible moves for the current player
          */
         public moves(from: string = ""): GameMove[] {
             return this.board.getPossibleMoves(this.currentPlayer, from);
@@ -97,7 +97,7 @@ namespace Kharbga {
         /**
          * @summary Searches for moves that result in a capture of one of the
          * opponent pieces for the current player
-         * @param from -- optional from location
+         * @param {string} from -- optional from location
          * @returns a list of possible game moves that could result in capture for the current player
          */
         public moves_that_capture(from: string = ""): GameMove[] {
@@ -740,7 +740,9 @@ namespace Kharbga {
         public processMove2(move: GameMove, moveHandler: IGameEvents): boolean {
             var ret: boolean = this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
 
-            moveHandler.moveProcessed(ret, move);
+            if (moveHandler != null ) {
+                moveHandler.moveProcessed(ret, move);
+            }
             return ret;
         }
 
@@ -932,10 +934,10 @@ namespace Kharbga {
                 eventData2.from = cell;
                 eventData2.to = cell;
                 if (recorded === PlayerSettingStatus.ERR_MALHA) {
-                    this.gameEvents.invalidSettingMalhaEvent(eventData);
+                    this.gameEvents.invalidSettingMalhaEvent(eventData2);
                 } else {
                     if (recorded === PlayerSettingStatus.ERR_OCCUPIED) {
-                        this.gameEvents.invalidSettingOccupiedEvent(eventData);
+                        this.gameEvents.invalidSettingOccupiedEvent(eventData2);
                     }
                 }
             }
