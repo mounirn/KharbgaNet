@@ -598,8 +598,8 @@ var KharbgaServer = function (gameViwer) {
             gamesHubProxy.client.send = onSendMessage;
             gamesHubProxy.client.hello = function () {
                 if (loggingOn) console.log("%s - Hello from server", getLoggingNow());
-                //  $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
-                // $('#messages-list').append("<li class='list-group-item'>Hello from server</li>");
+                 $('#message').html("<div class='alert alert-success'>Hello from server.</div>");
+                 $('#messages-list').append("<li class='list-group-item'>Hello from server</li>");
             };
 
             gamesHubProxy.client.gameDeleted = onGameDeleted;

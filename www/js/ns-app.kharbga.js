@@ -712,7 +712,7 @@ var KharbgaApp = function () {
         var ret = false;
         var gameMove = {};
 
-        gameMove.message = $("#user-message").val();
+        gameMove.message = $("#move-message").val();
 
         gameMove.resigned = $('#abandonCheckbox').is(':checked');
         gameMove.exchangeRequest = false;
@@ -811,6 +811,7 @@ var KharbgaApp = function () {
 
     function completeMoveProcessed() {
         $("#user-message").text("");
+        $("#move-message").text("");
         // 
         //play sound here
         playSound();  // good one
@@ -2836,6 +2837,12 @@ var KharbgaApp = function () {
             console.log("%s - onPostMessage: ", getLoggingNow());
             
         }
+
+        if (gamesHubProxy != null )
+        {
+            var message = $('#move-message').val();
+            gamesHubProxy.server.postMessage(appClientState.sessionId,user.name,message);
+        }
     }
     // base hub messages
     var onJoined = function (connectionInfo, serverTime) {
@@ -3070,8 +3077,8 @@ var KharbgaApp = function () {
             gamesHubProxy.client.send = onSendMessage;
             gamesHubProxy.client.hello = function () {
                 if (loggingOn) console.log("%s - Hello from server", getLoggingNow());
-                //  $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
-                // $('#messages-list').append("<li class='list-group-item'>Hello from server</li>");
+                 $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
+                 $('#messages-list').append("<li class='list-group-item'>Hello from server</li>");
             };
 
             gamesHubProxy.client.gameDeleted = onGameDeleted;

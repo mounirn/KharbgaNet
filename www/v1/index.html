@@ -579,7 +579,14 @@
     <script src="../js/jquery.signalR-2.3.0.js"></script>
 
 
-    <script src="http://localhost:3121/signalR/hubs"></script>
+    <script>
+        var scriptToLoad = window.__env.baseURI + "signalR/hubs";
+        console.log("loading: " + scriptToLoad);
+        var signalRElement = document.createElement('script');
+        signalRElement.setAttribute('src', scriptToLoad);
+        document.body.appendChild(signalRElement)
+        console.log("loading: " + scriptToLoad);
+    </script>
 
     <!-- convert to the real URL-->
     <script src="../js/moment.min.js"></script>
