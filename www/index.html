@@ -9,22 +9,33 @@
     <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/site.css" />
+    <link rel="import" href="./html/footer.html" onload="handleLoad(event)" onerror="handleError(event)">
+
     <script src="./lib/jquery/jquery.min.js"></script>
     <script>
-        window.fbAsyncInit = function() {
-            FB.init({
-                appId: '107740655926360',
-                cookie: true,
-                xfbml: true,
-                version: 'v2.8'
-            });
+        /*     window.fbAsyncInit = function() {
+                            FB.init({
+                                appId: '107740655926360',
+                                cookie: true,
+                                xfbml: true,
+                                version: 'v2.8'
+                            });
 
-            FB.AppEvents.logPageView();
+                            FB.AppEvents.logPageView();
 
-            checkLoginState();
+                            checkLoginState();
 
-        };
+                        };
+                    */
+        function handleLoad(e) {
+            console.log('Loaded import: ' + e.target.href);
+        }
+
+        function handleError(e) {
+            console.log('Error loading import: ' + e.target.href);
+        }
     </script>
+
     <script>
         (function(i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r;
@@ -64,7 +75,7 @@
         </p>
         <figure class="text-center">
             <img src="./img/players.png" title="Kharbga players from North Africa">
-            <figcaption>Kharbga Game Played in a North African Oasis</figcaption>
+            <figcaption><strong>Kharbga Game Played in an North African Oasis</strong></figcaption>
         </figure>
         <hr>
         <div id="facebook-section" class="text-center">
@@ -147,6 +158,20 @@
             });
         });
     </script>
+
+    <div id="container">
+    </div>
+    <script>
+        var link = document.querySelector('link[rel="import"]');
+        if (link != null) {
+            // Clone the <template> in the import.
+            var template = link.import.querySelector('template');
+            var clone = document.importNode(template.content, true);
+
+            document.querySelector('#container').appendChild(clone);
+        }
+    </script>
+
 </body>
 
 </html>

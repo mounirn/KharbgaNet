@@ -1,4 +1,4 @@
-namespace Kharbga{
+namespace Kharbga {
 	/**
 	 * @summary Represents a Kharbga Board cell.
 	 */
@@ -44,6 +44,7 @@ namespace Kharbga{
             this.col = col;
             this.id = BoardCell.COLUMNS[col] + BoardCell.ROWS[row];
             this.listAdjacentCells = [];
+            this.state = BoardCellState.Empty;
         }
 
         /**
@@ -222,9 +223,9 @@ namespace Kharbga{
                 case BoardCellState.Empty:
                     return false;
                 case BoardCellState.OccupiedByAttacker:
-                    return player.isAttacker;
+                    return player.isAttacker === true;
                 case BoardCellState.OccupiedByDefender:
-                    return !player.isAttacker;
+                    return player.isAttacker === false;
                 default:
                     return false;
             }
@@ -240,9 +241,9 @@ namespace Kharbga{
                 case BoardCellState.Empty:
                     return false;
                 case BoardCellState.OccupiedByAttacker:
-                    return !player.isAttacker;
+                    return player.isAttacker === false;
                 case BoardCellState.OccupiedByDefender:
-                    return player.isAttacker;
+                    return player.isAttacker === true;
                 default:
                     return false;
             }

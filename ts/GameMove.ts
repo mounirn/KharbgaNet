@@ -26,5 +26,6 @@ namespace Kharbga {
         public beforeFen: string;
         public afterFen: string;
         public message: string;
+        public clientId: string;
     }
 }

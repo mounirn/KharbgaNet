@@ -1471,27 +1471,11 @@ var KharbgaApp = function () {
             console.log(gameInfo);
         }
 
-        // update the game players info
-        game.attacker.name = gameInfo.attackerName;
-        game.defender.name = gameInfo.defenderName;
-
+        // add the game to the list
         appendGameToGamesList(gameInfo);      
 
-        $('#current-game-id').text(gameInfo.id);
-        $('#current-game-status').text(getStatusText(gameInfo.status));
-        $('#game-attacker').text(gameInfo.attackerName);
-        $('#game-defender').text(gameInfo.defenderName);
-
-        // set up the game if the game is not setup 
-        if (gameState.id == "") {
-            setupLocalGame(gameInfo);
-            
-        
-            setCookie("_nsgid", gameInfo.id);
-        }
-        else {
-            updateLocalGameStatus(gameInfo);
-        }
+        // setup the game and the board and update the UI
+        setupLocalGame(gameInfo);
    
         // start the background timer for the computer if we have a computer playing
         var computerPlayer = gameState.getComputerPlayer();
@@ -2036,21 +2020,9 @@ var KharbgaApp = function () {
      * handle for when a move is recorded
      * @param {any} status -- move status
      * @param {any} errorMessage -- error message if move failed to record
-     * @param {any} gameServerInfo -- the server game
-     * @param {any} player -- the player making the move
-     * @param {any} isAttacker -- indicates if attacker move
-     * @param {any} isSetting  -- indicates if setting or move
-     * @param {any} moveFrom  -- from location
-     * @param {any} moveTo   -- to location
-     * @param {any} resigned  -- indicates player resigned
-     * @param {any} exchangeRequest -- indicates an exchange request or acceptance
-     * @param {any} beforeFEN  -- board state before the move
-     * @param {any} afterFEN    -- board state after the move
-     * @param {any} message  -- the message posted by the player with the move
      * @param {any} serverMove -- the server move record with/ captured/exchange info
      */
-    var onMoveRecorded = function (status, errorMessage, gameServerInfo, player, isAttacker, isSetting, moveFrom, moveTo, resigned,
-            exchangeRequest, beforeFEN, afterFEN, message, serverMove) {
+    var onMoveRecorded = function (status, errorMessage, serverMove) {
         if (status === false) {
             console.log("%s - server - error recording move: %s ", getLoggingNow(), errorMessage);
             $('#message').html("<div class='alert alert-danger'> Failed to process move by the server. Error: " + errorMessage+ "</div>");
@@ -2208,12 +2180,10 @@ var KharbgaApp = function () {
 
      //   $('#' + gameInfo.id).addClass(getStatusCss(gameInfo.Status));    
 
-        // update the game players info
-        game.setPlayerNames(gameInfo.attackerName,gameInfo.defenderName);
+       
         
         setupLocalGame(gameInfo);
-    
-        selectActiveGameId(gameInfo.id);
+      
        // 
        // checkBoardAndPlayIfComputer();
           //checkBoardAndPlayIfComputer();
@@ -2230,12 +2200,12 @@ var KharbgaApp = function () {
 
     var onAppendMove = function (gameId, move) {
         // double check that this is current move
-        appendMoveToGameHistory(move);
+      //  appendMoveToGameHistory(move);
     };
 
     /**
      * @summary Sets up the local game with the given game info
-     * @param {*} gameInfo 
+     * @param {Kharbga.GameInfo} gameInfo - the game information
      */
     function setupLocalGame(gameInfo) {
         if (typeof gameInfo == "undefined" || gameInfo == null) {
@@ -2252,6 +2222,9 @@ var KharbgaApp = function () {
         game.attacker.name = gameInfo.attackerName;
         game.defender.name = gameInfo.defenderName;
 
+         // update the game players info - is this needed
+         game.setPlayerNames(gameInfo.attackerName,gameInfo.defenderName);
+
         // update the local game state
         gameState.update(gameInfo);
 
@@ -2263,15 +2236,23 @@ var KharbgaApp = function () {
         // update the board display
         updateBoard(game);
 
+
+
+        $('#current-game-id').text(gameInfo.id);
+        $('#current-game-status').text(getStatusText(gameInfo.status));
+        $('#game-attacker').text(gameInfo.attackerName);
+        $('#game-defender').text(gameInfo.defenderName);
+
         // player
         if (game.turn() == 'a')
             $('#player-turn').html("Attacker");
         else
             $('#player-turn').html("Defender");
 
-
         updateLocalGameStatus(gameInfo);
-        // setup the move history
+        selectActiveGameId(gameInfo.id);
+
+        // setup the move history list
         setupGameMovesHistoryList(gameInfo);
         removeSelectedCells();
     }
@@ -2296,7 +2277,7 @@ var KharbgaApp = function () {
 
         $('#game-players').html(gameInfo.attackerName + " vs. " + gameInfo.defenderName);
         $('#game-score').html(gameInfo.attackerScore + "-" + gameInfo.defenderScore);
-        $('#game-result').html(Kharbga.GameState[gameInfo.state]);
+        $('#game-result').html(toDisplayString(Kharbga.GameState[gameInfo.state]));
 
         if (gameInfo.WinnerIsAttacker)
             $('#game-winner').html(gameInfo.attackerName + " (Attacker)");
@@ -2305,7 +2286,7 @@ var KharbgaApp = function () {
 
         updateGameInGameList(gameInfo);
 
-        // activate the modal dialog here instead of OnWinnerDeclared?
+        // activate the modal dialog here 
         if (gameInfo.status > 2)
             setTimeout(function () {
                 $('#game-over').modal();
@@ -2680,87 +2661,9 @@ var KharbgaApp = function () {
             }
         });
     }
-
-    function setupGameMovesHistory(serverGame) {
-
-        if (serverGame == null) {
-            $('#message').html("<div class='alert alert-danger'>Invalid server game </div>");
-        }
-        $('#game-moves-history').empty();
-
-        var html = "<table  class='table table-responsive'><thead>";
-        // append the header
-        html += "<thead ><tr>";
-        html += ("<th>Number</th>");
-        html += ("<th>Player</th>");
-        html += ("<th>Is Setting</th>");
-        html += ("<th>From</th>");
-        html += ("<th>To</th>");
-        html += ("<th>Resigned</th>");
-        html += ("<th>Exchange Request</th>");
-   //     html += ("<th>Before FEN <br>");
-   //     html += ("After FEN <br>");
-   //     html += ("Message</th>");
-        html += "</tr></thead><tbody id='game-moves-history-table'  style='max- height:300px; overflow - y:scroll'>";
-       
-        $.each(serverGame.moves, function () {
-            html += "<tr>";
-            html += ("<td>" + this.number + "</td>");
-            html += ("<td>" + this.playerName);
-            html += ((this.isAttacker == true ? " (Attacker)" : " (Defender)") + "</td>");
-            html += ("<td>" + (this.isSetting == true ? "Yes" : "No") + "</td>");
-            html += ("<td>" + (this.from) + "</td>");
-            html += ("<td>" + (this.to) + "</td>");
-            html += ("<td>" + (this.resigned == true ? "Yes" : "No") + "</td>");
-            html += ("<td>" + (this.exchangeRequest == true ? "Yes" : "No") + "</td>");
-            html += "</tr><tr><td><td>";
-
-            // add another row for the message and fen
-            html += ("<td colspan='5'><pre style='font-size:x-small'>Before FEN: " + (this.beforeFen) + "<br>");
-            html += ("After FEN: " + (this.afterFen) + "<br>");
-         //   html += ("Captured/Exchanged: " + (this.CapturedExchanged) + "<br>");
-            html += ("Message: " + (this.message) + "</pre></td>");
-            html += "</tr>";
-        });
-
-        html += "</tbody></table>";
-        $('#game-moves-history').html(html);     
-    }
-
-    /**
-     * Appends the given move to the game history
-     * @param {any} move - move information from the server
-     */
-    function appendMoveToGameHistory(move) {
-
-        if (move == null) {
-            $('#message').html("<div class='alert alert-danger'>Invalid server game move </div>");
-        }
-        var html = "";
-        html += "<tr>";
-        html += ("<td>" + move.number + "</td>");
-        html += ("<td>" + move.playerName);
-        html += ( (move.isAttacker == true ? " (Attacker)" : " (Defender)") + "</td>");
-        html += ("<td>" + (move.isSetting == true ? "Yes" : "No") + "</td>");
-        html += ("<td>" + (move.from) + "</td>");
-        html += ("<td>" + (move.to) + "</td>");
-        html += ("<td>" + (move.resigned == true ? "Yes" : "No") + "</td>");
-        html += ("<td>" + (move.exchangeRequest == true ? "Yes" : "No") + "</td>");
-    //    html += ("<td> <pre style='font-size:xx-small'>" + (move.BeforeFEN) + "<br>");
-   //     html += ("" + (move.AfterFEN) + "<br>");
-    //    html += ("" + (move.Message) + "<pre></td>");
-    //    html += "</tr>";
-        html += "</tr><tr><td><td>";
-
-        // add another row for the message and fen
-        html += ("<td colspan='5'><pre style='font-size:x-small'> Before FEN: " + (move.beforeFen) + "<br>");
-        html += ("After FEN: " + (move.afterFen) + "<br>");
-      //  html += ("Captured/Exchanged: " + (move.CapturedExchanged) + "<br>");
-        html += ("Message: " + (move.message) + "</pre></td>");
-
-        html += "</tr>";
-
-        $('#game-moves-history-table').append(html);
+    $('#server-link').on('click', setupSignalR);
+    function setupSignalR(e){
+        _setupSignalR();
     }
 
     /**
@@ -2774,7 +2677,7 @@ var KharbgaApp = function () {
         }
         $('#game-moves-history').empty();
 
-        var html =  "<ul class='list-group' id='game-moves-history-list' style='max-height:300px; overflow-y:scroll'>";
+        var html =  "<strong>Game Moves History</strong><br><ul class='list-group' id='game-moves-history-list' style='max-height:300px; overflow-y:scroll'>";
         html += "</ul>";
         $('#game-moves-history').html(html);
 
@@ -2783,7 +2686,6 @@ var KharbgaApp = function () {
         });
     }
        
-
     /**
      * Appends the given move to the game history
      * @param {any} move - move information from the server
@@ -3047,7 +2949,7 @@ var KharbgaApp = function () {
         boardEl = $('#board');
         $('#currentGamePanel').hide();
         resizeGame();
-       // _setupSignalR();
+      
     };
 
     $('.nav-tabs a').on('shown.bs.tab', function(e){
@@ -3061,10 +2963,16 @@ var KharbgaApp = function () {
        // alert(e);
     });
 
+    /** @summary starts and initializes connection to the server
+     *  @returns true if successful, false otherwise
+     */
     var _setupSignalR = function () {
         try {
             $.connection.hub.url = nsApiClient.baseURI + 'signalr';
             if (loggingOn) console.log("Hub URL: %s", $.connection.hub.url);
+
+            $('#server-uri').text($.connection.hub.url); 
+
             gamesHubProxy = $.connection.gamesHub;
             $.connection.hub.logging = loggingOn;  // turn off  (config)
 
@@ -3127,7 +3035,7 @@ var KharbgaApp = function () {
         });
     };
 
-    _setupSignalR();
+    //_setupSignalR();
     //_refreshAppInfo();
 
     function startSignalR() {
@@ -3205,7 +3113,8 @@ var KharbgaApp = function () {
         // attempt to start SignalR if not init
         if (appClientState.signalReInitialized == false)
         {
-            startSignalR();
+            _setupSignalR();
+            //startSignalR();
         }
         if (appClientState.signalReInitialized)
             gamesHubProxy.server.ping(appClientState.sessionId).done(function () { setSystemError(false); });
@@ -3365,8 +3274,18 @@ var KharbgaApp = function () {
         updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
 
     };
+    
+    /** @summary starts and initializes connection to the server
+     *  @returns true if successful, false otherwise
+     */
+    this.initMessaging = function(){
+       return  _setupSignalR();
+    }; 
     var replayId = "";
     var replayOn = false;
+    
+    /** @summary starts the replay of a game - see game state
+     */
     this.playStart = function () {
         console.log("playStart");
      

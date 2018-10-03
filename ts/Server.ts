@@ -16,5 +16,5 @@ interface IKharbgaClient {
 
 }
 interface KharbgaServer {
-    send(name: string, message: string): JQueryPromise<void>;
+    send(name: string, message: string): void;
 }

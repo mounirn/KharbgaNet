@@ -144,7 +144,7 @@ namespace Kharbga {
                 return PlayerSettingStatus.ERR_INVALID_CELL;
             }
             var eventData: BoardEventData;
-            if (cell.isMalha()) {
+            if (cell.isMalha() === true) {
                 if (this.boardEvents != null) {
                     // generate event
                     eventData = new BoardEventData(cell, cell, id, BoardMoveType.SettingOnMiddleCell);
@@ -153,7 +153,7 @@ namespace Kharbga {
 
                 return PlayerSettingStatus.ERR_MALHA;
             }
-            if (cell.isOccupied()) {
+            if (cell.isOccupied() === true) {
                 if (this.boardEvents != null) {
                     eventData= new BoardEventData(cell, cell, id, BoardMoveType.SettingOnOccupiedCell);
                     this.boardEvents.invalidMoveEvent(eventData);

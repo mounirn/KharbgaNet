@@ -56,13 +56,34 @@
         <div class="tab-content">
             <!-- tabs-->
             <div id="play" class="tab-pane fade in active text-center">
-                <h1>Welcome to</h1> <img src="../img/kharbga.png" title="Kharbga">
-                <p>If this is your first time here, please click <a href="#rules" data-toggle="modal" data-target="#rulesModal">here
-                        to learn about the game.</a></p>
-                <p>This system provides a platform for learning and playing this fun board game from North Africa.
-                </p>
-                <img src="../img/players.png" title="Kharbga played in the desert of North Africa">
-                <p><strong>The game played in the desert</strong></p>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#collapse1">Welcome</a>
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <h1>Welcome to</h1> <img src="../img/kharbga.png" title="Kharbga">
+                                <p>If this is your first time here, please click <a href="#rules" data-toggle="modal" data-target="#rulesModal">here
+                                        to learn about the game.</a></p>
+                                <p>This system provides a platform for learning and playing this fun board game from North Africa.
+                                </p>
+                                <img src="../img/players.png" class="img img-responsive" title="Kharbga played in the desert of North Africa">
+                                <p><strong>Game Played on the Sand in in North Africa</strong></p>
+                            </div>
+                            <div class="panel-footer">
+                                <hr/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="collapse in">
+
+                </div>
             </div>
 
             <div id="gameState" class="tab-pane fade">
@@ -337,9 +358,7 @@
                     </div>
                     <div class="panel-body">
                         <div id="signalr-status" class=""></div>
-                        <div style="height: 400px;overflow-y:scroll">
-                            <ul id="messages-list" class="list-group "></ul>
-                        </div>
+
                     </div>
                 </div>
                 <div class="panel panel-info">
@@ -444,7 +463,7 @@
 
                             <!-- for testing only -->
                             <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
-                            <h3>Game Moves History</h3>
+                            <hr>
                             <div id="game-moves-history" class="max-height:100px;overflow-y:scroll">
 
                             </div>
@@ -503,7 +522,7 @@
                         </div>
                         <div class="panel-body text-center">
                             <!-- The Board -->
-                            <div id="board" style="min-width:300px;width:80%"></div>
+                            <div id="board" style="min-width:300px;max-width:400px"></div>
                             <div id="message" class=""></div>
                         </div>
                         <div class="panel-footer">
@@ -517,7 +536,24 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Server Messages - URL: <span id="server-uri"></span></strong>
+                <div class="pull-right">
+                    <a href="#" id="server-link" value="connect-server">
+                        <span class="glyphicon glyphicon-refresh"></span>Reconnect
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div style="height: 400px;overflow-y:scroll">
+                    <ul id="messages-list" class="list-group "></ul>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
     <!-- Modal Dialogs-->
     <div id="rulesModal" class="modal fade" role="dialog">
         <div class="modal-dialog" style="min-height:90%min;min-width:80%">
@@ -566,6 +602,7 @@
                 <strong>Developed by <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
             </div>
         </div>
+        <hr />
     </footer>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
@@ -602,6 +639,10 @@
         $(document).ready(function() {
             //  $('.combobox').combobox()
             var kApp = new KharbgaApp();
+            var setupOk = kApp.initMessaging();
+            if (setupOk == false) {
+                alert("Unable to setup connection to the server. Please try again later!");
+            }
             kApp.initBoard({
                 themePath: '../img/theme-simple/{piece}.png'
             });

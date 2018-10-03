@@ -1,8 +1,15 @@
 
 # Open Issues / To Do
 
+* overall UI
+    -- do we need a menu?
+    -- menu links are not working
+    -- Tab control -- is not ideal for mobile front end
 * Error about invalid setting
 * Error creating game when user is not logged in - issue with the game created by field is empty       when user is not logged in
+
+* Exchange requests are not shown properly in the UI and -- debug
+* highlighting of exchange requests disappears
 
   https://stackoverflow.com/questions/7795300/validation-failed-for-one-or-more-entities-see-entityvalidationerrors-propert
 
@@ -20,6 +27,7 @@
   * As Attacker
   * As Defender (ability to request for two)
     piece being played with
+  * Deciding what to move if multiple captures are possible after capture on the move
 
 * Ability to replay with a delay
 * Ability to start a game with options (w/ computer, as Attacker,as Defender). 
@@ -103,7 +111,22 @@
 * Add option to support different size board: 5x5 and 9x9
 
 # Dev Release Notes:
----
+
+## v 1.0 -- Oct 2018
+
+### Features
+
+* Online Web Access (www.kharbga.net)
+* Ability to play with computer as attacker or defender
+* Ability to play with another player over the net
+
+### Issues Resolved
+
+* Setup on www.kharbga.net
+* v1 - jquery version
+* v2 - AngualrJS version
+
+
 ## v 0.1  -- Apr 30, 2017
 
 ### Features

@@ -102,14 +102,14 @@ var Kharbga;
                 return Kharbga.PlayerSettingStatus.ERR_INVALID_CELL;
             }
             var eventData;
-            if (cell.isMalha()) {
+            if (cell.isMalha() === true) {
                 if (this.boardEvents != null) {
                     eventData = new Kharbga.BoardEventData(cell, cell, id, Kharbga.BoardMoveType.SettingOnMiddleCell);
                     this.boardEvents.invalidMoveEvent(eventData);
                 }
                 return Kharbga.PlayerSettingStatus.ERR_MALHA;
             }
-            if (cell.isOccupied()) {
+            if (cell.isOccupied() === true) {
                 if (this.boardEvents != null) {
                     eventData = new Kharbga.BoardEventData(cell, cell, id, Kharbga.BoardMoveType.SettingOnOccupiedCell);
                     this.boardEvents.invalidMoveEvent(eventData);
@@ -455,6 +455,7 @@ var Kharbga;
             this.col = col;
             this.id = BoardCell.COLUMNS[col] + BoardCell.ROWS[row];
             this.listAdjacentCells = [];
+            this.state = Kharbga.BoardCellState.Empty;
         }
         BoardCell.prototype.Above = function () {
             return this.up;
@@ -552,9 +553,9 @@ var Kharbga;
                 case Kharbga.BoardCellState.Empty:
                     return false;
                 case Kharbga.BoardCellState.OccupiedByAttacker:
-                    return player.isAttacker;
+                    return player.isAttacker === true;
                 case Kharbga.BoardCellState.OccupiedByDefender:
-                    return !player.isAttacker;
+                    return player.isAttacker === false;
                 default:
                     return false;
             }
@@ -564,9 +565,9 @@ var Kharbga;
                 case Kharbga.BoardCellState.Empty:
                     return false;
                 case Kharbga.BoardCellState.OccupiedByAttacker:
-                    return !player.isAttacker;
+                    return player.isAttacker === false;
                 case Kharbga.BoardCellState.OccupiedByDefender:
-                    return player.isAttacker;
+                    return player.isAttacker === true;
                 default:
                     return false;
             }
