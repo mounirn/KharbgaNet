@@ -23,19 +23,22 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#"><img src="../img/kharbga.png" style="max-height:20px;" title="Kharbga played in the desert of North Africa"></a>
+                    <a class="navbar-brand" href="#play"><img src="../img/kharbga.png" style="max-height:20px;" title="Kharbga played in the desert of North Africa"></a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active dropdown"><a href="#play">Play</a></li>
-                        <li><a href="#play">New</a></li>
+                        <li class="active dropdown"><a data-target="tab-pane" href="#play">Play</a></li>
+                        <li><a href="#play" data-target="tab-pane">New</a></li>
                         <li><a href="#rules" data-toggle="modal" data-target="#rulesModal">Rules</a></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li id="register-li"><a id="register-link" href="#register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                        <li id="login-li"><a id="login-link" href="#login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                        <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                        <li id="register-li"><a id="register-link" href="#register"><span class="glyphicon glyphicon-user"></span>
+                                Sign Up</a></li>
+                        <li id="login-li"><a id="login-link" href="#login"><span class="glyphicon glyphicon-log-in"></span>
+                                Login</a></li>
+                        <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>
+                                Logout</a></li>
                     </ul>
                     <p id="account-welcome" class="navbar-text navbar-right text-success"></p>
                 </div>
@@ -43,19 +46,19 @@
         </nav>
         <div id="main-message" class=""></div>
         <ul id="main-tabs" class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#welcome">Welcome</a></li>
+            <li class="active"><a data-toggle="tab" href="#play">Welcome</a></li>
             <li><a data-toggle="tab" href="#gameState">Game State</a></li>
             <li><a data-toggle="tab" href="#activeGames">Open Games</a></li>
             <li><a data-toggle="tab" href="#account">My Account</a></li>
             <li><a data-toggle="tab" href="#system">System</a></li>
             <li><a data-toggle="tab" href="#help">Help</a></li>
-            <li><a data-toggle="tab" href="#about">About</a></li>
         </ul>
         <div class="tab-content">
             <!-- tabs-->
-            <div id="welcome" class="tab-pane fade in active text-center">
+            <div id="play" class="tab-pane fade in active text-center">
                 <h1>Welcome to</h1> <img src="../img/kharbga.png" title="Kharbga">
-                <p>If this is your first time here, please click <a href="#rules" data-toggle="modal" data-target="#rulesModal">here to learn about the game.</a></p>
+                <p>If this is your first time here, please click <a href="#rules" data-toggle="modal" data-target="#rulesModal">here
+                        to learn about the game.</a></p>
                 <p>This system provides a platform for learning and playing this fun board game from North Africa.
                 </p>
                 <img src="../img/players.png" title="Kharbga played in the desert of North Africa">
@@ -72,20 +75,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="text-success"> Last Action: </p>
-                            </div>
-                            <div class="col-sm-9">
-                                <span id="gameMove" class="badge"></span>
-                            </div>
-                        </div>
-                        <p>FEN: <span id="fen" class="badge badge-success"></span></p>
 
-                        <!-- for testing only -->
-                        <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
-                        <strong>Current Game Moves</strong>
-                        <div id="game-moves-history"></div>
                         <div id="game-state-message"> </div>
                         <table id="game-state-table" class="table table-striped">
                             <tbody id="game-state-table-body">
@@ -160,7 +150,7 @@
                                 <div class="col-sm-10 input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-tent"></i></span>
                                     <input class="form-control" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50" />
-                                    <datalist id="register-team-list">                                       
+                                    <datalist id="register-team-list">
                                     </datalist>
                                 </div>
                             </div>
@@ -208,26 +198,46 @@
                     </div>
                 </div>
                 <div id="account-info-panel" class="panel panel-info hidden">
-                    <table class="table table-user-information">
-                        <tbody>
-                            <tr>
-                                <td>Name:</td>
-                                <td><span id="account-name"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Session Id</td>
-                                <td><span id="account-session-id"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Active Game ID</td>
-                                <td><span id="account-game-id"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Role</td>
-                                <td><span id="account-game-role"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong>My Account</strong>
+
+                            <div class="pull-right">
+                                <a href="#" id="account-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-user-information">
+                                <tbody>
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td><span id="account-name"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Session Id</td>
+                                        <td><span id="account-session-id"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Active Game ID</td>
+                                        <td><span id="account-game-id"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Role</td>
+                                        <td><span id="account-game-role"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table id="user-info-table" class="table table-striped">
+                                <tbody id="user-info-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
             <div id="system" class="tab-pane fade">
@@ -293,9 +303,26 @@
             <div id="help" class="tab-pane fade">
                 <div id="help-message"></div>
                 <!-- Trigger the modal with a button -->
-                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#rulesModal">View Rules</button>
+                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#rulesModal">View
+                    Rules</button>
 
+                <div class="panel panel-info">
+                    <div class="panel-heading"><strong>API URL:</strong> <span id="api-url"></span>
+                        <div class="pull-right">
+                            <a href="#" id="refreshAppInfo-submit" value="Refresh">
+                                <span class="glyphicon glyphicon-refresh"></span> Refresh
+                            </a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div id="help-message"> </div>
+                        <table id="app-info-table" class="table table-striped">
+                            <tbody id="app-info-table-body">
 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <!-- Signal R messages-->
                 <div class="panel panel-info">
                     <div class="panel-heading">
@@ -346,39 +373,21 @@
                     </div>
                 </div>
             </div>
-            <div id="about" class="tab-pane fade">
-                <div class="panel panel-info">
-                    <div class="panel-heading"><strong>API URL:</strong> <span id="api-url"></span>
-                        <div class="pull-right">
-                            <a href="#" id="refreshAppInfo-submit" value="Refresh">
-                                <span class="glyphicon glyphicon-refresh"></span> Refresh
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="panel-body">
-                    <div id="help-message"> </div>
-                    <table id="app-info-table" class="table table-striped">
-                        <tbody id="app-info-table-body">
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
         <div id="currentGame" class="">
             <div class="row">
                 <div class="col-sm-6 col-md-6 col-lg-6">
                     <div class="btn-group">
                         <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                                New Game <span class="caret"></span>
-                            </button>
+                            New Game <span class="caret"></span>
+                        </button>
                         <ul class="dropdown-menu" role="menu">
                             <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
                             <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
-                            <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against system</a></li>
-                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against system</a></li>
+                            <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
+                                    system</a></li>
+                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
+                                    system</a></li>
                         </ul>
                     </div>
                     <div class="panel panel-success">
@@ -387,7 +396,6 @@
                             <span id="current-game-status" class="badge pull-right"></span>
                         </div>
                         <div class="panel-body">
-
                             <table class="table table-striped ">
                                 <thead>
                                     <tr>
@@ -424,35 +432,52 @@
                                 </tr>
 
                             </table>
-                        </div>
-                        <div class="panel panel-info">
-                            <div class="panel-heading">Actions and Player Move Flags</div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-sm-9">
-                                        <input type="checkbox" id="abandonCheckbox"><strong> Abandon</strong>
-                                    </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="text-success"> Last Action: </p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-9">
-                                        <input type="checkbox" id="exchangeRequestCheckbox"><strong> Exchange&nbsp;Request:</strong>
-                                    </div>
-
-                                    <div class="col-sm-3">
-                                        <span id="exchangeRequestDefenderPiece" class="badge"></span>
-                                    </div>
-
+                                <div class="col-sm-9">
+                                    <span id="gameMove" class="badge"></span>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-9">
-                                        <input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox">
-                                        <strong>
-                                                    Exchange&nbsp;Request&nbsp;Accepted:
-                                                </strong>
+                            </div>
+                            <p>FEN: <span id="fen" class="badge badge-success"></span></p>
+
+                            <!-- for testing only -->
+                            <button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
+                            <h3>Game Moves History</h3>
+                            <div id="game-moves-history" class="max-height:100px;overflow-y:scroll">
+
+                            </div>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Actions and Player Move Flags</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <input type="checkbox" id="abandonCheckbox"><strong> Abandon</strong>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <span id="exchangeRequestAttackerPiece1" class="badge"></span>
-                                        <span id="exchangeRequestAttackerPiece2" class="badge"></span>
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <input type="checkbox" id="exchangeRequestCheckbox"><strong>
+                                                Exchange&nbsp;Request:</strong>
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                            <span id="exchangeRequestDefenderPiece" class="badge"></span>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox">
+                                            <strong>
+                                                Exchange&nbsp;Request&nbsp;Accepted:
+                                            </strong>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <span id="exchangeRequestAttackerPiece1" class="badge"></span>
+                                            <span id="exchangeRequestAttackerPiece2" class="badge"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -462,10 +487,13 @@
                 <div class="col-sm-6 col-md-6 col-lg-6 ">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <span class="pull-left"> Board - Turn:  </span> &nbsp; &nbsp;
+                            <span class="pull-left"> Board - Turn: </span> &nbsp; &nbsp;
                             <span id="player-turn" class="badge"></span> &nbsp; &nbsp;
 
                             <span id="state" class="badge"></span>
+                            <audio id="sound" preload="auto">
+                                <source src="../img/button-26.mp3" type="audio/mpeg">
+                            </audio>
                             <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">
 
                                 <span class="glyphicon glyphicon-refresh"></span> Flip
@@ -551,7 +579,7 @@
     <script src="../js/jquery.signalR-2.3.0.js"></script>
 
 
-    <script src="http://localhost/NS.API_2016/signalR/hubs"></script>
+    <script src="http://localhost:3121/signalR/hubs"></script>
 
     <!-- convert to the real URL-->
     <script src="../js/moment.min.js"></script>

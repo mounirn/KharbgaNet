@@ -53,13 +53,12 @@ var KharbgaApp = function () {
 
     // the client state
     var appClientState = {
-        sessionId: "",
-        userScreenName: "",   
+        sessionId: "", 
         role: 0,      //  unknown, attacker, defender, spectator
         loggedIn: false,     
         loaded: false,
         firstComputerSetting: true,
-        computer_is_playing: false,
+        computerIsPlaying: false,
         selectedSource: "",      // indicates that the user has a selected a source for setting or moving
         moveSourceRequired : "", // the move source required 
         signalReInitialized: false,
@@ -791,7 +790,7 @@ var KharbgaApp = function () {
         if (gameState.id != "" && appClientState.useServer === true) {
             // notify server pf the setting
             gamesHubProxy.server.recordMove(appClientState.sessionId,gameState.id, 
-                appClientState.userScreenName,
+                user.name,
                 gameMove.isAttacker, gameMove.isSetting, gameMove.from, gameMove.to, 
                 gameMove.resigned, gameMove.exchangeRequest,
                 gameMove.beforeFen, game.fen(), gameMove.message, lastMoveId,
@@ -1087,7 +1086,7 @@ var KharbgaApp = function () {
             getLoggingNow(), moveSourceRequired);
         
         
-        appClientState.computer_is_playing = true;
+        appClientState.computerIsPlaying = true;
 
         var source = "";
         var target = "";
@@ -1129,7 +1128,7 @@ var KharbgaApp = function () {
 
                 // if computer can not play -- resign or pass
                 game.check();
-                appClientState.computer_is_playing = false;
+                appClientState.computerIsPlaying = false;
                 return;
             }
             source = "spare";
@@ -1174,7 +1173,7 @@ var KharbgaApp = function () {
 
                     // if computer can not play -- resign or pass
                     game.check();
-                    appClientState.computer_is_playing = false;
+                    appClientState.computerIsPlaying = false;
                     return;
                 }
                 
@@ -1195,7 +1194,7 @@ var KharbgaApp = function () {
         if (typeof (moveSourceRequired) != 'undefined' && moveSourceRequired != null && 
             moveSourceRequired.length != 0 && source !== moveSourceRequired) {
         
-            appClientState.computer_is_playing = false;
+            appClientState.computerIsPlaying = false;
             return;
         }
 
@@ -1259,7 +1258,7 @@ var KharbgaApp = function () {
             }
         }
 
-        appClientState.computer_is_playing = false;
+        appClientState.computerIsPlaying = false;
     }
 
     /**
@@ -1403,7 +1402,7 @@ var KharbgaApp = function () {
 
         if (appClientState.useServer === true && gamesHubProxy !== null) {
             // call the server to start the new game
-            gamesHubProxy.server.createGame(appClientState.sessionId,appClientState.userScreenName, e.data.asAttacker, e.data.againstComputer)
+            gamesHubProxy.server.createGame(appClientState.sessionId,user.name, e.data.asAttacker, e.data.againstComputer)
                 .done(function () {
                     console.log('%s - Done Server Invocation of create game', getLoggingNow());
 
@@ -1427,12 +1426,12 @@ var KharbgaApp = function () {
             opponent.isSystem = e.data.againstComputer;            
             if (e.data.asAttacker === true)
             {
-                gameState.attackerName = appClientState.userScreenName;
+                gameState.attackerName = user.name;
                 gameState.attacker = user;
                 gameState.defender = opponent;
             }
             else{
-                gameState.defenderName = appClientState.userScreenName;
+                gameState.defenderName = user.name;
                 gameState.attacker = opponent;
                 gameState.defender = user;
             }
@@ -1907,7 +1906,7 @@ var KharbgaApp = function () {
                 appClientState.loggedIn = false;
                 setupMyAccount();
                 appClientState.sessionId = "";
-                appClientState.userScreenName = "";
+                user.name = "";
 
 
                 if (status.status === 404 || status.status === 400)
@@ -1927,7 +1926,7 @@ var KharbgaApp = function () {
         if (appClientState.loggedIn === true) {
             $('#account-info-panel').show().removeClass('hidden');
             $('#account-welcome').show().removeClass('hidden');
-            $('#account-welcome').html("<strong> Welcome " + appClientState.userScreenName + "</strong>");
+            $('#account-welcome').html("<strong> Welcome " + user.name + "</strong>");
 
             $('#login-li').hide().addClass('hidden');
             $('#register-li').hide().addClass('hidden');
@@ -1950,7 +1949,7 @@ var KharbgaApp = function () {
             $('#register-li').show().removeClass('hidden');
             $('#logout-li').hide().addClass('hidden');
         }
-        $('#account-name').text(appClientState.userScreenName);
+        $('#account-name').text(user.name);
        // $('#account-org-id').text(appClientState.session.ClientId);
         $('#account-session-id').text(appClientState.sessionId);
         $('#account-game-id').text(gameState.id);
@@ -1982,9 +1981,9 @@ var KharbgaApp = function () {
 
         if (gid != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
 
-        //    gamesHubProxy.server.reJoinGame(appClientState.userScreenName, gid, false);
+        //    gamesHubProxy.server.reJoinGame(user.name, gid, false);
             // tell the server to rejoin this connection with the game
-            gamesHubProxy.server.joinGame(appClientState.sessionId,appClientState.userScreenName, gid, false);
+            gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false);
         }
     }
 
@@ -2475,7 +2474,7 @@ var KharbgaApp = function () {
         resetLocalGame();
 
         //join the game and indicate if spectator or not
-        gamesHubProxy.server.joinGame(appClientState.sessionId, appClientState.userScreenName, data.id, spectator).done(function () {
+        gamesHubProxy.server.joinGame(appClientState.sessionId, user.name, data.id, spectator).done(function () {
          // init the local game with the given server game data    
       //   resetLocalGame();  // server will sen
          // update the game view with the given game
@@ -2516,7 +2515,7 @@ var KharbgaApp = function () {
         var spectator = true;
 
         //join the game and indicate if spectator or not
-        gamesHubProxy.server.joinGame(appClientState.sessionId,appClientState.userScreenName, data.id, spectator);
+        gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, data.id, spectator);
 
         // init the local game with the given server game data    
       //  resetLocalGame();  // server will sen
@@ -2872,7 +2871,7 @@ var KharbgaApp = function () {
     var onMessagePosted = function (user, message) {
         if (loggingOn)
             console.log('%s - server: onMessagePosted from %s: %s', getLoggingNow(), user.Name, message);
-        $('#messages-list').append("<li class='list-group-item'><strong>" + getLoggingNow() + " - " + user.Name + ":</strong> <pre> " + message+ " </pre></li>");
+        $('#messages-list').append("<li class='list-group-item'><strong>" + getLoggingNow() + " - " + user.name + ":</strong> <pre> " + message+ " </pre></li>");
 
     };
 
@@ -2887,9 +2886,9 @@ var KharbgaApp = function () {
    // startSignalR();
   
     function saveGame() {
-     //   if (appClientState.userScreenName == game.winner.Name) { // winner gets this honor
-            gamesHubProxy.server.updateGameState(appClientState.sessionId,appClientState.userScreenName, gameState.id,
-                game.getState(), game.winner.isAttacker(), game.attackerScore, game.defenderScore);
+     //   if (user.name == game.winner.Name) { // winner gets this honor
+            gamesHubProxy.server.updateGameState(appClientState.sessionId,user.name, gameState.id,
+                game.getState(), game.winner.isAttacker, game.attackerScore, game.defenderScore);
      //   }
     }
 
@@ -2901,14 +2900,14 @@ var KharbgaApp = function () {
         if (session != null) {
             appClientState.session = session;
             appClientState.sessionId = session.sessionId;
-            appClientState.userScreenName = session.fullName;
+            user.name = session.fullName;
             appClientState.loggedIn = session.isActive;
             setCookie(C_NSSID, appClientState.sessionId);
         }
         else {
             appClientState.session = null;
             appClientState.sessionId = "";
-            appClientState.userScreenName = "";
+            user.name = "";
             appClientState.loggedIn = false;
             setCookie(C_NSSID, "");
         }
@@ -2978,12 +2977,12 @@ var KharbgaApp = function () {
         else
             boardEl.find('.square-d4').removeClass('highlight-malha');
 
-        if (gameState.attackerName == appClientState.userScreenName )
+        if (gameState.attackerName == user.name )
             $('#game-attacker').text(gameState.attackerName + " (me)" );
         else
             $('#game-attacker').text(gameState.attackerName);
 
-        if (gameState.defenderName == appClientState.userScreenName)
+        if (gameState.defenderName == user.name)
             $('#game-defender').text(gameState.defenderName + " (me)" );
         else
             $('#game-defender').text(gameState.defenderName );
@@ -3221,7 +3220,7 @@ var KharbgaApp = function () {
             //setSystemError("Unable to connect with signalR hub");
             return;
         }
-        gamesHubProxy.server.postMessage(appClientState.sessionId,appClientState.userScreenName, msg.message);
+        gamesHubProxy.server.postMessage(appClientState.sessionId,user.name, msg.message);
     };
 
 
@@ -3351,11 +3350,11 @@ var KharbgaApp = function () {
         appClientState.lastReplayPosition--;
         if (appClientState.lastReplayPosition < 0) {
             appClientState.lastReplayPosition = 0;
-            board.position(gameState.Moves[appClientState.lastReplayPosition].beforeFen, true);
+            board.position(gameState.moves[appClientState.lastReplayPosition].beforeFen, true);
             updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],false);
             return;
         }
-        board.position(gameState.Moves[appClientState.lastReplayPosition].afterFen, true);
+        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
         updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
 
     };
@@ -3530,7 +3529,7 @@ var KharbgaApp = function () {
             return;        
         }
         //join the game and indicate if spectator or not
-        gamesHubProxy.server.joinGame(appClientState.sessionId,appClientState.userScreenName, gameId, false);
+        gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gameId, false);
 
     };
 

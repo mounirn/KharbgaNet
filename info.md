@@ -1,6 +1,11 @@
 
 # Open Issues / To Do
 
+* Error about invalid setting
+* Error creating game when user is not logged in - issue with the game created by field is empty       when user is not logged in
+
+  https://stackoverflow.com/questions/7795300/validation-failed-for-one-or-more-entities-see-entityvalidationerrors-propert
+
 * Save game state in the server  (azure doc or mongodb or something else)
 * Loading a game after refresh is causing an error
 * When a new game is started and pending another play to join. Please add a message with that info.

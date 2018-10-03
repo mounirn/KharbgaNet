@@ -1,0 +1,29 @@
+{
+    "name": "kharbga.net",
+    "version": "1.0.0",
+    "description": "An online board strategy game based on the ancient games of Kharbga and Seega from North Africa. \r The rules of this online game are close to the rules of Seega as documented by various online resources.\r See references below. However, the exact rules enforced by this program are based on the version played in the south of Tunisia.",
+    "main": "systemjs-angular-loader.js",
+    "dependencies": {
+        "angular-ui-bootstrap": "^2.5.0",
+        "angular-ui-router": "^0.4.2",
+        "bootstrap-combobox": "^1.0.2",
+        "jqueryrouter": "^1.2.0"
+    },
+    "devDependencies": {
+        "expose-loader": "^0.7.5"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mounirn/KharbgaNet.git"
+    },
+    "keywords": [],
+    "author": "Mounir Nouri",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mounirn/KharbgaNet/issues"
+    },
+    "homepage": "https://github.com/mounirn/KharbgaNet#readme"
+}
