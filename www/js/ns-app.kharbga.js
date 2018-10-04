@@ -1876,7 +1876,7 @@ var KharbgaApp = function () {
 
                 if (session != null) {
                     setupClientStateWithSession(session);
-                 //   rejoinLastGameIfAny();
+                    rejoinLastGameIfAny();
                 }
                 else {
                     setupClientStateWithSession(null);
@@ -1962,7 +1962,7 @@ var KharbgaApp = function () {
         }
         // check local active game cookie
         var gid = getLastGameCookie();
-        setupGames(gid);
+     //   setupGames(gid);
 
         if (gid != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
 
@@ -2051,7 +2051,7 @@ var KharbgaApp = function () {
             ret = game.processMove(serverMove.from, serverMove.to, serverMove.resigned, serverMove.exchangeRequest);
         }
         else {
-            ret = game.processSetting(move.to);
+            ret = game.processSetting(serverMove.to);
         }
         updateBoard(game);
         updateLastActionInfo(serverMove);
@@ -2465,7 +2465,11 @@ var KharbgaApp = function () {
 
                 // select the game 
        //    selectActiveGameId(data.id);
-        });                 
+        });  
+        
+        // focus the game tab
+        boardEl.focus();
+        window.scrollTo($('#board').scrollTop() + 100);
     }
 
     /**
