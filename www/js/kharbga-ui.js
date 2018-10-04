@@ -740,9 +740,14 @@
             }
 
             if (color === 'black') {
-                html += '<td style="padding-top: 5px;"><strong>Defender:<br><span id="game-defender"></span></strong></td>';
+                html += '<td style="padding-top: 5px;font-weight:bold">Defender:<br><span id="game-defender"></span>';
+               
+                html += '</td>';
+
             } else {
-                html += '<td style="padding-top: 5px"><strong>Attacker:<br><span id="game-attacker"></span> </strong></td>';
+                html += '<td style="padding-top: 5px;font-weight:bold">Attacker: <span id="game-attacker"></span>';
+                
+                html += '</td>';
             }
           
 
@@ -751,11 +756,11 @@
             // add the Exchange Request boxes for the attacker and defender
             html += '<tr><td colspan="5">';
             if (color === 'black') {
-                html += '<input type="checkbox" id="exchangeRequestCheckbox"><span style="font-size:smaller"><strong>Exchange&nbsp;Request:</strong></span> ';
-                html += '<span id="exchangeRequestDefenderPiece" class="badge"> </span>';
+                html += '<div class="checkbox"><label><input type="checkbox" id="exchangeRequestCheckbox" /><strong>Exchange&nbsp;Request:</strong></label> ';
+                html += '<span id="exchangeRequestDefenderPiece" class="badge"> </span></div>';
             } else {
-                html += '<input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox"><span style="font-size:smaller"><strong>Exchange&nbsp;Request&nbsp;Accepted:</strong></span>';
-                html += '<span id="exchangeRequestAttackerPiece1" class="badge"></span> <span id="exchangeRequestAttackerPiece2" class="badge"></span>';
+                html += '<div class="checkbox"><label><input type="checkbox"  id="exchangeRequestAcceptedCheckbox"/><strong> Exchange&nbsp;Request&nbsp;Accepted:</strong></label>';
+                html += '<span id="exchangeRequestAttackerPiece1" class="badge"></span> <span id="exchangeRequestAttackerPiece2" class="badge"></span></div>';
             }
             html += '</td></tr>';
 

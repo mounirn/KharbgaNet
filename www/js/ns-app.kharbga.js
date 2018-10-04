@@ -1549,10 +1549,14 @@ var KharbgaApp = function () {
 
        // $('#loadSetting1Btn').hide();
     }
+    $('#clear-board-button').on('click', onClear);
     /**
      * Clears the game and the board. The board is a set with an empty position string or fen
      */
-    function onClear() {
+    function onClear(e) {
+
+        e.preventDefault();
+
         game = new Kharbga.Game(gameEvents, boardEvents);
         game.reset();
         game.start();
@@ -1736,8 +1740,9 @@ var KharbgaApp = function () {
      * handler for refresh app info request
      * @param {any} e
      */
-    function onRefreshAppInfo(e) {      
-        e.preventDefault();
+    function onRefreshAppInfo(e) { 
+        if (e!= null)     
+            e.preventDefault();
         _refreshAppInfo();
 
     }
@@ -1765,6 +1770,9 @@ var KharbgaApp = function () {
     $('#app-state-link').on('click', _refreshAppState);
 
     function _refreshAppState(e){
+        if (e!= null)
+            e.preventDefault();
+
         $('#main-message').html("<div class='alert alert-info'>Processing...</div>"); 
        
         $('#app-state-table-body').html("");
@@ -1799,6 +1807,9 @@ var KharbgaApp = function () {
     $('#game-state-link').on('click', _refreshGameState);
 
     function _refreshGameState(e){
+        if (e!= null)
+            e.preventDefault();
+
         $('#main-message').html("<div class='alert alert-info'>Processing...</div>"); 
        
         $('#game-state-table-body').html("");
@@ -2129,15 +2140,15 @@ var KharbgaApp = function () {
             console.log("%s - setCurrentPlayer - Invalid game passed : ", getLoggingNow());
             return;
         }
-
       
         // setup the check boxes based on the player
         if (user.isSpectator) {
-            $('#abandonCheckbox').prop('disabled', true);
+            $('#resign-checkbox').prop('disabled', true);
             $('#exchangeRequestCheckbox').prop('disabled', true);
             $('#exchangeRequestAcceptedCheckbox').prop('disabled', true);
         }
         else {
+            $('#resign-checkbox').prop('enabled', true);
             if (user.isAttacker) {
                 $('#exchangeRequestCheckbox').prop('disabled', true);
                 $('#exchangeRequestAcceptedCheckbox').prop('disabled', false);
@@ -2148,8 +2159,8 @@ var KharbgaApp = function () {
             }
         }
 
-        gameState.update(serverGame);
-        updateLocalGameStatus(serverGame);
+     //   gameState.update(serverGame);
+     //  updateLocalGameStatus(serverGame);
 
         // refresh the myAccount info
         setupMyAccount();
@@ -2177,18 +2188,14 @@ var KharbgaApp = function () {
             console.log("%s - Game Joined: ", getLoggingNow());
             console.log(gameInfo);
         }
-       // show the panel
-      //  $('#currentGamePanel').show();
-
+  
      //   $('#' + gameInfo.id).addClass(getStatusCss(gameInfo.Status));    
 
        
         
         setupLocalGame(gameInfo);
       
-       // 
-       // checkBoardAndPlayIfComputer();
-          //checkBoardAndPlayIfComputer();
+
         // start the background timer for the computer if we have a computer playing
         if (appClientState.backgroundJobId> 0)
             clearInterval(appClientState.backgroundJobId);
@@ -2238,13 +2245,6 @@ var KharbgaApp = function () {
         // update the board display
         updateBoard(game);
 
-
-
-        $('#current-game-id').text(gameInfo.id);
-        $('#current-game-status').text(getStatusText(gameInfo.status));
-        $('#game-attacker').text(gameInfo.attackerName);
-        $('#game-defender').text(gameInfo.defenderName);
-
         // player
         if (game.turn() == 'a')
             $('#player-turn').html("Attacker");
@@ -2269,30 +2269,26 @@ var KharbgaApp = function () {
         $('#current-game-status').text(getStatusText(gameInfo.status));
         $('#game-attacker').text(gameInfo.attackerName);
         $('#game-defender').text(gameInfo.defenderName);
-        
-        // game status 
-        $('#current-game-status').text(getStatusText(gameInfo.status));  
-     //   updateGameInGameList(gameInfo);
-  
-        $('#game-attacker').text(gameInfo.attackerName);
-        $('#game-defender').text(gameInfo.defenderName);
-
+        $('.attacker-name').text(gameInfo.attackerName);
+        $('.defender-name').text(gameInfo.defenderName);
         $('#game-players').html(gameInfo.attackerName + " vs. " + gameInfo.defenderName);
         $('#game-score').html(gameInfo.attackerScore + "-" + gameInfo.defenderScore);
         $('#game-result').html(toDisplayString(Kharbga.GameState[gameInfo.state]));
 
-        if (gameInfo.WinnerIsAttacker)
-            $('#game-winner').html(gameInfo.attackerName + " (Attacker)");
-        else
-            $('#game-winner').html(gameInfo.defenderName + " (Defender)");
-
         updateGameInGameList(gameInfo);
 
-        // activate the modal dialog here 
-        if (gameInfo.status > 2)
-            setTimeout(function () {
-                $('#game-over').modal();
-            }, 1000);
+        if (game.winner != null){
+            if (game.winner.isAttacker)
+                $('#game-winner').html(gameInfo.attackerName + " (Attacker)");
+            else
+                $('#game-winner').html(gameInfo.defenderName + " (Defender)");        
+
+            // activate the modal dialog here 
+            if (gameInfo.status > 2)
+                setTimeout(function () {
+                    $('#game-over').modal();
+                }, 1000);
+        }
     }
 
     var onGameDeleted = function (gameInfo) {
@@ -2669,6 +2665,8 @@ var KharbgaApp = function () {
     }
     $('#server-link').on('click', setupSignalR);
     function setupSignalR(e){
+        if (e!= null)
+            e.preventDefault();
         _setupSignalR();
     }
 
@@ -3089,6 +3087,9 @@ var KharbgaApp = function () {
     this.setupSignalR = _setupSignalR;
 
     function onFlipBoard(e){
+        if (e!= null)
+            e.preventDefault();
+
         if (board == null) {
             $('#message').html("<div class='alert alert-danger'>Game board is not initialized</div>");
             return;

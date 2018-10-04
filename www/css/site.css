@@ -3,26 +3,26 @@
     font-family: Frutiger, Futura, Gills Sans, Helvetica, Lucida, Optima, Palatino, Agfa Rotis, Arial, and Univers;
 }
 
-
 .navbar-inverse {
     background-color: #4D7D56;
     border-color: #4D7D56;
     color: white;
 }
 
-    .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
-        background-color: #4D7D56;
-        color: antiquewhite;
-        border-color: #4D7D56;
-    }
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+    background-color: #4D7D56;
+    color: antiquewhite;
+    border-color: #4D7D56;
+}
 
-    .navbar-inverse .navbar-nav > li > a {
-        color: antiquewhite;
-    }
+.navbar-inverse .navbar-nav>li>a {
+    color: antiquewhite;
+}
 
-    .navbar-inverse .navbar-brand {
-        color: antiquewhite;
-    }
+.navbar-inverse .navbar-brand {
+    color: antiquewhite;
+}
 
 .main {
     background-color: white;
@@ -31,16 +31,22 @@
 .field-validation-error {
     color: #B40636;
 }
+
+
 /* Word press*/
+
+
+/* issue with checkbox size on smaller screens
 @media screen and (max-width: 782px) {
     input [type=radio], input[type=checkbox] {
         height: 25px;
         width: 25px;
     }
 }
+*/
 
-
-a, a:hover {
+a,
+a:hover {
     color: #4D7D56;
 }
 
@@ -48,8 +54,8 @@ a, a:hover {
     border-radius: 50%;
 }
 
-.container{
-    background-color:transparent;
+.container {
+    background-color: transparent;
 }
 
 .footer {
@@ -57,7 +63,7 @@ a, a:hover {
 }
 
 .row {
-    background-color:transparent;
+    background-color: transparent;
 }
 
 .panel {
@@ -71,7 +77,7 @@ a, a:hover {
 
 .panel-heading {
     background-color: #4D7D56;
-    color:white;
+    color: white;
 }
 
 .panel-body {
@@ -83,7 +89,7 @@ a, a:hover {
     color: white;
 }
 
-.panel-info > .panel-heading {
+.panel-info>.panel-heading {
     color: antiquewhite;
     background-color: #E1781A;
     border-color: #bce8f1;

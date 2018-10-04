@@ -1,0 +1,104 @@
+<tr>
+    <td colspan="2">
+        <input class="btn btn-info" type="button" id="getPositionBtn" value="Refresh Game Info" /><br />
+    </td>
+</tr>
+<!-- for testing only -->
+<button id="loadSetting1Btn" class="btn btn-default" type="button"> Load Setting1 </button>
+
+
+<div class="panel panel-info">
+    <div class="panel-heading">Actions and Player Move Flags</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-9">
+                <input type="checkbox" id="abandonCheckbox"><strong> Resign</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <input type="checkbox" id="exchangeRequestCheckbox"><strong>
+                    Exchange&nbsp;Request:</strong>
+            </div>
+
+            <div class="col-sm-3">
+                <span id="exchangeRequestDefenderPiece" class="badge"></span>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <input type="checkbox" class="" id="exchangeRequestAcceptedCheckbox">
+                <strong>
+                    Exchange&nbsp;Request&nbsp;Accepted:
+                </strong>
+            </div>
+            <div class="col-sm-3">
+                <span id="exchangeRequestAttackerPiece1" class="badge"></span>
+                <span id="exchangeRequestAttackerPiece2" class="badge"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="system" class="tab-pane fade">
+    <div id="system-message"></div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <!--Connections-->
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <strong> Active Connections: </strong><span id="connections-count"></span> record(s)
+                    <div class="pull-right">
+                        <a href="#" id="connections-link" value="refresh-connections">
+                            <span class="glyphicon glyphicon-refresh"></span>Refresh
+                        </a>
+                    </div>
+
+                </div>
+                <div class="panel-body">
+                    <div id="connections-table" style="height: 300px; overflow-y:scroll">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <!--Players-->
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <strong>Players: </strong> <span id="players-count"></span> record(s)
+                    <div class="pull-right">
+                        <a href="#" id="players-link" value="refresh-players">
+                            <span class="glyphicon glyphicon-refresh"></span>Refresh
+                        </a>
+                    </div>
+
+                </div>
+                <div class="panel-body">
+                    <div id="players-table" style="height: 300px; overflow-y:scroll">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Games-->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <strong>Games: </strong> <span id="games-count"></span> record(s)
+            <div class="pull-right">
+                <a href="#" id="system-games-link" value="refresh-games">
+                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                </a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="games-table" style="height: 300px; overflow-y:scroll">
+
+            </div>
+        </div>
+    </div>
+
+</div>
