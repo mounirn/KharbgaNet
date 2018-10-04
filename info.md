@@ -5,11 +5,15 @@
     -- do we need a menu?
     -- menu links are not working
     -- Tab control -- is not ideal for mobile front end
-* Error about invalid setting
-* Error creating game when user is not logged in - issue with the game created by field is empty       when user is not logged in
+    created by field is empty       when user is not logged in
+* System - move from UI of V1 or V2 and move to Own Html file  
+    -- /html/system.html
+    -- add link to main app 
+    -- add Rules as link from main file
 
 * Exchange requests are not shown properly in the UI and -- debug
 * highlighting of exchange requests disappears
+* 
 
   https://stackoverflow.com/questions/7795300/validation-failed-for-one-or-more-entities-see-entityvalidationerrors-propert
 
@@ -44,6 +48,7 @@
   * Check that Pieces that are capturable and give these priority to move
   * Check that the result of a move does not result in a capturable piece
   * Check that the result of a move results in less capturables
+  * case when computer is attacker and asking for Haff!! keeps moving the same piece. System needs to if repeating move more than three time ( add rule to mark the move as invalid)
 
 * Detect Player blocked condition and allow the player to continue if it is not the first block
 * Add ability to detect the number of times exchange requests are requested using the same piece and attacker     is not paying up (limit to 3)
@@ -125,6 +130,8 @@
 * Setup on www.kharbga.net
 * v1 - jquery version
 * v2 - AngualrJS version
+* Error about invalid setting -- fixed
+* Error creating game when user is not logged in - issue with the game 
 
 
 ## v 0.1  -- Apr 30, 2017

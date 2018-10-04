@@ -2038,18 +2038,20 @@ var KharbgaApp = function () {
         if (lastMoveId == serverMove.clientId) {
             // append the move to the game history
             appendMoveToGameHistoryList(serverMove);
-            console.log("%s - server - did not record setting/move in local game for local moveId: %s", getLoggingNow(), lastMoveId);
+            console.log("%s - server - did not record setting/move in local game for local moveId: %s", 
+                getLoggingNow(), lastMoveId);
             return; 
         }
     
         var ret;
-        console.log("%s - server - recording setting/move in local game for server Move ID: %s", getLoggingNow(), serverMove.ClientID);
+        console.log("%s - server - recording setting/move in local game for server Move ID: %s", 
+            getLoggingNow(), serverMove.clientId);
 
         if (game.is_in_moving_state()) {
-            ret = game.processMove(moveFrom, moveTo, resigned, exchangeRequest);
+            ret = game.processMove(serverMove.from, serverMove.to, serverMove.resigned, serverMove.exchangeRequest);
         }
         else {
-            ret = game.processSetting(moveTo);
+            ret = game.processSetting(move.to);
         }
         updateBoard(game);
         updateLastActionInfo(serverMove);
