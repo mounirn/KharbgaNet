@@ -1179,11 +1179,20 @@ var KharbgaApp = function () {
                 }
                 
                 var moveId = 0;
-                if (playOptions.randomMove)
-                    moveId = getRandom(0, moves.length - 1);
+                if (moveSourceRequired!= null && moveSourceRequired.length >0){
+                    for(var item = 0; item< moves.length; item++ ){
+                        if (moves[item].source == moveSourceRequired){
+                            moveId = item.id;
+                            break;
+                        }
+                    }
+                }
+                else{
+                    if (playOptions.randomMove)
+                        moveId = getRandom(0, moves.length - 1);
+                }
 
                 // todo -- add check for game to rank the moves by score and play the one with the highest score
-
                 var move = moves[moveId];
                 source = move.from;
                 target = move.to;
@@ -1191,19 +1200,15 @@ var KharbgaApp = function () {
             }
         }
        
-        // check if a given source piece must be played
-        if (typeof (moveSourceRequired) != 'undefined' && moveSourceRequired != null && 
-            moveSourceRequired.length != 0 && source !== moveSourceRequired) {
-        
-            appClientState.computerIsPlaying = false;
-            return;
-        }
 
         $('#gameMove').html(source + "-" + target);
       
         var ret = false;
         var msg = "";
-        var resigned = $('#abandonCheckbox').is(':checked');
+        var resigned = false;
+        //resigned = $('#abandonCheckbox').is(':checked');
+        // add rule for how to make the computer resign
+
         var isAttacker = false;
         if (game.turn() == 'a') {
             // set the exchange request if computer
@@ -1749,11 +1754,11 @@ var KharbgaApp = function () {
 
     function _refreshAppInfo(){
         $("#api-url").text(nsApiClient.baseURI);
-        $('#help-message').html("<div class='alert alert-info'>Processing...</div>");
+       // $('#help-message').html("<div class='alert alert-info'>Processing...</div>");
    
         nsApiClient.appService.getAppInfo(function (data, status) {
             if (data != null) {
-                $('#help-message').html("<div class='alert alert-info'>" + JSON.stringify(status) + "</div>");
+              //  $('#help-message').html("<div class='alert alert-info'>" + JSON.stringify(status) + "</div>");
               //  $('#appInfo').html(JSON.stringify(data));
                 $('#app-info-table-body').html("");
                 Object.keys(data).forEach( function(key){
@@ -1762,7 +1767,7 @@ var KharbgaApp = function () {
                 });
             }
             else {
-                $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+              //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
                 $('#appInfo').html('');
             }
         });
@@ -1838,7 +1843,6 @@ var KharbgaApp = function () {
                 $('#game-state-table-body').append(tr2);
             }
         });
-      
     }
 
     function toDisplayString(key){
@@ -1958,7 +1962,9 @@ var KharbgaApp = function () {
     }
 
     /**
-     * rejoins local cached game (after the user refreshes the their browser or logs in again)
+     * @summary rejoins local cached game 
+     * (after the user refreshes the their browser or logs in again)
+     * sets up the active open games (latest 20 games)
      */
     function rejoinLastGameIfAny() {
 
@@ -1973,7 +1979,7 @@ var KharbgaApp = function () {
         }
         // check local active game cookie
         var gid = getLastGameCookie();
-     //   setupGames(gid);
+        setupGames(gid);
 
         if (gid != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
 
@@ -2222,7 +2228,7 @@ var KharbgaApp = function () {
             return;
         }
         // set the game id coockie
-        setCookie("_nsgid", gameInfo.id);
+    
 
         // clear the local game
         resetLocalGame();
@@ -2257,6 +2263,9 @@ var KharbgaApp = function () {
         // setup the move history list
         setupGameMovesHistoryList(gameInfo);
         removeSelectedCells();
+
+        // sets up the cookie for replaying the active game
+        setCookie("_nsgid", gameInfo.id);
     }
 
     function updateLocalGameStatus(gameInfo) {
@@ -2440,19 +2449,13 @@ var KharbgaApp = function () {
             console.log("%s - onGameSelected - invalid data passed with the entry ", getLoggingNow());
             return;
         }
-
-        // switch view to the Play/View tab
-        $('#main-tabs a[href="#home"]').tab('show');   
+ 
         $('#message').html("<div class='alert alert-success'>Game is ready on the server</div>");
-
-     
         $('#message').html("<div class='alert alert-success'>Setting up game state based on server data</div>");
         console.log("Setting up game state based on server data");
    
         var spectator = false;
-
         resetLocalGame();
-
         //join the game and indicate if spectator or not
         gamesHubProxy.server.joinGame(appClientState.sessionId, user.name, data.id, spectator).done(function () {
          // init the local game with the given server game data    
@@ -2465,7 +2468,6 @@ var KharbgaApp = function () {
         
         // focus the game tab
         boardEl.focus();
-        window.scrollTo($('#board').scrollTop() + 100);
     }
 
     /**
@@ -2778,8 +2780,9 @@ var KharbgaApp = function () {
             // check if equal to self
             if (loggingOn) console.log('%s - server: pong from %s received on: %s', getLoggingNow(), connectionId, serverTime);
             $('#messages-list').append("<li class='list-group-item'>" + getLoggingNow() + " pong received from " + connectionId + " - server time " + serverTime + "</li>");
-            console.log(result);
+            if (loggingOn)  console.log(result);
         }
+        $('#signalr-status').html("Server Time: " + serverTime.toString());
     };
     var onMessagePosted = function (user, message) {
         if (loggingOn)
@@ -3064,6 +3067,9 @@ var KharbgaApp = function () {
                     $('#messages-list').append("<li class='list-group-item list-group-item-success'>  " + "Started" + "</li>");
 
                     setSystemError(false);
+
+                    // check if we got a game to rejoin and refresh the active games
+                    rejoinLastGameIfAny();
                 })
                 .fail(function () {
                     appClientState.signalReInitialized = false;
@@ -3113,20 +3119,20 @@ var KharbgaApp = function () {
     };
 
     function _ping(e){
-        if (gamesHubProxy == null) {
-            setSystemError(true);
-            return;
-        }
+        if (e!= null)
+            e.preventDefault();
+
         // attempt to start SignalR if not init
         if (appClientState.signalReInitialized == false)
         {
             _setupSignalR();
             //startSignalR();
         }
-        if (appClientState.signalReInitialized)
+        if (appClientState.signalReInitialized){
             gamesHubProxy.server.ping(appClientState.sessionId).done(function () { setSystemError(false); });
+        }
         else{
-            setSystemError(true);
+
         }
     }
     

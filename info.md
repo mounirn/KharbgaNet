@@ -3,13 +3,18 @@
 
 * overall UI
     -- do we need a menu?
-    -- menu links are not working
+    -- menu links are not working - fixed
+    -- modal dialogs do not work well in small devices
     -- Tab control -- is not ideal for mobile front end
+    -- v2 version cleanup
+* contact us --> my online objects
     created by field is empty       when user is not logged in
 * System - move from UI of V1 or V2 and move to Own Html file  
     -- /html/system.html
     -- add link to main app 
     -- add Rules as link from main file
+* Move Settings as part of the MyAccount function
+
 
 * Exchange requests are not shown properly in the UI and -- debug
 * highlighting of exchange requests disappears

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="../css/site.css">
 </head>
 
-<body>
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
     <div class="container-fluid">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
@@ -23,14 +23,16 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#play"><img src="../img/kharbga.png" style="max-height:20px;" title="Kharbga played in the desert of North Africa"></a>
+                    <a class="navbar-brand" href="#home-section"><img src="../img/kharbga.png" style="max-height:25px;" title="Kharbga played in the desert of North Africa"></a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
                         <!--  <li class="active dropdown"><a data-target="tab-pane" href="#play">Play</a></li>
                         <li><a href="#play" data-target="tab-pane">New</a></li>
                       -->
-                        <li><a href="#rules" data-toggle="modal" data-target="#rulesModal">Rules</a></li>
+                        <li><a target="rules" href="../html/rules.html" title="Kharbga Game Rules">Rules</a></li>
+                        <li><a href="#play-watch-section" title="Create a new Game or Join Active Games">Play or Watch</a></li>
+                        <li><a href="#messages-section" title="Server Messages">Messages</a></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
@@ -47,14 +49,13 @@
         </nav>
         <div id="main-message" class=""></div>
         <ul id="main-tabs" class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#play">Welcome</a></li>
-            <li><a data-toggle="tab" href="#activeGames">Open Games</a></li>
+            <li class="active"><a data-toggle="tab" href="#welcome">Welcome</a></li>
             <li><a data-toggle="tab" href="#account">My Account</a></li>
             <li><a data-toggle="tab" href="#help">Help</a></li>
         </ul>
         <div class="tab-content">
             <!-- tabs-->
-            <div id="play" class="tab-pane fade in active text-center">
+            <div id="welcome" class="tab-pane fade in active text-center">
                 <div class="panel-group">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -89,32 +90,7 @@
                         </div>
                     </div>
                 </div>
-
-
-                <div class="collapse in">
-
-                </div>
             </div>
-
-            <div id="activeGames" class="tab-pane fade">
-                <!--Games-->
-                <div class="panel panel-info" style="min-width:130px">
-                    <div class="panel-heading" style="min-width:120px">
-                        <strong>Active & Open Games</strong>
-                        <div class="pull-right">
-                            <a href="#" id="games-link" value="refresh-games">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-
-                        <div id="games-list" style="max-height: 400px;overflow-y:scroll" class="list-group "></div>
-                    </div>
-                </div>
-            </div>
-
-
             <div id="account" class="tab-pane fade">
                 <div id="account-message"></div>
                 <div id="login-panel" class="panel panel-info hidden">
@@ -248,14 +224,31 @@
 
 
                 </div>
+                <div id="settings" class="panel panel-info">
+                    <div class="panel-heading">
+                        Settings
+                    </div>
+                    <div class="panel-body">
+                        <div class="checkbox">
+                            <label>
+                                <input id="use-server-checkbox" type="checkbox" /> Use Server
+                            </label>
+                            <label>
+                                <input id="play-on-same-computer-checkbox" type="checkbox" />Both players play on this board
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="help" class="tab-pane fade">
                 <div id="help-message"></div>
                 <!-- Trigger the modal with a button -->
+                <p><strong>For the Game Player</strong></p>
                 <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#rulesModal">View
                     Rules</button>
 
+                <p><strong>For the Game Developer/Operator</strong></p>
                 <div class="panel panel-info">
                     <div class="panel-heading"><strong>API URL:</strong> <span id="api-url"></span>
                         <div class="pull-right">
@@ -277,17 +270,14 @@
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <strong>Messaging Server Status</strong>
-
                         <div class="pull-right">
                             <a href="#" id="ping-link" value="ping">
                                 <span class="glyphicon glyphicon-ping"></span>Ping Server
                             </a>
                         </div>
-
                     </div>
                     <div class="panel-body">
                         <div id="signalr-status" class=""></div>
-
                     </div>
                 </div>
                 <div class="panel panel-info">
@@ -299,7 +289,6 @@
                         </div>
                     </div>
                     <div class="panel-body">
-
                         <div id="game-state-message"> </div>
                         <table id="game-state-table" class="table table-striped">
                             <tbody id="game-state-table-body">
@@ -308,18 +297,6 @@
                         </table>
                     </div>
                 </div>
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        Settings
-                    </div>
-                    <div class="panel-body">
-                        <p>
-                            <input id="use-server-checkbox" type="checkbox" /> Use Server
-                            <input id="play-on-same-computer" type="checkbox" />Both players play on this board
-                        </p>
-                    </div>
-                </div>
-
                 <div class="panel panel-info">
                     <div class="panel-heading"><strong>App Client State</strong>
                         <div class="pull-right">
@@ -340,22 +317,37 @@
                 </div>
             </div>
         </div>
-        <div id="currentGame" class="">
+        <div id="home-section" class="container-fluid">
             <div class="row">
                 <div class="col-sm-6 col-md-6 col-lg-6">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                            New Game <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
-                            <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
-                            <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
-                                    system</a></li>
-                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
-                                    system</a></li>
-                        </ul>
+                    <!--Games-->
+                    <div class="panel panel-info" style="min-width:130px">
+                        <div class="panel-heading" style="min-width:120px">
+                            <strong>Active & Open Games</strong>
+                            <div class="pull-right">
+                                <a href="#" id="games-link" value="refresh-games">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+                        <div id="play-watch-section" class="panel-body">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                    New Game <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
+                                    <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
+                                    <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
+                                            system</a></li>
+                                    <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
+                                            system</a></li>
+                                </ul>
+                            </div>
+                            <div id="games-list" style="max-height: 200px;overflow-y:scroll" class="list-group "></div>
+                        </div>
                     </div>
+
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             Game ID: <span id="current-game-id"></span>
@@ -396,10 +388,10 @@
                                 <span id="gameMove" class="badge"></span>
                             </p>
 
-                            <p>FEN: <span id="fen" class="badge badge-success"></span></p>
+                            <p class="text-success">FEN: <span id="fen" class=""></span></p>
 
                             <hr>
-                            <div id="game-moves-history" class="max-height:100px;overflow-y:scroll">
+                            <div id="game-moves-history" class="height:120px;overflow-y:scroll">
 
                             </div>
 
@@ -439,8 +431,8 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading"><strong>Server Messages - URL: <span id="server-uri"></span></strong>
+        <div id="messages-section" class="panel panel-default">
+            <div class="panel-heading"><strong>Net Messages - URI: <span id="server-uri"></span></strong>
                 <div class="pull-right">
                     <a href="#" id="server-link" value="connect-server">
                         <span class="glyphicon glyphicon-refresh"></span>Reconnect
@@ -499,10 +491,26 @@
         <hr />
         <div class="container row">
             <div class="col-sm-9">
-
+                <ul class="nav navbar-nav">
+                    <li id="terms-li">
+                        <a target="rules" id="terms-link" href="../html/terms.html">
+                            <span class="glyphicon glyphicon-star"></span> Terms & Conditions
+                        </a>
+                    </li>
+                    <li id="privacy-li">
+                        <a target="rules" id="privacy-link" href="../html/privacy.html">
+                            <span class="glyphicon glyphicon-lock"></span> Privacy
+                        </a>
+                    </li>
+                    <li id="contact-us-li">
+                        <a target="nouris" id="contact-us-link" href="http://www.nourisolutions.com/company/message/send/1">
+                            <span class="glyphicon glyphicon-envelope"></span> Contact Us
+                        </a>
+                    </li>
+                    <ul>
             </div>
             <div class="col-sm-3">
-                <strong>Developed by <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+                <strong class="smaller">Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
             </div>
         </div>
         <hr />
@@ -544,7 +552,11 @@
             var kApp = new KharbgaApp();
             var setupOk = kApp.initMessaging();
             if (setupOk == false) {
-                alert("Unable to setup connection to the server. Please try again later!");
+                // alert("Unable to setup connection to the server. Please try again later!");
+                // try again after a couple of sec
+                setTimeout(function() {
+                    kApp.initMessaging();
+                }, 2000);
             }
             kApp.initBoard({
                 themePath: '../img/theme-simple/{piece}.png'
