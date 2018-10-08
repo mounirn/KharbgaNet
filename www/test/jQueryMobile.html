@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>My Online Objects Mobile</title>
+    <meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
+</head>
+
+<body>
+    <section data-role="page" id="first" data-theme="a">
+        <header data-role="header" data-position="fixed">
+            <h1>Page 1 Header</h1>
+        </header>
+
+        <article role="main" class="ui-content">
+            <h2>Hello, world!</h2>
+            <a href="#second" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 2</a>
+        </article>
+
+        <footer data-role="footer" data-position="fixed">
+            <h4>Page 1 Footer</h4>
+        </footer>
+    </section>
+
+    <section data-role="page" id="second" data-theme="b">
+        <header data-role="header" data-position="fixed" data-add-back-btn="true">
+            <h1>Page 2 Header</h1>
+        </header>
+
+        <article role="main" class="ui-content">
+            <h2>Example Page</h2>
+        </article>
+
+        <footer data-role="footer" data-position="fixed">
+            <h4>Page 2 Footer</h4>
+            <a href="#description" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 3</a>
+
+        </footer>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+</body>
+
+</html>

@@ -357,28 +357,24 @@
                             <table class="table table-striped ">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th>Attacker <span class="attacker-name"></span></th>
-                                        <th></th>
                                         <th>Defender <span class="defender-name"></span></th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tr>
                                     <td>Score: </td>
                                     <td><span id="attacker_score" class="badge"></span> </td>
-                                    <td>Score: </td>
                                     <td><span id="defender_score" class="badge"> </span> </td>
                                 </tr>
                                 <tr>
                                     <td>Settings: </td>
                                     <td> <select id="attackerSettings"> </select></td>
-                                    <td>Settings: </td>
                                     <td><select id="defenderSettings"> </select></td>
                                 </tr>
                                 <tr>
                                     <td>Moves: </td>
                                     <td><select id="attackerMoves"> </select> </td>
-                                    <td>Moves: </td>
                                     <td><select id="defenderMoves"> </select></td>
                                 </tr>
 
@@ -416,7 +412,7 @@
                         </div>
                         <div class="panel-body text-center">
                             <!-- The Board -->
-                            <div id="board" style="min-width:300px;"></div>
+                            <div id="board" style="min-width:250px;max-width:300px"></div>
                             <div id="message" class=""></div>
                         </div>
                         <div class="panel-footer">

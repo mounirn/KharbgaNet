@@ -1970,13 +1970,11 @@ var KharbgaApp = function () {
 
         if (!appClientState.signalReInitialized){
             // try to start it again
-            startSignalR();
-           
-        }
-        if (!appClientState.signalReInitialized){
-            
+            _setupSignalR();
+            setTimeout(rejoinLastGameIfAny,5000);
             return;
         }
+      
         // check local active game cookie
         var gid = getLastGameCookie();
         setupGames(gid);

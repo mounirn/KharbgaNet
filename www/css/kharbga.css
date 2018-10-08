@@ -8,7 +8,15 @@
  * Date: Apr 15, 2017 -- adopted by Mounir Nouri for Kharbga
  */
 
+
 /* clearfix */
+
+@media (min-width: 650px),
+(orientation: landscape) {
+    .k-board {
+        max-width: 300px;
+    }
+}
 
 .clearfix-7da63 {
     clear: both;
@@ -16,19 +24,24 @@
 
 
 /* board */
+
 .board-b72b1 {
     border: 2px solid #404040;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
 }
+
 .selected-game {
     border: 2px solid #404040;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
 }
+
+
 /* square */
+
 .square-55d63 {
     float: left;
     position: relative;
@@ -52,18 +65,23 @@
 
 
 /* white square */
+
 .white-1e1d7 {
     background-color: #f0d9b5;
     color: #b58863;
 }
 
+
 /* black square */
+
 .black-3c85d {
     background-color: #b58863;
     color: #f0d9b5;
 }
 
+
 /* kharbga square */
+
 .kharbga-cell {
     background-color: #f0d9b5;
     color: #b58863;
@@ -72,7 +90,9 @@
     box-shadow: inset 0 0 1px 1px #b58863;
 }
 
+
 /* highlighted square */
+
 .highlight1-32417,
 .highlight2-9c5d2 {
     -webkit-box-shadow: inset 0 0 3px 3px yellow;
@@ -110,7 +130,9 @@
     box-shadow: inset 0 0 3px 3px yellow;
 }
 
+
 /* notation */
+
 .notation-322f9 {
     cursor: default;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -231,7 +253,7 @@ body {
     -webkit-box-shadow: inset 0 0 3px 3px red;
     -moz-box-shadow: inset 0 0 3px 3px red;
     box-shadow: inset 0 0 3px 3px red;
-    background-image: url("../img/KMalha.jpg") ;
+    background-image: url("../img/KMalha.jpg");
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -242,7 +264,6 @@ body {
     box-shadow: inset 0 0 3px 3px blue;
 }
 
-
 .highlight-possible-move {
     -webkit-box-shadow: inset 0 0 3px 3px blue;
     -moz-box-shadow: inset 0 0 3px 3px blue;
@@ -251,6 +272,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
 }
+
 
 /* Sample  */
 
@@ -348,6 +370,8 @@ pre.prettyprint {
     border: 1px solid #ccc;
     padding: 10px;
 }
+
+
 /*   MN -- not used
 ol.linenums {
     margin-top: 0;
@@ -359,8 +383,8 @@ html {
 }
 
 body {
-    /*background: url('../img/bg.png') repeat;*/
-}
+    background: url('../img/bg.png') repeat;
+}*/
 
 div#body_container {
     min-height: 700px;
@@ -408,11 +432,14 @@ div#right_footer a {
 div#right_footer a:hover {
     text-decoration: underline;
 }
+
+
 /*
 div.row {
     background: #fff;
 }
 */
+
 h1,
 h2,
 h3,
@@ -608,6 +635,8 @@ table#markup_example_tbl td {
     padding: 20px;
     padding-bottom: 250px;
 }
+
+
 /*
 #example_html_container input,
 input.btn,
@@ -647,21 +676,24 @@ button.btn {
     border-radius: 3px;
 }
 */
+
 thead.center th {
     text-align: center;
 }
 
+
 /*
     form validation
 */
+
 input[type="text"]:valid {
     color: green;
 }
 
-    input[type="text"]:valid ~ .input-validation::before {
-        content: "&check;";
-        color: green;
-    }
+input[type="text"]:valid~.input-validation::before {
+    content: "&check;";
+    color: green;
+}
 
 input[type="text"]:invalid {
     color: red;
@@ -669,6 +701,7 @@ input[type="text"]:invalid {
 
 
 /* combobox*/
+
 .form-search .combobox-container,
 .form-inline .combobox-container {
     display: inline-block;
@@ -676,15 +709,18 @@ input[type="text"]:invalid {
     vertical-align: top;
 }
 
-    .form-search .combobox-container .input-group-addon,
-    .form-inline .combobox-container .input-group-addon {
-        width: auto;
-    }
+.form-search .combobox-container .input-group-addon,
+.form-inline .combobox-container .input-group-addon {
+    width: auto;
+}
 
 .combobox-selected .caret {
     display: none;
 }
+
+
 /* :not doesn't work in IE8 */
+
 .combobox-container:not(.combobox-selected) .glyphicon-remove {
     display: none;
 }
@@ -721,6 +757,7 @@ input[type="text"]:invalid {
     border-top-color: #468847;
 }
 
+
 /* validation
 input:invalid {
     border: 2px dashed red;
@@ -730,8 +767,8 @@ input:valid {
     border: 2px solid green;
 }*/
 
-
-input:required:invalid, input:focus:invalid {
+input:required:invalid,
+input:focus:invalid {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAeVJREFUeNqkU01oE1EQ/mazSTdRmqSxLVSJVKU9RYoHD8WfHr16kh5EFA8eSy6hXrwUPBSKZ6E9V1CU4tGf0DZWDEQrGkhprRDbCvlpavan3ezu+LLSUnADLZnHwHvzmJlvvpkhZkY7IqFNaTuAfPhhP/8Uo87SGSaDsP27hgYM/lUpy6lHdqsAtM+BPfvqKp3ufYKwcgmWCug6oKmrrG3PoaqngWjdd/922hOBs5C/jJA6x7AiUt8VYVUAVQXXShfIqCYRMZO8/N1N+B8H1sOUwivpSUSVCJ2MAjtVwBAIdv+AQkHQqbOgc+fBvorjyQENDcch16/BtkQdAlC4E6jrYHGgGU18Io3gmhzJuwub6/fQJYNi/YBpCifhbDaAPXFvCBVxXbvfbNGFeN8DkjogWAd8DljV3KRutcEAeHMN/HXZ4p9bhncJHCyhNx52R0Kv/XNuQvYBnM+CP7xddXL5KaJw0TMAF8qjnMvegeK/SLHubhpKDKIrJDlvXoMX3y9xcSMZyBQ+tpyk5hzsa2Ns7LGdfWdbL6fZvHn92d7dgROH/730YBLtiZmEdGPkFnhX4kxmjVe2xgPfCtrRd6GHRtEh9zsL8xVe+pwSzj+OtwvletZZ/wLeKD71L+ZeHHWZ/gowABkp7AwwnEjFAAAAAElFTkSuQmCC);
     background-position: right top;
     background-repeat: no-repeat;
@@ -744,7 +781,9 @@ input:required:valid {
     background-repeat: no-repeat;
 }
 
+
 /* sound */
+
 .unmute {
     background-image: url(../img/unmute.png);
     background-size: cover;
@@ -757,6 +796,6 @@ input:required:valid {
     background-image: url(../img/mute.png);
 }
 
-.required{
+.required {
     color: darkred;
 }
