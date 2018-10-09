@@ -1599,8 +1599,8 @@ var KharbgaApp = function () {
         if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
             accountTab.tab('show');  
 
-    //    $('#login-panel').show().removeClass('hidden');
-    //    $('#register-panel').hide().addClass('hidden');
+         $('#login-panel').show().removeClass('hidden');
+         $('#register-panel').hide().addClass('hidden');
     }
     /**
      * Handler for register click from UI
@@ -1613,8 +1613,8 @@ var KharbgaApp = function () {
         if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
             accountTab.tab('show');
 
-     //   $('#login-panel').hide().addClass('hidden');
-     //   $('#register-panel').show().removeClass('hidden');
+        $('#login-panel').hide().addClass('hidden');
+        $('#register-panel').show().removeClass('hidden');
     }
 
  
@@ -1868,6 +1868,14 @@ var KharbgaApp = function () {
         var cookie = getCookie(C_NSSID);
         if (typeof cookie === "string" && cookie.length > 10)
             checkSession(cookie);       
+        else{
+            // check local storage
+            if (window.localStorage != null){
+                var sid = window.localStorage.getItem(C_NSSID);
+                if (typeof sid  === "string" && sid.length > 10)
+                    checkSession(sid);     
+            }
+        }
     }
 
     /**
@@ -1877,6 +1885,12 @@ var KharbgaApp = function () {
         var cookie = getCookie("_nsgid");
         if (typeof cookie === "string" && cookie.length > 10)
             return cookie;
+        // check local staroge
+        if (window.localStorage != null){
+            var gid = window.localStorage.getItem("_nsgid");
+            if (typeof gid  === "string" && gid.length > 10)
+                return gid;     
+        }
         return "";
     }
 
@@ -1892,24 +1906,25 @@ var KharbgaApp = function () {
                 $('#main-message').html("");
 
                 var session = data.object;
-
+                
                 if (session != null) {
                     setupClientStateWithSession(session);
-                    rejoinLastGameIfAny();
+                    
                 }
                 else {
                     setupClientStateWithSession(null);
                 }
                 setupMyAccount();
 
-                // rejoin the game
-               //
+                // rejoin the game if any in all cases - just in case for guests
+                rejoinLastGameIfAny();
             }
             else {
                // setCookie(C_NSSID, "");
                 appClientState.loggedIn = false;
                 setupMyAccount();
                 appClientState.sessionId = "";
+                appClientState.session = null;
                 user.name = "";
 
 
@@ -1937,15 +1952,15 @@ var KharbgaApp = function () {
 
             $('#logout-li').show().removeClass('hidden');
 
-         //   $('#login-panel').hide().addClass('hidden');
-         //   $('#register-panel').hide().addClass('hidden');
+            $('#login-panel').hide().addClass('hidden');
+            $('#register-panel').hide().addClass('hidden');
 
       
 
         } else {
             $('#login-panel').show().removeClass('hidden');
-         //   $('#register-panel').hide().addClass('hidden');
-         //   $('#account-info-panel').hide().addClass('hidden');
+            $('#register-panel').hide().addClass('hidden');
+            $('#account-info-panel').hide().addClass('hidden');
 
             $('#account-welcome').hide().addClass('hidden');
 
@@ -2171,7 +2186,7 @@ var KharbgaApp = function () {
      //  updateLocalGameStatus(serverGame);
 
         // refresh the myAccount info
-        setupMyAccount();
+        //setupMyAccount();
     };
    
     // handle when the game is selected by a player. All people will receive a this message
@@ -2832,7 +2847,7 @@ var KharbgaApp = function () {
     };
 
     /**
-     * Helper function for setting cookie
+     * Helper function for setting cookie and local storage
      * @param {any} key
      * @param {any} value
      */
@@ -2840,6 +2855,11 @@ var KharbgaApp = function () {
         var expires = new Date();
         expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
         document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+
+        // store in local storage 
+        if (window.localStorage != null){
+            window.localStorage.setItem(C_NSSID, value);            
+        }
     }
     /**
      * Helper function for reading cookie
@@ -2926,7 +2946,7 @@ var KharbgaApp = function () {
     // handler for resizing
     $(window).resize(resizeGame);
 
-    setupMyAccount();
+  //  setupMyAccount();
     setupFormsValidation();
 
     function playSound() {
@@ -3115,9 +3135,14 @@ var KharbgaApp = function () {
             checkSessionCookie();  // check it and update state
     };
 
-    // setup the current games and last game if any 
+    /** @summary checks the session cookie, setup the current games and last game if any 
+     * 
+     */ 
     this.setup = function () {
-        rejoinLastGameIfAny();
+        checkSessionCookie();
+        // the game will be rejoined if a valid session
+        // guests will not be able to rejoin their games
+        // rejoinLastGameIfAny();
     };
 
     function _ping(e){
