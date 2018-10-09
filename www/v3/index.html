@@ -7,45 +7,39 @@
     <meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="../css/kharbga.css" />
     <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile-1.4.5.min.css">
 
+    <link rel="stylesheet" href="../css/themes/Kharbga2.min.css">
+    <link rel="stylesheet" href="../css/themes/jquery.mobile.icons.min.css">
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
-
     <link rel="stylesheet" href="../css/site.css">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="./index.css">
+
+    <!--  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> -->
+    <script src="../lib/jquery/jquery-1.11.3.min.js"></script>
+    <script src="../lib/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
 </head>
 
 <body>
-
-
     <!-- /header -->
-
     <section data-role="page" id="first" data-theme="a">
         <header data-role="header" data-position="fixed">
-            <h1><img src="../img/kharbga.png" style="max-height:25px"></h1>
+            <h4><img src="../img/kharbga.png" style="max-height:25px"></h4>
             <a href="#menu-panel" data-icon="info" data-iconpos="notext" class="ui-btn-right">Info</a>
             <a href="#play-watch-section" data-icon="bars" class="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini" data-iconpos="notext">Play/Watch</a>
         </header>
-        <div id="welcome" data-role="panel" class="panel-collapse collapse" data-position="right" data-display="overlay" data-theme="a">
-            <div class="row">
-                <div class="col-sm-6 col-md-6 text-center">
-                    <h1>Welcome to</h1> <img src="../img/kharbga.png" title="Kharbga">
-                    <p>If this is your first time here, please click <a href="#rules" data-toggle="modal" data-target="#rulesModal">here
-                            to learn about the game.</a></p>
-                    <p>This system provides a platform for learning and playing this fun board game from North Africa.
-                    </p>
-                </div>
-                <div class="col-sm-6 col-md-6 text-center">
-                    <figure>
-                        <img src="../img/players.png" style="width:300px;" class="img " title="Kharbga game played in the desert of North Africa">
-                        <figcaption>
-                            <strong>Kharbga Game Played on a Sand Board in the desert of North Africa</strong>
-                        </figcaption>
-                    </figure>
-                </div>
-            </div>
-        </div>
         <article role="main" class="ui-content">
+            <p id="login-li">
+                <a id="login-link-v3" href="#login-panel" data-rel="popup" data-position-to="window">
+                    <span class="glyphicon glyphicon-log-in"></span> Sign In</a> or
+                <a id="register-link-v3" href="#register-panel" data-rel="popup" data-position-to="window">
+                    <span class="glyphicon glyphicon-user"></span> Sign Up</a>.
+            </p>
+            <p id="logout-li">
+                <span id="account-welcome" class="text-success"></span>
+                <a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
+            </p>
+            <span id="account-message" class="text-success"></span>
             <div id="menu-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
                 <h3>Welcome</h3>
@@ -54,15 +48,32 @@
                 <p>
                     This system provides a platform for learning and playing this fun board game from North Africa.
                 </p>
-                <h4>Choose from the options below to learn more about this system.</h4>
+                <p>
+                    Click here to <a href="#popup-menu" data-rel="popup">start a new game as Attacker or Defender</a> playing with other players or with the System.</a>
+                </p>
+                <strong>Choose from the options below to learn more about this system.</strong>
                 <ul data-role="listview" data-inset="true">
 
                     <li><a target="rules" href="../html/rules.html">Game Rules</a></li>
                     <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
                     <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
                     <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
-
                 </ul>
+                <p>
+                    <strong>To play with other users in the network, you need to have a valid user account. </strong> Click here to
+                    <a href="#register-panel" data-rel="popup">Sign Up</a>.
+                </p>
+                <p>
+                    Click here to
+                    <a href="#login-panel" data-rel="popup">Sign In</a>.
+                </p>
+                <p>
+                    Click here to view
+                    <a href="#account-info-panel" data-rel="popup">Your Account</a> information.
+                </p>
+                <p class="text-center">
+                    <a href="#popup-menu" data-rel="popup">Play</a>
+                </p>
                 <p>
                     If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
                 </p>
@@ -80,62 +91,66 @@
                 </figure>
 
             </div>
-            <div data-role="panel" id="play-watch-section" class="panel-body" data-position="left" data-display="overlay" data-theme="a">
-                <div class="btn-group">
-                    <h3>Join or Watch Active Games</h3>
-                    <a href="#" data-rel="close">Close</a>
-
-                    <ul data-role="listview" data-inset="true" class="dropdown-menu" role="menu">
-
+            <div id="play-watch-section" data-role="panel" data-position="left" data-display="overlay" data-theme="a">
+                <div class="text-center">
+                    <h4>
+                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
+                    </h4>
+                    <h4>Join or Watch Active Games</h4>
+                    <ul id="games-list" style="height: 70%;max-height:600px;overflow-y:scroll" class="list-group ">
                     </ul>
                 </div>
-                <ul id="games-list" data-role="listview" data-inset="true" data-theme="b" style="xmax-height: 200px;xoverflow-y:scroll" class="list-group ">
-                </ul>
+
+                <a href="#" data-rel="close">Close</a>
             </div>
-
-
             <div class="row">
                 <div class="col-sm-6 col-md-5 col-lg-4">
                     <div class="panel panel-success">
-                        <div class="panel-header">
-                            <p>
-                                <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">Flip</a>
-                                <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong>
-                                    
-                            </p>
+                        <div class="panel-heading">
+                            Kharbga Board - <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong> 
                         </div>
-                        <div class="panel-body text-center">
+                        <div class="panel-body">
+                         
                             <!-- The Board -->
                             <div id="board" style="min-width:250px;max-width:300px"></div>
-                            <div id="message" class=""></div>
+                            <div class="message" id="message" class=""></div>
                         </div>
                         <div class="panel-footer">
-<!--
-                        <label>
-                            <input type="checkbox" id="abandonCheckbox" class="ui-btn-inline">
-                            <strong>Resign</strong>
+                            <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">Flip</a>
+                            <p>
+                                Board State:</strong>
+
+
+                            <span id="state" class="badge"></span>
+                            </p>
+
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <label for="abandonCheckbox">  
+                                    <input type="checkbox" id="abandonCheckbox" name="abandonCheckbox" 
+                                    data-min="true" data-iconpos="right">
+                                
+                                      Check this to resign and make any move on the board
                                 </label>
-                                -->
-                                <p>
-                                    Board State:</strong>
-                                    <span id="state" class="badge"></span>
-                                </p>
-                                <audio id="sound" preload="auto">
-                                <source src="../img/button-26.mp3" type="audio/mpeg">
-                             </audio>
+                            </fieldset>
+                            <audio id="sound" preload="auto">
+                                            <source src="../img/button-26.mp3" type="audio/mpeg">
+                                        </audio>
                         </div>
+
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-6">
-                    <a href="#popup-menu" class="btn btn-default" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-icon-gear ui-btn-inline ">New Game</a>
+                    <p class="text-center">
+                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-icon-gear ui-btn-inline ">New Game</a>
+                    </p>
                     <div id="popup-menu" data-role="popup">
                         <ul data-role="listview" data-inset="true">
                             <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
                             <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
                             <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
-                                        system</a></li>
+                                            system</a></li>
                             <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
-                                        system</a></li>
+                                            system</a></li>
                         </ul>
 
                     </div>
@@ -151,7 +166,7 @@
                                 <label class="text-info" for="gameMove">Last Action: </label>
                                 <span id="gameMove" class="badge"></span>
                             </p>
-                            <p class="text-success">info: <span id="fen" class=""></span></p>
+                            <p class="text-success">FEN: <span id="fen" class=""></span></p>
 
                             <hr>
                             <div id="game-moves-history" class="height:120px;overflow-y:scroll">
@@ -169,8 +184,8 @@
 
                             <h5>Net Messages - URI: <span id="server-uri"></span> -
                                 <a href="#" data-icon="refresh" id="server-link" value="connect-server">
-                                    Reconnect
-                                </a> |
+                                        Reconnect
+                                    </a> |
                                 <a href="#" id="ping-link" value="ping">Ping Server</a>
                             </h5>
                             <div style="height: 200px;overflow-y:scroll">
@@ -180,68 +195,211 @@
                     </div>
                 </div>
             </div>
-            <h4>Development & Operation Support</h4>
-            <div data-role="tabs" id="game-tabs">
-                <div data-role="navbar">
-                    <ul>
-                        <li>
-                            <a href="#tab-server" data-ajax="false">Server Status</a>
-                        </li>
-                        <li>
-                            <a href="#tab-game-state" data-ajax="false">Game State</a>
-                        </li>
-                        <li>
-                            <a href="#tab-app-state" data-ajax="false">Client App State</a>
-                        </li>
-                    </ul>
-                </div>
+            <a href="#dev-support-panel" xclass="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini">Development & Operation Support</a>
 
-                <div id="tab-server">
-
-                    <h4>API URL: <span id="api-url"></span>
-                        <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">
-                             Refresh
-                    </a></h4>
-                    <div id="help-message"> </div>
-                    <table id="app-info-table" class="table table-striped">
-                        <tbody id="app-info-table-body">
-
-                        </tbody>
-                    </table>
-                </div>
-                <div id="tab-game-state">
-                    <h4>Active Game State
-                        <a href="#" id="game-state-link" value="Refresh">
-                             Refresh
-                        </a>
-                    </h4>
-
+            <div id="login-panel" data-role="popup" class="ui-content">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Login</div>
                     <div class="panel-body">
-                        <div id="game-state-message"> </div>
-                        <table id="game-state-table" class="table table-striped">
-                            <tbody id="game-state-table-body">
-
-                            </tbody>
-                        </table>
+                        <form class="form-horizontal" id="login-form" novalidate>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="login-id">Login ID:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input type="text" class="form-control" id="login-id" placeholder="Enter login id" required size="30" minlength="6" maxlength="30">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="login-pwd">Password:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" id="login-remember"> Remember me</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button id="login-submit" type="submit" class="btn btn-default">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-footer">
+                        <a href="#register-panel" data-rel="popup" data-position-to="window">Sign Up</a>
                     </div>
                 </div>
-                <div id="tab-app-state">
-                    <h4>App Client State -
-                        <a href="#" id="app-state-link" value="Refresh">
-                            Refresh
-                        </a>
-                    </h4>
+            </div>
+            <div id="register-panel" data-role="popup" class="ui-content">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Sign Up</div>
                     <div class="panel-body">
-                        <div id="app-state-message"> </div>
-                        <table id="app-state-table" class="table table-striped">
-                            <tbody id="app-state-table-body">
+                        <form id="register-form" class="cmxform form-horizontal validate-form" novalidate method="get" action="">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="register-team">Team:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-tent"></i></span>
+                                    <input class="form-control" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50" />
+                                    <datalist id="register-team-list">
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="register-email">Email:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                    <input type="email" class="form-control" id="register-email" placeholder="Enter email" size="50" required pattern="^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$" minlength="3" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="register-id">Login ID:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input type="text" class="form-control" id="register-login-id" placeholder="Enter your login Id" size="30" required minlength="6" maxlength="30">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="register-pwd">Password:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    <input type="password" class="form-control" id="register-pwd" placeholder="Enter password" size="20" required minlength="8" maxlength="20">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="register-pwd-confirm">Confirm Password:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    <input type="password" class="form-control" id="register-pwd-confirm" placeholder="Confirm password" size="20" required minlength="8" maxlength="20">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="register-name">Screen Name:</label>
+                                <div class="col-sm-10 input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
+                                    <input type="text" class="form-control" id="register-name" placeholder="Enter screen name" size="20" required minlength="3" maxlength="20">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button id="register-submit" type="submit" class="btn btn-default">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="account-info-panel" data-role="popup" class="ui-content">
+                <div class="panel panel-info ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong>My Account</strong>
 
-                            </tbody>
-                        </table>
+                            <div class="pull-right">
+                                <a href="#" id="account-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-user-information">
+                                <tbody>
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td><span id="account-name"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Session Id</td>
+                                        <td><span id="account-session-id"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Active Game ID</td>
+                                        <td><span id="account-game-id"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Role</td>
+                                        <td><span id="account-game-role"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table id="user-info-table" class="table table-striped">
+                                <tbody id="user-info-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
+
+
+            <div id="dev-support-panel" xdata-role="panel" xdata-theme="b" xdata-position="right">
+                <div data-role="tabs" id="game-tabs">
+                    <div data-role="navbar">
+                        <ul>
+                            <li>
+                                <a href="#tab-server" data-ajax="false">Server Status</a>
+                            </li>
+                            <li>
+                                <a href="#tab-game-state" data-ajax="false">Game State</a>
+                            </li>
+                            <li>
+                                <a href="#tab-app-state" data-ajax="false">Client App State</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="tab-server">
+
+                        <h4>API URL: <span id="api-url"></span>
+                            <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">
+                             Refresh
+                    </a></h4>
+                        <div id="help-message"> </div>
+                        <table id="app-info-table" class="table table-striped">
+                            <tbody id="app-info-table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="tab-game-state">
+                        <h4>Active Game State
+                            <a href="#" id="game-state-link" value="Refresh">
+                             Refresh
+                        </a>
+                        </h4>
+
+                        <div class="panel-body">
+                            <div id="game-state-message"> </div>
+                            <table id="game-state-table" class="table table-striped">
+                                <tbody id="game-state-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tab-app-state">
+                        <h4>App Client State -
+                            <a href="#" id="app-state-link" value="Refresh">
+                            Refresh
+                        </a>
+                        </h4>
+                        <div class="panel-body">
+                            <div id="app-state-message"> </div>
+                            <table id="app-state-table" class="table table-striped">
+                                <tbody id="app-state-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
             <!-- <a href="#second" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 2</a>
            -->
@@ -252,14 +410,14 @@
         </footer>
     </section>
 
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <!--  <script src="../lib/jquery/jquery.min.js"></script> -->
 
 
     <script src="../jsconfig/env.js"></script>
-    <script src="../lib/jquery/jquery.min.js"></script>
+
     <script src="../js/jquery.signalR-2.3.0.js"></script>
     <script src="../js/jquery.validate.js"></script>
     <script src="../js/additional-methods.js"></script>

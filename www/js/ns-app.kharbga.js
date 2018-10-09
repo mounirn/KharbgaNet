@@ -1595,9 +1595,12 @@ var KharbgaApp = function () {
     function onLoginLink(e) {
         e.preventDefault();
 
-        $('#main-tabs a[href="#account"]').tab('show');      
-        $('#login-panel').show().removeClass('hidden');
-        $('#register-panel').hide().addClass('hidden');
+        var accountTab = $('#main-tabs a[href="#account"]');
+        if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
+            accountTab.tab('show');  
+
+    //    $('#login-panel').show().removeClass('hidden');
+    //    $('#register-panel').hide().addClass('hidden');
     }
     /**
      * Handler for register click from UI
@@ -1606,9 +1609,12 @@ var KharbgaApp = function () {
     function onRegisterLink(e) {
         e.preventDefault();
 
-        $('#main-tabs a[href="#account"]').tab('show');
-        $('#login-panel').hide().addClass('hidden');
-        $('#register-panel').show().removeClass('hidden');
+        var accountTab = $('#main-tabs a[href="#account"]');
+        if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
+            accountTab.tab('show');
+
+     //   $('#login-panel').hide().addClass('hidden');
+     //   $('#register-panel').show().removeClass('hidden');
     }
 
  
@@ -1637,10 +1643,13 @@ var KharbgaApp = function () {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
                 $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");                    
+                console.log(data);
                 setupClientStateWithSession(data.object);           
                 setupMyAccount();
                 // check the last game 
                 rejoinLastGameIfAny();
+                if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
+                    $.appViewHandler.closeLoginPanel();
             }
             else {
                 setupClientStateWithSession(null);
@@ -1684,18 +1693,13 @@ var KharbgaApp = function () {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
                 $('#account-message').html("<div class='alert alert-success'>Registered new account successfully. </div>");
-
-                var session = data.session;
-
-                if (session != null) {
-                    setupClientStateWithSession(data.session);      
-                }
-                else {
-                    setupClientStateWithSession(null);
-                }
+                console.log(data);
+                setupClientStateWithSession(data.object);      
                 setupMyAccount();
 
                 rejoinLastGameIfAny();
+                if ($.appViewHandler != null && typeof($.appViewHandler.closeRegisterPanel) === 'function')
+                    $.appViewHandler.closeRegisterPanel();
             }
             else {
                 setupClientStateWithSession(null);
@@ -1933,15 +1937,15 @@ var KharbgaApp = function () {
 
             $('#logout-li').show().removeClass('hidden');
 
-            $('#login-panel').hide().addClass('hidden');
-            $('#register-panel').hide().addClass('hidden');
+         //   $('#login-panel').hide().addClass('hidden');
+         //   $('#register-panel').hide().addClass('hidden');
 
       
 
         } else {
             $('#login-panel').show().removeClass('hidden');
-            $('#register-panel').hide().addClass('hidden');
-            $('#account-info-panel').hide().addClass('hidden');
+         //   $('#register-panel').hide().addClass('hidden');
+         //   $('#account-info-panel').hide().addClass('hidden');
 
             $('#account-welcome').hide().addClass('hidden');
 

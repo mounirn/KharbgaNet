@@ -689,26 +689,50 @@
                 pieces = ['bS'];
             }
 
-            var html = '<div class="row">';
+            var html = '<div class="row" style="font-weight:normal;font-size:small">';
             // MN : add indication which one is the attacker and which one is the defender
             //   
             if (color === 'black') {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Defender: <span id="game-defender"></span></strong></div>';
-                html += '<div class="col-sm-2"><span id="defender-thinking"></div>'; //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">
+                html += '<div class="col-sm-8" style="padding-top: 5px">Defender: <span id="game-defender"></span>';
+               
+              //  html += '<span id="defender-thinking" /></div>';
+                 //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">
+                 html += '</div>';
             } else {
-                html += '<div class="col-sm-3" style="padding-top: 10px"><strong>Attacker: <span id="game-attacker"></strong> </strong></div><div class="col-sm-2"><span id="attacker-thinking"></div>';
-                html += '<div class="col-sm-2"><span id="attacker-thinking"></div>';//&nbsp;&nbsp;<span id="attacker_clock" class="badge alert alert-info">
+                html += '<div class="col-sm-8" style="padding-top: 5px">Attacker: <span id="game-attacker"></span>';
+                                       
+              //  html += '<span id="attacker-thinking" /></div>';
+                //&nbsp;&nbsp;<span id="attacker_clock" class="badge alert alert-info">
+                html += '</div>';
             }
-            html += '<div class="col-sm-5">'
+            html += '<div class="col-sm-4">';
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
             }
             if (color === 'black') 
-                html += '</div><div class="col-sm-2">&nbsp;&nbsp;<span id="defender_score" class="badge">';
+                html += '&nbsp;&nbsp;<span id="defender_score" class="badge">';
             else
-                html += '</div><div class="col-sm-2">&nbsp;&nbsp;<span id="attacker_score" class="badge">';
+                html += '&nbsp;&nbsp;<span id="attacker_score" class="badge">';
 
-            html += '</div></div>'
+            html += '</div></div>'; 
+            html += "<div>";  // exchange request div
+            if (color === 'black') {
+
+                 html += '<label style="font-size:small;font-weight:normal">';
+                html += '<input type="checkbox" id="exchangeRequestCheckbox" />Exchange&nbsp;Request</label> ';
+                html += '<span id="exchangeRequestDefenderPiece" class="badge"> </span>';
+               
+            }
+            else{
+                html += '<label style="font-size:small;font-weight:normal">';
+                html += '<input type="checkbox" id="exchangeRequestAcceptedCheckbox" />Exchange&nbsp;Request&nbsp;Accepted</label> ';
+                html += '<span id="exchangeRequestAttackerPiece1" class="badge"></span> ';
+                html += '<span id="exchangeRequestAttackerPiece2" class="badge"></span>';  
+               
+            }
+            html += '</div>'; 
+
+          
 
             return html;
         }
@@ -720,35 +744,33 @@
                 pieces = ['bS'];
             }
 
-            var html = '<table style="text-align:left" class="table table-responsive xtable-bordered xtable-condensed"><tr>';
+            var html = '<table style="text-align:left;font-size:small" class="table table-responsive"><tr>';
             // MN : add indication which one is the attacker and which one is the defender
             //   
-             html += '<td>';
+            if (color === 'black') {
+                html += '<td>Defender: <span id="defender_score" class="badge">';
+            }
+            else{
+                html += '<td>Attacker: <span id="attacker_score" class="badge">';
+            }
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
-            }
+            }       
             if (color === 'black') {
-                html += '</td><td><span id="defender_score" class="badge"></td>';
+                html += '</td>';
                 html += '<td><span id="defender_clock" class="badge alert alert-info"></span></td>';
                 html += '<td><span id="defender-thinking"></td>'; 
+                html += '<td style="padding-top: 5px;font-weight:bold"><br><span id="game-defender"></span>';         
+                html += '</td>';
 
             } else {
-                html += '</td><td><span id="attacker_score" class="badge"></td>';
+                html += '</td>';
                 html += '<td><span id="attacker_clock" class="badge alert alert-info"></span></td>';
                 html += '<td><span id="attacker-thinking"></td>';
-
-            }
-
-            if (color === 'black') {
-                html += '<td style="padding-top: 5px;font-weight:bold">Defender:<br><span id="game-defender"></span>';
-               
-                html += '</td>';
-
-            } else {
-                html += '<td style="padding-top: 5px;font-weight:bold">Attacker: <span id="game-attacker"></span>';
-                
+                html += '<td style="padding-top: 5px;font-weight:bold"><span id="game-attacker"></span>';
                 html += '</td>';
             }
+
           
 
             html += '</tr>';
@@ -1069,11 +1091,11 @@
 
             if (cfg.sparePieces === true) {
                 if (CURRENT_ORIENTATION === 'white') {
-                    sparePiecesTopEl.html(buildSparePiecesTable('black'));
-                    sparePiecesBottomEl.html(buildSparePiecesTable('white'));
+                    sparePiecesTopEl.html(buildSparePieces('black'));
+                    sparePiecesBottomEl.html(buildSparePieces('white'));
                 } else {
-                    sparePiecesTopEl.html(buildSparePiecesTable('white'));
-                    sparePiecesBottomEl.html(buildSparePiecesTable('black'));
+                    sparePiecesTopEl.html(buildSparePieces('white'));
+                    sparePiecesBottomEl.html(buildSparePieces('black'));
                 }
             }
         }

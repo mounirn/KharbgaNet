@@ -5,3 +5,4 @@ bower_components
 .vs/slnx.sqlite
 .vs/KharbgaNet/v15/.suo
 *.log
+www/lib/jquery.mobile/demos
