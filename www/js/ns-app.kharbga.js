@@ -1645,7 +1645,7 @@ var KharbgaApp = function () {
                 $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");                    
                 console.log(data);
                 setupClientStateWithSession(data.object);           
-                setupMyAccount();
+
                 // check the last game 
                 rejoinLastGameIfAny();
                 if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
@@ -1653,7 +1653,7 @@ var KharbgaApp = function () {
             }
             else {
                 setupClientStateWithSession(null);
-                setupMyAccount();            
+            
                 if (status.status === 404 || status.status === 400  )
                     $('#account-message').html("<div class='alert alert-danger'>Invalid Login ID or password</div>");
                 else
@@ -1695,7 +1695,7 @@ var KharbgaApp = function () {
                 $('#account-message').html("<div class='alert alert-success'>Registered new account successfully. </div>");
                 console.log(data);
                 setupClientStateWithSession(data.object);      
-                setupMyAccount();
+
 
                 rejoinLastGameIfAny();
                 if ($.appViewHandler != null && typeof($.appViewHandler.closeRegisterPanel) === 'function')
@@ -1703,7 +1703,6 @@ var KharbgaApp = function () {
             }
             else {
                 setupClientStateWithSession(null);
-              //  setupMyAccount();
                
                 if (status.status === 404 || status.status === 400)
                     $('#account-message').html("<div class='alert alert-danger'>Invalid registration info. Errors: " + status.responseText+ " </div>");
@@ -1721,6 +1720,11 @@ var KharbgaApp = function () {
     */
     function onLogoutSubmit(e) {
         e.preventDefault();
+        if (appClientState.sessionId == null || appClientState.sessionId.length < 10)
+        {
+            $('#account-message').html("<div class='alert alert-info'>Invalid session</div>");
+            return; 
+        }
         $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
         // add call for back-end to delete the session
         nsApiClient.userService.logout(appClientState.sessionId, function (data,status) {
@@ -1729,20 +1733,22 @@ var KharbgaApp = function () {
                 $('#account-message').html("<div class='alert alert-success'>Logged out successfully </div>");
                
                 setupClientStateWithSession(null);
-                setupMyAccount();
+                
             }
             else {
                 setupClientStateWithSession(null);
                 //e;
-                setupMyAccount();
+               
       
                 $('#account-message').html("<div class='alert alert-danger'>Failed to logout.  </div>");
                 $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }  
-        });
-        appClientState.loggedIn = false;
+            } 
+  
 
-        setupMyAccount();
+        });
+        
+
+        
 
     }
     /**
@@ -1873,7 +1879,13 @@ var KharbgaApp = function () {
             if (window.localStorage != null){
                 var sid = window.localStorage.getItem(C_NSSID);
                 if (typeof sid  === "string" && sid.length > 10)
-                    checkSession(sid);     
+                    checkSession(sid);   
+                else{
+                    setupClientStateWithSession(null);  
+                }
+            }
+            else{
+                setupClientStateWithSession(null);
             }
         }
     }
@@ -1899,11 +1911,11 @@ var KharbgaApp = function () {
      * @param {any} sessionId the session id
      */
     function checkSession(sessionId) {
-        $('#main-message').html("<div class='alert alert-info'>Processing... </div>");
+        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
         var result = nsApiClient.userService.checkSession(sessionId, function (data, status) {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
-                $('#main-message').html("");
+                $('#account-message').html("");
 
                 var session = data.object;
                 
@@ -1914,13 +1926,13 @@ var KharbgaApp = function () {
                 else {
                     setupClientStateWithSession(null);
                 }
-                setupMyAccount();
+
 
                 // rejoin the game if any in all cases - just in case for guests
                 rejoinLastGameIfAny();
             }
             else {
-               // setCookie(C_NSSID, "");
+                setCookie(C_NSSID, "");
                 appClientState.loggedIn = false;
                 setupMyAccount();
                 appClientState.sessionId = "";
@@ -1929,11 +1941,11 @@ var KharbgaApp = function () {
 
 
                 if (status.status === 404 || status.status === 400)
-                    $('#main-message').html("<div class='alert alert-danger'>Invalid Session</div>");
+                    $('#account-message').html("<div class='alert alert-warning'>Invalid Session - Please Login</div>");
                 else
-                    $('#main-message').html("<div class='alert alert-danger'> Failed to access the system</div>");
+                    $('#account-message').html("<div class='alert alert-danger'> Failed to access the system. Please try your request again later. </div>");
 
-                $('#main-message').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+               // $('#account-message').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
             }
         });
     }
@@ -2186,7 +2198,7 @@ var KharbgaApp = function () {
      //  updateLocalGameStatus(serverGame);
 
         // refresh the myAccount info
-        //setupMyAccount();
+        setupMyAccount();
     };
    
     // handle when the game is selected by a player. All people will receive a this message
@@ -2312,7 +2324,7 @@ var KharbgaApp = function () {
             // activate the modal dialog here 
             if (gameInfo.status > 2)
                 setTimeout(function () {
-                    $('#game-over').modal();
+                  //  $('#game-over').modal();
                 }, 1000);
         }
     }
@@ -2844,6 +2856,7 @@ var KharbgaApp = function () {
             appClientState.loggedIn = false;
             setCookie(C_NSSID, "");
         }
+        setupMyAccount();
     };
 
     /**
@@ -2858,7 +2871,7 @@ var KharbgaApp = function () {
 
         // store in local storage 
         if (window.localStorage != null){
-            window.localStorage.setItem(C_NSSID, value);            
+            window.localStorage.setItem(key, value);            
         }
     }
     /**
@@ -2946,7 +2959,7 @@ var KharbgaApp = function () {
     // handler for resizing
     $(window).resize(resizeGame);
 
-  //  setupMyAccount();
+    setupMyAccount();
     setupFormsValidation();
 
     function playSound() {
@@ -3095,6 +3108,7 @@ var KharbgaApp = function () {
                 })
                 .fail(function () {
                     appClientState.signalReInitialized = false;
+                    checkSessionCookie();
                     console.log('%s - startSignalR Could not Connect!', getLoggingNow());
                     setSystemError(true);
                     $("#signalr-status").html("<div class='alert alert-danger'>Not connected</div>");

@@ -5,12 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="lwEQt7T2NYDXNwqHUyL1Ic7hXDR5U5i5YvdRh_NSMyM" />
-    <title>Kharbga.Net </title>
+    <title>Game Rules - Kharbga Game Network </title>
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/kharbga.css" />
     <link rel="stylesheet" href="../css/site.css" />
     <script src="../lib/jquery/jquery.min.js"></script>
+    <style>
+        figcaption {
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,21 +24,23 @@
             <a href="../index.html">
                 <img src="../img/kharbga.png" style="max-height:40px;">
             </a>
-            <h3>Welcome to Kharbga Game Network Rules</h3>
         </div>
         <div class="panel panel-info">
+            <div class="panel-heading">Welcome to Kharbga Game Network - Game Rules</div>
             <div class="panel-body">
                 <ul id="main-tabs" class="nav nav-pills">
                     <li class="active"><a data-toggle="tab" href="#objectives">Objectives</a></li>
-                    <li><a data-toggle="tab" href="#setting">Setting Phase</a></li>
-                    <li><a data-toggle="tab" href="#moving">Moving Phase</a></li>
-                    <li><a data-toggle="tab" href="#gameover">Game Over</a></li>
+                    <li><a data-toggle="tab" class="setting" href="#setting">Setting Phase</a></li>
+                    <li><a data-toggle="tab" class="moving" href="#moving">Moving Phase</a></li>
+                    <li><a data-toggle="tab" class="capturing" href="#capturing">Capturing Soldiers</a></li>
+                    <li><a data-toggle="tab" class="exchanging" href="#exchanging">Exchanging Soldiers</a></li>
+                    <li><a data-toggle="tab" class="gameover" href="#gameover">Game Over</a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="objectives" class="tab-pane fade in active">
 
                         <div class="row">
-                            <div class="col-sm-6 col-md-6">
+                            <div class="col-sm-4 col-md-4">
                                 <h4 class="text-primary">Background Information and Objectives</h4>
                                 <ul>
                                     <li>The game is played by two players (an Attacker and a Defender) using a board of 7 by 7 squares.
@@ -42,28 +49,48 @@
                                     <li>The objective of each player is to terminate the opponent soldiers.</li>
                                     <li>Players decide which one is the Attacker and which one is the Defender. </li>
                                     <li>The Attacker has the advantage of starting setting his first two soldiers on the board in strategic squares to enable capturing the Defender soldiers after the first move.</li>
-                                    <li>The Defender has the advantage of requesting soldier exchanges for unreachable/safe soldiers: one Defender soldier for two Attacker soldiers.</li>
+                                    <li>The Defender has the advantage of requesting
+                                        <a href="javascript:clickTab('#exchanging')">
+                                            soldier exchanges
+                                        </a> for unreachable safe soldiers: one Defender soldier for two Attacker soldiers (one for two).
+                                    </li>
                                     <li>
-                                        There are two phases for the game: a Setting phase where the players takes turns placing their soldiers on the board two at a time and Moving phase where each player attempts to capture the opponent soldiers or request exchanges for safe/untouchable soldiers.
+                                        There are two phases for the game:
+                                        <ol>
+                                            <li>
+                                                a <a href="javascript:clickTab('#setting')">Setting </a> phase where the players takes turns placing their soldiers on the board two at a time and
+                                            </li>
+                                            <li>
+                                                a <a href="javascript:clickTab('#moving')">Moving</a> phase where each player attempts to <a href="javascript:clickTab('#capturing')">capture</a> the opponent soldiers or
+                                                <a href="javascript:clickTab('#exchanging')"></a>request exchanges</a> for safe/untouchable soldiers.
+                                            </li>
+                                        </ol>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-sm-6 col-md-6 text-center">
+                            <div class="col-sm-4 col-md-4 text-center">
                                 <figure>
-                                    <img class="img responsive img " alt="Kharbga players" src="../img/players.png" style="width:300px;" />
-                                    <figcaption>Fig. 1 - Kharbga game played in an North African oasis</figcaption>
+                                    <img class="img responsive img " alt="Kharbga players" src="../img/players.png" style="max-width:300px;" />
+                                    <figcaption>Fig. 1.1 - Kharbga game played in an North African oasis.</figcaption>
+                                </figure>
+
+
+                            </div>
+                            <div class="col-sm-4 col-md-4 text-center">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Game Board Over On the Internet" src="../img/kharbga-board.png" style="max-width:300px;" />
+                                    <figcaption>Fig. 1.2 - Kharbga Game Network Board - players from around the world could connect and play with each other</figcaption>
                                 </figure>
                             </div>
                         </div>
                     </div>
                     <div id="setting" class="tab-pane ">
                         <div class="row">
-                            <div class="col-sm-6 col-md-6">
+                            <div class="col-sm-4 col-md-4">
                                 <h4 class="text-primary">Setting soldiers on the board </h4>
                                 <p>The following rules are followed when setting the board:</p>
                                 <ul>
-                                    <li>At this point, the board is empty. See Figure 2. </li>
-                                    <li>Players take turns setting the board two soldiers at a time following a strategy to set the opponent soldiers for capture and set their own soldiers for safety.</li>
+                                    <li>See Figure 2.1. At this point, the board is empty. </li>
                                     <li>
                                         The central square of the board, marked by a cross, is left empty in the setting phase. This square is used for the first move. It is called 'Malha' in Tunisian language meaning it is not seed-able by soldiers.
                                     </li>
@@ -71,64 +98,200 @@
                                         The Attacker has the advantage of starting setting his first two soldiers on the board. The Attacker's strategy to setup the opponent soldiers for capture and prevent the defender from building up safe untouchable soldiers.
                                     </li>
                                     <li>
-                                        The Defender follows the Attacker setting their two places following a strategy to capture the Attacker pieces after making captures or to build up zones of safety where unreachable pieces could demand one for two exchanges.
+                                        The Defender follows the Attacker setting their two places following a strategy to capture the Attacker pieces after making captures or to build up zones of safety where unreachable untouchable pieces could demand
+                                        <a href="#exchanging" data-toggle="tab" role="tab">one for two exchanges</a>.
                                     </li>
-                                    <li>The Defender must be allowed to move after the first Attacker move. If the first move results in the defender being blocked, the Defender wins the game.</li>
+                                    <li>Players take turns setting the board two soldiers at a time until the board is filled up. See Figure 2.2. </li>
+                                    <li>This phase is very important in the game. Players must follow a strategy to set the opponent soldiers for capture and set their own soldiers for safety.</li>
+
                                 </ul>
+                                <p>Figure 2.2 illustrates the end of the setting phase where the board is set with all players soldiers.</p>
                             </div>
-                            <div class="col-sm-6 col-md-6 text-center">
+                            <div class="col-sm-4 col-md-4 text-center">
                                 <figure>
                                     <img class="img responsive img " alt="Kharbga Board" src="../img/kharbga-board.png" />
-                                    <figcaption>Fig 2. - Kharbga Board before setting</figcaption>
+                                    <figcaption>Fig 2.1 - Kharbga Board before setting</figcaption>
+                                </figure>
+                            </div>
+                            <div class="col-sm-4 col-md-4 text-center">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board" src="../img/kharbga-setting-complete.png" />
+                                    <figcaption>Fig 2.2 - Kharbga Board at the end of setting - All cells are occupied expect the middle cell</figcaption>
                                 </figure>
                             </div>
                         </div>
 
                     </div>
                     <div id="moving" class="tab-pane ">
-                        <h4 class="text-primary">Moving soldiers on the board - capturing and exchanging soldiers</h4>
-                        <p>After completing the setting of the board, solders take turn moving soldiers on the board following the following rules:</p>
-                        <ul>
-                            <li>At this point, all board cells are filled up with each player 24 soldiers strategically placed except the middle cell (Malha).</li>
-                            <li>Play starts by the Attacker moving one of his first free solider on the middle cell which is left empty.</li>
-                            <li>Soldiers could be used for moving only if they have a free/empty adjacent cell</li>
-                            <li>Moves on the board could be orthogonal in any possible direction (up, down, left, or up) but not diagonally from one cell to another adjacent empty cell. </li>
-                            <li>The first move of the Attacker may or may not capture one or more of the defender's soldiers.
-                            </li>
-                            <li>A solider is captured if its gets sandwiched (placed between two opponent soldiers ) on the move (not during setting).</li>
-                            <li>
-                                Soldiers are only captured when the opponent makes a move that sandwiches the piece. Soldiers are considered safe in these cases: the soldiers moves to a cell between two of the opponent's soldiers or it the soldiers is between two of the opponent's soldiers
-                                in the original setting of the board.
-                            </li>
-                            <li>
-                                If the move results in a capture of one or more (up to three), the captured piece(s) is/are removed off the board. The player that made the capture is required (has the advantage) to continue moving the same soldier to a next adjacent square until no
-                                more captures could be made.
-                            </li>
-                            <li>If no capture results from the move, players change turns.</li>
-                            <li>If the first move results in the defender being blocked, the Defender wins the game.</li>
-                            <li>After, the first move, if the move results in a player being blocked, the same player must continue moving until the opponent player is unblocked.</li>
-                            <li>
-                                In addition to capturing, moves could involve related soldiers Exchange Requests. Below is the procedure/steps to follow:
+                        <div class="row">
+                            <div class="col-sm-4 col-md-4">
+                                <h4 class="text-primary">Moving soldiers on the board after setting - Rules </h4>
+                                <p>After completing the setting of the board, players take turn moving soldiers on the board following the following rules:</p>
+                                <ul>
+                                    <li>Soldiers could be used for moving only if they have a free/empty adjacent cell</li>
+                                    <li>Moves on the board could be orthogonal in any possible direction (up, down, left, or up) from one cell to another adjacent empty cell </li>
+                                    <li>Moves could not be made diagonally or off the board</li>
+                                    <li>The first move is always made by the Attacker who must set at least one soldier adjacent to the middle cell (Malha).
+                                    </li>
+                                    <li> See Figure 3.1. At this point, all board cells are filled up with each player 24 soldiers strategically placed except the middle cell (Malha)
+                                    </li>
+                                    <li>
+                                        The first move of the Attacker may or may not capture one or more of the defender's soldiers. See <a href="javascript:clickTab('#capturing')">capturing</a> rules in the next tab
+
+                                    </li>
+                                    <li>
+                                        If the first Attacker move (with or without capture) results in the Defender being blocked, the Defender wins the game. The Defender must be allowed to move after the first Attacker move. See Figure 3.4 for an example of this case.
+                                    </li>
+                                    <li>After the first move, if the move results in a player being blocked, the same player must continue moving until the opponent player is unblocked.
+                                    </li>
+                                </ul>
+
+                            </div>
+                            <div class="col-sm-4 col-md-4 ">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board" src="../img/kharbga-setting-complete.png" />
+                                    <figcaption>Fig 3.1 - Setting the board is complete and ready for Moving stage</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-not-resulting-in-a-capture.png " />
+                                    <figcaption>Fig 3.2 - 1st Move not resulting in a capture</figcaption>
+                                </figure>
+
+                            </div>
+                            <div class="col-sm-4 col-md-4 ">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-capture-3.png " />
+                                    <figcaption>Fig 3.3 - 1st Attacker move resulting in a capture of 3 Defender soldiers</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-defender-blocked.png " />
+                                    <figcaption>Fig 3.3 - 1st Attacker results in Defender being blocked - Defender wins</figcaption>
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="capturing" class="tab-pane ">
+                        <div class="row ">
+                            <div class="col-sm-4 col-md-4 ">
+                                <h4 class="text-primary ">Capturing Soldiers</h4>
+                                <p>The following rules are followed:</p>
+                                <ul>
+                                    <li>
+                                        A solider is captured if its gets sandwiched (placed between two opponent soldiers ) on the move (not during setting)
+                                    </li>
+                                    <li>
+                                        Soldiers are only captured when the opponent makes a move that sandwiches the piece
+                                    </li>
+                                    <li>
+                                        Soldiers are considered safe in these cases: the soldiers moves to a cell between two of the opponent's soldiers or it the soldiers is between two of the opponent's soldiers in the original setting of the board
+                                    </li>
+                                    <li>
+                                        A capture move move results in the capture of up to three soldiers
+                                    </li>
+                                    <li>
+                                        The captured piece(s) is/are removed off the board. </li>
+
+                                    <li>
+                                        The player that made the capture is required to continue moving the same soldier to a next adjacent square if a capture is possible until no further capture moves could be made (using the same initial soldier). See Figures 4.3.
+                                    </li>
+                                    <li>If no capture results from the move, players change turns.</li>
+
+                                </ul>
+                                <p>
+                                    The strategy of the game is not only to capture the opponent soldiers, but also to prevent your own soldiers from being captured. So, sometimes it may be more beneficial to not capture a and move soldiers away to places to gain ground or to prevent being
+                                    captured. See Figures 4.1 and 4.2 for examples.
+                                </p>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board" src="../img/kharbga-setting-complete.png" />
+                                    <figcaption>Fig 4.1 - Kharbga Board at the end of setting - case when Defender wins since they do not have any way to move</figcaption>
+                                </figure>
+                            </div>
+                            <div class="col-sm-4 col-md-4 ">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-capture-3.png " />
+                                    <figcaption>Fig 4.1 - Kharbga Board 1st Attacker move resulting in a capture of 3 Defender soldiers.</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-continue-capture-using-same-solider2.png " />
+                                    <figcaption>Fig 3.3 - First Attacker move case when the same solider must continue moving the same solider to complete the capture - continued</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-continue-capture-using-same-solider3.png " />
+                                    <figcaption>Fig 3.5 - First Attacker move case when the same solider must continue moving the same solider to complete the capture - continued</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-capture-3.png " />
+                                    <figcaption>Fig 3.2 - First Attacker move 'b3-b4' captures 3 Defender soldiers</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-continue-capture-using-same-solider.png " />
+                                    <figcaption>Fig 3.3 - First Attacker move case when the same solider must continue moving the same solider to complete the capture</figcaption>
+                                </figure>
+                            </div>
+                            <div class="col-sm-4 col-md-4 ">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/kharbga-first-move-continue-capture-using-same-solider2.png " />
+                                    <figcaption>Fig 4.2 - Kharbga Board 1st Attacker move resulting in a capture of 3 Defender soldiers.</figcaption>
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exchanging" class="tab-pane ">
+                        <div class="row ">
+                            <div class="col-sm-4 col-md-4 ">
+                                <h4 class="text-primary ">Exchanging Soldiers two for one</h4>
+                                <p>Exchanging soldiers is demanded by the Defender who managed to build up protected regions in the board where soldiers could move freely without any risk of capture. These soldiers are called untouchables and demand two
+                                    of the Attackers soldiers for one untouchable. Below is the procedure/steps for making an exchange:
+                                </p>
+
                                 <ol>
                                     <li>The Defender initiates the request by raising the exchange request flag (checking the Exchange request check box) and moving a safe unreachable soldier to use for the exchange.
-                                        <li>The Attacker could accept or deny the request in his next move by raising or not raising the Exchange Request Accepted flag. </li>
-                                        <li>The Attacker accepts the request by raising the Exchange Request Accepted flag and moving a free soldier to use in the exchange. This would be the first soldier to use in the exchange</li>
-                                        <li>
-                                            The Defender accepts this soldier by continuing to raise the exchange request flag (checking the Exchange request check box) and moving the same safe soldier to an adjacent square. If a different soldier is used in the move. The process goes back to the
-                                            first step.
-                                            <li>The Attacker could accept or deny the request in his next move by raising or not raising the Exchange Request Accepted flag and make a move to indicate his second soldier to use for the exchange.</li>
-                                            <li>
-                                                The Defender accepts this second soldier by continuing to raise the exchange request flag and moving the same soldier to an adjacent soldier. With this step, the exchange request is completed and the exchanged soldiers are removed off the board.
-                                            </li>
-                                            <li>After the exchange is completed, it is the Attacker's turn to make the next move. </li>
+                                    </li>
+                                    <li>The Attacker could accept or deny the request in his next move by raising or not raising the Exchange Request Accepted flag.
+
+                                    </li>
+                                    <li>
+                                        The Attacker accepts the request by raising the Exchange Request Accepted flag and moving a free soldier to use in the exchange. This would be the first soldier to use in the exchange
+                                    </li>
+                                    <li>
+                                        The Defender accepts this soldier by continuing to raise the exchange request flag (checking the Exchange request check box) and moving the same safe soldier to an adjacent square. If a different soldier is used in the move. The process goes back to the
+                                        first step.
+                                    </li>
+                                    <li>The Attacker could accept or deny the request in his next move by raising or not raising the Exchange Request Accepted flag and make a move to indicate his second soldier to use for the exchange.</li>
+                                    <li>
+                                        The Defender accepts this second soldier by continuing to raise the exchange request flag and moving the same soldier to an adjacent soldier. With this step, the exchange request is completed and the exchanged soldiers are removed off the board.
+                                    </li>
+                                    <li>After the exchange is completed, it is the Attacker's turn to make the next move. </li>
                                 </ol>
-                                </li>
-
-
-                        </ul>
+                            </div>
+                            <div class="col-sm-4 col-md-4 ">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/defender-exchange-request-step1.png " />
+                                    <figcaption>Fig 5.1 - Exchange Request started by Defender - untouchable piece to exchange is shown</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/defender-exchange-request-step3.png " />
+                                    <figcaption>Fig 5.3 - Exchange Request confirmed by Defender - untouchable piece to exchange is shown and attacker piece 1 is accepted</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/defender-exchange-request-step5.png " />
+                                    <figcaption>Fig 5.5 - Exchange Request completed by Defender - untouchable piece to exchange is shown and attacker piece 1 is accepted</figcaption>
+                                </figure>
+                            </div>
+                            <div class="col-sm-4 col-md-4 ">
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/attacker-exchange-request-accepted-first-soldier-step2.png " />
+                                    <figcaption>Fig 5.2 - Exchange request Accepted by Attacker - first piece to exchange is shown</figcaption>
+                                </figure>
+                                <figure>
+                                    <img class="img responsive img " alt="Kharbga Board " src="../img/attacker-exchange-request-accepted-second-solider-step4.png " />
+                                    <figcaption>Fig 5.4 - Exchange request Accepted Confirmation y Attacker - second piece to exchange is shown</figcaption>
+                                </figure>
+                            </div>
+                        </div>
                     </div>
                     <div id="gameover" class="tab-pane ">
-                        <h4 class="text-primary">Game Over</h4>
+                        <h4 class="text-primary ">Game Over</h4>
                         <p>Below are the possible cases when the game is over and a winner is declared</p>
                         <ul>
                             <li>The Defender is blocked from moving after the first move by the Attacker: Defender wins.
@@ -141,24 +304,75 @@
 
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
     <footer>
-        <hr />
-        <div class="container row">
-            <div class="col-sm-9">
+        <div class="container row ">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <a href="../index.html">
+                            <img src="../img/title.png" class="text-center" style="max-height:100px;" title="Kharbga Game Network">
+                        </a>
+                    </div>
+                    <div class="col-sm-8">
+                        <ul class="nav navbar-nav">
+                            <li id="terms-li">
+                                <a target="rules" id="terms-link" href="../html/terms.html">
+                                    <span class="glyphicon glyphicon-star"></span> Terms & Conditions
+                                </a>
+                            </li>
+                            <li id="privacy-li">
+                                <a target="rules" id="privacy-link" href="../html/privacy.html">
+                                    <span class="glyphicon glyphicon-lock"></span> Privacy
+                                </a>
+                            </li>
+                            <li id="contact-us-li">
+                                <a target="nouris" id="contact-us-link" href="http://www.nourisolutions.com/company/message/send/1">
+                                    <span class="glyphicon glyphicon-envelope"></span> Contact Us
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
             </div>
-            <div class="col-sm-3">
-                <strong>Developed & Operated By <a href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+            <div class="col-sm-4">
+                <strong>Developed & Operated By <a href="http://www.nouriSolutions.com ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
             </div>
         </div>
         <hr />
     </footer>
-    <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../lib/bootstrap/js/bootstrap.min.js "></script>
+    <script>
+        //https://stackoverflow.com/questions/7862233/twitter-bootstrap-tabs-go-to-specific-tab-on-page-reload-or-hyperlink
+        $(document).ready(function() {
+            /*  var hash = document.location.hash;
+            var prefix = "tab_";
+
+            if (hash) {
+                hash = hash.replace(prefix, '');
+                var hashPieces = hash.split('#');
+                //  activeTab = $('a[href=' + hashPieces[0] + ']');
+                activeTab = $('.' + hashPieces[1]);
+                activeTab && activeTab.tab('show');
+            }
+        */
+            if (window.location.hash != "") {
+                $('a[href="' + window.location.hash + '"]').click()
+            }
+            // Change hash for page-reload
+            $('.nav-pills a').on('shown', function(e) {
+                window.location.hash = e.target.hash;
+                window.scrollTo(0, 0);
+            });
+        });
+
+        function clickTab(tab) {
+            $('a[href="' + tab + '"]').click()
+        }
+    </script>
 </body>
 
 </html>

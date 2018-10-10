@@ -12,6 +12,18 @@
     <link rel="stylesheet" href="../css/kharbga.css" />
     <link rel="stylesheet" href="../css/site.css" />
     <script src="../lib/jquery/jquery.min.js"></script>
+
+    <script>
+        function handleLoad(e) {
+            console.log('Loaded import: ' + e.target.href);
+        }
+
+        function handleError(e) {
+            console.log('Error loading import: ' + e.target.href);
+        }
+    </script>
+    <link rel="import" href="../html/footer.html" onload="handleLoad(event)" onerror="handleError(event)">
+
 </head>
 
 <body>
@@ -21,11 +33,11 @@
             <a href="../index.html">
                 <img src="../img/kharbga.png" style="max-height:40px;">
             </a>
-            <h3> Welcome to Kharbga Game Network</h3>
+
         </div>
-        <div class="panel panel-primary">
+        <div class="panel panel-info">
             <div class="panel-heading">
-                <h3>Terms and Conditions</h3>
+                Welcome to Kharbga Game Network - Terms and Conditions
             </div>
             <div class="panel-body">
                 <p>
@@ -67,8 +79,21 @@
         </div>
 
     </div>
+    <div id="imports-container">
+
+    </div>
     <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
 
+    <script>
+        var link = document.querySelector('link[rel="import"]');
+        if (link != null) {
+            // Clone the <template> in the import.
+            var template = link.import.querySelector('template');
+            var clone = document.importNode(template.content, true);
+
+            document.querySelector('#imports-container').appendChild(clone);
+        }
+    </script>
 </body>
 
 </html>

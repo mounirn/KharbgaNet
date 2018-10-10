@@ -5,28 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="lwEQt7T2NYDXNwqHUyL1Ic7hXDR5U5i5YvdRh_NSMyM" />
-    <title>Kharbga.Net</title>
+    <title>Kharbga Game Network</title>
     <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/site.css" />
-    <link rel="import" href="./html/footer.html" onload="handleLoad(event)" onerror="handleError(event)">
 
     <script src="./lib/jquery/jquery.min.js"></script>
     <script>
         /*     window.fbAsyncInit = function() {
-                                                            FB.init({
-                                                                appId: '107740655926360',
-                                                                cookie: true,
-                                                                xfbml: true,
-                                                                version: 'v2.8'
-                                                            });
+                                                                                                                                            FB.init({
+                                                                                                                                                appId: '107740655926360',
+                                                                                                                                                cookie: true,
+                                                                                                                                                xfbml: true,
+                                                                                                                                                version: 'v2.8'
+                                                                                                                                            });
 
-                                                            FB.AppEvents.logPageView();
+                                                                                                                                            FB.AppEvents.logPageView();
 
-                                                            checkLoginState();
+                                                                                                                                            checkLoginState();
 
-                                                        };
-                                                    */
+                                                                                                                                        };
+                                                                                                                                    */
         function handleLoad(e) {
             console.log('Loaded import: ' + e.target.href);
         }
@@ -69,18 +68,41 @@
     </script>
     <div class="container-fluid text-center">
         <a href="./index.html">
-            <img src="./img/kharbga.png" title="Kharbga Online Game" style="max-height:40px;">
+            <img src="./img/kharbga.png" title="Kharbga Game Network" style="max-height:40px;">
         </a>
 
-        <h1>Welcome to Kharbga</h1>
-        <p>
-            If you are new here, please <a target="rules" href="./html/rules.html">click here to view the game rules.</a>
-        </p>
-        <figure class="text-center">
-            <img src="./img/players.png" title="Kharbga players from North Africa">
-            <figcaption><strong>Kharbga Game Played in an North African Oasis</strong></figcaption>
-        </figure>
-        <hr>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4>Welcome to Kharbga Game Network</h4>
+            </div>
+            <div class="panel-body">
+                <p>
+                    If you are new here, please <a target="rules" href="./html/rules.html">click here to view the game rules.</a>
+                </p>
+                <figure class="text-center">
+                    <img src="./img/players.png" title="Kharbga players from North Africa">
+                    <figcaption>Kharbga Game Played in an North African Oasis </figcaption>
+                </figure>
+
+                <hr>
+                <div id="main">
+                    <h2>Choose which version to play:</h2>
+                    <p>
+                        <a href="./v1/index.html">Version 1 - JQuery, TypeScript, HTML5, CSS3, Bootstrap, ASP.Net, SignalR</a>
+                    </p>
+
+                    <p>
+                        <a href="./v2/index.html">Version 2 - AngularJS, JQuery, HTML5, CSS3, TypeScript, Bootstrap, ASP.Net, SignalR</a>
+                    </p>
+
+                    <p>
+                        <a href="./v3/index.html">Version 3 - JQuery Mobile, HTML5, CSS3, JQuery, TypeScript, Bootstrap, ASP.Net, SignalR</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
         <div id="facebook-section" class="text-center">
             <div id="status">
 
@@ -96,89 +118,100 @@
             <div id="logoutButton">
                 <button id="logout" name="Logout" value="Logout" type="submit" title="Logout of App using Facebook"></button>
             </div>
-        </div <div id="main">
-        <h2>Choose which version to play:</h2>
-        <p>
-            <a href="./v1/index.html">Version 1 - JQuery, TypeScript, HTML5, CSS3, Bootstrap, ASP.Net, SignalR</a>
-        </p>
-
-        <p>
-            <a href="./v2/index.html">Version 2 - AngularJS, JQuery, HTML5, CSS3, TypeScript, Bootstrap, ASP.Net, SignalR</a>
-        </p>
-
-        <p>
-            <a href="./v3/index.html">Version 3 - JQuery Mobile, HTML5, CSS3, JQuery, TypeScript, Bootstrap, ASP.Net, SignalR</a>
-        </p>
-    </div>
-    </div>
-    <script>
-        function checkLoginState() {
-            if (typeof FB === 'object') {
-                FB.getLoginStatus(function(response) {
-                    statusChangeCallback(response);
-                });
+        </div </div>
+        <script>
+            function checkLoginState() {
+                if (typeof FB === 'object') {
+                    FB.getLoginStatus(function(response) {
+                        statusChangeCallback(response);
+                    });
+                }
             }
-        }
 
-        function statusChangeCallback(response) {
-            console.log('statusChangeCallback');
-            console.log(response);
-            // The response object is returned with a status field that lets the
-            // app know the current login status of the person.
-            // Full docs on the response object can be found in the documentation
-            // for FB.getLoginStatus().
-            if (response.status === 'connected') {
-                // Logged into your app and Facebook.
-                testAPI();
-                $('#loginButton').hide();
-                $('#logoutButton').show();
-            } else {
-                // The person is not logged into your app or we are unable to tell.
-                $('#loginButton').show();
-                document.getElementById('status').innerHTML = 'Please log ' +
-                    'into this app.';
-
-                $('#logoutButton').hide();
-            }
-        }
-
-        // Here we run a very simple test of the Graph API after login is
-        // successful.  See statusChangeCallback() for when this call is made.
-        function testAPI() {
-            console.log('Welcome!  Fetching your information.... ');
-            FB.api('/me', function(response) {
-                console.log('Successful login for: ' + response.name);
+            function statusChangeCallback(response) {
+                console.log('statusChangeCallback');
                 console.log(response);
-                document.getElementById('status').innerHTML =
-                    'Welcome ' + response.name + '!';
-            });
-        }
-
-
-        $(document).ready(function() {
-            $('#logout').click(function() {
-                FB.logout(function(response) {
-                    // Person is now logged out
-                    console.log("Logout ", response);
+                // The response object is returned with a status field that lets the
+                // app know the current login status of the person.
+                // Full docs on the response object can be found in the documentation
+                // for FB.getLoginStatus().
+                if (response.status === 'connected') {
+                    // Logged into your app and Facebook.
+                    testAPI();
+                    $('#loginButton').hide();
+                    $('#logoutButton').show();
+                } else {
+                    // The person is not logged into your app or we are unable to tell.
                     $('#loginButton').show();
+                    document.getElementById('status').innerHTML = 'Please log ' +
+                        'into this app.';
+
+                    $('#logoutButton').hide();
+                }
+            }
+
+            // Here we run a very simple test of the Graph API after login is
+            // successful.  See statusChangeCallback() for when this call is made.
+            function testAPI() {
+                console.log('Welcome!  Fetching your information.... ');
+                FB.api('/me', function(response) {
+                    console.log('Successful login for: ' + response.name);
+                    console.log(response);
+                    document.getElementById('status').innerHTML =
+                        'Welcome ' + response.name + '!';
+                });
+            }
+
+
+            $(document).ready(function() {
+                $('#logout').click(function() {
+                    FB.logout(function(response) {
+                        // Person is now logged out
+                        console.log("Logout ", response);
+                        $('#loginButton').show();
+                    });
                 });
             });
-        });
-    </script>
+        </script>
 
-    <div id="container">
-    </div>
-    <script>
-        var link = document.querySelector('link[rel="import"]');
-        if (link != null) {
-            // Clone the <template> in the import.
-            var template = link.import.querySelector('template');
-            var clone = document.importNode(template.content, true);
 
-            document.querySelector('#container').appendChild(clone);
-        }
-    </script>
+        <footer>
+            <div class="container row ">
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <a href="./v3/index.html">
+                                <img src="./img/title.png" class="text-center" style="max-height:100px;" title="Kharbga Game Network">
+                            </a>
+                        </div>
+                        <div class="col-sm-8">
+                            <ul class="nav navbar-nav">
+                                <li id="terms-li">
+                                    <a target="rules" id="terms-link" href="./html/terms.html">
+                                        <span class="glyphicon glyphicon-star"></span> Terms & Conditions
+                                    </a>
+                                </li>
+                                <li id="privacy-li">
+                                    <a target="rules" id="privacy-link" href="./html/privacy.html">
+                                        <span class="glyphicon glyphicon-lock"></span> Privacy
+                                    </a>
+                                </li>
+                                <li id="contact-us-li">
+                                    <a target="nouris" id="contact-us-link" href="http://www.nourisolutions.com/company/message/send/1">
+                                        <span class="glyphicon glyphicon-envelope"></span> Contact Us
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
+                </div>
+                <div class="col-sm-4">
+                    <strong>Developed & Operated By <a href="http://www.nouriSolutions.com ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+                </div>
+            </div>
+            <hr />
+        </footer>
 </body>
 
 </html>
