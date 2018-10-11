@@ -38,11 +38,12 @@ namespace Kharbga {
         }
 
         public reset(): void {
+            this.id = "";
             this.attackerName = "";
             this.defenderName = "";
             this.moves= new Array<GameMove>();
-            this.status = 0;
-            this.state = 0;
+            this.status = GameStatus.Created;
+            this.state = GameState.NotStarted;
             this.attacker = null;
             this.defender = null;
             this.players = [];

@@ -6,6 +6,9 @@
 }
 
 
+/* issue with double scroll bars https://stackoverflow.com/questions/26159229/jquery-mobile-double-scrollbar-css */
+
+
 /* https://vanseodesign.com/css/vertical-centering/ */
 
 .parent {
@@ -18,5 +21,82 @@
     display: inline-block;
 }
 
+.center {
+    text-align: center;
+}
+
+.kharbga-grid .ui-block-a {
+    padding-right: 10px;
+}
+
+
+/* stack all grids below 40em (640px) */
+
+@media all and (max-width: 720px) {
+    .kharbga-grid .ui-block-a,
+    .kharbga-grid .ui-block-b,
+    .kharbga-grid .ui-block-c,
+    .kharbga-grid .ui-block-d,
+    .kharbga-grid .ui-block-e {
+        width: 100%;
+        float: none;
+    }
+}
+
 
 /* end*/
+
+
+/* making panels part of the page on larger screen */
+
+@media ( min-width: 35em) {
+    /* wrap on wide viewports once open */
+    .ui-panel-page-content-open.ui-panel-page-content-position-left {
+        margin-right: 17em;
+    }
+    .ui-panel-page-content-open.ui-panel-page-content-position-right {
+        margin-left: 17em;
+    }
+    .ui-panel-page-content-open {
+        width: auto;
+    }
+    /* disable "dismiss" on wide viewports */
+    .ui-panel-dismiss {
+        display: none;
+    }
+    /* same as the above but for panels with display mode "push" only */
+    .ui-panel-page-content-open.ui-panel-page-content-position-left.ui-panel-page-content-display-push {
+        margin-right: 17em;
+    }
+    .ui-panel-page-content-open.ui-panel-page-content-position-right.ui-panel-page-content-display-push {
+        margin-left: 17em;
+    }
+    .ui-panel-page-content-open.ui-panel-page-content-display-push {
+        width: auto;
+    }
+    .ui-panel-dismiss-display-push {
+        display: none;
+    }
+}
+
+
+/* Bootstrap badge */
+
+.badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 1;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-align: center;
+    background-color: #eca92c;
+    border-radius: 10px;
+}
+
+.badge:empty {
+    display: none;
+}

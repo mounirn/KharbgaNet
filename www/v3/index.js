@@ -10,7 +10,7 @@ $(document).one("pageshow", function() {
 /* popup requires jquery 1.11 - does not work with v 3.3 and mobile 1.4.5*/
 $.appViewHandler = {
     closeLoginPanel : function(){
-        $("#login-panel").popup( "close" );
+        $("#login-popup").popup( "close" );
     },
 
     closeRegisterPanel: function (){

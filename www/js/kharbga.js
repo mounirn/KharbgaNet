@@ -1629,11 +1629,12 @@ var Kharbga;
             this.players = [this.attacker, this.defender];
         };
         GameInfo.prototype.reset = function () {
+            this.id = "";
             this.attackerName = "";
             this.defenderName = "";
             this.moves = new Array();
-            this.status = 0;
-            this.state = 0;
+            this.status = Kharbga.GameStatus.Created;
+            this.state = Kharbga.GameState.NotStarted;
             this.attacker = null;
             this.defender = null;
             this.players = [];

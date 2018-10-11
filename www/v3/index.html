@@ -6,11 +6,12 @@
     <title>Kharbga</title>
     <meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="../css/kharbga.css" />
-    <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile-1.4.5.min.css">
+    <!-- <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css"> -->
+    <!-- <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile-1.4.5.min.css"> -->
 
     <link rel="stylesheet" href="../css/themes/Kharbga2.min.css">
     <link rel="stylesheet" href="../css/themes/jquery.mobile.icons.min.css">
+    <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile.structure-1.4.5.css">
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../css/site.css">
     <link rel="stylesheet" href="./index.css">
@@ -30,116 +31,112 @@
         </header>
         <article role="main" class="ui-content">
             <div id="menu-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
+                <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
                 <div class="panel panel-info">
-                    <div class="panel-heading">My Account</div>
-                    <div class="panel-body">
+                    <div class="panel-heading ui-bar ui-bar-b">My Account</div>
+                    <div class="panel-body ui-body">
                         <p id="login-li">
                             <a id="login-link-v3" href="#login-popup" data-rel="popup" data-position-to="window">
-                                <span class="glyphicon glyphicon-log-in"></span> Login</a>.
-
+                                <span class="glyphicon glyphicon-log-in"></span> Login</a>
                         </p>
                         <p id="logout-li">
                             <span id="account-welcome" class="text-success"></span>
                             <br><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
                         </p>
-                        <span id="account-message" class="text-success"></span>
-                        <br>
-                        <hr>
-                        <strong>To play with other users in the network, you need to have a valid user account. </strong> Click here to
-                        <a href="../html/register.html" target="account">sign up if not already registered.</a>.
-                        <hr>
+                        <p>If this is your first time here, please click <a href="../html/rules.html">here
+                                to learn about the game.</a></p>
+                        <p>
+                            This system provides a platform for learning and playing this fun board game from North Africa.
+                        </p>
+                        <figure class="center">
+                            <a href="#popup-menu" data-rel="popup">
+                                <img src="../img/players.png" style="width:90%;" class="img" title="Kharbga game played in the desert of North Africa">
+                            </a>
+                            <figcaption>
+                                <strong>Kharbga Game Played on a Sand Board in North Africa</strong>
+                            </figcaption>
+                        </figure>
+                        <p>
+                            Click here to <a href="#popup-menu" data-rel="popup">start a new game as Attacker or Defender</a> playing with other players or with the System.</a>
+                        </p>
                     </div>
-                </div>
-                <p>If this is your first time here, please click <a href="../html/rules.html">here
-                        to learn about the game.</a></p>
-                <p>
-                    This system provides a platform for learning and playing this fun board game from North Africa.
-                </p>
-                <p>
-                    Click here to <a href="#popup-menu" data-rel="popup">start a new game as Attacker or Defender</a> playing with other players or with the System.</a>
-                </p>
-                <strong>Choose from the options below to learn more about this system.</strong>
-                <ul data-role="listview" data-inset="true">
-
-                    <li><a target="rules" href="../html/rules.html">Game Rules</a></li>
-                    <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
-                    <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
-                    <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
-                </ul>
-
-
-                <p class="text-center">
-                    <a href="#popup-menu" data-rel="popup">Play</a>
-                </p>
-                <p>
-                    If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
-                </p>
-                <p class="text-center">
-                    <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
-                </p>
-                <hr>
-                <p class="text-center"> <a href="#" data-rel="close">Close</a></p>
-                <hr>
-                <figure>
-                    <img src="../img/players.png" style="width:300px;" class="img" title="Kharbga game played in the desert of North Africa">
-                    <figcaption>
-                        <strong>Kharbga Game Played on a Sand Board in North Africa</strong>
-                    </figcaption>
-                </figure>
-
-            </div>
-            <div id="play-watch-section" data-role="panel" data-position="left" data-display="overlay" data-theme="a">
-                <div class="text-center">
-                    <h4>
-                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
-                    </h4>
-                    <h4>Join or Watch Active Games</h4>
-                    <ul id="games-list" style="height: 70%;max-height:600px;overflow-y:scroll" class="list-group ">
+                    <div class="ui-bar ui-bar-c">Choose from the options below to learn more about this system.</div>
+                    <ul data-role="listview" data-inset="true">
+                        <li><a target="rules" href="../html/rules.html">Game Rules</a></li>
+                        <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
+                        <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
+                        <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
                     </ul>
                 </div>
-
-                <a href="#" data-rel="close">Close</a>
+                <div class="ui-content">
+                    <p>
+                        If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
+                    </p>
+                    <strong>Thank you!</strong>
+                    <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+                </div>
+                <p class="center">
+                    <hr>
+                    <a href="#" class="center" data-rel="close">Close</a></p>
+                <hr>
+                </p>
             </div>
-            <div class="row">
-                <div class="col-sm-6 col-md-5 col-lg-4">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            Kharbga Board - <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong> 
-                        </div>
-                        <div class="panel-body">
-                         
-                            <!-- The Board -->
-                            <div id="board" style="min-width:250px;max-width:300px"></div>
-                            <div class="message" id="message" class=""></div>
-                        </div>
-                        <div class="panel-footer">
-                            <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">Flip</a>
-                            <p>
-                                Board State:</strong>
+            <div id="play-watch-section" data-role="panel" data-position="left" data-display="overlay" data-theme="a">
+                <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                <div class="ui-content">
+                    <div class="ui-bar ui-bar-b">
+                        <h4>Active Games</h4>
+                        <a id="games-link" href="#"><span class="glyphicon glyphicon-refresh"></span>Refresh</a>
+                    </div>
+
+                    <div class="text-center center ui-body ui-body-b">
+
+                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
 
 
-                            <span id="state" class="badge"></span>
-                            </p>
-
-                            <fieldset data-role="controlgroup" data-type="horizontal">
-                                <label for="abandonCheckbox">  
-                                    <input type="checkbox" id="abandonCheckbox" name="abandonCheckbox" 
-                                    data-min="true" data-iconpos="right">
-                                
-                                      Check this to resign and make any move on the board
-                                </label>
-                            </fieldset>
-                            <audio id="sound" preload="auto">
-                                            <source src="../img/button-26.mp3" type="audio/mpeg">
-                                        </audio>
-                        </div>
-
+                        <ul id="games-list" style="height: 70%;max-height:600px;overflow-y:scroll" class="list-group ">
+                        </ul>
+                        <a href="#" data-rel="close">Close</a>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-6 col-lg-6">
+
+            </div>
+            <div class="row ui-grid-a kharbga-grid">
+                <div class="col-sm-6 col-md-5 col-lg-4 panel panel-success ui-block-a">
+                    <div class="panel-heading ui-bar ui-bar-a">
+                        Kharbga Board - <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong> 
+                    </div>
+                    <div class="panel-body">
+                        
+                        <!-- The Board -->
+                        <div id="board" style="min-width:250px;max-width:300px"></div>
+                        <div class="message" id="message" class=""></div>
+                        <hr>
+                        <input id="resign-checkbox" type="checkbox" name="resign-checkbox" 
+                            data-mini="true"  class="">
+                        <label for="resign-checkbox">To resign, check this checkbox and make any move on the board on your turn.</label>
+                    </div>
+                    <div class="panel-footer">
+                        <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">Flip</a>
+                        <p>
+                            Board State:</strong> <span id="state" class="badge"></span>
+                        </p>
+                        <audio id="sound" preload="auto">
+                            <source src="../img/button-26.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 ui-block-b">
+                    <div class="panel-heading ui-bar ui-bar-a">
+                        Current Game Information
+                    </div>
                     <p class="text-center">
-                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-icon-gear ui-btn-inline ">New Game</a>
+                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-icon-gear ui-shadow ui-corner-all ui-btn-inline ">New Game</a>
+                        <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
+                        <a id="resign-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ">Resign</a>
+                        <a id="clear-board-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ">Clear</a>
                     </p>
                     <div id="popup-menu" data-role="popup">
                         <ul data-role="listview" data-inset="true">
@@ -153,26 +150,26 @@
 
                     </div>
                     <div class="panel panel-success">
-                        <div class="panel-heading">
+                        <div class="panel-heading ui-bar ui-bar-b">
                             Game ID: <span id="current-game-id"></span>
                         </div>
                         <div class="panel-body">
                             <p>
-                                <label class="text-info" for="current-game-status">Game State: </label>
-                                <span id="current-game-status" class="badge"></span></p>
-                            <p>
-                                <label class="text-info" for="gameMove">Last Action: </label>
-                                <span id="gameMove" class="badge"></span>
-                            </p>
-                            <p class="text-success">FEN: <span id="fen" class=""></span></p>
+                                <label class="text-info" for="current-game-status">Game State: 
+                                <span id="current-game-status" class="badge"></span></p></label>
+                                <p>
+                                    <label class="text-info" for="gameMove">Last Action: 
+                                <span id="gameMove" class="badge"></span></label>
+                                </p>
+                                <p class="text-success">FEN: <span id="fen" class=""></span></p>
 
-                            <hr>
-                            <div id="game-moves-history" class="height:120px;overflow-y:scroll">
-                            </div>
+                                <hr>
+                                <div id="game-moves-history" class="height:120px;overflow-y:scroll">
+                                </div>
                         </div>
                     </div>
                     <div id="tab-messages" class="panel panel-success">
-                        <div class="panel-heading">
+                        <div class="panel-heading ui-bar-c">
                             Player Messages
                         </div>
                         <div class="panel-body">
@@ -193,35 +190,45 @@
                     </div>
                 </div>
             </div>
-            <div id="login-popup" data-role="popup" data-theme="a" class="ui-content" style="width:80%">
+            <div id="login-popup" data-role="popup" data-theme="a" class="ui-content">
                 <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <div class="panel panel-info">
-                    <div class="panel-heading">
+                    <div data-role="header" class="panel-heading ui-bar" data-theme="b">
                         Login
                     </div>
-                    <div class="panel-body>">
-                        <form class="form-horizontal" id="login-form" novalidate>
-                            <div class="form-group">
-                                <label class="control-label col-sm-4" for="login-id">Login ID:</label>
-                                <div class="col-sm-6 input-group">
 
-                                    <input type="text" class="form-control" id="login-id" placeholder="Enter login id" required size="30" minlength="6" maxlength="30">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-4" for="login-pwd">Password:</label>
-                                <div class="col-sm-6 input-group">
+                    <div class="panel-body ui-grid-a">
+                        <div class="ui-block-a">
+                            <span id="account-message" class="text-success"></span>
+                            <form class="form-horizontal" id="login-form" novalidate>
+                                <div class="form-group ui-block-a">
+                                    <label class="control-label col-sm-4" for="login-id">Login ID:</label>
+                                    <div class="col-sm-6 input-group">
 
-                                    <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
+                                        <input type="text" class="form-control" id="login-id" placeholder="Enter login id" required size="30" minlength="6" maxlength="30">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-4 col-sm-6">
-                                    <button id="login-submit" type="submit" class="btn btn-default ui-btn ui-btn-inline ">Submit</button>
+                                <div class="form-group ui-block-a">
+                                    <label class="control-label col-sm-4" for="login-pwd">Password:</label>
+                                    <div class="col-sm-6 input-group">
 
+                                        <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                                <div class="form-group ui-block-a">
+                                    <div class="col-sm-offset-4 col-sm-6">
+                                        <button id="login-submit" type="submit" class="btn btn-default ui-btn ui-btn-inline ">Submit</button>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="alert alert-warning ui-block-b">
+                            To play with other users in the network, you need to have a valid user account. </strong>
+                            Click here to <a href="../html/register.html" target="account">sign up if not already registered.</a>.
+                        </div>
+                        <hr>
                     </div>
                 </div>
             </div>
@@ -239,6 +246,9 @@
                             </li>
                             <li>
                                 <a href="#tab-app-state" data-ajax="false">Client App State</a>
+                            </li>
+                            <li>
+                                <a href="#tab-user-state" data-ajax="false">User State</a>
                             </li>
                         </ul>
                     </div>
@@ -287,20 +297,31 @@
                             </table>
                         </div>
                     </div>
+                    <div id="tab-user-state">
+                        <h4>User and Account State -
+                            <a href="#" id="user-state-link" value="Refresh">
+                            Refresh
+                        </a>
+                        </h4>
+                        <div class="panel-body">
+                            <div id="user-state-message"> </div>
+                            <table id="user-state-table" class="table table-striped">
+                                <tbody id="user-state-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-            <!-- <a href="#second" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 2</a>
+
+            <!-- </div><a href="#second" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 2</a>
            -->
         </article>
         <footer data-role="footer" data-position="fixed">
             <h4>Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></h4>
         </footer>
-        </footer>
     </section>
-
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
     <!--  <script src="../lib/jquery/jquery.min.js"></script> -->
 
@@ -343,9 +364,6 @@
                 themePath: '../img/theme-simple/{piece}.png'
             });
         });
-
-
-
         //]]>
     </script>
 </body>

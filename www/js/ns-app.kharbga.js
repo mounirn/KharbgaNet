@@ -270,7 +270,7 @@ var KharbgaApp = function () {
         $('#message').html(message);
 
 
-        $('#state').html(Kharbga.GameState[eventData.source.getState()]);
+        $('#state').html(toDisplayString(Kharbga.GameState[eventData.source.getState()]));
 
         updateScores(eventData.source);
 
@@ -404,7 +404,7 @@ var KharbgaApp = function () {
         console.log("%s - event: onWinnerDeclared - winner: %s ", getLoggingNow(), eventData.player);
         $('#message').html("<div class='alert alert-success'><strong>Game Over. Winner is: " + eventData.player.name + " </strong></div>");
 
-        $('#state').html(Kharbga.GameState[eventData.source.getState()]);
+        $('#state').html(toDisplayString(Kharbga.GameState[eventData.source.getState()]));
 
         updateBoard(eventData.source);
 
@@ -1016,7 +1016,12 @@ var KharbgaApp = function () {
     function checkBoardAndPlayIfComputer() {
         console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s",
             getLoggingNow(), getComputerRole(), game.turn());
-        if (user == null) {
+        if (appClientState.computerIsPlaying === true) {
+            console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - computer is playing - returning",
+                getLoggingNow(), getComputerRole(), game.turn());
+            return;
+        }
+        if (user == null || appClientState.computerIsPlaying === true) {
             console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local player is null - returning",
                 getLoggingNow(), getComputerRole(), game.turn());
             return;
@@ -1159,8 +1164,11 @@ var KharbgaApp = function () {
 
                 if (moves == null || moves.length == 0) {  // no capture able and no savable
                     moves = game.moves_unreachables(moveSourceRequired);
-                    if (moves != null && moves.length > 0)
+                    if (moves != null && moves.length > 0){
+                       
                         exchangeRequest = true;
+                      
+                    }
                 }
 
                 if (moves == null || moves.length == 0) { // no unreachable?{
@@ -1300,6 +1308,7 @@ var KharbgaApp = function () {
                 boardEl.css('border-color: red');
             }
         }
+        setupResignCheckbox();
     }
 
     function clearLastMoveInfo() {
@@ -1319,7 +1328,7 @@ var KharbgaApp = function () {
         }
         $('#attacker_score').html(aGame.getAttackerScore().toString());
         $('#defender_score').html(aGame.getDefenderScore().toString());
-        $('#state').html(Kharbga.GameState[aGame.getState()]);
+        $('#state').html(toDisplayString(Kharbga.GameState[aGame.getState()]));
 
         if (board != null) {
             $('#fen').html(board.fen().replaceAll2('/','/ ') );
@@ -1506,7 +1515,7 @@ var KharbgaApp = function () {
         appClientState.firstComputerSetting = true;
         game.reset();
         game.start();
-        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#state').html(toDisplayString(Kharbga.GameState[game.getState()]));
         if (board != null) {
             board.clear();
             board.start();
@@ -1548,13 +1557,14 @@ var KharbgaApp = function () {
         game.set(fen);
         board.position(game.fen(), false);
 
-        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#state').html(toDisplayString(Kharbga.GameState[game.getState()]));
         $('#fen').html(board.fen());
         $('#pgn').html(board.position().toString());
 
        // $('#loadSetting1Btn').hide();
     }
     $('#clear-board-button').on('click', onClear);
+    $('#resign-button').on('click', onResign);
     /**
      * Clears the game and the board. The board is a set with an empty position string or fen
      */
@@ -1562,16 +1572,21 @@ var KharbgaApp = function () {
 
         e.preventDefault();
 
-        game = new Kharbga.Game(gameEvents, boardEvents);
-        game.reset();
-        game.start();
-        $('#state').html(Kharbga.GameState[game.getState()]);
-        board.clear();
-        $('#fen').html(board.fen());
-        $('#pgn').html(board.position().toString());
-        onStart();
+        gameState.reset();
+       
+        // do not clear the user - this should be the same as the user logged in
+        // user.reset();
+
+        setupLocalGame(gameState);
+        setupLocalPlayer(user,gameState);
     }
-  
+
+    function onResign(e){
+        e.preventDefault();
+        $('#resign-checkbox').attr('checked','checked');
+        $('#resign-checkbox').prop('checked',true);
+    }
+
     function onSendMessage(name, message) {
         console.log("%s - onSendMessage from %s: %", getLoggingNow(), name, message);
     }
@@ -1855,6 +1870,46 @@ var KharbgaApp = function () {
         });
     }
 
+
+    $('#user-state-link').on('click', _refreshUserState);
+
+    function _refreshUserState(e){
+        if (e!= null)
+            e.preventDefault();
+
+        $('#main-message').html("<div class='alert alert-info'>Processing...</div>"); 
+       
+        $('#user-state-table-body').html("");
+        Object.keys(user).forEach( function(key){
+            var obj = user[key]; 
+            var objType = typeof obj;
+            if (objType == "object" ){               
+                var tr = "<tr><th>"+toDisplayString(key) + "</th><td>" + objType +"</td></tr>";
+                $('#user-state-table-body').append(tr);
+                if (obj!= null){
+                    Object.keys(obj).forEach( function(key2){
+                        if (typeof obj[key2] != "function" )
+                        {                 
+                            var tr = "<tr><th><span style='padding-left:50px;'>.</span>"+toDisplayString(key2) + "</th><td>" + obj[key2]+"</td></tr>";
+                            $('#user-state-table-body').append(tr);
+                        }
+                    });
+                }
+            }
+            else if (objType == "function" ){
+                // skip
+            }
+            // check if array
+            else{
+                var tr2 = "<tr><th>"+toDisplayString(key) + "</th><td>" + obj+"</td></tr>";
+                $('#user-state-table-body').append(tr2);
+            }
+        });
+    }
+
+    /** @summary Converts a camel case string to display 
+     *  @returns {string} the converted string
+    */
     function toDisplayString(key){
        // key.replace(/([A-Z])/g, function($1){return " "+$1.toLowerCase();});
         // insert a space between lower & upper
@@ -2002,6 +2057,8 @@ var KharbgaApp = function () {
         if (!appClientState.signalReInitialized){
             // try to start it again
             _setupSignalR();
+            
+            
             setTimeout(rejoinLastGameIfAny,5000);
             return;
         }
@@ -2016,6 +2073,10 @@ var KharbgaApp = function () {
             // tell the server to rejoin this connection with the game
             gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false);
         }
+
+        //resize the board 
+        resizeGame();
+
     }
 
     // setup all the various buttons and links events
@@ -2159,23 +2220,7 @@ var KharbgaApp = function () {
         $('#move-exchanged').html(serverMove.exchanged);
     }
 
-    /**
-     * sets up the local player info 
-     * @param {any} player -- the player
-     * @param {any} serverGame -- the game is not required
-     */
-    var onSetupLocalPlayer = function setupLocalPlayer(player, serverGame) {
-        if (typeof player == "undefined" || player == null) {
-            console.log("%s - setCurrentPlayer - Invalid player passed : ", getLoggingNow());
-            return;
-        }
-        user.update(player);
-        
-        if (typeof serverGame == "undefined" || serverGame == null) {
-            console.log("%s - setCurrentPlayer - Invalid game passed : ", getLoggingNow());
-            return;
-        }
-      
+    function setupResignCheckbox(){
         // setup the check boxes based on the player
         if (user.isSpectator) {
             $('#resign-checkbox').prop('disabled', true);
@@ -2193,6 +2238,25 @@ var KharbgaApp = function () {
                 $('#exchangeRequestCheckbox').prop('disabled', false);
             }
         }
+    }
+    /**
+     * sets up the local player info 
+     * @param {any} player -- the player
+     * @param {any} serverGame -- the game is not required
+     */
+    var onSetupLocalPlayer = function setupLocalPlayer(player, serverGame) {
+        if (typeof player == "undefined" || player == null) {
+            console.log("%s - setCurrentPlayer - Invalid player passed : ", getLoggingNow());
+            return;
+        }
+        user.update(player);
+        
+        if (typeof serverGame == "undefined" || serverGame == null) {
+            console.log("%s - setCurrentPlayer - Invalid game passed : ", getLoggingNow());
+            return;
+        }
+      
+        setupResignCheckbox();
 
      //   gameState.update(serverGame);
      //  updateLocalGameStatus(serverGame);
@@ -2890,7 +2954,7 @@ var KharbgaApp = function () {
         _refreshGames();
 
         // set the game state
-        $('#state').html(Kharbga.GameState[game.getState()]);
+        $('#state').html(toDisplayString(Kharbga.GameState[game.getState()]));
       //  $('#message').html("<div class='alert alert-success'>Click on the New Game button to start a new game on this computer.</div>")
 
 
