@@ -714,7 +714,7 @@ var KharbgaApp = function () {
 
         gameMove.message = $("#move-message").val();
 
-        gameMove.resigned = $('#abandonCheckbox').is(':checked');
+        gameMove.resigned = $('#resign-checkbox').is(':checked');
         gameMove.exchangeRequest = false;
         gameMove.isAttacker = false;
         if (game.turn() == 'a') {
@@ -1214,17 +1214,12 @@ var KharbgaApp = function () {
         var ret = false;
         var msg = "";
         var resigned = false;
-        //resigned = $('#abandonCheckbox').is(':checked');
         // add rule for how to make the computer resign
 
         var isAttacker = false;
         if (game.turn() == 'a') {
             // set the exchange request if computer
-   //         exchangeRequest = $('#exchangeRequestAcceptedCheckbox').is(':checked');
             isAttacker = true;
-        }
-        else {
-   //         exchangeRequest = $('#exchangeRequestCheckbox').is(':checked');
         }
         var isSetting = false;
 
@@ -1534,7 +1529,7 @@ var KharbgaApp = function () {
 
         clearLastMoveInfo();
         removeLastMoveHighlighting();
-        $('#abandonCheckbox').prop('checked', false);
+        $('#resign-checkbox').prop('checked', false);
 
         setCookie("_nsgid", "");
 
@@ -2140,6 +2135,9 @@ var KharbgaApp = function () {
             $('#message').html("<div class='alert alert-danger'> Server Record Move - Invalid Game Move </div>");
             return;
         }
+
+        // add the move to the local game
+        gameState.moves.push(serverMove);
       
         // if the move is already submitted to the local game (by real player or computer) just add to the Move history and 
         if (lastMoveId == serverMove.clientId) {
@@ -2510,7 +2508,9 @@ var KharbgaApp = function () {
             if (gamesResult.success === true) {
                 $.each(gamesResult.object, function () {
                     appendGameToGamesList(this);
+                    
                 });
+                refreshList('#games-list');
             }
             if (loggingOn) {
                 console.log("%s - _refreshingGames from the server - selecting active game Id: %s ", getLoggingNow(), gameState.id);
@@ -2773,16 +2773,14 @@ var KharbgaApp = function () {
 
         if (serverGame == null) {
             $('#message').html("<div class='alert alert-danger'>Invalid server game </div>");
-        }
-        $('#game-moves-history').empty();
+        }   
 
-        var html =  "<strong>Game Moves History</strong><br><ul class='list-group' id='game-moves-history-list' style='max-height:300px; overflow-y:scroll'>";
-        html += "</ul>";
-        $('#game-moves-history').html(html);
+        $('#game-moves-history-list').empty();
 
         $.each(serverGame.moves, function (i,v) {
             appendMoveToGameHistoryList(v);
         });
+
     }
        
     /**
@@ -2828,6 +2826,7 @@ var KharbgaApp = function () {
            html += "</li>";
 
         $('#game-moves-history-list').append(html);
+        refreshList('#game-moves-history-list');
     }
 
     /**
@@ -2845,34 +2844,46 @@ var KharbgaApp = function () {
             gamesHubProxy.server.postMessage(appClientState.sessionId,user.name,message);
         }
     }
+
+    function refreshList(id){
+        if ($.appViewHandler && $.appViewHandler != null)
+            $.appViewHandler.refreshList(id);
+    }
+
     // base hub messages
     var onJoined = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
             console.log('%s - server: connection %s joined on %s ', getLoggingNow(), connectionInfo.id, serverTime);
             $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server connected " + connectionInfo.id + "</li>");
+            refreshList('#messages-list');
+            
         }
     };
     var onLeft = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
             console.log('%s - server: connection %s left at %s ', getLoggingNow(), connectionInfo.id, serverTime);
             $('#messages-list').append("<li class='list-group-item'>" + new Date().toLocaleTimeString() + ": server disconnected " + connectionInfo.id + " - " + connectionInfo.UserName + "</li>");
+            refreshList('#messages-list');
         }
     };
     var onRejoined = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
             console.log('%s - server: connection %s rejoined on %s ', getLoggingNow(), connectionInfo.id, serverTime);
             $('#messages-list').append("<li class='list-group-item'>" + getLoggingNow() + ": server rejoined " + connectionInfo.id + "</li>");
+            refreshList('#messages-list');
         }
     };
     var onPong = function (connectionId, serverTime, result) {
         if (connectionId !== $.connection.hub.id) {
             if (loggingOn) console.log('%s - server: INVALID pong from %s received on: %s', getLoggingNow(), connectionId, JSON.stringify(serverTime));
             $('#messages-list').append("<li class='list-group-item list-group-item-danger'> server: INVALID pong from " + connectionId + " received on:" + new Date().toLocaleTimeString() + " - server time " + serverTime + "</li>");
+            refreshList('#messages-list');
         }
         else {
             // check if equal to self
             if (loggingOn) console.log('%s - server: pong from %s received on: %s', getLoggingNow(), connectionId, serverTime);
             $('#messages-list').append("<li class='list-group-item'>" + getLoggingNow() + " pong received from " + connectionId + " - server time " + serverTime + "</li>");
+            refreshList('#messages-list');
             if (loggingOn)  console.log(result);
         }
         $('#signalr-status').html("Server Time: " + serverTime.toString());
@@ -2881,7 +2892,7 @@ var KharbgaApp = function () {
         if (loggingOn)
             console.log('%s - server: onMessagePosted from %s: %s', getLoggingNow(), user.Name, message);
         $('#messages-list').append("<li class='list-group-item'><strong>" + getLoggingNow() + " - " + user.name + ":</strong> <pre> " + message+ " </pre></li>");
-
+        refreshList('#messages-list');
     };
 
     var onGameStateUpdated = function (status, message, game, player){
@@ -3093,6 +3104,7 @@ var KharbgaApp = function () {
                 if (loggingOn) console.log("%s - Hello from server", getLoggingNow());
                  $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
                  $('#messages-list').append("<li class='list-group-item'>Hello from server</li>");
+                 refreshList('#messages-list');
             };
 
             gamesHubProxy.client.gameDeleted = onGameDeleted;
@@ -3113,10 +3125,10 @@ var KharbgaApp = function () {
                 appClientState.signalReInitialized = false;
                 $("#signalr-status").html("<div class='alert alert-danger'>" + error+"</div>");
                 $('#messages-list').append("<li class='list-group-item list-group-item-danger'>  " + error + "</li>");
-      
+                refreshList('#messages-list');
             });
             $('#messages-list').append("<li class='list-group-item list-group-item-success'>  " + "Setup" + "</li>");
-           
+            refreshList('#messages-list');
             return startSignalR();
         }
         catch (e) {
@@ -3132,6 +3144,7 @@ var KharbgaApp = function () {
             appClientState.signalReInitialized = false;
             appClientState.useServer = false;
             $('#messages-list').append("<li class='list-group-item list-group-item-danger'> disconnected " + $.connection.hub.id + "</li>");
+            refreshList('#messages-list');
 
             $("#signalr-status").html("<div class='alert alert-danger'>Disconnected</div>");
             setTimeout(function () {
@@ -3164,6 +3177,7 @@ var KharbgaApp = function () {
                     // moves the setup of the games on startup at the end of the checking session process
                     $("#signalr-status").html("<div class='alert alert-success'>Connected</div>");
                     $('#messages-list').append("<li class='list-group-item list-group-item-success'>  " + "Started" + "</li>");
+                    refreshList('#messages-list');
 
                     setSystemError(false);
 

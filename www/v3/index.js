@@ -15,5 +15,12 @@ $.appViewHandler = {
 
     closeRegisterPanel: function (){
         $("#register-panel").popup( "close" );    
+    },
+    refreshList : function(listElementId){
+       var listElement = $(listElementId);
+       if (listElement && listElement!=null){
+            listElement.listview("refresh");
+            listElement.trigger("updateLayout");
+       }
     }
-}   
+};   

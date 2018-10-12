@@ -22,11 +22,10 @@
 </head>
 
 <body>
-    <!-- /header -->
     <section data-role="page" id="first" data-theme="a">
         <header data-role="header" data-position="fixed">
             <h4><img src="../img/kharbga.png" style="max-height:25px"></h4>
-            <a href="#menu-panel" data-icon="info" data-iconpos="notext" class="ui-btn-right">Info</a>
+            <a href="#menu-panel" data-icon="user" data-iconpos="notext" class="ui-btn-right">Info</a>
             <a href="#play-watch-section" data-icon="bars" class="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini" data-iconpos="notext">Play/Watch</a>
         </header>
         <article role="main" class="ui-content">
@@ -69,74 +68,118 @@
                         <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="ui-content">
+                <div class="ui-body">
                     <p>
                         If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
                     </p>
                     <strong>Thank you!</strong>
                     <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
-                </div>
-                <p class="center">
+
+                    <p class="center">
+                        <hr>
+                        <a href="#" class="center" data-rel="close">Close</a></p>
                     <hr>
-                    <a href="#" class="center" data-rel="close">Close</a></p>
-                <hr>
-                </p>
+                    </p>
+                </div>
             </div>
             <div id="play-watch-section" data-role="panel" data-position="left" data-display="overlay" data-theme="a">
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-                <div class="ui-content">
+                <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
+                <div class="panel panel-info">
                     <div class="ui-bar ui-bar-b">
-                        <h4>Active Games</h4>
-                        <a id="games-link" href="#"><span class="glyphicon glyphicon-refresh"></span>Refresh</a>
+                        </a> Active Games
                     </div>
-
-                    <div class="text-center center ui-body ui-body-b">
-
-                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
-
-
-                        <ul id="games-list" style="height: 70%;max-height:600px;overflow-y:scroll" class="list-group ">
-                        </ul>
-                        <a href="#" data-rel="close">Close</a>
-                    </div>
+                </div>
+                <div class="text-center center ui-body ui-body-b">
+                    <a id="games-link" href="#" class="glyphicon glyphicon-refresh ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-refresh ui-btn-icon-notext ui-btn-left">Refresh
+                    <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
+                    <ul id="games-list" data-role="listview" data-inset="true" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                    </ul>
+                </div>
+                <div class="center ui-bar ui-bar-c">
+                    <a href="#" data-rel="close">Close</a>
                 </div>
 
             </div>
-            <div class="row ui-grid-a kharbga-grid">
-                <div class="col-sm-6 col-md-5 col-lg-4 panel panel-success ui-block-a">
+            <div class="row ui-grid-b kharbga-grid">
+                <div class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
                     <div class="panel-heading ui-bar ui-bar-a">
                         Kharbga Board - <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong> 
                     </div>
-                    <div class="panel-body">
+                    <div class="">
+                        <div class="panel-body ">
                         
-                        <!-- The Board -->
-                        <div id="board" style="min-width:250px;max-width:300px"></div>
-                        <div class="message" id="message" class=""></div>
-                        <hr>
-                        <input id="resign-checkbox" type="checkbox" name="resign-checkbox" 
-                            data-mini="true"  class="">
-                        <label for="resign-checkbox">To resign, check this checkbox and make any move on the board on your turn.</label>
-                    </div>
-                    <div class="panel-footer">
-                        <a href="#" class="pull-right" id="flipOrientation" value="Flip orientation">Flip</a>
-                        <p>
+                            <!-- The Board -->
+                            <div id="board" style="max-width:300px"></div>
+                        </div>   
+                  
+                    </div>                  
+                    <div class="panel-footer ui-bar ui-bar-c">
+                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" 
+                        data-icon="recycle"     
+                            value="Flip orientation">Flip</a>
+                        
                             Board State:</strong> <span id="state" class="badge"></span>
-                        </p>
-                        <audio id="sound" preload="auto">
-                            <source src="../img/button-26.mp3" type="audio/mpeg">
-                        </audio>
+                        <br>
+                        <hr>
                     </div>
+                    <div class="ui-grid ui-grid-a">
+                        <div class="ui-block-a">
+                            <input id="resign-checkbox" type="checkbox" name="resign-checkbox" data-mini="true" class="">
+                            <label for="resign-checkbox">Resign</label>
+                        </div>
+                        <div class="ui-block-b">
+                            <a id="clear-board-button" data-mini="true" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ">Clear</a>
+                        </div>
+                    </div>
+                    <p>To resign, check the above checkbox and make any move on the board on your turn.</p>
                 </div>
-                <div class="col-sm-6 col-md-6 col-lg-6 ui-block-b">
+                <div class="col-sm-4 ui-block-b" xstyle="padding-top:70px;">
                     <div class="panel-heading ui-bar ui-bar-a">
                         Current Game Information
                     </div>
-                    <p class="text-center">
-                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-icon-gear ui-shadow ui-corner-all ui-btn-inline ">New Game</a>
-                        <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
 
-                        <a id="resign-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ">Resign</a>
-                        <a id="clear-board-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ">Clear</a>
+
+                    <div class="message" id="message" class=""></div>
+                    <audio id="sound" preload="auto">
+                        
+                    <source src="../img/button-26.mp3" type="audio/mpeg">
+                    </audio>
+                    <div class="panel panel-success">
+                        <div class="panel-heading ui-bar ui-bar-b">
+                            <small>Game ID: <span id="current-game-id"></span></small>
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                                <label class="text-info" for="current-game-status">Game State: 
+                                    <span id="current-game-status" class="badge"></span>
+                                </label>
+                            </p>
+                            <p>
+                                <label class="text-info" for="gameMove">Last Action: 
+                                    <span id="gameMove" class="badge"></span>
+                                </label>
+                            </p>
+                            <p class="text-success">FEN: <span id="fen" class=""></span></p>
+
+                            <hr>
+                            <div id="game-moves-history">
+                                <div class="ui-bar ui-bar-c">
+                                    <strong>Moves History</strong>
+                                </div>
+                                <div class="ui-body">
+                                    <ul data-role='listview' id='game-moves-history-list' style='height:250px;max-height:350px; overflow-y:scroll'>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <p class="text-center center">
+                        <a href="#popup-menu" data-mini="true" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-mini ui-icon-gear ui-shadow ui-corner-all ui-btn-inline ">New Game</a>
+                        <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
                     </p>
                     <div id="popup-menu" data-role="popup">
                         <ul data-role="listview" data-inset="true">
@@ -149,73 +192,57 @@
                         </ul>
 
                     </div>
-                    <div class="panel panel-success">
-                        <div class="panel-heading ui-bar ui-bar-b">
-                            Game ID: <span id="current-game-id"></span>
-                        </div>
-                        <div class="panel-body">
-                            <p>
-                                <label class="text-info" for="current-game-status">Game State: 
-                                <span id="current-game-status" class="badge"></span></p></label>
-                                <p>
-                                    <label class="text-info" for="gameMove">Last Action: 
-                                <span id="gameMove" class="badge"></span></label>
-                                </p>
-                                <p class="text-success">FEN: <span id="fen" class=""></span></p>
 
-                                <hr>
-                                <div id="game-moves-history" class="height:120px;overflow-y:scroll">
-                                </div>
-                        </div>
+                </div>
+                <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">
+                    <div class="panel-heading ui-bar ui-bar-b">
+                        <h3>Network Messages</h3>
                     </div>
-                    <div id="tab-messages" class="panel panel-success">
-                        <div class="panel-heading ui-bar-c">
-                            Player Messages
-                        </div>
-                        <div class="panel-body">
-                            <label for="move-message">Message:</label>
-                            <input type="text" xclass="form-control" id="move-message" name="move-message">
-                            <button id="postMessageBtn" type="submit" class="btn btn-default ui-btn ui-btn-inline">Post</button>
+                    <div class="panel-body ui-body">
+                        <label for="move-message">Message:</label>
+                        <input type="text" xclass="form-control" id="move-message" name="move-message">
+                        <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
+                        <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
+                                Reconnect
+                            </a>
+                        <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
+                        <div class="ui-bar ui-bar-c">
+                            <small>Net Messages - URI: <span id="server-uri"></span> -</small>
 
-                            <h5>Net Messages - URI: <span id="server-uri"></span> -
-                                <a href="#" data-icon="refresh" id="server-link" value="connect-server">
-                                        Reconnect
-                                    </a> |
-                                <a href="#" id="ping-link" value="ping">Ping Server</a>
-                            </h5>
-                            <div style="height: 200px;overflow-y:scroll">
-                                <ul id="messages-list" class="list-group "></ul>
-                            </div>
+                        </div>
+                        <div class="ui-body">
+
+                            <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="login-popup" data-role="popup" data-theme="a" class="ui-content">
+            <div id="login-popup" data-role="popup" data-theme="a" class="ui-content" style="max-width:400px;">
                 <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <div class="panel panel-info">
                     <div data-role="header" class="panel-heading ui-bar" data-theme="b">
                         Login
                     </div>
 
-                    <div class="panel-body ui-grid-a">
-                        <div class="ui-block-a">
+                    <div class="panel-body ui-body">
+                        <div class="">
                             <span id="account-message" class="text-success"></span>
                             <form class="form-horizontal" id="login-form" novalidate>
-                                <div class="form-group ui-block-a">
+                                <div class="form-group">
                                     <label class="control-label col-sm-4" for="login-id">Login ID:</label>
                                     <div class="col-sm-6 input-group">
 
                                         <input type="text" class="form-control" id="login-id" placeholder="Enter login id" required size="30" minlength="6" maxlength="30">
                                     </div>
                                 </div>
-                                <div class="form-group ui-block-a">
+                                <div class="form-group">
                                     <label class="control-label col-sm-4" for="login-pwd">Password:</label>
                                     <div class="col-sm-6 input-group">
 
                                         <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
                                     </div>
                                 </div>
-                                <div class="form-group ui-block-a">
+                                <div class="form-group">
                                     <div class="col-sm-offset-4 col-sm-6">
                                         <button id="login-submit" type="submit" class="btn btn-default ui-btn ui-btn-inline ">Submit</button>
 
@@ -224,7 +251,7 @@
                             </form>
                         </div>
 
-                        <div class="alert alert-warning ui-block-b">
+                        <div class="alert alert-warning ui-bar ui-bar-c">
                             To play with other users in the network, you need to have a valid user account. </strong>
                             Click here to <a href="../html/register.html" target="account">sign up if not already registered.</a>.
                         </div>
@@ -322,12 +349,11 @@
             <h4>Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></h4>
         </footer>
     </section>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <script src="../lib/json/json3.min.js"></script>
     <!--  <script src="../lib/jquery/jquery.min.js"></script> -->
 
 
     <script src="../jsconfig/env.js"></script>
-
     <script src="../js/jquery.signalR-2.3.0.js"></script>
     <script src="../js/jquery.validate.js"></script>
     <script src="../js/additional-methods.js"></script>
