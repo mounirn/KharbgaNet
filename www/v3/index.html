@@ -264,12 +264,30 @@
 
                         <div class="alert alert-warning ui-bar ui-bar-c">
                             To play with other users in the network, you need to have a valid user account. </strong>
-                            Click here to <a href="../html/register.html" target="account">sign up if not already registered.</a>.
+                            Click here to <a href="../html/register.html" target="account" class="ui-mini ui-inline">sign up if not already registered.</a>
                         </div>
                         <hr>
                     </div>
                 </div>
             </div>
+            <div id="game-over" data-role="popup" data-theme="a" style="max-width:400px;" class="modal fade gameOver ui-content" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header ui-bar">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title text-center center">GAME OVER</h4>
+                        </div>
+                        <div class="modal-body ui-body">
+                            <p class="text-center text-info text-center center"><strong><span id="game-players"></span></strong></p>
+                            <p class="text-center text-success center">Winner is: <span id="game-winner"></span></p>
+                            <p class="text-center text-success center"><span id="game-result"></span></p>
+                            <p class="text-center text-info center">Final Score: <span id="game-score"></span></p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <a href="#dev-support-panel" xclass="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini">Development & Operation Support</a>
 
             <div id="dev-support-panel" xdata-role="panel" xdata-theme="b" xdata-position="right">

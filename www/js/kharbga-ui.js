@@ -665,13 +665,19 @@
             return '';
         }
 
-        function buildPiece(piece, hidden, id) {
+        function buildPiece(piece, hidden, id, spare) {
             var html = '<img src="' + buildPieceImgSrc(piece) + '" ';
+            var clsSpare = "";
+            
+            // MN -- added class spare if a spare piece
+            if (spare === true)
+                clsSpare = " spare ";
+
             if (id && typeof id === 'string') {
                 html += 'id="' + id + '" ';
             }
             html += 'alt="" ' +
-                'class="' + CSS.piece + '" ' +
+                'class="' + CSS.piece + clsSpare +'" ' +
                 'data-piece="' + piece + '" ' +
                 'style="width: ' + (SQUARE_SIZE-0) + 'px;' +
                 'height: ' + (SQUARE_SIZE-0) + 'px;';
@@ -713,7 +719,7 @@
           
           //  html += '<div class="col-sm-3 ui-block-b">';
             for (var i = 0; i < pieces.length; i++) {
-                html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
+                html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]], true);
             }
            
           

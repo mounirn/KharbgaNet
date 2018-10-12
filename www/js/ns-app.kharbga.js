@@ -819,7 +819,12 @@ var KharbgaApp = function () {
         // good place to reset the current move
         // check if game is over
         if (game.game_over()) {
+            updateBoard(game);
+            updateBoardInfo();
             // trigger server updating the game status into the server
+            if ($ && $.appViewHandler!= null){
+                $.appViewHandler.displayGameOver();
+            }
             saveGame(game);
         }
     }

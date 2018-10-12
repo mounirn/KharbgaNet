@@ -27,7 +27,7 @@
 
 .kharbga-grid .ui-block-a {
     padding-right: 10px;
-    max-width: 320px;
+    max-width: 280px;
 }
 
 .kharbga-grid .ui-block-b {
@@ -44,33 +44,19 @@
         width: 100%;
         float: none;
     }
-    .board-grid .ui-block-a {
-        width: 70%;
-        float: left;
-    }
-    .board-grid .ui-block-b {
-        width: 30%;
-        float: left;
-    }
 }
 
 @media all and (max-width: 720px) and (min-width:420px) {
     .kharbga-grid.ui-grid-b .ui-block-a {
-        width: 50%;
-        max-width: 320px;
+        width: 40%;
+        max-width: 280px;
     }
     .kharbga-grid.ui-grid-b .ui-block-b {
-        width: 50%;
+        width: 60%;
     }
     .kharbga-grid.ui-grid-b .ui-block-c {
         width: 100%;
         float: none
-    }
-    .board-grid .ui-block-a {
-        width: 70%;
-    }
-    .board-grid .ui-block-b {
-        width: 30%;
     }
 }
 

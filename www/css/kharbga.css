@@ -11,10 +11,10 @@
 
 /* kHARBGA SPARE PEICE*/
 
-.piece-417db {
+.spare {
     float: right;
-    max-width: 20px;
-    max-height: 20px;
+    max-width: 10%;
+    max-height: 10%;
 }
 
 

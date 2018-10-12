@@ -22,5 +22,8 @@ $.appViewHandler = {
             listElement.listview("refresh");
             listElement.trigger("updateLayout");
        }
-    }
+    },
+    displayGameOver : function(){
+        $("#game-over").popup( "open" );
+    },
 };   
