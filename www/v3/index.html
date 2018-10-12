@@ -113,17 +113,16 @@
         -->
 
             <div class="row ui-grid-b kharbga-grid">
-                <div class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
+                <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
                     <div class="panel-heading ui-bar ui-bar-a">
                         Kharbga Board - <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong> 
                     </div>
-                    <div class="">
-                        <div class="panel-body ">
-                            <div class="message" id="message" class=""></div>    
+                    <div class="board-with-message">
+                        <div  class="panel-body ">
                             <!-- The Board -->
-                            <div id="board" style="max-width:300px"></div>
+                            <div id="board" ></div>
                         </div>   
-                  
+                        <div class="message" id="message" class=""></div>  
                     </div>                  
                     <div class="panel-footer ui-bar ui-bar-c">
                         <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" 

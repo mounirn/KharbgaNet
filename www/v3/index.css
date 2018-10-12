@@ -37,18 +37,24 @@
 
 /* stack all grids below 40em (340px) */
 
-@media all and (max-width: 360px) {
+@media all and (max-width: 419px) {
     .kharbga-grid .ui-block-a,
     .kharbga-grid .ui-block-b,
-    .kharbga-grid .ui-block-c,
-    .kharbga-grid .ui-block-d,
-    .kharbga-grid .ui-block-e {
+    .kharbga-grid .ui-block-c {
         width: 100%;
         float: none;
     }
+    .board-grid .ui-block-a {
+        width: 70%;
+        float: left;
+    }
+    .board-grid .ui-block-b {
+        width: 30%;
+        float: left;
+    }
 }
 
-@media all and (max-width: 720px) and (min-width:360px) {
+@media all and (max-width: 720px) and (min-width:420px) {
     .kharbga-grid.ui-grid-b .ui-block-a {
         width: 50%;
         max-width: 320px;
@@ -60,33 +66,24 @@
         width: 100%;
         float: none
     }
-}
-
-
-/*
-@media all and (max-width: 360px) {
-    .kharbga-board .ui-block-a,
-    .kharbga-board .ui-block-b,
-    .kharbga-board .ui-block-c,
-    .kharbga-board .ui-block-d,
-    .kharbga-board .ui-block-e {
-        width: 50%;
+    .board-grid .ui-block-a {
+        width: 70%;
     }
-}
-*/
-
-@media all and (max-width: 320px) {
-    .board-grid {
-        width: 100%;
+    .board-grid .ui-block-b {
+        width: 30%;
     }
 }
 
-.board-grid .ui-block-a {
-    width: 70%;
+@media all and (max-width: 420px) {
+    #board-frame {
+        min-width: 200px;
+    }
 }
 
-.board-grid .ui-block-b {
-    width: 30%;
+.board-grid {
+    font-weight: normal;
+    font-size: small;
+    max-width: 280px;
 }
 
 

@@ -689,13 +689,15 @@
                 pieces = ['bS'];
             }
 
-            var html = '<div class="row ui-grid-a board-grid" style="font-weight:normal;font-size:small">';
+         //   var html = '<div class="row ui-grid-a board-grid" style="font-weight:normal;font-size:small">';
             // MN : add indication which one is the attacker and which one is the defender
             //  
-            html += '<div class="col-sm-7 ui-block-a" style="padding-top: 5px;">'; 
+        //    html += '<div class="col-sm-7 ui-block-a" style="padding-top: 5px;">'; 
+            var html = '<div class="row board-grid">';
+              
             if (color === 'black') {
                 html += '<b>Defender:</b> <span id="defender_score" class="badge"></span>';
-                html += ' <span id="game-defender"></span>';
+                html += '<span id="game-defender"></span>';
                
               //  html += '<span id="defender-thinking" /></div>';
                  //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">
@@ -707,15 +709,15 @@
                 //&nbsp;&nbsp;<span id="attacker_clock" class="badge alert alert-info">
                
             } 
-            html += '</div>';
+          //  html += '</div>';
           
-            html += '<div class="col-sm-3 ui-block-b">';
+          //  html += '<div class="col-sm-3 ui-block-b">';
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
             }
            
           
-            html += '</div></div>'; 
+          //  html += '</div></div>'; 
 
             html += "<div>";  // exchange request div
             if (color === 'black') {

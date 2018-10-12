@@ -9,6 +9,15 @@
  */
 
 
+/* kHARBGA SPARE PEICE*/
+
+.piece-417db {
+    float: right;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+
 /* clearfix */
 
 @media (min-width: 650px),
