@@ -101,6 +101,17 @@
                 </div>
 
             </div>
+            <!--   <div class="row kharbga-grid ui-grid-b">
+                <div class="ui-block-a">
+                    
+                </div>
+              
+                <div class="ui-block-c">
+
+                </div>
+            </div>  
+        -->
+
             <div class="row ui-grid-b kharbga-grid">
                 <div class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
                     <div class="panel-heading ui-bar ui-bar-a">
@@ -108,7 +119,7 @@
                     </div>
                     <div class="">
                         <div class="panel-body ">
-                        
+                            <div class="message" id="message" class=""></div>    
                             <!-- The Board -->
                             <div id="board" style="max-width:300px"></div>
                         </div>   
@@ -138,9 +149,25 @@
                     <div class="panel-heading ui-bar ui-bar-a">
                         Current Game Information
                     </div>
+                    <div class="xui-block-b">
+                        <p class="text-center center">
+                            <a href="#popup-menu" data-mini="true" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-mini ui-icon-gear ui-shadow ui-corner-all ui-btn-inline ">New Game</a>
+                            <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
 
+                        </p>
+                        <div id="popup-menu" data-role="popup">
+                            <ul data-role="listview" data-inset="true">
+                                <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
+                                <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
+                                <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
+                                                system</a></li>
+                                <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
+                                                system</a></li>
+                            </ul>
 
-                    <div class="message" id="message" class=""></div>
+                        </div>
+                    </div>
+
                     <audio id="sound" preload="auto">
                         
                     <source src="../img/button-26.mp3" type="audio/mpeg">
@@ -176,22 +203,7 @@
                         </div>
                     </div>
                     <hr/>
-                    <p class="text-center center">
-                        <a href="#popup-menu" data-mini="true" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-mini ui-icon-gear ui-shadow ui-corner-all ui-btn-inline ">New Game</a>
-                        <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
 
-                    </p>
-                    <div id="popup-menu" data-role="popup">
-                        <ul data-role="listview" data-inset="true">
-                            <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
-                            <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
-                            <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
-                                            system</a></li>
-                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
-                                            system</a></li>
-                        </ul>
-
-                    </div>
 
                 </div>
                 <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">

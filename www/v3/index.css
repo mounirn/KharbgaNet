@@ -35,9 +35,9 @@
 }
 
 
-/* stack all grids below 40em (640px) */
+/* stack all grids below 40em (340px) */
 
-@media all and (max-width: 720px) {
+@media all and (max-width: 360px) {
     .kharbga-grid .ui-block-a,
     .kharbga-grid .ui-block-b,
     .kharbga-grid .ui-block-c,
@@ -48,14 +48,71 @@
     }
 }
 
+@media all and (max-width: 720px) and (min-width:360px) {
+    .kharbga-grid.ui-grid-b .ui-block-a {
+        width: 50%;
+        max-width: 320px;
+    }
+    .kharbga-grid.ui-grid-b .ui-block-b {
+        width: 50%;
+    }
+    .kharbga-grid.ui-grid-b .ui-block-c {
+        width: 100%;
+        float: none
+    }
+}
+
+
+/*
+@media all and (max-width: 360px) {
+    .kharbga-board .ui-block-a,
+    .kharbga-board .ui-block-b,
+    .kharbga-board .ui-block-c,
+    .kharbga-board .ui-block-d,
+    .kharbga-board .ui-block-e {
+        width: 50%;
+    }
+}
+*/
+
+@media all and (max-width: 320px) {
+    .board-grid {
+        width: 100%;
+    }
+}
+
+.board-grid .ui-block-a {
+    width: 70%;
+}
+
+.board-grid .ui-block-b {
+    width: 30%;
+}
+
+
+/* adding a widescreen breakpoint to adjust ratios 
+
+@media all and (min-width: 75em) {
+    .kharbga-grid.ui-grid-b .ui-block-a {
+        width: 25%;
+    }
+    .kharbga-grid.ui-grid-b .ui-block-b {
+        width: 25%;
+    }
+    .kharbga-grid.ui-grid-c .ui-block-c {
+        width: 50%;
+    }
+}
+*/
+
 
 /* end*/
 
 
-/* making panels part of the page on larger screen */
+/* making panels part of the page on larger screen
 
 @media ( min-width: 35em) {
-    /* wrap on wide viewports once open */
+    
     .ui-panel-page-content-open.ui-panel-page-content-position-left {
         margin-right: 17em;
     }
@@ -65,11 +122,11 @@
     .ui-panel-page-content-open {
         width: auto;
     }
-    /* disable "dismiss" on wide viewports */
+    
     .ui-panel-dismiss {
         display: none;
     }
-    /* same as the above but for panels with display mode "push" only */
+   
     .ui-panel-page-content-open.ui-panel-page-content-position-left.ui-panel-page-content-display-push {
         margin-right: 17em;
     }
@@ -83,6 +140,7 @@
         display: none;
     }
 }
+ */
 
 
 /* Bootstrap  */

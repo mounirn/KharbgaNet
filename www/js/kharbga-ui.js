@@ -689,32 +689,27 @@
                 pieces = ['bS'];
             }
 
-            var html = '<div class="row ui-grid-a" style="font-weight:normal;font-size:small">';
+            var html = '<div class="row ui-grid-a board-grid" style="font-weight:normal;font-size:small">';
             // MN : add indication which one is the attacker and which one is the defender
             //  
-            html += '<div class="col-sm-7 ui-block-a" style="padding-top: 5px">'; 
+            html += '<div class="col-sm-7 ui-block-a" style="padding-top: 5px;">'; 
             if (color === 'black') {
-                html += 'Defender: <span id="game-defender"></span>';
+                html += '<b>Defender:</b> <span id="defender_score" class="badge"></span>';
+                html += ' <span id="game-defender"></span>';
                
               //  html += '<span id="defender-thinking" /></div>';
                  //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">
             } else {
-                html += 'Attacker: <span id="game-attacker"></span>';
+                html += '<b>Attacker:</b> <span id="attacker_score" class="badge"></span>';
+                html += ' <span id="game-attacker"></span>';
                                        
               //  html += '<span id="attacker-thinking" /></div>';
                 //&nbsp;&nbsp;<span id="attacker_clock" class="badge alert alert-info">
                
             } 
             html += '</div>';
-            html += '<div class="col-sm-2 ui-block-b">';
-
-            if (color === 'black') 
-                html += '&nbsp;&nbsp;<span id="defender_score" class="badge">';
-            else
-                html += '&nbsp;&nbsp;<span id="attacker_score" class="badge">';
-  
-            html += '</div>';
-            html += '<div class="col-sm-3 ui-block-c">';
+          
+            html += '<div class="col-sm-3 ui-block-b">';
             for (var i = 0; i < pieces.length; i++) {
                 html += buildPiece(pieces[i], false, SPARE_PIECE_ELS_IDS[pieces[i]]);
             }
