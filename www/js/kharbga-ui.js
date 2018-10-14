@@ -702,13 +702,13 @@
             var html = '<div class="row board-grid">';
               
             if (color === 'black') {
-                html += '<b>Defender:</b> <span id="defender_score" class="badge"></span>';
+                html += '<b>Defender:</b> <span id="defender_score" class="badge defender-score"></span>';
                 html += '<span id="game-defender"></span>';
                
               //  html += '<span id="defender-thinking" /></div>';
                  //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">
             } else {
-                html += '<b>Attacker:</b> <span id="attacker_score" class="badge"></span>';
+                html += '<b>Attacker:</b> <span id="attacker_score" class="badge attacker-score"></span>';
                 html += ' <span id="game-attacker"></span>';
                                        
               //  html += '<span id="attacker-thinking" /></div>';
@@ -729,15 +729,15 @@
             if (color === 'black') {
 
                  html += '<label style="font-size:small;font-weight:normal">';
-                html += '<input type="checkbox" id="exchangeRequestCheckbox" />Exchange&nbsp;Request</label> ';
-                html += '<span id="exchangeRequestDefenderPiece" class="badge"> </span>';
+                html += '<input class="exchangeRequest" type="checkbox" id="exchangeRequestCheckbox" />Exchange&nbsp;Request</label> ';
+                html += '<span  id="exchangeRequestDefenderPiece" class="badge exchangeRequest"> </span>';
                
             }
             else{
                 html += '<label style="font-size:small;font-weight:normal">';
-                html += '<input type="checkbox" id="exchangeRequestAcceptedCheckbox" />Exchange&nbsp;Request&nbsp;Accepted</label> ';
-                html += '<span id="exchangeRequestAttackerPiece1" class="badge"></span> ';
-                html += '<span id="exchangeRequestAttackerPiece2" class="badge"></span>';  
+                html += '<input class="exchangeRequest" type="checkbox" id="exchangeRequestAcceptedCheckbox" />Exchange&nbsp;Request&nbsp;Accepted</label> ';
+                html += '<span  id="exchangeRequestAttackerPiece1" class="badge exchangeRequest"></span> ';
+                html += '<span  id="exchangeRequestAttackerPiece2" class="badge exchangeRequest"></span>';  
                
             }
             html += '</div>'; 

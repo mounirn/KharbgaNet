@@ -1615,7 +1615,10 @@ var Kharbga;
             this.attacker = new Kharbga.Attacker();
             this.attackerName = "Attacker";
             this.defenderName = "Defender";
+            this.attackerScore = 0;
+            this.defenderScore = 0;
             this.players = [this.attacker, this.defender];
+            this.nextMoveNumber = 1;
         }
         GameInfo.prototype.setup = function (id, createdBy, state, status, attacker, defender) {
             this.id = id;
@@ -1630,8 +1633,11 @@ var Kharbga;
         };
         GameInfo.prototype.reset = function () {
             this.id = "";
+            this.nextMoveNumber = 1;
             this.attackerName = "";
             this.defenderName = "";
+            this.attackerScore = 0;
+            this.defenderScore = 0;
             this.moves = new Array();
             this.status = Kharbga.GameStatus.Created;
             this.state = Kharbga.GameState.NotStarted;
@@ -1646,6 +1652,8 @@ var Kharbga;
             this.id = gameInfo.id;
             this.attackerName = gameInfo.attackerName;
             this.defenderName = gameInfo.defenderName;
+            this.attackerScore = gameInfo.attackerScore;
+            this.defenderScore = gameInfo.defenderScore;
             this.moves = new Array();
             for (var _i = 0, _a = gameInfo.moves; _i < _a.length; _i++) {
                 var move = _a[_i];
@@ -1656,6 +1664,7 @@ var Kharbga;
             this.attacker = gameInfo.attacker;
             this.defender = gameInfo.defender;
             this.players = [this.attacker, this.defender];
+            this.nextMoveNumber = gameInfo.nextMoveNumber;
         };
         GameInfo.prototype.getComputerPlayer = function () {
             if (this.attacker !== null && this.attacker.isSystem === true) {
@@ -1665,6 +1674,18 @@ var Kharbga;
                 return this.defender;
             }
             return null;
+        };
+        GameInfo.prototype.newMove = function (player) {
+            var ret = new Kharbga.GameMove("", "", null);
+            ret.number = this.nextMoveNumber++;
+            ret.player = player;
+            if (player !== null) {
+                ret.playerName = player.name;
+            }
+            return ret;
+        };
+        GameInfo.prototype.getNextMoveNumber = function () {
+            return this.nextMoveNumber++;
         };
         return GameInfo;
     }());

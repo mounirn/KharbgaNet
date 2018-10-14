@@ -57,7 +57,7 @@
                             </figcaption>
                         </figure>
                         <p>
-                            Click here to <a href="#popup-menu" data-rel="popup">start a new game as Attacker or Defender</a> playing with other players or with the System.</a>
+                            Click here to <a href="#popup-menu" data-rel="popup">start a new game as Attacker or Defender</a> playing with the system or other players.</a>
                         </p>
                     </div>
                     <div class="ui-bar ui-bar-c">Choose from the options below to learn more about this system.</div>
@@ -114,22 +114,19 @@
 
             <div class="row ui-grid-b kharbga-grid">
                 <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
-                    <div class="panel-heading ui-bar ui-bar-a">
-                        Kharbga Board - <strong>Turn:</strong> <span id="player-turn" class="badge"></span> <strong> 
+                    <div class="panel-heading ui-bar ui-bar-a small">
+                        Kharbga Board - Turn: <span id="player-turn" class="badge"></span>
                     </div>
                     <div class="board-with-message">
-                        <div  class="panel-body ">
+                        <div class="panel-body ">
                             <!-- The Board -->
-                            <div id="board" ></div>
-                        </div>   
-                        <div class="message" id="message" class=""></div>  
-                    </div>                  
+                            <div id="board"></div>
+                        </div>
+                        <div class="message" id="message" class=""></div>
+                    </div>
                     <div class="panel-footer ui-bar ui-bar-c">
-                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" 
-                        data-icon="recycle"     
-                            value="Flip orientation">Flip</a>
-                        
-                            Board State:</strong> <span id="state" class="badge"></span>
+                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" data-icon="recycle" value="Flip orientation">Flip</a> Board State:</strong> <span id="state"
+                            class="badge"></span>
                         <br>
                         <hr>
                     </div>
@@ -155,13 +152,46 @@
 
                         </p>
                         <div id="popup-menu" data-role="popup">
+                            <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
+                                New Game Options
+                            </div>
                             <ul data-role="listview" data-inset="true">
-                                <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
-                                <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
-                                <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
-                                                system</a></li>
-                                <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
-                                                system</a></li>
+                                <li>
+                                    <label>
+                                        <input id="as-attacker-checkbox" data-mini="true"type="checkbox" checked />I would like to play as Attacker
+                                    </label>
+                                </li>
+                                <li>
+                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                        <label for="player-two-person">with real player</label>
+                                        <input type="radio" name="radioWithPersonOrComputer" id="player-two-person" />
+                                        <label for="player-two-computer">or against computer</label>
+                                        <input type="radio" name="radioWithPersonOrComputer" id="player-two-computer" checked/>
+                                    </fieldset>
+                                </li>
+                                <li>
+                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                        <label for="over-the-network-game">over the network</label>
+                                        <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
+                                        <label for="local-game">local on this device</label>
+                                        <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
+                                    </fieldset>
+                                </li>
+
+                                <li>
+                                    <button id="start-game-with-options">Start New Game</button>
+                                </li>
+                                <li><strong>Quick Start Over the Network - must be logged in</strong>
+                                    <ul data-role="listview" data-inset="true">
+                                        <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
+                                        <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
+                                        <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
+                                                        system</a></li>
+                                        <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
+                                                        system</a></li>
+                                    </ul>
+                                </li>
+
                             </ul>
 
                         </div>
@@ -176,6 +206,37 @@
                             <small>Game ID: <span id="current-game-id"></span></small>
                         </div>
                         <div class="panel-body">
+                            <div id="game-message" class="message"></div>
+                            <table class="table table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%"></th>
+                                        <th style="width:35%" class="center">Attacker</th>
+                                        <th style="width:35%" class="center">Defender</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <th class="text-right">Name: </th>
+                                    <td class="center"><span class="attacker-name"></span> </td>
+                                    <td class="center"><span class="defender-name"></span> </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-right">Score: </th>
+                                    <td class="center"><span class="attacker-score"></span> </td>
+                                    <td class="center"><span class="defender-score"> </span> </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-right">Settings: </th>
+                                    <td> <select id="attackerSettings" data-mini="true"> </select></td>
+                                    <td><select id="defenderSettings" data-mini="true"> </select></td>
+                                </tr>
+                                <tr>
+                                    <th class="text-right">Moves: </th>
+                                    <td><select id="attackerMoves" data-mini="true"> </select> </td>
+                                    <td><select id="defenderMoves" data-mini="true"> </select></td>
+                                </tr>
+
+                            </table>
                             <p>
                                 <label class="text-info" for="current-game-status">Game State: 
                                     <span id="current-game-status" class="badge"></span>
@@ -202,8 +263,6 @@
                         </div>
                     </div>
                     <hr/>
-
-
                 </div>
                 <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">
                     <div class="panel-heading ui-bar ui-bar-b">
@@ -222,7 +281,7 @@
 
                         </div>
                         <div class="ui-body">
-
+                            <div id="net-message"></div>
                             <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
                         </div>
                     </div>
@@ -270,22 +329,19 @@
                     </div>
                 </div>
             </div>
-            <div id="game-over" data-role="popup" data-theme="a" style="max-width:400px;" class="modal fade gameOver ui-content" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header ui-bar">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            <h4 class="modal-title text-center center">GAME OVER</h4>
-                        </div>
-                        <div class="modal-body ui-body">
-                            <p class="text-center text-info text-center center"><strong><span id="game-players"></span></strong></p>
-                            <p class="text-center text-success center">Winner is: <span id="game-winner"></span></p>
-                            <p class="text-center text-success center"><span id="game-result"></span></p>
-                            <p class="text-center text-info center">Final Score: <span id="game-score"></span></p>
-                        </div>
+            <div id="game-over" data-role="popup" data-theme="a" style="max-width:500px;" class="modal fade gameOver ui-content" role="dialog">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 
-                    </div>
+                <div class="modal-header ui-bar" data-theme="a">
+                    <h4 class="modal-title text-center center">GAME OVER</h4>
                 </div>
+                <div class="modal-body ui-body">
+                    <p class="text-center text-info center"><strong><span id="game-players"></span></strong></p>
+                    <p class="text-center text-success center">Winner is: <span id="game-winner"></span></p>
+                    <p class="text-center text-success center"><span id="game-result"></span></p>
+                    <p class="text-center text-info center">Final Score: <span id="game-score"></span></p>
+                </div>
+
             </div>
 
             <a href="#dev-support-panel" xclass="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini">Development & Operation Support</a>
@@ -418,6 +474,8 @@
             kApp.initBoard({
                 themePath: '../img/theme-simple/{piece}.png'
             });
+            // make the app available
+            $.kApp = kApp;
         });
         //]]>
     </script>
