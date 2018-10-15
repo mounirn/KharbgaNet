@@ -2215,20 +2215,6 @@ var KharbgaApp = function () {
             $('#exchangeRequestAttackerPiece2').text('');
         }
     });
-
-    // handlers for the play
-    $('#play-backward').on('click', function () {
-        console.log('play - backward');
-    });
-    $('#play-start').on('click', function () {
-        console.log('play - start');
-    });
-    $('#play-pause').on('click', function () {
-        console.log('play - pause');
-    });
-    $('#play-forward').on('click', function () {
-        console.log('play - forward');
-    });
    
     /**
      * @summary handle for when a move is recorded
@@ -2950,10 +2936,14 @@ var KharbgaApp = function () {
     /**
     * @summary handler for the Post message request
     */
-    function onPostMessage() {
-        if (loggingOn === true) {
-            logMessage("onPostMessage: ");
-            
+    function onPostMessage() {      
+        logMessage("onPostMessage: ");
+
+        // the user must be logged in to 
+        if (appClientState.loggedIn === false || appClientState.session === null){
+            // add check if admin
+            displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
+            return;
         }
 
         if (gamesHubProxy != null )
@@ -3395,10 +3385,23 @@ var KharbgaApp = function () {
         // rejoinLastGameIfAny();
     };
 
+    /** @summary starts and initializes connection to the server
+     *  @returns true if successful, false otherwise
+     */
+    this.initMessaging = function(){
+        return  _setupSignalR();
+    }; 
+
     function _ping(e){
         if (e!= null)
             e.preventDefault();
 
+        // the user must be logged in to 
+        if (appClientState.loggedIn === false || appClientState.session === null){
+            // add check if admin
+            displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
+            return;
+        }
         // attempt to start SignalR if not init
         if (appClientState.signalReInitialized == false)
         {
@@ -3458,6 +3461,14 @@ var KharbgaApp = function () {
     };
 
     this.postMessage = function(msg){
+
+        // the user must be logged in to 
+        if (appClientState.loggedIn === false || appClientState.session === null){
+            // add check if admin
+            displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
+            return;
+        }
+
         if (gamesHubProxy == null) {
             displayNetMessage("Unable to post to server. Please try ping or restart first.");
             return;
@@ -3477,6 +3488,11 @@ var KharbgaApp = function () {
         return appClientState;
     };
 
+    /**
+     * Updates the board with a given move capptured or exchanged pieces
+     * @param {*} move 
+     * @param {*} highlightMove 
+     */
     var updateBoardWithMove = function (move, highlightMove) {
         if (move == null)
             return;
@@ -3558,9 +3574,12 @@ var KharbgaApp = function () {
        
     };
 
+    /**
+     * @summary starts the board at the beginning of the setting phase if still playing a setting move
+     * if playing a moving move to goes back to the beginning of the moving phase
+     */
     this.playBegining = function () {
-        console.log("playBeginning");
-    
+        
         // we now have a completed game
         console.log("playBeginning - status: %s - Last replay Position: %s",
             gameState.status, appClientState.lastReplayPosition);
@@ -3578,11 +3597,13 @@ var KharbgaApp = function () {
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
     };
+    
+    /**
+     * @summary displays one move back of the game state
+     */
     this.playBackward = function () {
-        console.log("playBackward");
-        if (appClientState.serverGame == null)
-            return;
-
+        console.log("playBackward - one move back");
+       
     //    if (gameState.status != 3)
     //        return;
         if (gameState.moves.length == 0)
@@ -3602,41 +3623,39 @@ var KharbgaApp = function () {
 
     };
     
-    /** @summary starts and initializes connection to the server
-     *  @returns true if successful, false otherwise
-     */
-    this.initMessaging = function(){
-       return  _setupSignalR();
-    }; 
+    
     var replayId = "";
     var replayOn = false;
     
-    /** @summary starts the replay of a game - see game state
+    /**
+     *  @summary starts the replay of a game - game needs to be in a completed state
      */
     this.playStart = function () {
         console.log("playStart");
      
-         if (gameState.status != 3)
-              return;
-
-        if (gameState.moves == null)
+         if (gameState.status != 3){
+            displayGameMessage("Game is not completed (3) replay");
             return;
+         }
+
+        if (gameState.moves == null || gameState.moves.length == 0) // no moves
+        {
+            displayGameMessage("No moves are recorded to replay")
+            return;
+        }
 
         console.log("playStart - status: %s", gameState.status);
 
         if (appClientState.lastReplayPosition < 0)
             appClientState.lastReplayPosition = 0;
 
-        if (gameState.moves.length == 0) {
-            // message
-            return;
-        }
 
         if (replayOn)
             return;
 
         board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
         updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
+
         $('#play-start').attr('class', 'disabled');
         $('#play-pause').attr('class', 'enabled');
 
@@ -3645,26 +3664,34 @@ var KharbgaApp = function () {
         }, 3000, this.playForward);   // add option for replay speed
         replayOn = true;
     };
+
+    
+    /**
+     * @summary Pause the replay of the game
+     */
     this.playPause = function () {
         console.log("playPause");
        
-        if (gameState.status != 3)
-            return;
+     //   if (gameState.status != 3)
+      //      return;
 
         console.log("playPause - status: %s", gameState.status);
 
         clearInterval(replayId);
         replayOn = false;
+
         $('#play-start').attr('class', 'enabled');
         $('#play-pause').attr('class', 'disabled');
 
     };
-    this.playForward = function () {
-        console.log("playForward");
-      
-    //    if (gameState.status != 3)
-     //       return;
 
+    
+    /**
+     * @summary moves the replay position of the game state to the next move
+     */
+    this.playForward = function () {
+        console.log("playForward one move");
+ 
         // we now have a completed game
         console.log("playForward - status: %s - Last replay Position: %s",
             gameState.status, appClientState.lastReplayPosition);
@@ -3682,12 +3709,16 @@ var KharbgaApp = function () {
         updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
 
     };
+
+    
+    /**
+     * @summary moves the board at the end of the settings position 
+     */
     this.playEnd = function () {
-        console.log("playEnd");
+        console.log("play End of Setting");
         if (appClientState.serverGame == null)
             return;
    
-
         // we now have a completed game
         console.log("playEnd - status: %s - Last replay Position: %s",
             gameState.status, appClientState.lastReplayPosition);
@@ -3707,8 +3738,10 @@ var KharbgaApp = function () {
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
     };
+
     var soundMuted = false; 
     var _soundToggle = function () {
+        logMessage("soundToggle");
         var sound = document.getElementById("sound");
         if (sound == null || typeof (sound) == 'undefined')
             return;
@@ -3724,6 +3757,7 @@ var KharbgaApp = function () {
     this.soundToggle = _soundToggle;
 
     this.soundUp = function () {
+        logMessage("soundUp");
         var sound = document.getElementById("sound");
         if (sound == null || typeof (sound) == 'undefined')
             return;
@@ -3739,6 +3773,7 @@ var KharbgaApp = function () {
 
     };
     this.soundDown = function () {
+        logMessage("soundDown");
         var sound = document.getElementById("sound");
         if (sound == null || typeof (sound) == 'undefined')
             return;
@@ -3754,6 +3789,7 @@ var KharbgaApp = function () {
     };
 
     this.setVolume = function (volume) {
+        logMessage("setVolume");
         var sound = document.getElementById("sound");
         if (sound == null || typeof (sound) == 'undefined')
             return;

@@ -8,6 +8,8 @@ $(document).one("pageshow", function() {
     $("body > [data-role='header'] [data-role='navbar']").navbar();
 });
 
+$.nsAppViewModel = {};
+
 
 $(document).ready(function(){
     $('#start-game-with-options').on('click',function(e){
@@ -30,6 +32,16 @@ $(document).ready(function(){
 
         $("#popup-menu").popup( "close" );
     });
+
+    // set up the various controls
+    $('#play-beginning').on('click',$.appViewHandler.playBeginning);
+    $('#play-backward').on('click',$.appViewHandler.playBackward);
+    $('#play-start').on('click',$.appViewHandler.playStart);
+    $('#play-pause').on('click',$.appViewHandler.playPause);
+    $('#play-forward').on('click',$.appViewHandler.playForward);
+    $('#play-end').on('click',$.appViewHandler.playEnd);
+    $('#sound-set-volume').on('click',$.appViewHandler.setVolume);
+    $('#sound-toggle').on('click',$.appViewHandler.soundToggle);
 });
 
 
@@ -55,8 +67,71 @@ $.appViewHandler = {
     openLoginPanel : function(){
         $("#login-popup").popup("open");
     },
+
+    playBeginning : function () {
+        if ($.nsAppKharbga == null )
+            return;
+
+        $.nsAppKharbga.playBegining();
+    },
+
+    playBackward : function () {
+        if ($.nsAppKharbga == null)
+            return;
+        $.nsAppKharbga.playBackward(); 
+    },
+
+    playStart : function () {
+        if ($.nsAppKharbga == null )
+            return;
+        $.nsAppKharbga.playStart(); 
+    },
+
+    playPause : function () {
+        if ($.nsAppKharbga == null)
+            return;
+         $.nsAppKharbga.playPause(); 
+    },
+
+    playForward : function () {
+        if ($.nsAppKharbga == null)
+            return;
+        $.nsAppKharbga.playForward(); 
+    },
+
+    playEnd : function () {
+        if ($.nsAppKharbga == null )
+            return;
+        $.nsAppKharbga.playEnd();
+    },
+
+    soundToggle : function () {
+        if ($.nsAppKharbga == null )
+            return;
+        $.nsAppKharbga.soundToggle();
+    },
+
+    soundUp : function () {
+        if ($.nsAppKharbga == null )
+            return;
+        $.nsAppKharbga.soundUp();
+    },
+
+    soundDown : function () {
+        if ($.nsAppKharbga == null )
+            return;
+        $.nsAppKharbga.soundDown();
+    },
+
+    setVolume : function (volume) {
+        if ($.nsAppKharbga == null )
+            return;
+        $.nsAppKharbga.setVolume(volume);
+    }
 };  
 
 function onLoginLink(){
     $.appViewHandler.openLoginPanel();
 }
+
+$.nsVM = $.appViewHandler;
