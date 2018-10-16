@@ -13,8 +13,10 @@
 
 .spare {
     float: right;
-    max-width: 10%;
-    max-height: 10%;
+    max-width: 20px;
+    max-height: 20px;
+    width: 10%;
+    height: 10%;
 }
 
 

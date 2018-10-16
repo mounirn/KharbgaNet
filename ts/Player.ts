@@ -9,15 +9,17 @@ namespace Kharbga {
      *  do not get captured by the Attacker.
      */
     export class Player {
-        occupiedCells = new Array(24);
+     //   occupiedCells = new Array(24); -- not used
         public readonly isAttacker : boolean;
         public readonly isSystem : boolean;
         public readonly isSpectator: boolean;
-        totalTimeThinkingSinceStartOfGame: number = 0;
+        public totalTimeThinkingSinceStartOfGame: number = 0;
         constructor(isComputer: boolean, isAttacker: boolean, isSpectator: boolean) {
             this.isAttacker = isAttacker;
             this.isSystem = isComputer;
             this.isSpectator = isSpectator;
+            this.score = 0;
+            this.totalTimeThinkingSinceStartOfGame = 0;
         }
 
         /// the player selects a color to use for their pieces and profile
@@ -32,8 +34,11 @@ namespace Kharbga {
         // this is the user's account id
         public emailAddress: string;
 
+        public score: number;
+
         reset(): void {
             this.totalTimeThinkingSinceStartOfGame = 0;
+            this.score = 0;
         }
     }
 

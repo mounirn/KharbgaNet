@@ -206,8 +206,8 @@
 
             game.init();
             assert.equal(game.state, Kharbga.GameState.Setting);
-            assert.equal(game.attackerScore, 0);
-            assert.equal(game.defenderScore, 0);
+            assert.equal(game.attacker.score, 0);
+            assert.equal(game.defender.score, 0);
             assert.equal(game.currentPlayer, game.attacker);
             assert.notOk(game.winner, "No game winner at the start");
 
@@ -227,8 +227,17 @@
             assert.ok(game.processSetting("c4"), "defender setting 2")
             assert.equal(game.fen(), "7/3S3/7/1ss4/3S3/7/7");
 
+        });
+
+        QUnit.test("Kharbga game Play", function(assert) {
+            var game = new Kharbga.Game(gameEvents, boardEvents);
+            assert.ok(game, "game is not null");
+
+
+            // start the game
+            game.start();
             // set all player pieces randomly 
-            for (var s = 0; s < 46; s++) {
+            for (var s = 0; s <= 47; s++) {
                 var possibleSettings = game.settings();
                 if (possibleSettings != null && possibleSettings.length > 0) {
                     var setting = possibleSettings[0];
@@ -237,15 +246,17 @@
             }
 
             // we are now in moving phase
-            assert.equal(game.state, Kharbga.GameState.Moving);
-            assert.equal(game.attackerScore, 24);
-            assert.equal(game.defenderScore, 24);
 
-            // make a move until the game is complete
-            var totalMoves = 100;
+            assert.equal(game.attacker.score, 24, "attacker score is ok");
+            assert.equal(game.defender.score, 24, "defender score is ok");
+            // kharbga could be in the game moving or completed state 
+            assert.ok(game.state >= Kharbga.GameState.Moving, "Game State: " + game.state);
+
+            // make a move until the game is complete or total moves reach this
+            var totalMoves = 200;
             while (!game.game_over()) {
                 var moveSourceRequired = game.move_source_required();
-                var moves = game.moves(moveSourceRequired);
+                var moves = game.moves(moveSourceRequired); // returns the possible moves
 
                 if (moves == null || moves.length === 0)
                     break;
@@ -259,14 +270,19 @@
                 } else
                     move = moves[0];
 
-                //   var result = game.processMove2(move, gameEvents);
+                var result = game.processMove2(move, gameEvents);
                 //  assert.ok(result, "move processed: " + move.from + "-" + move.to + " " + move.player.name);
-                //   if (result === false)
+                //  if (result === false)
                 //      break;
                 totalMoves = totalMoves - 1;
-                if (totalMoves === 0)
+                if (totalMoves === 0 || game.game_over() === true)
                     break;
             }
+
+            assert.ok(game.attacker.totalTimeThinkingSinceStartOfGame >= 0, "attacker  thinking " + game.attacker.totalTimeThinkingSinceStartOfGame.toString());
+            assert.ok(game.defender.totalTimeThinkingSinceStartOfGame >= 0, "defender thinking  " + game.attacker.totalTimeThinkingSinceStartOfGame.toString());
+
+            assert.ok(game.state >= Kharbga.GameState.Moving, "game state: " + Kharbga.GameState[game.state]);
             initBoard(config);
             assert.ok(boardView, "boardView is ok - game fen: " + game.fen());
 
@@ -274,6 +290,7 @@
             boardView.start();
             boardView.position(game.fen(), false);
 
+            game.reset(); // stops the timer
         });
     </script>
 </head>

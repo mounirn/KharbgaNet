@@ -39,10 +39,12 @@ var KharbgaApp = function () {
         name:"Guest",
         isAttacker:true,
         isSpectator:false,
+        score:0,
         reset: function(){
             this.name = "Guest";
             this.isAttacker= true;
             this.IsSpectator = false;
+            this.score = 0;
         },
         update: function(player){
             if (player == null)
@@ -53,6 +55,7 @@ var KharbgaApp = function () {
             this.name = player.name;
             this.isAttacker = player.isAttacker;
             this.isSpectator = player.isSpectator;
+            this.score = player.score;
         } 
     };
   
@@ -833,8 +836,8 @@ var KharbgaApp = function () {
             playSound();  
         }
         // update the game state with the latest score
-        gameState.attackerScore = game.attackerScore;
-        gameState.defenderScore = game.defenderScore;
+        gameState.attacker.score = game.attacker.score;
+        gameState.defender.score = game.defender.score;
         gameState.state = game.getState();
 
         updateLocalGameStatus(gameState); 
@@ -1566,7 +1569,8 @@ var KharbgaApp = function () {
                 name:"Friend",
                 isSpectator: false,
                 isAttacker: false,
-                isSystem: true
+                isSystem: true,
+                score: 0
             };         
             user.isAttacker = e.data.asAttacker;
             opponent.isAttacker = !e.data.asAttacker;
@@ -1577,17 +1581,13 @@ var KharbgaApp = function () {
             }
 
             if (e.data.asAttacker === true)
-            {
-                gameState.attackerName = user.name;
+            {              
                 gameState.attacker = user;
-                gameState.defender = opponent;
-                gameState.defenderName = opponent.name;
+                gameState.defender = opponent;               
             }
-            else{
-                gameState.defenderName = user.name;
+            else{            
                 gameState.defender = user;
-                gameState.attacker = opponent;
-                gameState.attackerName = opponent.name;
+                gameState.attacker = opponent;     
             }
 
             if (e.data.againstComputer === true || e.data.overTheNetwork === false){
@@ -2489,12 +2489,9 @@ var KharbgaApp = function () {
         resetLocalGame();
 
         // update the game players info
-        game.attacker.name = gameInfo.attackerName;
-        game.defender.name = gameInfo.defenderName;
+        game.attacker.name = gameInfo.attacker.name;
+        game.defender.name = gameInfo.defender.name;
         game.state = gameInfo.state;
-
-        // update the game players info - is this needed
-        game.setPlayerNames(gameInfo.attackerName,gameInfo.defenderName);
 
         // update the local game state if it is not already the same
         if (gameState != gameInfo)
@@ -2544,12 +2541,12 @@ var KharbgaApp = function () {
 
         $('#current-game-id').text(gameInfo.id);
         $('#current-game-status').text(getStatusText(gameInfo.status));
-        $('#game-attacker').text(gameInfo.attackerName);
-        $('#game-defender').text(gameInfo.defenderName);
-        $('.attacker-name').text(gameInfo.attackerName);
-        $('.defender-name').text(gameInfo.defenderName);
-        $('#game-players').html(gameInfo.attackerName + " vs. " + gameInfo.defenderName);
-        $('#game-score').html(gameInfo.attackerScore + "-" + gameInfo.defenderScore);
+        $('#game-attacker').text(gameInfo.attacker.name);
+        $('#game-defender').text(gameInfo.defender.name);
+        $('.attacker-name').text(gameInfo.attacker.name);
+        $('.defender-name').text(gameInfo.defender.name);
+        $('#game-players').html(gameInfo.attacker.name + " vs. " + gameInfo.defender.name);
+        $('#game-score').html(gameInfo.attacker.score + "-" + gameInfo.defender.score);
         $('#game-result').html(toDisplayString(Kharbga.GameState[gameInfo.state]));
 
         if (appClientState.useServer === true){
@@ -3115,7 +3112,7 @@ var KharbgaApp = function () {
             setCookie("_nsgid", gameState.id);
             displayNetMessage("Saving game on the server...");
             gamesHubProxy.server.updateGameState(appClientState.sessionId,user.name, gameState.id,
-                game.getState(), game.winner.isAttacker, game.attackerScore, game.defenderScore).done(function(){
+                game.getState(), game.winner.isAttacker, game.attacker.score, game.defender.score).done(function(){
                     displayNetMessage("Done saving game on the server.");
                     displayGameMessage("Saved game on the server");
                 });
@@ -3253,15 +3250,15 @@ var KharbgaApp = function () {
         else
             boardEl.find('.square-d4').removeClass('highlight-malha');
 
-        if (gameState.attackerName == user.name )
-            $('#game-attacker').text(gameState.attackerName + " (me)" );
+        if (gameState.attacker.name == user.name )
+            $('#game-attacker').text(gameState.attacker.name + " (me)" );
         else
-            $('#game-attacker').text(gameState.attackerName);
+            $('#game-attacker').text(gameState.attacker.name);
 
-        if (gameState.defenderName == user.name)
-            $('#game-defender').text(gameState.defenderName + " (me)" );
+        if (gameState.defender.name == user.name)
+            $('#game-defender').text(gameState.defender.name + " (me)" );
         else
-            $('#game-defender').text(gameState.defenderName );
+            $('#game-defender').text(gameState.defender.name );
         
         // update the scores      
         updateScores(game);

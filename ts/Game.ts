@@ -4,32 +4,32 @@ namespace Kharbga {
      *
      */
     export class Game {
-        id: string;  // the game id
-        state: GameState;  // the game state as defined above
-        board: Board; // represents the game board
-        startTime: Date;
+        id: string;         // the game id
+        state: GameState;   // the game state as defined above
+        board: Board;       // represents the game board
+        startTime: Date;    // start time
+        endTime: Date;      // end time
         attacker: Attacker = new Attacker(); // represents the attacker
         defender: Defender = new Defender(); // represents the defender
-        spectators: Array<Player> = new Array<Player>(2);
+        spectators: Array<Player> = new Array<Player>(1);  // spectators if any
         history: GameHistory = new GameHistory(); // stores the history of all moves made
-        currentPlayer: Player; // keeps track of who's turn it is
-        winner: Player;
+        private currentPlayer: Player; // keeps track of who's turn it is
+        public winner: Player;
 
         gameEvents: IGameEvents;
         boardEvents: IBoardEvents;
 
         // starting with 24 pieces.
         numberOfSettingsAllowed = 2; // temp counter used for Settings. Players are allowed to set two pieces at a time
-        attackerScore = 0;
-        defenderScore = 0;
-        attackerMove = 0;
-        defenderMove = 0;
+        attackerMove = 0;   // not really used
+        defenderMove = 0;   // not really used
 
         // transitional state
         moveSourceRequiredAfterCapture: string = ""; // the source piece required after a capture
         moveDestinationsPossibleCapture: string[] = null; // the possible destinations to capture
         firstMove = true;
         moveFlags: GameMoveFlags; // current state of the move params
+        private thinkingTimerId: number = -1;
 
         /*
          * @summary Initializes the game to the no started state
@@ -50,8 +50,6 @@ namespace Kharbga {
         init(): void {
             this.id = "";
             this.startTime = new Date();
-            this.attackerScore = 0;
-            this.defenderScore = 0;
             this.attackerMove = 0;
             this.defenderMove = 0;
             this.currentPlayer = this.attacker;
@@ -70,20 +68,39 @@ namespace Kharbga {
             var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
             this.gameEvents.newGameStartedEvent(eventData);
             this.gameEvents.newPlayerTurnEvent(eventData);
+            // start the timer for adding total thinking time for each player
+            this.thinkingTimerId = setInterval(this.thinkingTimerHandler,5,this);
+        }
+
+        private thinkingTimerHandler(game:Game): void {
+            let p: Player = game.getCurrentPlayer();
+            p.totalTimeThinkingSinceStartOfGame += 5;
+            return;
+        }
+
+        private setGameDone(): void {
+            this.endTime = new Date();
+            if (this.thinkingTimerId > 0) {
+                clearInterval(this.thinkingTimerId);
+                this.thinkingTimerId = -1;
+            }
         }
 
         /**
          * @summary Resets the game. Clears the board and players info
+         * and stops the players thinking timer
          */
         public reset(): void {
             this.board.clear();
             this.attacker.reset();
             this.defender.reset();
-            this.attackerScore = 0;
-            this.defenderScore = 0;
             this.winner = null;
             this.currentPlayer = this.attacker;
             this.history.reset();
+            if (this.thinkingTimerId > 0) {
+                clearInterval(this.thinkingTimerId);
+                this.thinkingTimerId = -1;
+            }
         }
 
         /**
@@ -285,9 +302,9 @@ namespace Kharbga {
                             return false;
                         } else {
                             if (isAttackerPiece) {
-                                this.attackerScore++;
+                                this.attacker.score++;
                             } else {
-                                this.defenderScore++;
+                                this.defender.score++;
                             }
                         }
                         //  position[square] = fenToPieceCode(row[j]);
@@ -550,8 +567,8 @@ namespace Kharbga {
          */
         public getCurrentPlayer(): Player { return this.currentPlayer; }
 
-        public getAttackerScore(): number { return this.attackerScore; }
-        public getDefenderScore(): number { return this.defenderScore; }
+        public getAttackerScore(): number { return this.attacker.score; }
+        public getDefenderScore(): number { return this.defender.score; }
 
         public getAttackerMoveNumber(): number { return this.attackerMove; }
         public getDefenderMoveNumber(): number { return this.defenderMove; }
@@ -560,6 +577,11 @@ namespace Kharbga {
          * @returns the startup time of the game
          */
         public getStartTime(): Date { return this.startTime; }
+
+        /**
+         * @returns the end time of the game
+         */
+        public getEndTime(): Date { return this.endTime; }
 
         /**
          * @summary Checks the time since the start of the game
@@ -701,9 +723,9 @@ namespace Kharbga {
                     this.checkPlayerTurn();
                 } else {   // update the scores
                     if (this.currentPlayer.isAttacker) {
-                        this.defenderScore -= result.capturedPieces;
+                        this.defender.score -= result.capturedPieces;
                     } else {
-                        this.attackerScore -= result.capturedPieces;
+                        this.attacker.score -= result.capturedPieces;
                     }
 
                     // check if the player could still
@@ -792,6 +814,7 @@ namespace Kharbga {
                         this.winner = this.defender;
                         eventData.player = this.winner;
                         this.state = GameState.WinnerDeclaredDefenderIsBlocked;
+                        this.setGameDone();
                         this.gameEvents.winnerDeclaredEvent(eventData);
                         return;
                     } else {
@@ -822,24 +845,24 @@ namespace Kharbga {
                 this.state = GameState.DefenderAbandoned;
                 this.winner = this.attacker;
             }
-
+            this.setGameDone();
             // winnerDeclaredEvent(this, null);
             var eventData: GameEventData = new GameEventData(this, this.winner);
             this.gameEvents.winnerDeclaredEvent(eventData);
         }
 
         private CheckScores(): void {
-            if (this.defenderScore <= 0) {
+            if (this.defender.score <= 0) {
                 this.winner = this.attacker;
                 this.state = GameState.DefenderLostAllPieces;
-
+                this.setGameDone();
                 var eventData: GameEventData = new GameEventData(this, this.winner);
                 this.gameEvents.winnerDeclaredEvent(eventData);
             } else {
-                if (this.attackerScore <= 0) {
+                if (this.attacker.score <= 0) {
                     this.state = GameState.AttackerLostAllPieces;
                     this.winner = this.defender;
-
+                    this.setGameDone();
                     var eventData2: GameEventData = new GameEventData(this, this.winner);
                     this.gameEvents.winnerDeclaredEvent(eventData2);
                 }
@@ -911,9 +934,9 @@ namespace Kharbga {
                 this.history.addSetting(this.currentPlayer, cell.id);
 
                 if (this.getCurrentPlayer().isAttacker === true) {
-                    this.attackerScore++;
+                    this.attacker.score++;
                 } else {
-                    this.defenderScore++;
+                    this.defender.score++;
                 }
                 var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
                 eventData.from = cell;
@@ -1071,9 +1094,9 @@ namespace Kharbga {
             var ret:boolean = this.board.recordExchange(untouchablePieceId, attackerPiece1, attackerPiece2);
 
             if (ret === true) {
-                this.defenderScore--;
-                this.attackerScore--;
-                this.attackerScore--;
+                this.defender.score--;
+                this.attacker.score--;
+                this.attacker.score--;
             }
             return ret;
         }

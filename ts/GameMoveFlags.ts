@@ -27,5 +27,17 @@ namespace Kharbga {
             this.exchangeRequestAttackerPiece1 = "";
             this.exchangeRequestAttackerPiece2 = "";
         }
+
+        public copy(f: GameMoveFlags): void {
+            if (f === null) { // throw
+                return;
+            }
+            this.resigned = f.resigned;
+            this.exchangeRequest = f.exchangeRequest;
+            this.exchangeRequestAccepted = f.exchangeRequestAccepted;
+            this.exchangeRequestDefenderPiece = f.exchangeRequestDefenderPiece ;
+            this.exchangeRequestAttackerPiece1 = f.exchangeRequestAttackerPiece1;
+            this.exchangeRequestAttackerPiece2 = f.exchangeRequestAttackerPiece2;
+        }
     }
 }
