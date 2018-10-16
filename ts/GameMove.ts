@@ -9,6 +9,13 @@ namespace Kharbga {
             this.player = p;
             this.isSetting = false;
             this.exchangeRequest = false;
+            this.beforeFen = "";
+            this.afterFen = "";
+            this.exchanged = "";
+            this.captured = "";
+            this.message = "";
+            this.number = 0;
+            this.playerName = "";
         }
         public from: string;
         public to: string;
@@ -27,5 +34,7 @@ namespace Kharbga {
         public afterFen: string;
         public message: string;
         public clientId: string;
+        public captured: string;
+        public exchanged: string;
     }
 }

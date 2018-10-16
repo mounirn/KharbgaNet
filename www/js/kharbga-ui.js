@@ -728,16 +728,16 @@
             html += "<div>";  // exchange request div
             if (color === 'black') {
 
-                 html += '<label style="font-size:small;font-weight:normal">';
-                html += '<input class="exchangeRequest" type="checkbox" id="exchangeRequestCheckbox" />Exchange&nbsp;Request</label> ';
-                html += '<span  id="exchangeRequestDefenderPiece" class="badge exchangeRequest"> </span>';
+                 html += '<label style="font-size:x-small;font-weight:normal">';
+                html += '<input class="exchangeRequest" type="checkbox" id="exchangeRequestCheckbox" />Exchange&nbsp;Request&nbsp;';
+                html += '<span  id="exchangeRequestDefenderPiece" class="badge exchangeRequest"> </span></label>';
                
             }
             else{
-                html += '<label style="font-size:small;font-weight:normal">';
-                html += '<input class="exchangeRequest" type="checkbox" id="exchangeRequestAcceptedCheckbox" />Exchange&nbsp;Request&nbsp;Accepted</label> ';
+                html += '<label style="font-size:x-small;font-weight:normal">';
+                html += '<input class="exchangeRequest" type="checkbox" id="exchangeRequestAcceptedCheckbox" />Exchange&nbsp;Request&nbsp;Accepted ';
                 html += '<span  id="exchangeRequestAttackerPiece1" class="badge exchangeRequest"></span> ';
-                html += '<span  id="exchangeRequestAttackerPiece2" class="badge exchangeRequest"></span>';  
+                html += '<span  id="exchangeRequestAttackerPiece2" class="badge exchangeRequest"></span></label>';  
                
             }
             html += '</div>'; 

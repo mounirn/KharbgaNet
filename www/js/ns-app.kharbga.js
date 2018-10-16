@@ -183,9 +183,7 @@ var KharbgaApp = function () {
                 removeSelectedCells();
                 removeLastMoveHighlighting();
             },userOptions.highlightLastMoveMilliSecondsBeforeTimeout);           
-        }
-
-        //setTimeout(checkBoardAndPlayIfComputer,1000);            
+        }       
     }
   
     /**
@@ -231,7 +229,7 @@ var KharbgaApp = function () {
         /* highlight the previous move */
         var source = boardEl.find('.square-' + eventData.targetCellId);
         source.addClass('highlight-move');     
-        //setTimeout(checkBoardAndPlayIfComputer,1000);      
+           
     }
 
     /**
@@ -255,7 +253,7 @@ var KharbgaApp = function () {
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
 
-       //setTimeout(checkBoardAndPlayIfComputer,1000);      
+       
     }
 
     /**
@@ -353,8 +351,7 @@ var KharbgaApp = function () {
         }
 
         appClientState.moveSourceRequired = moveSourceRequired;
-        //setTimeout(checkBoardAndPlayIfComputer,1000,moveSourceRequired);      
-      //  checkBoardAndPlayIfComputer(moveSourceRequired);
+       
     }
 
     /**
@@ -380,11 +377,12 @@ var KharbgaApp = function () {
      * @param {any} eventData - the game event info
      */
     function onWinnerDeclared(eventData) {
-        logMessage("event: onWinnerDeclared - winner: %s " + eventData.player.name);
+        logMessage("event: onWinnerDeclared - winner: " + eventData.player.name);
         displaySuccessMessage("Game Over. Winner is: <strong>" + eventData.player.name + " </strong>");
 
         $('#state').html(toDisplayString(Kharbga.GameState[eventData.source.getState()]));
         gameState.state = eventData.source.getState();
+        gameState.status = Kharbga.GameStatus.Completed;
 
         updateLocalGameStatus(gameState);
 
@@ -401,8 +399,11 @@ var KharbgaApp = function () {
         }  
        
        // turn off the background computer thread
-        if (typeof applicationCache.backgroundJobId == "number" && applicationCache.backgroundJobId > 0)
+        if (typeof appClientState.backgroundJobId == "number" && appClientState.backgroundJobId > 0){
             clearInterval(appClientState.backgroundJobId);
+            appClientState.backgroundJobId = -1;
+            displayComputerMessage("Ended computer play task");
+        }
     }
 
     /**
@@ -694,7 +695,7 @@ var KharbgaApp = function () {
      */
     function processAction(source, target) {
         var ret = false;
-        var gameMove = {};
+        var gameMove = new Kharbga.GameMove();
         gameMove.player = game.getCurrentPlayer();
 
         gameMove.playerName = gameMove.player.name; 
@@ -742,7 +743,7 @@ var KharbgaApp = function () {
         else {
             if (game.is_in_setting_state()) {
                 gameMove.isSetting = true;
-                ret = game.processSetting(target);
+                ret = game.processSetting(target, gameMove.resigned);
                 onMoveProcessed(ret, gameMove);
             }
             else {
@@ -763,7 +764,8 @@ var KharbgaApp = function () {
             logMessage("Failed to process move");
             log(gameMove); 
             displayWarningMessage("Failed to process move");
-            return;
+            
+            //return;  should still update the UI with 
         }
         // update the game move
         gameMove.afterFen = game.fen();
@@ -771,14 +773,21 @@ var KharbgaApp = function () {
         gameMove.exchanged = lastMove.exchanged; 
         lastMoveId = createMoveId();
         gameMove.clientId = lastMoveId;
+        
+        if (gameMove.number <= 0)
+            gameMove.number = gameState.getNextMoveNumber(); 
+
+        // update the UI with the last action info
+        updateLastActionInfo(gameMove);
 
         // complete the move and return if not using the server
         if (appClientState.useServer === false)
         {
-            gameMove.number = gameState.getNextMoveNumber();
-            displayGameMessage("Recording move #: "+ gameMove.number);
-            completeMoveProcessed();
+         
+            displayGameMessage("Recorded locally move #: " + gameMove.number);
+          
             onMoveRecorded(true,"",gameMove);
+            completeMoveProcessed();
             return;
         }
     
@@ -790,7 +799,7 @@ var KharbgaApp = function () {
             // submit to the server
             if (gameState.id != "" ) {
                 // notify server pf the setting
-                displayNetMessage("Recording move: client id: "+ gameMove.clientId);
+                displayNetMessage("Recording move # "+ gameMove.number);
                 gamesHubProxy.server.recordMove(appClientState.sessionId,gameState.id, 
                     user.name,
                     gameMove.isAttacker, gameMove.isSetting, gameMove.from, gameMove.to, 
@@ -798,15 +807,15 @@ var KharbgaApp = function () {
                     gameMove.beforeFen, game.fen(), gameMove.message, lastMoveId,
                     lastMove.captured, lastMove.exchanged
                 ).done(function () {
-                    logMessage('Done  recordedMove (moveId : ' +  lastMoveId);
-                    displayNetMessage("Done Record move - client id: " + gameMove.clientId);
+                    logMessage('Done  recordedMove move Id : ' +  lastMoveId);
+                    displayNetMessage("Done recording move # " + gameMove.number);
                     completeMoveProcessed();
 
                 })
                 .fail(function (error) {
                     logMessage("Failed recordMove - moveId : " + lastMoveId);
                     logObject(error);
-                    displayNetMessage("Failed to record move - error " + error);
+                    displayNetMessage("Failed to record move - error: " + error);
                 });
             }
         }   
@@ -835,6 +844,7 @@ var KharbgaApp = function () {
         if (game.game_over()) {
             updateBoard(game);
             updateBoardInfo();
+            gameState.status = Kharbga.GameStatus.Completed;
             // trigger server updating the game status into the server
             if ($ && $.appViewHandler!= null){
                 $.appViewHandler.displayGameOver();
@@ -951,7 +961,8 @@ var KharbgaApp = function () {
     var removeLastMoveHighlighting = function () {
         boardEl.find('.highlight-captured').removeClass('highlight-captured');
         boardEl.find('.highlight-source').removeClass('highlight-source');
-        boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
+
+     //   boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
 
     };
     var lastMoveId = "";
@@ -1029,6 +1040,7 @@ var KharbgaApp = function () {
      * 
      */
     function checkBoardAndPlayIfComputer() {
+        displayComputerMessage(getLoggingNow() + " - checking turn...");
         console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s",
             getLoggingNow(), getComputerRole(), game.turn());
         if (appClientState.computerIsPlaying === true) {
@@ -1081,7 +1093,7 @@ var KharbgaApp = function () {
         console.log("%s - checkBoardAndPlayIfComputer (as %s) - game turn: %s - local real player is: %s - required From Piece: %s",
             getLoggingNow(), getComputerRole(), game.turn(), getLocalPlayerRole(), game.move_source_required());
 
- 
+        displayComputerMessage(getLoggingNow() + " - thinking...");
         $('#computer-message').html("<div class='alert alert-warning'>Thinking... </div>");
         var computerPlayer = gameState.getComputerPlayer();
         if (computerPlayer.isAttacker === true && game.turn() == 'a') {
@@ -1093,7 +1105,7 @@ var KharbgaApp = function () {
                 computer_play();
             }
         }
-        $('#computer-message').html("");
+       // $('#computer-message').html("");
     }
 
   
@@ -1150,7 +1162,7 @@ var KharbgaApp = function () {
                 // if computer can not play -- resign or pass
                 game.check();
                 appClientState.computerIsPlaying = false;
-                displayComputerMessage("Computer: Unable to find settings");
+                displayComputerMessage("Computer: Unable to find setting");
                 return;
             }
             gameMove.from = "spare";
@@ -1189,7 +1201,7 @@ var KharbgaApp = function () {
                 if (moves == null || moves.length == 0) { // no unreachable?{
                     moves = game.moves(moveSourceRequired);
                 }         
-                if (moves == null || typeof moves.length === "undefined" || moves.length <= 0) {
+                if (moves == null || moves.length <= 0) {
              
                     // if computer can not play -- resign or pass
                     game.check();
@@ -1202,7 +1214,7 @@ var KharbgaApp = function () {
                 if (moveSourceRequired!= null && moveSourceRequired.length >0){
                     for(var item = 0; item< moves.length; item++ ){
                         if (moves[item].source == moveSourceRequired){
-                            moveId = item.id;
+                            moveId = item;
                             break;
                         }
                     }
@@ -1218,14 +1230,13 @@ var KharbgaApp = function () {
                 gameMove.to = move.to;
                 logMessage("Game Move generated: ");
                 logObject(gameMove);
+                displayComputerMessage("Generated computer move: " + gameMove.from + "-" + gameMove.to);
+                  
             }
         }
        
-
-        $('#gameMove').html(gameMove.from + "-" + gameMove.to);
-      
-        var ret = false;
-      
+        $('#gameMove').html(gameMove.from + "-" + gameMove.to);  
+        var ret = false;    
         gameMove.resigned = false;
         gameMove.message = "";
         gameMove.isAttacker = false;
@@ -1250,7 +1261,18 @@ var KharbgaApp = function () {
         gameMove.afterFen = game.fen();
         gameMove.captured = lastMove.captured;
         gameMove.exchanged = lastMove.exchanged;
-
+        var gameMoveText = gameMove.from + "-" + gameMove.to;
+        if (gameMove.captured.length > 0)
+        {
+            gameMoveText += ": (c) - ";
+            gameMoveText += gameMove.captured;
+        }
+        if (gameMove.exchanged.length > 0)
+        {
+            gameMoveText += ": (e) - ";
+            gameMoveText += gameMove.exchanged;
+        }
+        $('#gameMove').html(gameMoveText);  
 
         if (ret == true) {
             lastMoveId = createMoveId();
@@ -1266,20 +1288,22 @@ var KharbgaApp = function () {
                     gameMove.clientId,
                     lastMove.captured, lastMove.exchanged
                 ).done(function () {
-                    displayNetMessage("Done - recordedMove - Move Id: " + lastMoveId);
+                    displayNetMessage("Done recording move number: " + gameMove.number);
                     board.position(game.fen(), false); // update the board with the computer move
                     playSound();
 
                 }).fail(function (error) {
-                    logMessage("Fail - recordMove failed. Error:");
-                    displayNetMessage("Fail - recordedMove - Move Id: " + lastMoveId);
+                    logMessage("Failed recording move. Error:");
+                    displayNetMessage("Failed recording move number: " + gameMove.number);
                     logObject(error);
                 });
             }
             else { 
                 displayGameMessage("Recording computer move #: " + gameMove.number);
-                completeMoveProcessed();
-                onMoveRecorded(true,"",gameMove);  // record the move locally
+                 onMoveRecorded(true,"",gameMove);  
+                 // record the move locally 
+                 completeMoveProcessed();
+
                 board.position(game.fen(), false); // update the board with the computer move
                 playSound();
             }
@@ -1322,6 +1346,9 @@ var KharbgaApp = function () {
             }
         }
         setupResignCheckbox();
+
+        resizeGame();
+
     }
 
     function clearLastMoveInfo() {
@@ -1395,7 +1422,9 @@ var KharbgaApp = function () {
         $('#exchangeRequestDefenderPiece').text(moveFlags.exchangeRequestDefenderPiece);
         $('#exchangeRequestAttackerPiece1').text(moveFlags.exchangeRequestAttackerPiece1);
         $('#exchangeRequestAttackerPiece2').text(moveFlags.exchangeRequestAttackerPiece2);
+
         var exchangedSquare;
+
         if (!moveFlags.exchangeRequest)
             boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
         else{
@@ -1454,10 +1483,8 @@ var KharbgaApp = function () {
      * @param {string} message - the message to display
      */
     function displayComputerMessage(message){
-        $('#game-message').html("<div class='alert alert-info'>" + message + "</div>");
-    
+        $('#computer-message').html("<div class='alert alert-info'>" + message + "</div>");
     }
-
 
     /**
      * @summary Displays an informational message to the user
@@ -1529,7 +1556,9 @@ var KharbgaApp = function () {
         
             gameState.reset();
             gameState.id = createGameId();
-            user.name = "You";
+            if (appClientState.loggedIn === false){
+                user.name = "I";
+            }
             user.isSpectator = false;
             user.isAttacker = e.data.asAttacker; 
 
@@ -1542,8 +1571,10 @@ var KharbgaApp = function () {
             user.isAttacker = e.data.asAttacker;
             opponent.isAttacker = !e.data.asAttacker;
             opponent.isSystem = e.data.againstComputer;   
-            if (opponent.isSystem)
+
+            if (opponent.isSystem === true){
                 opponent.name = "System";
+            }
 
             if (e.data.asAttacker === true)
             {
@@ -1556,11 +1587,11 @@ var KharbgaApp = function () {
                 gameState.defenderName = user.name;
                 gameState.defender = user;
                 gameState.attacker = opponent;
-                gameState.opponentName = opponent.name;
+                gameState.attackerName = opponent.name;
             }
 
             if (e.data.againstComputer === true || e.data.overTheNetwork === false){
-                game.status = Kharbga.GameStatus.Joined;
+                game.status = Kharbga.GameStatus.Active;
                 game.state  = Kharbga.GameState.Settings;
             }
            
@@ -1604,11 +1635,10 @@ var KharbgaApp = function () {
         var computerPlayer = gameState.getComputerPlayer();
         if (user.isSpectator === false &&  computerPlayer!= null){
             logMessage("starting computer play timer...");
+            displayComputerMessage("Started computer player task");
             appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,4000);
         }
     };
-
-
 
     /**
      * @summary: Clears the local game and board 
@@ -1644,7 +1674,7 @@ var KharbgaApp = function () {
         removeLastMoveHighlighting();
         $('#resign-checkbox').prop('checked', false);
 
-        setCookie("_nsgid", "");
+       // setCookie("_nsgid", "");
 
         // hide the panel (?)
       //  $('#currentGamePanel').hide();
@@ -1672,7 +1702,7 @@ var KharbgaApp = function () {
        // $('#loadSetting1Btn').hide();
     }
     $('#clear-board-button').on('click', onClear);
-    $('#resign-button').on('click', onResign);
+   
     /**
      * Clears the game and the board. The board is a set with an empty position string or fen
      */
@@ -1681,16 +1711,17 @@ var KharbgaApp = function () {
         e.preventDefault();
 
         resetLocalGame();
-       
-     
-     //   setupLocalGame(gameState);
-     //   setupLocalPlayer(user,gameState);
+        setCookie("_nsgid", "");
+        // clear any computer thread stated
+        if (appClientState.backgroundJobId> 0){
+            clearInterval(appClientState.backgroundJobId);
+            appClientState.backgroundJobId = -1;
+            displayComputerMessage("Ended computer play task");
+        }
     }
 
     function onResign(e){
         e.preventDefault();
-
-
        
     }
 
@@ -2053,18 +2084,13 @@ var KharbgaApp = function () {
     }
 
     /**
-    * checks the stored active game id 
+    * @summary retrieves the stored active game id 
     */
     function getLastGameCookie() {
         var cookie = getCookie("_nsgid");
         if (typeof cookie === "string" && cookie.length > 10)
             return cookie;
-        // check local staroge
-        if (window.localStorage != null){
-            var gid = window.localStorage.getItem("_nsgid");
-            if (typeof gid  === "string" && gid.length > 10)
-                return gid;     
-        }
+     
         return "";
     }
 
@@ -2173,12 +2199,18 @@ var KharbgaApp = function () {
         // check local active game cookie
         var gid = getLastGameCookie();
         setupGames(gid);
-
+      
         if (gid != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
-
+            displayNetMessage("Joining previous game - id: " + gid);
         //    gamesHubProxy.server.reJoinGame(user.name, gid, false);
             // tell the server to rejoin this connection with the game
-            gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false);
+            gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false).done(function(){
+                displayNetMessage("Done joining previous game - id: " + gid);
+            });
+        }
+        else{
+            // check local saved game
+            loadGame();
         }
 
         //resize the board 
@@ -2313,10 +2345,43 @@ var KharbgaApp = function () {
         }
     }
 
-    function updateLastActionInfo(serverMove) {
-        $('#gameMove').html(serverMove.from + " - " + serverMove.to);
-        $('#move-captured').html(serverMove.captured);
-        $('#move-exchanged').html(serverMove.exchanged);
+    /**
+     * @summary Updates the UI display of the last action 
+     * @param {*} gameMove - the game move info
+     */
+    function updateLastActionInfo(gameMove) {
+
+        
+        $('#move-captured').html(gameMove.captured);
+        $('#move-exchanged').html(gameMove.exchanged);
+
+        var gameMoveText = gameMove.from + "-" + gameMove.to;
+        if (gameMove.isAttacker)
+            gameMoveText += " (A) ";
+        else
+            gameMoveText += " (D) ";
+
+        if (gameMove.captured.length > 0)
+        {
+            gameMoveText += ": captured - ";
+            gameMoveText += gameMove.captured;
+        }
+        if (gameMove.exchanged.length > 0)
+        {
+            gameMoveText += ": exchanged - ";
+            gameMoveText += gameMove.exchanged;
+        }
+        if (gameMove.resigned === true){
+            gameMoveText += ": resigned ";
+        }
+        if (gameMove.exchangeRequest){
+            if (gameMove.isAttacker)
+                gameMoveText += (" Exchange req. accepted "); // + gameMove.exchangeRequestAttackerPiece1 + " " + gameMove.exchangeRequestAttackerPiece2);
+            else
+                gameMoveText += (" exchange req. ");// + gameMove.exchangeRequestDefenderPiece);
+
+        }
+        $('#gameMove').html(gameMoveText);  
     }
 
     function setupResignCheckbox(){
@@ -2375,15 +2440,15 @@ var KharbgaApp = function () {
         if (typeof(gameInfo) === "undefined" || gameInfo == null)
         {
             logMessage("server - onGameJoined - invalid game ");
-            displayNetMessage("Join Game Error - SE22");    
+           // displayNetMessage("Join Game Error - SE22");    
             return;
         }
 
         logMessage("Player joining: ");
-        logObject(player)
+        logObject(player);
 
         // add to the games list
-        logMessage("server - Game Joined: ");
+        logMessage("Game Joined: ");
         logObject(gameInfo);
         displayGameMessage("Joined game id: " + gameInfo.id);    
            
@@ -2391,12 +2456,16 @@ var KharbgaApp = function () {
         setupLocalGame(gameInfo);
       
         // start the background timer for the computer if we have a computer playing
-        if (appClientState.backgroundJobId> 0)
+        if (appClientState.backgroundJobId> 0){
             clearInterval(appClientState.backgroundJobId);
+            displayComputerMessage("Ended computer play task");
+        }
 
         var computerPlayer = gameState.getComputerPlayer();
-        if (user.isSpectator === false &&  computerPlayer!= null){
+        if (user.isSpectator === false &&  computerPlayer!= null && 
+            gameInfo.Status < Kharbga.GameStatus.Completed){
             logMessage("starting computer play timer...");
+            displayComputerMessage("Started computer player task");
             appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,4000);
         }
     };
@@ -2422,17 +2491,25 @@ var KharbgaApp = function () {
         // update the game players info
         game.attacker.name = gameInfo.attackerName;
         game.defender.name = gameInfo.defenderName;
+        game.state = gameInfo.state;
 
         // update the game players info - is this needed
         game.setPlayerNames(gameInfo.attackerName,gameInfo.defenderName);
 
-        // update the local game state
-        gameState.update(gameInfo);
-        displayGameMessage("Updated local game with joined game id: " + gameInfo.id);    
-        
-        // replay all existing moves
-        game.setupWith(gameInfo);
+        // update the local game state if it is not already the same
+        if (gameState != gameInfo)
+            gameState.update(gameInfo);
 
+        displayGameMessage("Updated local game with joined game " );    
+        
+        
+         game.setupWith(gameInfo);// replay all existing moves
+       //  if (gameInfo.moves!= null && gameInfo.moves.length> 0){
+       //     var lastMove = gameInfo.moves[gameState.moves.length-1];
+       //     game.set(lastMove.afterFen);  // set the board with the last move pos
+       //     game.state = gameInfo.state;
+        //}
+        
         clearLastMoveInfo();
 
         // update the board display
@@ -2452,7 +2529,7 @@ var KharbgaApp = function () {
         removeSelectedCells();
 
         // sets up the cookie for replaying the active game
-        setCookie("_nsgid", gameInfo.id);
+        // setCookie("_nsgid", gameInfo.id);
     }
 
     /** 
@@ -2475,7 +2552,9 @@ var KharbgaApp = function () {
         $('#game-score').html(gameInfo.attackerScore + "-" + gameInfo.defenderScore);
         $('#game-result').html(toDisplayString(Kharbga.GameState[gameInfo.state]));
 
-        updateGameInGameList(gameInfo);
+        if (appClientState.useServer === true){
+             updateGameInGameList(gameInfo);
+        }
 
         if (game.winner != null){
             if (game.winner.isAttacker)
@@ -2870,18 +2949,18 @@ var KharbgaApp = function () {
 
     /**
      * Sets up the game moves history list with a server game
-     * @param {any} serverGame - the server game
+     * @param {any} gameInfo - the game info
      */
-    function setupGameMovesHistoryList(serverGame) {
+    function setupGameMovesHistoryList(gameInfo) {
 
-        if (serverGame == null) {
-            $('#message').html("<div class='alert alert-danger'>Invalid server game </div>");
+        if (gameInfo == null) {
+            displayGameMessage("Invalid game");
             return;
         }   
 
         $('#game-moves-history-list').empty();
 
-        $.each(serverGame.moves, function (i,v) {
+        $.each(gameInfo.moves, function (i,v) {
             appendMoveToGameHistoryList(v);
         });
 
@@ -2897,20 +2976,20 @@ var KharbgaApp = function () {
             return;
         }
         var html = "";
-        html += "<li class='list-group-item'>";
+        html += "<li class='list-group-item' style='font-size:xx-small'>";
         html += ("<strong>" + move.number + ". </strong>");
         html += ("" + move.playerName);
         html += ((move.isAttacker == true ? " (A)" : " (D)") + " - ");
-        html += ( (move.isSetting == true ? "S" : "M") + ": ");
+      //  html += ( (move.isSetting == true ? "S" : "M") + ": ");
         html += (move.from + " to ");
         html += move.to ;
         if (move.resigned == true)
             html +=  " - Resigned";
         if (move.exchangeRequest == true) {
             if (move.isAttacker)
-                html += " - ERA";
+                html += " - exchange req. accepted";
             else
-                html += " - ER";
+                html += " - exchange req.";
         }
      //   html += "<br>";
 
@@ -2918,18 +2997,18 @@ var KharbgaApp = function () {
      //   html += ("<pre style='font-size:small'>FEN Before & After: " + (move.BeforeFEN) + " - ");
      //   html += ((move.AfterFEN) );
         if (move.captured != "")
-            html += ( " - C: " + move.captured);
+            html += ( " - captured: " + move.captured);
 
         if (move.exchanged != "")
-            html += (" - E: " + move.exchanged );
+            html += (" - exchanged: " + move.exchanged );
 
         if (move.message != "")
-            html += (" - M: " + move.message);
+            html += (" - message: " + move.message);
 
       //  html += "</pre>";
            html += "</li>";
 
-        $('#game-moves-history-list').append(html);
+        $('#game-moves-history-list').prepend(html);
         refreshList('#game-moves-history-list');
     }
 
@@ -3033,6 +3112,7 @@ var KharbgaApp = function () {
         gameState.state = game.getState();
 
         if (appClientState.userServer === true){
+            setCookie("_nsgid", gameState.id);
             displayNetMessage("Saving game on the server...");
             gamesHubProxy.server.updateGameState(appClientState.sessionId,user.name, gameState.id,
                 game.getState(), game.winner.isAttacker, game.attackerScore, game.defenderScore).done(function(){
@@ -3041,11 +3121,31 @@ var KharbgaApp = function () {
                 });
         }
         else{
+            // clear the last game cookie so local storage is used instead when joining the last game
+            setCookie("_nsgid", "");
+
             displayGameMessage("Saving game locally");
             if (typeof(window.localStorage) !== "undefined" ){
                 window.localStorage.setItem("kharbgaGameState", JSON.stringify(gameState));
                 displayGameMessage("Saved game locally");
             }
+        }
+    }
+
+    /**
+     * @summary Loads a game from local storage and set up the game state and board with it
+     */
+    function loadGame(){       
+        if (typeof(window.localStorage) !== "undefined" ){
+            displayGameMessage("Loading last local game");
+            var prevGameState = window.localStorage.getItem("kharbgaGameState");
+            var obj = JSON.parse(prevGameState);
+            logObject(obj);
+            if (obj!= null){
+                gameState.update(obj);
+                onGameJoined(gameState,user);
+            }
+            displayGameMessage("loaded game locally");
         }
     }
 
@@ -3571,6 +3671,9 @@ var KharbgaApp = function () {
 
         $('#play-move-info').html(html);
         playSound();
+
+        // updates the last action info with the move
+        updateLastActionInfo(move); 
        
     };
 
@@ -3583,18 +3686,37 @@ var KharbgaApp = function () {
         // we now have a completed game
         console.log("playBeginning - status: %s - Last replay Position: %s",
             gameState.status, appClientState.lastReplayPosition);
+        if (gameState.moves == null || gameState.moves.length == 0){
+            displayGameMessage("No moves to replay");
+            return;
+        }
 
-        var lastSettingPos = 48;
-        if (appClientState.lastReplayPosition > lastSettingPos)
-            appClientState.lastReplayPosition = lastSettingPos;
+        if (appClientState.lastReplayPosition > 48)
+            appClientState.lastReplayPosition = 48;
         else
             appClientState.lastReplayPosition = 0;
 
+        
+        if (gameState.lastReplayPosition >= gameState.moves.length)
+            appClientState.lastReplayPosition = 0;
 
-        board.position(gameState.moves[appClientState.lastReplayPosition].beforeFen, true);
+        var move = gameState.moves[appClientState.lastReplayPosition];
 
-        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
+        
+        if (appClientState.lastReplayPosition === 48){
+            displayGameMessage("Restarting replay at the end of settings");
+            board.position(move.beforeFen, true);   
+        }
+        else{
+            displayGameMessage("Restarting replay at the beginning of settings");
+            board.position(move.beforeFen, true);   
+        }
+       
+        
+        updateBoardWithMove(move, true);
         boardEl.find('.highlight-move').removeClass('highlight-move');
+
+        $('#fen').html(board.fen().replaceAll2('/','/ ') );
 
     };
     
@@ -3604,22 +3726,31 @@ var KharbgaApp = function () {
     this.playBackward = function () {
         console.log("playBackward - one move back");
        
-    //    if (gameState.status != 3)
-    //        return;
-        if (gameState.moves.length == 0)
+        if (gameState.moves == null || gameState.moves.length == 0){
+            displayGameMessage("No moves to replay");
             return;
+        }
+
 
         console.log("playBackward - status: %s", gameState.status);
-
+        var move = null;
         appClientState.lastReplayPosition--;
         if (appClientState.lastReplayPosition < 0) {
             appClientState.lastReplayPosition = 0;
-            board.position(gameState.moves[appClientState.lastReplayPosition].beforeFen, true);
-            updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],false);
+            move = gameState.moves[appClientState.lastReplayPosition];
+
+            board.position(move.beforeFen, true);
+            displayGameMessage("Restarting replay at the beginning");
+            updateBoardWithMove(move, true);
+            $('#fen').html(board.fen().replaceAll2('/','/ ') );
             return;
         }
-        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
+       
+        move = gameState.moves[appClientState.lastReplayPosition];
+        displayGameMessage("Replay at move# " + move.number);  
+        board.position(move.afterFen, true);
+        updateBoardWithMove(move,true);
+        $('#fen').html(board.fen().replaceAll2('/','/ ') );
 
     };
     
@@ -3633,14 +3764,8 @@ var KharbgaApp = function () {
     this.playStart = function () {
         console.log("playStart");
      
-         if (gameState.status != 3){
-            displayGameMessage("Game is not completed (3) replay");
-            return;
-         }
-
-        if (gameState.moves == null || gameState.moves.length == 0) // no moves
-        {
-            displayGameMessage("No moves are recorded to replay")
+        if (gameState.moves == null || gameState.moves.length == 0){
+            displayGameMessage("No moves to replay");
             return;
         }
 
@@ -3652,9 +3777,14 @@ var KharbgaApp = function () {
 
         if (replayOn)
             return;
+           
+        var move = gameState.moves[appClientState.lastReplayPosition];
+        displayGameMessage("Started replay at move #" + move.number);
+       // $('#replay-position').html("move#" + move.id);
 
-        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
+        board.position(move.beforeFen, true);
+        updateBoardWithMove(move, true);
+        $('#fen').html(board.fen().replaceAll2('/','/ ') );
 
         $('#play-start').attr('class', 'disabled');
         $('#play-pause').attr('class', 'enabled');
@@ -3676,6 +3806,7 @@ var KharbgaApp = function () {
       //      return;
 
         console.log("playPause - status: %s", gameState.status);
+        displayGameMessage("Paused replay of current game");
 
         clearInterval(replayId);
         replayOn = false;
@@ -3683,31 +3814,51 @@ var KharbgaApp = function () {
         $('#play-start').attr('class', 'enabled');
         $('#play-pause').attr('class', 'disabled');
 
+
     };
 
     
     /**
      * @summary moves the replay position of the game state to the next move
      */
-    this.playForward = function () {
-        console.log("playForward one move");
- 
+    this.playForward = function () {  
         // we now have a completed game
         console.log("playForward - status: %s - Last replay Position: %s",
             gameState.status, appClientState.lastReplayPosition);
-
-        appClientState.lastReplayPosition++;
+        
+        if (gameState.moves == null || gameState.moves.length == 0){
+            displayGameMessage("No moves to replay");
+            return;
+        }
+        var move = null;
+        
         if (gameState.moves.length <= appClientState.lastReplayPosition) {
             appClientState.lastReplayPosition = gameState.moves.length - 1;
-            board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
-            updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],false);
+
+            move = gameState.moves[appClientState.lastReplayPosition];
+            displayGameMessage("Replay of last move #" + move.number);
+           // $('#replay-position').html("move#" + move.id);
+    
+            board.position(move.afterFen, true);
+            updateBoardWithMove(move, true);
+            $('#fen').html(board.fen().replaceAll2('/','/ ') );
+          
             clearInterval(replayId);
             replayOn = false;
             return;
         }
-        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition],true);
 
+        move = gameState.moves[appClientState.lastReplayPosition];
+        displayGameMessage("Replay at move #" + move.number);
+       // $('#replay-position').html("move#" + move.id);
+
+        board.position(move.afterFen, true);
+        updateBoardWithMove(move, true);
+        $('#fen').html(board.fen().replaceAll2('/','/ ') )
+        
+        // set the play position to the next move
+        appClientState.lastReplayPosition++;
+      
     };
 
     
@@ -3715,26 +3866,40 @@ var KharbgaApp = function () {
      * @summary moves the board at the end of the settings position 
      */
     this.playEnd = function () {
-        console.log("play End of Setting");
-        if (appClientState.serverGame == null)
-            return;
+        console.log("play end of setting or moving");
    
         // we now have a completed game
         console.log("playEnd - status: %s - Last replay Position: %s",
             gameState.status, appClientState.lastReplayPosition);
 
-        var lastSettingPos = 47;
-        if (appClientState.lastReplayPosition < lastSettingPos)
-            appClientState.lastReplayPosition = lastSettingPos;
+        
+        if (gameState.moves == null || gameState.moves.length == 0){
+            displayGameMessage("No moves to replay");
+            return;
+        }
+
+       
+        if (appClientState.lastReplayPosition < 48)
+            appClientState.lastReplayPosition = 48;
         else
             appClientState.lastReplayPosition = gameState.moves.length - 1;
 
-        if (gameState.moves.length > appClientState.lastReplayPosition)
-            appClientState.lastReplayPosition = gameState.moves.length - 1;
 
-        board.position(gameState.moves[appClientState.lastReplayPosition].afterFen, true);
-        updateBoardWithMove(gameState.moves[appClientState.lastReplayPosition], true);
+        var move = gameState.moves[appClientState.lastReplayPosition];
+        
+        // $('#replay-position').html("move#" + move.id);
 
+        if (appClientState.lastReplayPosition === 48){
+            board.position(move.beforeFen, true);
+            displayGameMessage("Setting replay at end of settings");
+        }
+        else{
+            board.position(move.afterFen, true);
+            displayGameMessage("Setting replay at end of game");
+        }
+        updateBoardWithMove(move, true);
+        $('#fen').html(board.fen().replaceAll2('/','/ ') );
+       
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
     };

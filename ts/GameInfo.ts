@@ -16,18 +16,7 @@ namespace Kharbga {
         private nextMoveNumber: number;
 
         constructor() {
-            this.id = "";
-            this.state = 0;
-            this.status = 0;
-            this.moves = new Array<GameMove>();
-            this.defender = new Defender();
-            this.attacker= new Attacker();
-            this.attackerName = "Attacker";
-            this.defenderName = "Defender";
-            this.attackerScore = 0;
-            this.defenderScore = 0;
-            this.players = [this.attacker,this.defender];
-            this.nextMoveNumber = 1;
+            this.reset();
         }
         public setup(id: string, createdBy: string, state: GameState, status: GameStatus,
                  attacker: Player, defender: Player): void {
@@ -36,8 +25,7 @@ namespace Kharbga {
             this.state = state;
             this.status = status;
             this.moves = new Array<GameMove>();
-            this.players = [];
-
+        
             this.attacker = attacker;
             this.defender = defender;
             this.players = [this.attacker,this.defender];
@@ -45,17 +33,17 @@ namespace Kharbga {
 
         public reset(): void {
             this.id = "";
-            this.nextMoveNumber = 1;
-            this.attackerName = "";
-            this.defenderName = "";
+            this.nextMoveNumber = 0;
+            this.attackerName = "Attacker";
+            this.defenderName = "Defender";
             this.attackerScore = 0;
             this.defenderScore = 0;
             this.moves= new Array<GameMove>();
             this.status = GameStatus.Created;
             this.state = GameState.NotStarted;
-            this.attacker = null;
-            this.defender = null;
-            this.players = [];
+            this.defender = new Defender();
+            this.attacker= new Attacker();
+            this.players = [this.attacker,this.defender];
 
         }
         public update(gameInfo: GameInfo): void {
@@ -99,7 +87,8 @@ namespace Kharbga {
             return ret;
         }
         public getNextMoveNumber(): number {
-            return this.nextMoveNumber++;
+             this.nextMoveNumber++;
+             return this.nextMoveNumber;
         }
     }
 }

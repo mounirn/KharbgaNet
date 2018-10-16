@@ -124,36 +124,25 @@
                         </div>
                         <div class="message" id="message" class=""></div>
                     </div>
-                    <div class="panel-footer ui-bar ui-bar-c">
-                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" data-icon="recycle" value="Flip orientation">Flip</a> Board State:</strong> <span id="state"
-                            class="badge"></span>
-                        <br>
+                    <div class="panel-footer ui-bar ui-bar-c small">
+                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" data-icon="recycle" value="Flip orientation">Flip</a> Board State: <span id="state" class="badge"></span>
                         <hr>
-                        <p class="text-center">
-                            <a href='#' title="Go to beginning" id="play-beginning"><span class="glyphicon glyphicon-step-backward"></span></a>
-                            <a href='#' title="Play back" id="play-backward"><span class="glyphicon glyphicon-backward"></span></a>
-                            <a href='#' title="Start" id="play-start"><span class="glyphicon glyphicon-play"></span></a>
-                            <a href='#' title="Pause" id="play-pause"><span class="glyphicon glyphicon-pause"></span></a>
-                            <a href='#' title="Play forward" id="play-forward"><span class="glyphicon glyphicon-forward"></span></a>
-                            <a href='#' title="Go to the end" id="play-end"><span class="glyphicon glyphicon-step-forward"></span></a>
-                        </p>
-                        <div class="row fieldset ui-grid-a">
-                            <div class="col-sm-2 col-xs-2 ui-block-a">
-                                <a href='#' id="sound-toggle" title="mute/unmute sound">
-                                    <div id="sound-mute" class="unmute mute"></div>
-                                </a>
-                                <audio id="sound" preload="auto">
-                                    <source src="../img/button-26.mp3" type="audio/mpeg">
-                                </audio>
-                            </div>
-                            <div class="col-sm-8 col-xs-8 ui-block-b">
-                                <!-- <input id="sound-volume" type="range" min="0.0" max="1.0" step="0.2" value="0.5" />
-                           --></div>
-                            <!--   <div class="col-sm-3 col-xs-3" >
-                           <a href='' data-ng-click="soundUp()" id="sound-up"><span class="glyphicon glyphicon-volume-up"></span></a>
-                            <a href='' data-ng-click="soundDown()" id="sound-down"><span class="glyphicon glyphicon-volume-down"></span></a>
-                       </div>-->
+
+                    </div>
+                    <div class="row fieldset ui-grid-a">
+                        <div class="col-sm-2 col-xs-2 ui-block-a" style="width:20%">
+                            <a class="pull-left" href='#' id="sound-toggle" title="mute/unmute sound">
+                                <div id="sound-mute" class="unmute mute"></div>
+                            </a>
+                            <audio id="sound" preload="auto">
+                                <source src="../img/button-26.mp3" type="audio/mpeg">
+                            </audio>
                         </div>
+
+                        <!--   <div class="col-sm-3 col-xs-3" >
+                        <a href='' data-ng-click="soundUp()" id="sound-up"><span class="glyphicon glyphicon-volume-up"></span></a>
+                        <a href='' data-ng-click="soundDown()" id="sound-down"><span class="glyphicon glyphicon-volume-down"></span></a>
+                    </div>-->
                     </div>
                     <div class="ui-grid ui-grid-a">
                         <div class="ui-block-a">
@@ -224,10 +213,10 @@
 
                     <div class="panel panel-success">
                         <div class="panel-heading ui-bar ui-bar-b">
-                            <small>Game ID: <span id="current-game-id"></span></small>
+                            <small>Game ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
                         </div>
                         <div class="panel-body">
-                            <div id="game-message" class="message"></div>
+                            <div id="game-message" class=""></div>
                             <table class="table table-striped ">
                                 <thead>
                                     <tr>
@@ -259,7 +248,7 @@
 
                             </table>
                             <p>
-                                <label class="text-info" for="current-game-status">Game State: 
+                                <label class="text-info" for="current-game-status">Game Status: 
                                     <span id="current-game-status" class="badge"></span>
                                 </label>
                             </p>
@@ -268,14 +257,30 @@
                                     <span id="gameMove" class="badge"></span>
                                 </label>
                             </p>
-                            <p class="text-success">FEN: <span id="fen" class=""></span></p>
-
+                            <p style="font-size:xx-small">
+                                <label class="text-info" for="fen">FEN: 
+                                    <span id="fen" class="small" style="font-size:xx-small"></span>
+                                </label>
+                            </p>
                             <hr>
+                            <div id="computer-message" class=""></div>
                             <div id="game-moves-history">
                                 <div class="ui-bar ui-bar-c">
                                     <strong>Moves History</strong>
+
+                                    <p class="text-center">
+                                        <a href='#' title="Go to beginning" id="play-beginning"><span class="glyphicon glyphicon-step-backward"></span></a>
+                                        <a href='#' title="Play back" id="play-backward"><span class="glyphicon glyphicon-backward"></span></a>
+                                        <a href='#' title="Start" id="play-start"><span class="glyphicon glyphicon-play"></span></a>
+                                        <a href='#' title="Pause" id="play-pause"><span class="glyphicon glyphicon-pause"></span></a>
+                                        <a href='#' title="Play forward" id="play-forward"><span class="glyphicon glyphicon-forward"></span></a>
+                                        <a href='#' title="Go to the end" id="play-end"><span class="glyphicon glyphicon-step-forward"></span></a>
+
+                                    </p>
+
                                 </div>
                                 <div class="ui-body">
+                                    <hr>
                                     <ul data-role='listview' id='game-moves-history-list' style='height:250px;max-height:350px; overflow-y:scroll'>
                                     </ul>
                                 </div>

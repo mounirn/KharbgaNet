@@ -399,7 +399,7 @@ namespace Kharbga {
 
             for (let move of sortedMoves) {
                 if (move.isSetting) {
-                    this.processSetting(move.to);
+                    this.processSetting(move.to,move.resigned);
                 }
             }
 
@@ -598,10 +598,20 @@ namespace Kharbga {
         /**
          * @summary process a player setting
          * @param cellId - the cell id clicked/selected by the user
+         * @param resigned flag - flag if current player indicated resigned on the move
          * @returns true if a successful setting, false otherwise
          */
-        public processSetting(cellId: string): boolean {
-                return this.recordSetting(cellId);
+        public processSetting(cellId: string, resigned: boolean = false): boolean {
+
+                this.moveFlags.resigned = resigned;
+
+                let ret : boolean = this.recordSetting(cellId);// process the move first
+                if (this.moveFlags.resigned === true) {
+                    this.processCurrentPlayerAbandoned();
+                }
+
+                return ret;
+
         }
 
         /**
@@ -623,17 +633,7 @@ namespace Kharbga {
             // check resigned with the move
             if (this.moveFlags.resigned) {
                 this.processCurrentPlayerAbandoned();
-                if (eventData.player.isAttacker) {
-                    //
-                    this.winner = this.defender;
-                    this.state = GameState.AttackerAbandoned;
-                } else {
-                    this.winner = this.attacker;
-                    this.state = GameState.DefenderAbandoned;
-                }
-                eventData.player = this.winner;
-                this.gameEvents.winnerDeclaredEvent(eventData);
-                return true;
+                // return true;
             }
             // check the possible moves if a source if required
             if (this.checkMoveSourceRequiredAndValidDestinations(toCellId) === false) {
