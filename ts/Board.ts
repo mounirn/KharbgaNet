@@ -560,12 +560,25 @@ namespace Kharbga {
             let uc: BoardCell = this.getCellById(untouchablePieceId);
             if (uc == null) { return false; }
 
+            if (uc.isOccupiedByDefender() === false) {
+                return false;
+            }
+
             let ac1: BoardCell = this.getCellById(attackerPiece1Id);
             if (ac1 == null) { return false; }
+
+            // check if cell is occupied by attacker pience
+            if (ac1.isOccupiedByAttacker() === false) {
+                return false;
+            }
 
             let ac2: BoardCell = this.getCellById(attackerPiece2Id);
 
             if (ac2 == null) { return false;}
+
+            if (ac2.isOccupiedByAttacker() === false) {
+                return false;
+            }
 
             if (ac1 === ac2) { // need to be two different piece
                 // need to raise an event here

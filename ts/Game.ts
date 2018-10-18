@@ -6,7 +6,7 @@ namespace Kharbga {
     export class Game {
         id: string;         // the game id
         state: GameState;   // the game state as defined above
-        board: Board;       // represents the game board
+        private board: Board;       // represents the game board
         startTime: Date;    // start time
         endTime: Date;      // end time
         attacker: Attacker = new Attacker(); // represents the attacker
@@ -20,12 +20,12 @@ namespace Kharbga {
         boardEvents: IBoardEvents;
 
         // starting with 24 pieces.
-        numberOfSettingsAllowed = 2; // temp counter used for Settings. Players are allowed to set two pieces at a time
-        attackerMove = 0;   // not really used
-        defenderMove = 0;   // not really used
+        numberOfSettingsAllowed:number = 2; // temp counter used for Settings. Players are allowed to set two pieces at a time
+        attackerMove:number = 0;   // not really used
+        defenderMove:number = 0;   // not really used
 
         // transitional state
-        moveSourceRequiredAfterCapture: string = ""; // the source piece required after a capture
+        moveSourceRequired: string = ""; // the source piece required after a capture
         moveDestinationsPossibleCapture: string[] = null; // the possible destinations to capture
         firstMove = true;
         moveFlags: GameMoveFlags; // current state of the move params
@@ -39,7 +39,6 @@ namespace Kharbga {
 
             this.gameEvents = gameEvents;
             this.boardEvents = boardEvents;
-
             this.board = new Board(boardEvents);
             this.moveFlags = new GameMoveFlags();
 
@@ -97,6 +96,7 @@ namespace Kharbga {
             this.winner = null;
             this.currentPlayer = this.attacker;
             this.history.reset();
+            this.moveFlags.reset();
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -219,6 +219,7 @@ namespace Kharbga {
             this.attacker.name = attacker;
             this.defender.name = defender;
         }
+
         /**
          * @summary Searches for possible settings near the opening square
          * @returns all possible settings near the malha
@@ -226,11 +227,10 @@ namespace Kharbga {
         public settings_near_malha(): Array<string> {
             var ret : string[]= new Array<string>();
 
-            let nearMalha: string[] = ["c4", "e4", "d3", "d5"];
-            for (let i: number = 0; i < nearMalha.length; i++) {
-                let cell: BoardCell = this.board.getCellById(nearMalha[i]);
+            for (let i: number = 0; i < ComputerPlayer.SETTINGS_NEAR_MALHA.length; i++) {
+                let cell: BoardCell = this.board.getCellById(ComputerPlayer.SETTINGS_NEAR_MALHA[i]);
                 if (cell.isEmpty()) {
-                    ret.push(nearMalha[i]);
+                    ret.push(ComputerPlayer.SETTINGS_NEAR_MALHA[i]);
                 }
             }
             return ret;
@@ -535,20 +535,13 @@ namespace Kharbga {
         }
 
         /**
-         * @summary Checks if a specific piece is required to be moved
-         */
-        public move_source_required(): string {
-            return this.moveSourceRequiredAfterCapture;
-        }
-
-        /**
          * @summary checks if the given destination is valid for the required piece
          * @param dest - the id of the cell moving to
          * @returns true if a valid destination, false otherwise
          */
         public checkMoveSourceRequiredAndValidDestinations(dest: string): boolean {
-            if (this.moveDestinationsPossibleCapture == null ||  this.moveSourceRequiredAfterCapture == null ||
-                this.moveSourceRequiredAfterCapture.length ===0) {
+            if (this.moveDestinationsPossibleCapture == null ||  this.moveSourceRequired == null ||
+                this.moveSourceRequired.length ===0) {
                 return true;
             }
             if (this.moveDestinationsPossibleCapture.indexOf(dest) >= 0) {
@@ -734,11 +727,11 @@ namespace Kharbga {
                         eventData.targetCellId = toCellId;
                         this.gameEvents.newMoveCompletedEvent(eventData);
                         this.moveDestinationsPossibleCapture = null;
-                        this.moveSourceRequiredAfterCapture = "";
+                        this.moveSourceRequired = "";
                         this.checkPlayerTurn();
                     } else {
                         eventData.targetCellId = toCell.id;
-                        this.moveSourceRequiredAfterCapture = toCell.id;
+                        this.moveSourceRequired = toCell.id;
                         this.moveDestinationsPossibleCapture = stillHavePiecesToCaptureResult.possibleMoves;
                         // add event that player should continue to play since they could still capture
                         this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData);
@@ -796,7 +789,7 @@ namespace Kharbga {
                 this.currentPlayer = this.attacker;
             }
 
-            this.moveSourceRequiredAfterCapture = "";
+            this.moveSourceRequired = "";
             this.moveDestinationsPossibleCapture = null;
 
             var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
@@ -882,11 +875,20 @@ namespace Kharbga {
                 // add check to see if it is OK for the player to pass
                 if (this.currentPlayer.isAttacker) {
                     this.currentPlayer = this.defender;
+                    if (this.moveFlags.exchangeRequest === true) {
+                        // defender is requesting to pay up, but attacker can not move
+                        this.winner = this.defender;
+                        var eventDataDone: GameEventData = new GameEventData(this, this.winner);
+                        this.state = GameState.AttackerCanNotMove;
+                        this.setGameDone();
+                        this.gameEvents.winnerDeclaredEvent(eventDataDone);
+                    }
+                    return;
                 } else {
                     this.currentPlayer = this.attacker;
                 }
 
-                var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
+                var eventData: GameEventData = new GameEventData(this, this.currentPlayer);
                 this.gameEvents.newPlayerTurnEvent(eventData);
             }
             return bCanPass;
@@ -1043,6 +1045,8 @@ namespace Kharbga {
                                 // reset the flags after posting the event
                                 this.moveFlags.reset();
                                 return;
+                            } else {
+                                this.gameEvents.untouchableExchangeCanceledEvent(eventData);
                             }
                         }
                     }

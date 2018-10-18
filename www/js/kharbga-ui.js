@@ -703,7 +703,7 @@
               
             if (color === 'black') {
                 html += '<b>Defender:</b> <span id="defender_score" class="badge defender-score"></span>';
-                html += '<span id="game-defender"></span>';
+                html += ' <span id="game-defender"></span>';
                
               //  html += '<span id="defender-thinking" /></div>';
                  //&nbsp;&nbsp;<span id="defender_clock" class="badge alert alert-info">

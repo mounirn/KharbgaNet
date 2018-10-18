@@ -14,12 +14,15 @@ namespace Kharbga {
         public readonly isSystem : boolean;
         public readonly isSpectator: boolean;
         public totalTimeThinkingSinceStartOfGame: number = 0;
-        constructor(isComputer: boolean, isAttacker: boolean, isSpectator: boolean) {
+        constructor(isComputer: boolean = false, isAttacker: boolean = true, isSpectator: boolean = false) {
             this.isAttacker = isAttacker;
             this.isSystem = isComputer;
             this.isSpectator = isSpectator;
             this.score = 0;
             this.totalTimeThinkingSinceStartOfGame = 0;
+            this.color= "";
+            this.emailAddress= "";
+            this.imageUrl = "";
         }
 
         /// the player selects a color to use for their pieces and profile
@@ -59,6 +62,7 @@ namespace Kharbga {
     export class Defender extends Player {
         constructor() {
             super(false,false,false);
+            this.name = "Defender";
         }
     }
 

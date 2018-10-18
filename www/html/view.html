@@ -23,57 +23,10 @@
 
 <body>
     <section data-role="page" id="first" data-theme="a">
-        <header data-role="header" data-position="fixed" class="text-center">
-            <img src="../img/kharbga.png" style="max-height:25px;padding-top:10px;">
-            <a href="#menu-panel" data-icon="user" class="ui-btn-right">
-                <span id="account-welcome">Welcome</span>
-            </a>
-            <div data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-mini ui-btn-left">
-                <a href="#popup-menu" data-icon="plus" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn ui-mini ui-btn-icon-plus ui-icon-left ui-shadow ui-corner-all ui-btn-inline">New Game</a>
-                <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch</a>
-            </div>
-            <div id="popup-menu" data-role="popup">
-                <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
-                    New Game Options
-                </div>
-                <ul data-role="listview" data-inset="true">
-                    <li>
-                        <label>
-                            <input id="as-attacker-checkbox" data-mini="true"type="checkbox" checked />I would like to play as Attacker
-                        </label>
-                    </li>
-                    <li>
-                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                            <label for="player-two-person">with real player</label>
-                            <input type="radio" name="radioWithPersonOrComputer" id="player-two-person" />
-                            <label for="player-two-computer">or against computer</label>
-                            <input type="radio" name="radioWithPersonOrComputer" id="player-two-computer" checked/>
-                        </fieldset>
-                    </li>
-                    <li>
-                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                            <label for="over-the-network-game">over the network</label>
-                            <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
-                            <label for="local-game">local on this device</label>
-                            <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
-                        </fieldset>
-                    </li>
-
-                    <li>
-                        <button id="start-game-with-options">Start New Game</button>
-                    </li>
-                    <li><strong>Play with other network players - must be logged in</strong>
-                        <ul data-role="listview" data-inset="true">
-                            <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
-                            <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
-                            <!--      <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
-                                            system</a></li>
-                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
-                                            system</a></li>-->
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+        <header data-role="header" data-position="fixed">
+            <h4><img src="../img/kharbga.png" style="max-height:25px"></h4>
+            <a href="#menu-panel" data-icon="user" data-iconpos="notext" class="ui-btn-right">Info</a>
+            <a href="#play-watch-section" data-icon="bars" class="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini" data-iconpos="notext">Play/Watch</a>
         </header>
         <article role="main" class="ui-content">
             <div id="menu-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
@@ -87,7 +40,7 @@
                                 <span class="glyphicon glyphicon-log-in"></span> Login</a>
                         </p>
                         <p id="logout-li">
-
+                            <span id="account-welcome" class="text-success"></span>
                             <br><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
                         </p>
                         <p>If this is your first time here, please click <a href="../html/rules.html">here
@@ -161,19 +114,28 @@
 
             <div class="row ui-grid-b kharbga-grid">
                 <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
-                    <div class="panel-heading ui-bar ui-bar-a small" style="font-size:small">
-                        Board - Turn: <span id="player-turn" class="badge"></span>
+                    <div class="panel-heading ui-bar ui-bar-a small">
+                        Kharbga Board - Turn: <span id="player-turn" class="badge"></span>
                     </div>
-                    <div class="message" id="message" class=""></div>
-                    <div class="panel-body ">
-                        <!-- The Board -->
-                        <div id="board"></div>
+                    <div class="board-with-message">
+                        <div class="panel-body ">
+                            <!-- The Board -->
+                            <div id="board"></div>
+                        </div>
+                        <div class="message" id="message" class=""></div>
                     </div>
-                    <div class="">
-                        <label for="resign-checkbox" style="font-size:x-small"> To resign, check this move a solider
+                    <div class="ui-grid-a">
+                        <div class="ui-block-b text-center center" style="width:15%;max-width:15px;vertical-align:middle">
+                            <a href='#' id="sound-toggle" title="mute/unmute sound">
+                                <div id="sound-mute" class="unmute mute"></div>
+                            </a>
+                        </div>
+                        <div class="ui-block-b" style="width:85%;float:right">
                             <input id="resign-checkbox" type="checkbox" name="resign-checkbox" data-mini="true" class="">
-                        </label>
+                            <label for="resign-checkbox" style="font-size:x-small">To resign, check this and make a move on your turn</label>
+                        </div>
                     </div>
+
                     <div class="panel-footer ui-bar ui-bar-c small">
                         <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" data-icon="recycle" value="Flip orientation">Flip</a>
                         <a id="clear-board-button" data-mini="true" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-notext ui-btn-left ">Clear</a>
@@ -199,24 +161,71 @@
 
                 </div>
                 <div class="col-sm-4 ui-block-b" xstyle="padding-top:70px;">
-                    <div class="panel-heading ui-bar ui-bar-a" style="font-size:small">
+                    <div class="panel-heading ui-bar ui-bar-a">
                         Current Game Information
                     </div>
-                    <div id="game-message" class=""></div>
+                    <div class="xui-block-b">
+                        <p class="text-center center">
+                            <a href="#popup-menu" data-mini="true" data-rel="popup" data-transition="slideup" data-icon="gear" class="ui-btn ui-mini ui-icon-gear ui-shadow ui-corner-all ui-btn-inline ">New Game</a>
+                            <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
+                        </p>
+                        <div id="popup-menu" data-role="popup">
+                            <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
+                                New Game Options
+                            </div>
+                            <ul data-role="listview" data-inset="true">
+                                <li>
+                                    <label>
+                                        <input id="as-attacker-checkbox" data-mini="true"type="checkbox" checked />I would like to play as Attacker
+                                    </label>
+                                </li>
+                                <li>
+                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                        <label for="player-two-person">with real player</label>
+                                        <input type="radio" name="radioWithPersonOrComputer" id="player-two-person" />
+                                        <label for="player-two-computer">or against computer</label>
+                                        <input type="radio" name="radioWithPersonOrComputer" id="player-two-computer" checked/>
+                                    </fieldset>
+                                </li>
+                                <li>
+                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                        <label for="over-the-network-game">over the network</label>
+                                        <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
+                                        <label for="local-game">local on this device</label>
+                                        <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
+                                    </fieldset>
+                                </li>
+
+                                <li>
+                                    <button id="start-game-with-options">Start New Game</button>
+                                </li>
+                                <li><strong>Quick Start Over the Network - must be logged in</strong>
+                                    <ul data-role="listview" data-inset="true">
+                                        <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
+                                        <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
+                                        <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
+                                                        system</a></li>
+                                        <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
+                                                        system</a></li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+
                     <div class="panel panel-success">
                         <div class="panel-heading ui-bar ui-bar-b">
                             <small>Game ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
                         </div>
                         <div class="panel-body">
-
+                            <div id="game-message" class=""></div>
                             <table class="table table-striped ">
                                 <thead>
                                     <tr>
-                                        <th style="width:30%">
-                                            <a href='#' id="sound-toggle" title="mute/unmute sound">
-                                                <div id="sound-mute" class="unmute mute"></div>
-                                            </a>
-                                        </th>
+                                        <th style="width:30%"></th>
                                         <th style="width:35%" class="center">Attacker</th>
                                         <th style="width:35%" class="center">Defender</th>
                                     </tr>
@@ -231,7 +240,6 @@
                                     <td class="center"><span class="attacker-score"></span> </td>
                                     <td class="center"><span class="defender-score"> </span> </td>
                                 </tr>
-                                <!--  
                                 <tr>
                                     <th class="text-right">Settings: </th>
                                     <td> <select id="attackerSettings" data-mini="true"> </select></td>
@@ -242,7 +250,7 @@
                                     <td><select id="attackerMoves" data-mini="true"> </select> </td>
                                     <td><select id="defenderMoves" data-mini="true"> </select></td>
                                 </tr>
-                            -->
+
                             </table>
                             <p>
                                 <label class="text-info" for="current-game-status">Game Status: 
@@ -251,7 +259,7 @@
                             </p>
                             <p>
                                 <label class="text-info" for="gameMove">Last Action: 
-                                    <span id="gameMove" class="badge"></span> 
+                                    <span id="gameMove" class="badge"></span>
                                 </label>
                             </p>
                             <p style="font-size:xx-small">
@@ -288,10 +296,9 @@
                     <hr/>
                 </div>
                 <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">
-                    <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
+                    <div class="panel-heading ui-bar ui-bar-b">
                         <h3>Network Messages</h3>
                     </div>
-                    <div id="net-message"></div>
                     <div class="panel-body ui-body">
                         <label for="move-message">Message:</label>
                         <input type="text" xclass="form-control" id="move-message" name="move-message">
@@ -304,7 +311,7 @@
                             <small>URI:<pre> <span id="server-uri"></span></pre></small>
                         </div>
                         <div class="ui-body">
-
+                            <div id="net-message"></div>
                             <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
                         </div>
                     </div>
@@ -454,11 +461,7 @@
            -->
         </article>
         <footer data-role="footer" data-position="fixed">
-            <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>
-            </h5>
-            <a href="#menu-panel" data-icon="gear" class="ui-btn-right ui-shadow ui-corner-all ui-btn-inline ui-mini">
-                My Account
-            </a>
+            <h4>Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a></h4>
         </footer>
     </section>
     <script src="../lib/json/json3.min.js"></script>

@@ -1,6 +1,7 @@
 namespace Kharbga {
     export class GameInfo {
         public id: string;
+        public isNetworkGame: boolean;
         public createdBy: string;
         public createdOn: Date;
         public state: GameState;
@@ -37,6 +38,7 @@ namespace Kharbga {
             this.defender = new Defender();
             this.attacker= new Attacker();
             this.players = [this.attacker,this.defender];
+            this.isNetworkGame = false;
 
         }
         public update(gameInfo: GameInfo): void {
@@ -54,6 +56,7 @@ namespace Kharbga {
             this.defender = gameInfo.defender;
             this.players = [this.attacker,this.defender];
             this.nextMoveNumber = gameInfo.nextMoveNumber;
+            this.isNetworkGame = gameInfo.isNetworkGame;
         }
         public getComputerPlayer(): Player {
             if (this.attacker !== null && this.attacker.isSystem === true) {

@@ -35,7 +35,8 @@ namespace Kharbga {
         /* @summary - This state happens after the first move by the defender.
          * It is a legal state and the attacker loses the game
          * in most cases. In this legal case, the defender can freely move their pieces until the
-         *  attacker is unblocked and is able to play.
+         *  attacker is unblocked and is able to play. But, they may choose to just request pay up. 
+         * This is why this is an automatic loss for the attacker
          */
         AttackerCanNotMove,
 

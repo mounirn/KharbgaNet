@@ -536,12 +536,22 @@ var Kharbga;
             if (uc == null) {
                 return false;
             }
+            if (uc.isOccupiedByDefender() === false) {
+                return false;
+            }
             var ac1 = this.getCellById(attackerPiece1Id);
             if (ac1 == null) {
                 return false;
             }
+            // check if cell is occupied by attacker pience
+            if (ac1.isOccupiedByAttacker() === false) {
+                return false;
+            }
             var ac2 = this.getCellById(attackerPiece2Id);
             if (ac2 == null) {
+                return false;
+            }
+            if (ac2.isOccupiedByAttacker() === false) {
                 return false;
             }
             if (ac1 === ac2) {
@@ -1020,6 +1030,161 @@ var Kharbga;
     }());
     Kharbga.BoardEventData = BoardEventData;
 })(Kharbga || (Kharbga = {}));
+var Kharbga;
+(function (Kharbga) {
+    var ComputerPlayer = (function () {
+        function ComputerPlayer() {
+        }
+        ComputerPlayer.prototype.generateSetting = function (aGame, playOptions) {
+            var ret = new Kharbga.AnalysedGameMove();
+            var settings = [];
+            var currentPlayer = aGame.getCurrentPlayer();
+            if (currentPlayer === null) {
+                ret.ok = false;
+                ret.error = "Unknown current player";
+                return ret;
+            }
+            if (playOptions.firstSettingMustIncludeMalhaAdjacent &&
+                currentPlayer.score === 0 && currentPlayer.isAttacker) {
+                settings = aGame.settings_near_malha(); // possible cells adjacent to Malha if first setting
+            }
+            else {
+                var settingNearOpponent = aGame.settings_near_opponent();
+                if (currentPlayer.isAttacker) {
+                    // check if settings includes any of these and prefer to set on these
+                    var settings2 = aGame.settings_near_malha();
+                    for (var si = 0; si < settings2.length; si++) {
+                        if (settingNearOpponent.indexOf(settings2[si]) > 0) {
+                            settings.push(settings2[si]);
+                        }
+                    }
+                }
+                if (settings.length === 0) {
+                    var settings3 = ["d1", "e1", "c1", "a5", "a4", "a3", "c7", "d7",
+                        "e7", "g5", "g4", "g3", "b5", "c6", "b3", "c2", "e2", "f3", "e6", "f5"];
+                    // check if settings includes any of these and prefer to set on these
+                    for (var si3 = 0; si3 < settings3.length; si3++) {
+                        if (settingNearOpponent.indexOf(settings3[si3]) > 0) {
+                            settings.push(settings3[si3]);
+                        }
+                    }
+                    if (settings.length === 0) {
+                        settings = settingNearOpponent;
+                    }
+                }
+            }
+            if (settings.length === 0) {
+                settings = aGame.settings();
+            }
+            // no setting case
+            if (settings == null || settings.length <= 0) {
+                ret.error = "Unable to find any more settings";
+                ret.possible = 0;
+                return ret;
+            }
+            ret.from = "spare";
+            if (playOptions.randomSetting) {
+                var settingId = this.getRandom(0, settings.length - 1);
+                ret.to = settings[settingId];
+            }
+            else {
+                ret.to = settings[0];
+            }
+            ret.possible = settings.length;
+            ret.possibleSettings = settings;
+            ret.ok = true;
+            return ret;
+        };
+        ComputerPlayer.prototype.generateMove = function (aGame, playOptions) {
+            if (aGame == null) {
+                return new Kharbga.AnalysedGameMove("", "", false, "Invalid Game");
+            }
+            if (aGame.is_in_setting_state()) {
+                return this.generateSetting(aGame, playOptions);
+            }
+            if (aGame.is_in_moving_state() === false) {
+                return new Kharbga.AnalysedGameMove("", "", false, "Game is not in a valid state: " + aGame.state);
+            }
+            var ret = new Kharbga.AnalysedGameMove("", "", true, "");
+            var moves = null;
+            if (playOptions.searchMovesThatCaptureOpponent) {
+                moves = aGame.moves_that_capture(aGame.moveSourceRequired);
+            }
+            if (playOptions.searchMovesThatSaveSelf) {
+                var movesThatSave = aGame.moves_that_save(aGame.moveSourceRequired);
+                if (playOptions.preferMovesThatCaptureOverMovesThatSave === false && movesThatSave.length > 0) {
+                    moves = movesThatSave;
+                }
+            }
+            if (moves == null || moves.length === 0) {
+                moves = aGame.moves_unreachables(aGame.moveSourceRequired);
+                if (moves != null && moves.length > 0) {
+                    ret.exchangeRequest = true;
+                }
+            }
+            if (moves == null || moves.length === 0) {
+                moves = aGame.moves(aGame.moveSourceRequired); // returns all possible moves
+                ret.possible = moves.length;
+            }
+            if (moves == null || moves.length <= 0) {
+                // if computer can not play -- resign or pass
+                ret.ok = false;
+                ret.error = "no moves found";
+                ret.possible = 0;
+                return ret;
+            }
+            var moveId = 0;
+            if (aGame.moveSourceRequired != null && aGame.moveSourceRequired.length > 0) {
+                for (var item = 0; item < moves.length; item++) {
+                    if (moves[item].from === aGame.moveSourceRequired) {
+                        moveId = item;
+                        break;
+                    }
+                }
+            }
+            else {
+                if (playOptions.randomMove) {
+                    moveId = this.getRandom(0, moves.length - 1);
+                }
+            }
+            // todo -- add check for game to rank the moves by score and play the one with the highest score
+            var move = moves[moveId];
+            ret.from = move.from;
+            ret.to = move.to;
+            ret.ok = true;
+            ret.possible = moves.length;
+            ret.possibleMoves = moves;
+            //  logMessage("Game Move generated: ");
+            //  logObject(gameMove);
+            //   displayComputerMessage("Generated computer move: " + gameMove.from + "-" + gameMove.to);
+        };
+        /**
+         * @summary returns a random number from the given range
+         * @param {any} lower - range start
+         * @param {any} upper - range to
+         */
+        ComputerPlayer.prototype.getRandom = function (lower, upper) {
+            // https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+            var percent = (Math.random() * 100);
+            // this will return number between 0-99 because Math.random returns decimal number from 0-0.9929292 something like that
+            // now you have a percentage, use it find out the number between your INTERVAL :upper-lower
+            var num = ((percent * (upper - lower) / 100));
+            // num will now have a number that falls in your INTERVAL simple maths
+            num += lower;
+            // add lower to make it fall in your INTERVAL
+            // but num is still in decimal
+            // use Math.floor>downward to its nearest integer you won't get upper value ever
+            // use Math.ceil>upward to its nearest integer upper value is possible
+            // math.round>to its nearest integer 2.4>2 2.5>3   both lower and upper value possible
+            // console.log("upper: %s,lower: %s, num: %s, floor num: %s, ceil num: %s,
+            // round num: %s", lower, upper, num, Math.floor(num), Math.ceil(num), Math.round(num));
+            return Math.floor(num);
+        };
+        return ComputerPlayer;
+    }());
+    ComputerPlayer.SETTINGS_NEAR_MALHA = ["c4", "e4", "d3", "d5"];
+    Kharbga.ComputerPlayer = ComputerPlayer;
+})(Kharbga || (Kharbga = {}));
 // https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
 var Kharbga;
 // https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
@@ -1160,7 +1325,7 @@ var Kharbga;
             this.attackerMove = 0; // not really used
             this.defenderMove = 0; // not really used
             // transitional state
-            this.moveSourceRequiredAfterCapture = ""; // the source piece required after a capture
+            this.moveSourceRequired = ""; // the source piece required after a capture
             this.moveDestinationsPossibleCapture = null; // the possible destinations to capture
             this.firstMove = true;
             this.thinkingTimerId = -1;
@@ -1218,6 +1383,7 @@ var Kharbga;
             this.winner = null;
             this.currentPlayer = this.attacker;
             this.history.reset();
+            this.moveFlags.reset();
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -1338,11 +1504,10 @@ var Kharbga;
          */
         Game.prototype.settings_near_malha = function () {
             var ret = new Array();
-            var nearMalha = ["c4", "e4", "d3", "d5"];
-            for (var i = 0; i < nearMalha.length; i++) {
-                var cell = this.board.getCellById(nearMalha[i]);
+            for (var i = 0; i < Kharbga.ComputerPlayer.SETTINGS_NEAR_MALHA.length; i++) {
+                var cell = this.board.getCellById(Kharbga.ComputerPlayer.SETTINGS_NEAR_MALHA[i]);
                 if (cell.isEmpty()) {
-                    ret.push(nearMalha[i]);
+                    ret.push(Kharbga.ComputerPlayer.SETTINGS_NEAR_MALHA[i]);
                 }
             }
             return ret;
@@ -1641,19 +1806,13 @@ var Kharbga;
             this.CheckScores();
         };
         /**
-         * @summary Checks if a specific piece is required to be moved
-         */
-        Game.prototype.move_source_required = function () {
-            return this.moveSourceRequiredAfterCapture;
-        };
-        /**
          * @summary checks if the given destination is valid for the required piece
          * @param dest - the id of the cell moving to
          * @returns true if a valid destination, false otherwise
          */
         Game.prototype.checkMoveSourceRequiredAndValidDestinations = function (dest) {
-            if (this.moveDestinationsPossibleCapture == null || this.moveSourceRequiredAfterCapture == null ||
-                this.moveSourceRequiredAfterCapture.length === 0) {
+            if (this.moveDestinationsPossibleCapture == null || this.moveSourceRequired == null ||
+                this.moveSourceRequired.length === 0) {
                 return true;
             }
             if (this.moveDestinationsPossibleCapture.indexOf(dest) >= 0) {
@@ -1818,12 +1977,12 @@ var Kharbga;
                         eventData.targetCellId = toCellId;
                         this.gameEvents.newMoveCompletedEvent(eventData);
                         this.moveDestinationsPossibleCapture = null;
-                        this.moveSourceRequiredAfterCapture = "";
+                        this.moveSourceRequired = "";
                         this.checkPlayerTurn();
                     }
                     else {
                         eventData.targetCellId = toCell.id;
-                        this.moveSourceRequiredAfterCapture = toCell.id;
+                        this.moveSourceRequired = toCell.id;
                         this.moveDestinationsPossibleCapture = stillHavePiecesToCaptureResult.possibleMoves;
                         // add event that player should continue to play since they could still capture
                         this.gameEvents.newMoveCompletedContinueSamePlayerEvent(eventData);
@@ -1875,7 +2034,7 @@ var Kharbga;
             else {
                 this.currentPlayer = this.attacker;
             }
-            this.moveSourceRequiredAfterCapture = "";
+            this.moveSourceRequired = "";
             this.moveDestinationsPossibleCapture = null;
             var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
             // check if the player can actually move
@@ -1959,11 +2118,20 @@ var Kharbga;
                 // add check to see if it is OK for the player to pass
                 if (this.currentPlayer.isAttacker) {
                     this.currentPlayer = this.defender;
+                    if (this.moveFlags.exchangeRequest === true) {
+                        // defender is requesting to pay up, but attacker can not move
+                        this.winner = this.defender;
+                        var eventDataDone = new Kharbga.GameEventData(this, this.winner);
+                        this.state = Kharbga.GameState.AttackerCanNotMove;
+                        this.setGameDone();
+                        this.gameEvents.winnerDeclaredEvent(eventDataDone);
+                    }
+                    return;
                 }
                 else {
                     this.currentPlayer = this.attacker;
                 }
-                var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
+                var eventData = new Kharbga.GameEventData(this, this.currentPlayer);
                 this.gameEvents.newPlayerTurnEvent(eventData);
             }
             return bCanPass;
@@ -2115,6 +2283,9 @@ var Kharbga;
                                 this.moveFlags.reset();
                                 return;
                             }
+                            else {
+                                this.gameEvents.untouchableExchangeCanceledEvent(eventData);
+                            }
                         }
                     }
                 }
@@ -2265,6 +2436,7 @@ var Kharbga;
             this.defender = new Kharbga.Defender();
             this.attacker = new Kharbga.Attacker();
             this.players = [this.attacker, this.defender];
+            this.isNetworkGame = false;
         };
         GameInfo.prototype.update = function (gameInfo) {
             if (gameInfo == null || gameInfo === this) {
@@ -2282,6 +2454,7 @@ var Kharbga;
             this.defender = gameInfo.defender;
             this.players = [this.attacker, this.defender];
             this.nextMoveNumber = gameInfo.nextMoveNumber;
+            this.isNetworkGame = gameInfo.isNetworkGame;
         };
         GameInfo.prototype.getComputerPlayer = function () {
             if (this.attacker !== null && this.attacker.isSystem === true) {
@@ -2330,12 +2503,31 @@ var Kharbga;
             this.playerName = "";
             this.flags = new Kharbga.GameMoveFlags();
         }
-        GameMove.prototype.copy = function (flags) {
+        GameMove.prototype.copyFlags = function (flags) {
             this.flags.copy(flags);
         };
         return GameMove;
     }());
     Kharbga.GameMove = GameMove;
+    /**
+     * @summary represents a move that is generated by the computer and is analysed for possible captures or
+     * moves
+     */
+    var AnalysedGameMove = (function () {
+        function AnalysedGameMove(from, to, ok, error) {
+            if (from === void 0) { from = ""; }
+            if (to === void 0) { to = ""; }
+            if (ok === void 0) { ok = false; }
+            if (error === void 0) { error = ""; }
+            this.from = from;
+            this.to = to;
+            this.ok = ok;
+            this.error = error;
+            this.possible = 0;
+        }
+        return AnalysedGameMove;
+    }());
+    Kharbga.AnalysedGameMove = AnalysedGameMove;
 })(Kharbga || (Kharbga = {}));
 var Kharbga;
 (function (Kharbga) {
@@ -2411,7 +2603,8 @@ var Kharbga;
         /* @summary - This state happens after the first move by the defender.
          * It is a legal state and the attacker loses the game
          * in most cases. In this legal case, the defender can freely move their pieces until the
-         *  attacker is unblocked and is able to play.
+         *  attacker is unblocked and is able to play. But, they may choose to just request pay up.
+         * This is why this is an automatic loss for the attacker
          */
         GameState[GameState["AttackerCanNotMove"] = 5] = "AttackerCanNotMove";
         /* After completing setting, this game goes to this state for players to start the first moves
@@ -2466,12 +2659,18 @@ var Kharbga;
      */
     var Player = (function () {
         function Player(isComputer, isAttacker, isSpectator) {
+            if (isComputer === void 0) { isComputer = false; }
+            if (isAttacker === void 0) { isAttacker = true; }
+            if (isSpectator === void 0) { isSpectator = false; }
             this.totalTimeThinkingSinceStartOfGame = 0;
             this.isAttacker = isAttacker;
             this.isSystem = isComputer;
             this.isSpectator = isSpectator;
             this.score = 0;
             this.totalTimeThinkingSinceStartOfGame = 0;
+            this.color = "";
+            this.emailAddress = "";
+            this.imageUrl = "";
         }
         Player.prototype.reset = function () {
             this.totalTimeThinkingSinceStartOfGame = 0;
@@ -2500,7 +2699,9 @@ var Kharbga;
     var Defender = (function (_super) {
         __extends(Defender, _super);
         function Defender() {
-            return _super.call(this, false, false, false) || this;
+            var _this = _super.call(this, false, false, false) || this;
+            _this.name = "Defender";
+            return _this;
         }
         return Defender;
     }(Player));
