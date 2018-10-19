@@ -24,11 +24,18 @@
 <body>
     <section data-role="page" id="first" data-theme="a">
         <header data-role="header" data-position="fixed" class="text-center">
-            <img src="../img/kharbga.png" style="max-height:25px;padding-top:10px;">
-            <a href="#account-panel" data-icon="user" class="ui-btn-right">
-                <span id="account-welcome">Welcome</span>
-            </a>
-
+            <div style="padding-top:10px">
+                <a target="rules" href="../html/rules.html">
+                    <img src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
+                </a>
+                <div id="login-li">
+                    <a id="login-link-v3" href="#login-popup" data-rel="popup" data-position-to="window" data-icon="user" class="ui-btn-right">
+                        <span class="glyphicon glyphicon-log-in"></span>Login</a>
+                </div>
+                <div id="logout-li">
+                    <a id="logout-link" href="#logout" data-icon="user" class="ui-btn-right"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
+                </div>
+            </div>
             <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">Play / Watch
             </a>
 
@@ -89,14 +96,7 @@
                 <div class="panel panel-info">
                     <div class="panel-heading ui-bar ui-bar-b">My Account</div>
                     <div class="panel-body ui-body">
-                        <p id="login-li">
-                            <a id="login-link-v3" href="#login-popup" data-rel="popup" data-position-to="window">
-                                <span class="glyphicon glyphicon-log-in"></span> Login</a>
-                        </p>
-                        <p id="logout-li">
 
-                            <br><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
-                        </p>
                         <p>If this is your first time here, please click <a href="../html/rules.html">here
                                 to learn about the game.</a></p>
                         <p>
@@ -171,6 +171,9 @@
                     <div class="panel-heading ui-bar ui-bar-a small" style="font-size:small">
                         Board - Turn: <span id="player-turn" class="badge"></span>
                     </div>
+                    <a href="#account-panel" xdata-icon="user" xclass="ui-btn-right">
+                        <span id="account-welcome">Welcome</span>
+                    </a>
                     <div class="message" id="message" class=""></div>
                     <div class="panel-body ">
                         <!-- The Board -->
@@ -465,9 +468,6 @@
         <footer data-role="footer" data-position="fixed">
             <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>
             </h5>
-            <a href="#menu-panel" data-icon="gear" class="ui-btn-right ui-shadow ui-corner-all ui-btn-inline ui-mini">
-                My Account
-            </a>
         </footer>
     </section>
     <script src="../lib/json/json3.min.js"></script>
