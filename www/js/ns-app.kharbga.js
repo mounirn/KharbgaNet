@@ -1329,7 +1329,7 @@ var KharbgaApp = function () {
         }
         setupResignCheckbox();
 
-        resizeGame();
+        $(window).trigger('resize');
 
     }
 

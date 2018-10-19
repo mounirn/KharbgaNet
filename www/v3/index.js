@@ -14,7 +14,7 @@ $.nsAppViewModel = {};
 $(document).ready(function(){
     $('#start-game-with-options').on('click',function(e){
         var options = {
-            asAttacker: $('#as-attacker-checkbox').is(':checked'),
+            asAttacker: $('#play-as-attacker').is(':checked'),
             againstComputer: $('#player-two-computer').is(':checked'),
             overTheNetwork: $('#over-the-network-game').is(':checked'),     
             secondPlayerName: 'Guest II',

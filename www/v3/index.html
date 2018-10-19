@@ -25,22 +25,29 @@
     <section data-role="page" id="first" data-theme="a">
         <header data-role="header" data-position="fixed" class="text-center">
             <img src="../img/kharbga.png" style="max-height:25px;padding-top:10px;">
-            <a href="#menu-panel" data-icon="user" class="ui-btn-right">
+            <a href="#account-panel" data-icon="user" class="ui-btn-right">
                 <span id="account-welcome">Welcome</span>
             </a>
-            <div data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-mini ui-btn-left">
-                <a href="#popup-menu" data-icon="plus" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn ui-mini ui-btn-icon-plus ui-icon-left ui-shadow ui-corner-all ui-btn-inline">New Game</a>
-                <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch</a>
-            </div>
+
+            <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">Play / Watch
+            </a>
+
+        </header>
+        <article role="main" class="ui-content">
             <div id="popup-menu" data-role="popup">
+
                 <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
                     New Game Options
                 </div>
                 <ul data-role="listview" data-inset="true">
                     <li>
-                        <label>
-                            <input id="as-attacker-checkbox" data-mini="true"type="checkbox" checked />I would like to play as Attacker
-                        </label>
+                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+
+                            <label for="play-as-attacker">Play as Attacker</label>
+                            <input type="radio" name="radioPlayRole" id="play-as-attacker" checked/>
+                            <label for="play-as-defender">as Defender</label>
+                            <input type="radio" name="radioPlayRole" id="play-as-defender" />
+                        </fieldset>
                     </li>
                     <li>
                         <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
@@ -73,10 +80,10 @@
                         </ul>
                     </li>
                 </ul>
+
             </div>
-        </header>
-        <article role="main" class="ui-content">
-            <div id="menu-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
+            <div id="account-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
+
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
                 <div class="panel panel-info">
@@ -129,7 +136,7 @@
                     </p>
                 </div>
             </div>
-            <div id="play-watch-section" data-role="panel" data-position="left" data-display="overlay" data-theme="a">
+            <div id="play-watch-section" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
                 <div class="panel panel-info">
@@ -289,7 +296,9 @@
                 </div>
                 <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">
                     <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
-                        <h3>Network Messages</h3>
+                        <h3>Game Network</h3>
+                        <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
                     </div>
                     <div id="net-message"></div>
                     <div class="panel-body ui-body">
