@@ -1032,6 +1032,27 @@ var Kharbga;
 })(Kharbga || (Kharbga = {}));
 var Kharbga;
 (function (Kharbga) {
+    /**
+     * @summary Defines various move error cases
+     */
+    var BoardMoveType;
+    (function (BoardMoveType) {
+        BoardMoveType[BoardMoveType["SettingOnValidCell"] = 0] = "SettingOnValidCell";
+        BoardMoveType[BoardMoveType["SettingOnOccupiedCell"] = 1] = "SettingOnOccupiedCell";
+        BoardMoveType[BoardMoveType["SettingOnMiddleCell"] = 2] = "SettingOnMiddleCell";
+        BoardMoveType[BoardMoveType["SelectedCellThatIsSurroundedForMoving"] = 3] = "SelectedCellThatIsSurroundedForMoving";
+        BoardMoveType[BoardMoveType["SelectedEmptyOrOpponentPieceForMoving"] = 4] = "SelectedEmptyOrOpponentPieceForMoving";
+        BoardMoveType[BoardMoveType["MovingToAnOccupiedCell"] = 5] = "MovingToAnOccupiedCell";
+        BoardMoveType[BoardMoveType["MovingToNotAdjacentCell"] = 6] = "MovingToNotAdjacentCell";
+        BoardMoveType[BoardMoveType["MovedToAValidCell"] = 7] = "MovedToAValidCell";
+        BoardMoveType[BoardMoveType["OpponentPieceCaptured"] = 8] = "OpponentPieceCaptured";
+        BoardMoveType[BoardMoveType["InvalidCellId"] = 9] = "InvalidCellId";
+        BoardMoveType[BoardMoveType["DefenderPieceExchanged"] = 10] = "DefenderPieceExchanged";
+        BoardMoveType[BoardMoveType["AttackerPieceExchanged"] = 11] = "AttackerPieceExchanged";
+    })(BoardMoveType = Kharbga.BoardMoveType || (Kharbga.BoardMoveType = {}));
+})(Kharbga || (Kharbga = {}));
+var Kharbga;
+(function (Kharbga) {
     var ComputerPlayer = (function () {
         function ComputerPlayer() {
         }
@@ -1242,24 +1263,6 @@ var Kharbga;
         BoardCellState[BoardCellState["OccupiedByDefender"] = 2] = "OccupiedByDefender";
         BoardCellState[BoardCellState["OccupiedByDefenderRequestingTwo"] = 3] = "OccupiedByDefenderRequestingTwo";
     })(BoardCellState = Kharbga.BoardCellState || (Kharbga.BoardCellState = {}));
-    /**
-     * @summary Defines various move error cases
-     */
-    var BoardMoveType;
-    (function (BoardMoveType) {
-        BoardMoveType[BoardMoveType["SettingOnValidCell"] = 0] = "SettingOnValidCell";
-        BoardMoveType[BoardMoveType["SettingOnOccupiedCell"] = 1] = "SettingOnOccupiedCell";
-        BoardMoveType[BoardMoveType["SettingOnMiddleCell"] = 2] = "SettingOnMiddleCell";
-        BoardMoveType[BoardMoveType["SelectedCellThatIsSurroundedForMoving"] = 3] = "SelectedCellThatIsSurroundedForMoving";
-        BoardMoveType[BoardMoveType["SelectedEmptyOrOpponentPieceForMoving"] = 4] = "SelectedEmptyOrOpponentPieceForMoving";
-        BoardMoveType[BoardMoveType["MovingToAnOccupiedCell"] = 5] = "MovingToAnOccupiedCell";
-        BoardMoveType[BoardMoveType["MovingToNotAdjacentCell"] = 6] = "MovingToNotAdjacentCell";
-        BoardMoveType[BoardMoveType["MovedToAValidCell"] = 7] = "MovedToAValidCell";
-        BoardMoveType[BoardMoveType["OpponentPieceCaptured"] = 8] = "OpponentPieceCaptured";
-        BoardMoveType[BoardMoveType["InvalidCellId"] = 9] = "InvalidCellId";
-        BoardMoveType[BoardMoveType["DefenderPieceExchanged"] = 10] = "DefenderPieceExchanged";
-        BoardMoveType[BoardMoveType["AttackerPieceExchanged"] = 11] = "AttackerPieceExchanged";
-    })(BoardMoveType = Kharbga.BoardMoveType || (Kharbga.BoardMoveType = {}));
     /**
      * @summary Defines piece states   -- this is now obsolete
      */

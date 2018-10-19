@@ -483,7 +483,8 @@ var KharbgaApp = function () {
         console.log("%s - board event: onInvalidMove - target: %s - type : %s ",
             getLoggingNow(), eventData.targetCellId, Kharbga.BoardMoveType[eventData.type]);
 
-        $('#message').html("<div class='alert alert-danger'>Invalid Move " + Kharbga.BoardMoveType[eventData.type] +" </div>");
+        $('#message').html("<div class='alert alert-danger'>Invalid Move: " + 
+        toDisplayString(Kharbga.BoardMoveType[eventData.type]) +" </div>");
     }
 
     function onValidMove(eventData) {
@@ -1331,6 +1332,8 @@ var KharbgaApp = function () {
 
         $(window).trigger('resize');
 
+        resizeGame();
+
     }
 
     /**
@@ -1780,8 +1783,8 @@ var KharbgaApp = function () {
         if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
             accountTab.tab('show');  
 
-         $('#login-panel').show().removeClass('hidden');
-         $('#register-panel').hide().addClass('hidden');
+        // $('#login-panel').show().removeClass('hidden');
+        // $('#register-panel').hide().addClass('hidden');
     }
     /**
      * Handler for register click from UI
@@ -1794,8 +1797,8 @@ var KharbgaApp = function () {
         if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
             accountTab.tab('show');
 
-        $('#login-panel').hide().addClass('hidden');
-        $('#register-panel').show().removeClass('hidden');
+      //  $('#login-panel').hide().addClass('hidden');
+       // $('#register-panel').show().removeClass('hidden');
     }
 
  
@@ -1826,11 +1829,12 @@ var KharbgaApp = function () {
                 $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");                    
                 console.log(data);
                 setupClientStateWithSession(data.object);           
+                if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
+                    $.appViewHandler.closeLoginPanel();
 
                 // check the last game 
                 rejoinLastGameIfAny();
-                if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
-                    $.appViewHandler.closeLoginPanel();
+               
             }
             else {
                 setupClientStateWithSession(null);
@@ -2137,14 +2141,14 @@ var KharbgaApp = function () {
 
             $('#logout-li').show().removeClass('hidden');
 
-            $('#login-panel').hide().addClass('hidden');
-            $('#register-panel').hide().addClass('hidden');
-
+        //    $('#login-panel').hide().addClass('hidden');
+        //    $('#register-panel').hide().addClass('hidden');
+            displaySuccessMessage("Signed In");
       
 
         } else {
-            $('#login-panel').show().removeClass('hidden');
-            $('#register-panel').hide().addClass('hidden');
+          //  $('#login-panel').show().removeClass('hidden');
+          //  $('#register-panel').hide().addClass('hidden');
             $('#account-info-panel').hide().addClass('hidden');
 
             $('#account-welcome').hide().addClass('hidden');
@@ -2152,6 +2156,8 @@ var KharbgaApp = function () {
             $('#login-li').show().removeClass('hidden');
             $('#register-li').show().removeClass('hidden');
             $('#logout-li').hide().addClass('hidden');
+
+            displayWarningMessage("Signed Out");
         }
         $('#account-name').text(user.name);
        // $('#account-org-id').text(appClientState.session.ClientId);
@@ -2172,29 +2178,30 @@ var KharbgaApp = function () {
      */
     function rejoinLastGameIfAny() {
 
-        if (!appClientState.signalReInitialized){
-            // try to start it again
-            _setupSignalR();
-            
-            
-            setTimeout(rejoinLastGameIfAny,5000);
-            return;
-        }
-      
-        // check local active game cookie
-        var gid = getLastGameCookie();
-        setupGames(gid);
-      
-        if (gid != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
-            displayNetMessage("Joining previous game - id: " + gid);
-        //    gamesHubProxy.server.reJoinGame(user.name, gid, false);
-            // tell the server to rejoin this connection with the game
-            gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false).done(function(){
-                displayNetMessage("Done joining previous game - id: " + gid);
-            });
+        if (appClientState.useServer === true){
+            if (!appClientState.signalReInitialized){
+                // try to start it again
+                _setupSignalR();
+                
+                
+                setTimeout(rejoinLastGameIfAny,5000);
+                return;
+            }
+        
+            // check local active game cookie
+            var gid = getLastGameCookie();
+            setupGames(gid);
+        
+            if (gid != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
+                displayNetMessage("Joining previous game - id: " + gid);
+            //    gamesHubProxy.server.reJoinGame(user.name, gid, false);
+                // tell the server to rejoin this connection with the game
+                gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false).done(function(){
+                    displayNetMessage("Done joining previous game - id: " + gid);
+                });
+            }
         }
         else{
-            // check local saved game
             loadGame();
         }
 
@@ -3496,6 +3503,8 @@ var KharbgaApp = function () {
                     // moves the setup of the games on startup at the end of the checking session process
                     displayNetMessage("Connected");
                     $("#signalr-status").html("<div class='alert alert-success'>Connected</div>");
+
+                    resizeGame();
 
                     // check if we got a game to rejoin and refresh the active games
                     rejoinLastGameIfAny();
