@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kharbga.Net - Login</title>
+    <title>Kharbga.Net - Register</title>
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <!-- Compressed CSS -->
     <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
@@ -36,8 +36,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li id="login-li"><a id="xlogin-link" href="../html/login.html"><span class="glyphicon glyphicon-log-in"></span>
                                 Login</a></li>
-                        <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>
-                                Logout</a></li>
+
                     </ul>
                     <p id="account-welcome" class="navbar-text navbar-right text-success"></p>
                 </div>
@@ -103,63 +102,6 @@
                     </form>
                 </div>
             </div>
-            <div id="account-info-panel" class="panel panel-info hidden">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <strong>My Account</strong>
-
-                        <div class="pull-right">
-                            <a href="#" id="account-link" value="user">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-user-information">
-                            <tbody>
-                                <tr>
-                                    <td>Name:</td>
-                                    <td><span id="account-name"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>Session Id</td>
-                                    <td><span id="account-session-id"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>Active Game ID</td>
-                                    <td><span id="account-game-id"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>Role</td>
-                                    <td><span id="account-game-role"></span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table id="user-info-table" class="table table-striped">
-                            <tbody id="user-info-table-body">
-
-                            </tbody>
-                        </table>
-                        <div id="settings" class="panel panel-info">
-                            <div class="panel-heading">
-                                Settings
-                            </div>
-                            <div class="panel-body">
-                                <div class="checkbox">
-                                    <label>
-                                        <input id="use-server-checkbox" type="checkbox" /> Use Server
-                                    </label>
-                                    <label>
-                                        <input id="play-on-same-computer-checkbox" type="checkbox" />Both players play on this board
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
         </div>
     </div>
     <footer>
@@ -200,7 +142,7 @@
         <hr />
     </footer>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <script src="../lib/json/json3.min.js"></script>
     <script src="../lib/jquery/jquery.min.js"></script>
     <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
 
@@ -208,36 +150,20 @@
     <script src="../js/additional-methods.js"></script>
 
     <script src="../jsconfig/env.js"></script>
-    <script src="../js/jquery.signalR-2.3.0.js"></script>
-
-
-    <script>
-        var scriptToLoad = window.__env.baseURI + "signalR/hubs";
-        console.log("loading: " + scriptToLoad);
-        var signalRElement = document.createElement('script');
-        signalRElement.setAttribute('src', scriptToLoad);
-        document.body.appendChild(signalRElement)
-        console.log("loading: " + scriptToLoad);
-    </script>
 
     <!-- convert to the real URL-->
     <script src="../js/moment.min.js"></script>
 
-    <script src="../js/kharbga-ui.js"></script>
-    <script src="../js/kharbga.js"></script>
+    <!-- -->
+    <script src="../js/ns-app-utils.js"></script>
     <script src="../js/ns-api-client.js"></script>
-    <!-- compiled TS-->
-    <script src="../js/ns-app.kharbga.js"></script>
+    <script src="../js/ns-app-user.js"></script>
+
 
     <script type="text/javascript">
         //<![CDATA[
         $(document).ready(function() {
-
-            var kApp = new KharbgaApp();
-            // sets the client state based on any previous session or game 
-            kApp.setup();
-
-            $('#register-link').click();
+            $.nsApp.setup();
         });
 
         //]]>
