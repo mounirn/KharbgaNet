@@ -7,8 +7,8 @@ namespace Kharbga {
         id: string;         // the game id
         state: GameState;   // the game state as defined above
         private board: Board;       // represents the game board
-        startTime: Date;    // start time
-        endTime: Date;      // end time
+        startTime: number;    // start time
+        endTime: number;      // end time
         attacker: Attacker = new Attacker(); // represents the attacker
         defender: Defender = new Defender(); // represents the defender
         spectators: Array<Player> = new Array<Player>(1);  // spectators if any
@@ -48,7 +48,7 @@ namespace Kharbga {
          */
         init(): void {
             this.id = "";
-            this.startTime = new Date();
+            this.startTime = new Date().getTime();
             this.attackerMove = 0;
             this.defenderMove = 0;
             this.currentPlayer = this.attacker;
@@ -78,7 +78,7 @@ namespace Kharbga {
         }
 
         private setGameDone(): void {
-            this.endTime = new Date();
+            this.endTime = new Date().getTime();
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -97,6 +97,8 @@ namespace Kharbga {
             this.currentPlayer = this.attacker;
             this.history.reset();
             this.moveFlags.reset();
+            this.startTime = 0;
+            this.endTime = 0;
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -567,16 +569,6 @@ namespace Kharbga {
         public getDefenderMoveNumber(): number { return this.defenderMove; }
 
         /**
-         * @returns the startup time of the game
-         */
-        public getStartTime(): Date { return this.startTime; }
-
-        /**
-         * @returns the end time of the game
-         */
-        public getEndTime(): Date { return this.endTime; }
-
-        /**
          * @summary Checks the time since the start of the game
          */
        // public TimeSpan timeSinceStartup { return DateTime.Now - _startTime; } }
@@ -586,6 +578,14 @@ namespace Kharbga {
          * @returns the game's winner
          */
         getWinner(): Player { return this.winner; }
+
+        /**
+         *  @summary calcualtes the 
+         *
+         */
+        getTotalPlayTime(): number {
+            return this.endTime - this.startTime;
+        }
 
         /**
          *  Returns the attacker
