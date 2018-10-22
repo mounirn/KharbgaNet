@@ -2543,7 +2543,7 @@ var KharbgaApp = function () {
         $('#game-result').html(toDisplayString(Kharbga.GameState[gameInfo.state]));
 
         if (appClientState.useServer === true){
-             updateGameInGameList(gameInfo);
+          //   updateGameInGameList(gameInfo);
         }
 
         if (game.winner != null){
