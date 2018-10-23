@@ -1,0 +1,131 @@
+.list-group-item {
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+
+/* issue with double scroll bars https://stackoverflow.com/questions/26159229/jquery-mobile-double-scrollbar-css */
+
+
+/* https://vanseodesign.com/css/vertical-centering/ */
+
+.parent {
+    display: table;
+}
+
+.child {
+    display: table-cell;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.center {
+    text-align: center;
+}
+
+.kharbga-grid .ui-block-a {
+    padding-right: 10px;
+    /* max-width: 280px; */
+}
+
+.kharbga-grid .ui-block-b {
+    padding-right: 10px;
+}
+
+
+/* stack all grids below 40em (340px) */
+
+@media all and (max-width: 419px) {
+    .kharbga-grid .ui-block-a,
+    .kharbga-grid .ui-block-b,
+    .kharbga-grid .ui-block-c {
+        width: 100%;
+        float: none;
+    }
+}
+
+@media all and (max-width: 720px) and (min-width:420px) {
+    .kharbga-grid.ui-grid-b .ui-block-a {
+        width: 40%;
+        /*max-width: 280px; */
+    }
+    .kharbga-grid.ui-grid-b .ui-block-b {
+        width: 60%;
+    }
+    .kharbga-grid.ui-grid-b .ui-block-c {
+        width: 100%;
+        float: none
+    }
+}
+
+@media all and (max-width: 420px) {
+    #board-frame {
+        min-width: 200px;
+    }
+}
+
+.board-grid {
+    font-weight: normal;
+    font-size: small;
+    /* max-width: 280px; */
+}
+
+th {
+    text-align: right;
+    font-size: small;
+}
+
+
+/* adding a widescreen breakpoint to adjust ratios 
+
+@media all and (min-width: 75em) {
+    .kharbga-grid.ui-grid-b .ui-block-a {
+        width: 25%;
+    }
+    .kharbga-grid.ui-grid-b .ui-block-b {
+        width: 25%;
+    }
+    .kharbga-grid.ui-grid-c .ui-block-c {
+        width: 50%;
+    }
+}
+*/
+
+
+/* end*/
+
+
+/* making panels part of the page on larger screen
+
+@media ( min-width: 35em) {
+    
+    .ui-panel-page-content-open.ui-panel-page-content-position-left {
+        margin-right: 17em;
+    }
+    .ui-panel-page-content-open.ui-panel-page-content-position-right {
+        margin-left: 17em;
+    }
+    .ui-panel-page-content-open {
+        width: auto;
+    }
+    
+    .ui-panel-dismiss {
+        display: none;
+    }
+   
+    .ui-panel-page-content-open.ui-panel-page-content-position-left.ui-panel-page-content-display-push {
+        margin-right: 17em;
+    }
+    .ui-panel-page-content-open.ui-panel-page-content-position-right.ui-panel-page-content-display-push {
+        margin-left: 17em;
+    }
+    .ui-panel-page-content-open.ui-panel-page-content-display-push {
+        width: auto;
+    }
+    .ui-panel-dismiss-display-push {
+        display: none;
+    }
+}
+ */

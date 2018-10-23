@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Kharbga</title>
+    <meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="../css/kharbga.css" />
+    <!-- <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css"> -->
+    <!-- <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile-1.4.5.min.css"> -->
+
+    <link rel="stylesheet" href="../css/themes/Kharbga2.min.css">
+    <link rel="stylesheet" href="../css/themes/jquery.mobile.icons.min.css">
+    <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile.structure-1.4.5.css">
+    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/site.css">
+    <link rel="stylesheet" href="./play.css">
+
+    <!--  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> -->
+    <script src="../lib/jquery/jquery-1.11.3.min.js"></script>
+    <script src="../lib/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+    <section data-role="page" id="first" data-theme="a">
+        <header data-role="header" data-position="fixed" class="text-center">
+            <div style="padding-top:10px">
+                <a target="rules" href="../html/rules.html">
+                    <img src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
+                </a>
+                <div id="login-li">
+                    <a id="login-link-v3" href="#login-popup" data-rel="popup" data-position-to="window" data-icon="user" class="ui-btn-right">
+                        <span class="glyphicon glyphicon-log-in"></span>Login</a>
+                </div>
+                <div id="logout-li">
+                    <a id="logout-link" href="#logout" data-icon="user" class="ui-btn-right"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
+                </div>
+            </div>
+            <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">Play / Watch
+            </a>
+
+        </header>
+        <article role="main" class="ui-content">
+            <div id="popup-menu" data-role="popup">
+
+                <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
+                    New Game Options
+                </div>
+                <ul data-role="listview" data-inset="true">
+                    <li>
+                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+
+                            <label for="play-as-attacker">Play as Attacker</label>
+                            <input type="radio" name="radioPlayRole" id="play-as-attacker" checked/>
+                            <label for="play-as-defender">as Defender</label>
+                            <input type="radio" name="radioPlayRole" id="play-as-defender" />
+                        </fieldset>
+                    </li>
+                    <li>
+                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                            <label for="player-two-person">with real player</label>
+                            <input type="radio" name="radioWithPersonOrComputer" id="player-two-person" />
+                            <label for="player-two-computer">or against computer</label>
+                            <input type="radio" name="radioWithPersonOrComputer" id="player-two-computer" checked/>
+                        </fieldset>
+                    </li>
+                    <li>
+                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                            <label for="over-the-network-game">over the network</label>
+                            <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
+                            <label for="local-game">local on this device</label>
+                            <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
+                        </fieldset>
+                    </li>
+
+                    <li>
+                        <button id="start-game-with-options">Start New Game</button>
+                    </li>
+                    <li><strong>Play with other network players - must be logged in</strong>
+                        <ul data-role="listview" data-inset="true">
+                            <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
+                            <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
+                            <!--      <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
+                                            system</a></li>
+                            <li><a id="new-game-defender-system" href="#play-defender-system">As Defender against
+                                            system</a></li>-->
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+            <div id="account-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
+
+                <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
+                <div class="panel panel-info">
+                    <div class="panel-heading ui-bar ui-bar-b"><a target="rules" href="../html/my-account.html">My Account</a></div>
+                    <div class="panel-body ui-body">
+
+                        <p>If this is your first time here, please click <a target="rules" href="../html/rules.html">here
+                                to learn about the game.</a></p>
+                        <p>
+                            This system provides a platform for learning and playing this fun board game from North Africa.
+                        </p>
+                        <figure class="center">
+                            <a href="#popup-menu" data-rel="popup">
+                                <img src="../img/players.png" style="width:90%;" class="img" title="Kharbga game played in the desert of North Africa">
+                            </a>
+                            <figcaption>
+                                <strong>Kharbga Game Played on a Sand Board in North Africa</strong>
+                            </figcaption>
+                        </figure>
+                        <p>
+                            Click here to <a href="#popup-menu" data-rel="popup">start a new game as Attacker or Defender</a> playing with the system or other players.</a>
+                        </p>
+                    </div>
+                    <div class="ui-bar ui-bar-c">Choose from the options below to learn more about this system.</div>
+                    <ul data-role="listview" data-inset="true">
+                        <li><a target="rules" href="../html/rules.html">Game Rules</a></li>
+                        <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
+                        <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
+                        <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="ui-body">
+                    <p>
+                        If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
+                    </p>
+                    <strong>Thank you!</strong>
+                    <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
+                    <p class="center">
+                        <hr>
+                        <a href="#" class="center" data-rel="close">Close</a></p>
+                    <hr>
+                    </p>
+                </div>
+            </div>
+            <div id="play-watch-section" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
+                <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
+                <div class="panel panel-info">
+                    <div class="ui-bar ui-bar-b">
+                        </a> Active Games
+                    </div>
+                </div>
+                <div class="text-center center ui-body ui-body-b">
+                    <a id="games-link" href="#" class="glyphicon glyphicon-refresh ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-refresh ui-btn-icon-notext ui-btn-left">Refresh
+                    <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
+                    <ul id="games-list" data-role="listview" data-inset="true" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                    </ul>
+                </div>
+                <div class="center ui-bar ui-bar-c">
+                    <a href="#" data-rel="close">Close</a>
+                </div>
+
+            </div>
+            <!--   <div class="row kharbga-grid ui-grid-b">
+                <div class="ui-block-a">
+                    
+                </div>
+              
+                <div class="ui-block-c">
+
+                </div>
+            </div>  
+        -->
+
+            <div class="row ui-grid-b kharbga-grid">
+                <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
+                    <div class="panel-heading ui-bar ui-bar-a small" style="font-size:small">
+                        Board - Turn: <span id="player-turn" class="badge"></span>
+                    </div>
+                    <a href="#account-panel" xdata-icon="user" xclass="ui-btn-right">
+                        <span id="account-welcome">Welcome</span>
+                    </a>
+                    <div class="message" id="message" class=""></div>
+                    <div class="panel-body ">
+                        <!-- The Board -->
+                        <div id="board"></div>
+                    </div>
+                    <div class="">
+                        <label for="resign-checkbox" style="font-size:x-small"> To resign, check this move a solider
+                            <input id="resign-checkbox" type="checkbox" name="resign-checkbox" data-mini="true" class="">
+                        </label>
+                    </div>
+                    <div class="panel-footer ui-bar ui-bar-c small">
+                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" data-icon="recycle" value="Flip orientation">Flip</a>
+                        <a id="clear-board-button" data-mini="true" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-notext ui-btn-left ">Clear</a>
+                        <hr>
+                        <p class="text-center"> <span id="state" class="badge"></span></p>
+
+                    </div>
+                    <div class="row fieldset ui-grid-a">
+                        <div class="col-sm-2 col-xs-2 ui-block-a" style="width:20%">
+
+                            <audio id="sound" preload="auto">
+                                <source src="../img/button-26.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+                        <!--   <div class="col-sm-3 col-xs-3" >
+                        <a href='' data-ng-click="soundUp()" id="sound-up"><span class="glyphicon glyphicon-volume-up"></span></a>
+                        <a href='' data-ng-click="soundDown()" id="sound-down"><span class="glyphicon glyphicon-volume-down"></span></a>
+                    </div>-->
+                    </div>
+
+
+
+                </div>
+                <div class="col-sm-4 ui-block-b" xstyle="padding-top:70px;">
+                    <div class="panel-heading ui-bar ui-bar-a" style="font-size:small">
+                        Current Game Information
+                    </div>
+                    <div id="game-message" class=""></div>
+                    <div class="panel panel-success">
+                        <div class="panel-heading ui-bar ui-bar-b">
+                            <small>Game ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
+                        </div>
+                        <div class="panel-body">
+
+                            <table class="table table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%">
+                                            <a href='#' id="sound-toggle" title="mute/unmute sound">
+                                                <div id="sound-mute" class="unmute mute"></div>
+                                            </a>
+                                        </th>
+                                        <th style="width:35%" class="center">Attacker</th>
+                                        <th style="width:35%" class="center">Defender</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <th class="text-right">Name: </th>
+                                    <td class="center"><span class="attacker-name"></span> </td>
+                                    <td class="center"><span class="defender-name"></span> </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-right">Score: </th>
+                                    <td class="center"><span class="attacker-score"></span> </td>
+                                    <td class="center"><span class="defender-score"> </span> </td>
+                                </tr>
+                                <!--  
+                                <tr>
+                                    <th class="text-right">Settings: </th>
+                                    <td> <select id="attackerSettings" data-mini="true"> </select></td>
+                                    <td><select id="defenderSettings" data-mini="true"> </select></td>
+                                </tr>
+                                <tr>
+                                    <th class="text-right">Moves: </th>
+                                    <td><select id="attackerMoves" data-mini="true"> </select> </td>
+                                    <td><select id="defenderMoves" data-mini="true"> </select></td>
+                                </tr>
+                            -->
+                            </table>
+                            <p>
+                                <label class="text-info" for="current-game-status">Game Status: 
+                                    <span id="current-game-status" class="badge"></span>
+                                </label>
+                            </p>
+                            <p>
+                                <label class="text-info" for="gameMove">Last Action: 
+                                    <span id="gameMove" class="badge"></span> 
+                                </label>
+                            </p>
+                            <p style="font-size:xx-small">
+                                <label class="text-info" for="fen">FEN: 
+                                    <span id="fen" class="small" style="font-size:xx-small"></span>
+                                </label>
+                            </p>
+                            <hr>
+                            <div id="computer-message" class=""></div>
+                            <div id="game-moves-history">
+                                <div class="ui-bar ui-bar-c">
+                                    <strong>Moves History</strong>
+
+                                    <p class="text-center">
+                                        <a href='#' title="Go to beginning" id="play-beginning"><span class="glyphicon glyphicon-step-backward"></span></a>
+                                        <a href='#' title="Play back" id="play-backward"><span class="glyphicon glyphicon-backward"></span></a>
+                                        <a href='#' title="Start" id="play-start"><span class="glyphicon glyphicon-play"></span></a>
+                                        <a href='#' title="Pause" id="play-pause"><span class="glyphicon glyphicon-pause"></span></a>
+                                        <a href='#' title="Play forward" id="play-forward"><span class="glyphicon glyphicon-forward"></span></a>
+                                        <a href='#' title="Go to the end" id="play-end"><span class="glyphicon glyphicon-step-forward"></span></a>
+
+                                    </p>
+
+                                </div>
+                                <div class="ui-body">
+                                    <hr>
+                                    <ul data-role='listview' id='game-moves-history-list' style='height:250px;max-height:350px; overflow-y:scroll'>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+                <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">
+                    <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
+                        <h3>Game Network</h3>
+                        <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
+                    </div>
+                    <div id="net-message"></div>
+                    <div class="panel-body ui-body">
+                        <label for="move-message">Message:</label>
+                        <input type="text" xclass="form-control" id="move-message" name="move-message">
+                        <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
+                        <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
+                                Reconnect
+                            </a>
+                        <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
+                        <div class="ui-bar ui-bar-c">
+                            <small>URI:<pre> <span id="server-uri"></span></pre></small>
+                        </div>
+                        <div class="ui-body">
+
+                            <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="login-popup" data-role="popup" data-theme="a" class="ui-content" style="max-width:400px;">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                <div class="panel panel-info">
+                    <div data-role="header" class="panel-heading ui-bar" data-theme="b">
+                        Login
+                    </div>
+
+                    <div class="panel-body ui-body">
+                        <div class="">
+                            <span id="account-message" class="text-success"></span>
+                            <form class="form-horizontal" id="login-form" novalidate>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4" for="login-id">Login ID:</label>
+                                    <div class="col-sm-6 input-group">
+
+                                        <input type="text" class="form-control" id="login-id" placeholder="Enter login id" required size="30" minlength="6" maxlength="30">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4" for="login-pwd">Password:</label>
+                                    <div class="col-sm-6 input-group">
+
+                                        <input type="password" class="form-control" id="login-pwd" placeholder="Enter password" required size="30" minlength="6" maxlength="30">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-4 col-sm-6">
+                                        <button id="login-submit" type="submit" class="btn btn-default ui-btn ui-btn-inline ">Submit</button>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="alert alert-warning ui-bar ui-bar-c">
+                            To play with other users in the network, you need to have a valid user account. </strong>
+                            Click here to <a href="../html/register.html" target="account" class="ui-mini ui-inline">sign up if not already registered.</a>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            <div id="game-over" data-role="popup" data-theme="a" style="max-width:500px;" class="modal fade gameOver ui-content" role="dialog">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+
+                <div class="modal-header ui-bar" data-theme="a">
+                    <h4 class="modal-title text-center center">GAME OVER</h4>
+                </div>
+                <div class="modal-body ui-body">
+                    <p class="text-center text-info center"><strong><span id="game-players"></span></strong></p>
+                    <p class="text-center text-success center">Winner is: <span id="game-winner"></span></p>
+                    <p class="text-center text-success center"><span id="game-result"></span></p>
+                    <p class="text-center text-info center">Final Score: <span id="game-score"></span></p>
+                </div>
+
+            </div>
+
+            <a href="#dev-support-panel" xclass="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini">Development & Operation Support</a>
+
+            <div id="dev-support-panel" xdata-role="panel" xdata-theme="b" xdata-position="right">
+                <div data-role="tabs" id="game-tabs">
+                    <div data-role="navbar">
+                        <ul>
+                            <li>
+                                <a href="#tab-server" data-ajax="false">Server Status</a>
+                            </li>
+                            <li>
+                                <a href="#tab-game-state" data-ajax="false">Game State</a>
+                            </li>
+                            <li>
+                                <a href="#tab-app-state" data-ajax="false">Client App State</a>
+                            </li>
+                            <li>
+                                <a href="#tab-user-state" data-ajax="false">User State</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="tab-server">
+
+                        <h4>API URL: <span id="api-url"></span>
+                            <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">
+                             Refresh </a>
+                        </h4>
+                        <div id="help-message"> </div>
+                        <table id="app-info-table" class="table table-striped">
+                            <tbody id="app-info-table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="tab-game-state">
+                        <h4>Active Game State
+                            <a href="#" id="game-state-link" value="Refresh">
+                             Refresh
+                        </a>
+                        </h4>
+
+                        <div class="panel-body">
+                            <div id="game-state-message"> </div>
+                            <table id="game-state-table" class="table table-striped">
+                                <tbody id="game-state-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tab-app-state">
+                        <h4>App Client State -
+                            <a href="#" id="app-state-link" value="Refresh">
+                            Refresh
+                        </a>
+                        </h4>
+                        <div class="panel-body">
+                            <div id="app-state-message"> </div>
+                            <table id="app-state-table" class="table table-striped">
+                                <tbody id="app-state-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tab-user-state">
+                        <h4>User and Account State -
+                            <a href="#" id="user-state-link" value="Refresh">
+                            Refresh
+                        </a>
+                        </h4>
+                        <div class="panel-body">
+                            <div id="user-state-message"> </div>
+                            <table id="user-state-table" class="table table-striped">
+                                <tbody id="user-state-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- </div><a href="#second" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 2</a>
+           -->
+        </article>
+        <footer data-role="footer" data-position="fixed">
+            <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>
+            </h5>
+        </footer>
+    </section>
+    <script src="../lib/json/json3.min.js"></script>
+    <!--  <script src="../lib/jquery/jquery.min.js"></script> -->
+
+
+    <script src="../jsconfig/env.js"></script>
+    <script src="../js/jquery.signalR-2.3.0.js"></script>
+    <script src="../js/jquery.validate.js"></script>
+    <script src="../js/additional-methods.js"></script>
+    <script>
+        var scriptToLoad = window.__env.baseURI + "signalR/hubs";
+        console.log("loading: " + scriptToLoad);
+        var signalRElement = document.createElement('script');
+        signalRElement.setAttribute('src', scriptToLoad);
+        document.body.appendChild(signalRElement)
+        console.log("loading: " + scriptToLoad);
+    </script>
+
+    <script src="../js/moment.min.js"></script>
+    <script src="../js/kharbga-ui.js"></script>
+    <script src="../js/kharbga.js"></script>
+    <script src="../js/ns-app-utils.js"></script>
+    <script src="../js/ns-api-client.js"></script>
+    <script src="../js/ns-app-user.js"></script>
+    <script src="../js/ns-app-kharbga.js"></script>
+    <script src="play.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        $(document).ready(function() {
+            //  $('.combobox').combobox()
+            var kApp = new KharbgaApp();
+            var setupOk = kApp.setup();
+
+            // make the app available
+            $.kApp = kApp;
+            $.nsAppKharbga = kApp;
+        });
+        //]]>
+    </script>
+</body>
+
+</html>

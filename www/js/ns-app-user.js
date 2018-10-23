@@ -93,9 +93,7 @@ nsApp.init = function(){
                 if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
                     $.appViewHandler.closeLoginPanel();
 
-                // check the last game 
-               // rejoinLastGameIfAny();
-               transferToMyAccount();
+               transferToPlay();
             }
             else {
                 setupClientStateWithSession(null);
@@ -138,10 +136,10 @@ nsApp.init = function(){
         var result = nsApiClient.userService.register(registerInfo, function (data, status) {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
-                displayAccountMessage("Registered new account successfully. ",true);
                 console.log(data);
                 setupClientStateWithSession(data.object);      
-                transferToMyAccount();
+                transferToPlay();
+                displayAccountMessage("Registered new account successfully. ",true);
                 if ($.appViewHandler != null && typeof($.appViewHandler.closeRegisterPanel) === 'function')
                     $.appViewHandler.closeRegisterPanel();
             }
@@ -161,6 +159,9 @@ nsApp.init = function(){
     function transferToMyAccount(){
         document.location= "../html/my-account.html";
     }
+    function transferToPlay(){
+        document.location= "../html/play.html";
+    }
     function transferToLogin(){
         document.location= "../html/login.html";
     }
@@ -173,37 +174,26 @@ nsApp.init = function(){
     */
     function onLogoutSubmit(e) {
         e.preventDefault();
-        if ($.nsApp.state.sessionId == null ||$.nsApp.state.sessionId.length < 10)
-        {
-            displayAccountMessage("invalid session");
-            transferToMyAccount();
+        if ($.nsApp.session == null ||$.nsApp.session.sessionId.length < 10)
+        {         
+            transferToMyAccount(); 
+            displayAccountMessage("You are not logged in");
             return; 
         }
         displayAccountMessage("Processing...");
         // add call for back-end to delete the session
-        nsApiClient.userService.logout($.nsApp.state.sessionId, function (data,status) {
+        nsApiClient.userService.logout($.nsApp.session.sessionId, function (data,status) {
             if (data != null ) {   
                 setupClientStateWithSession(null);
                 transferToLogin(); 
                 displayAccountMessage("Logged out successfully");
             }
             else {
-                setupClientStateWithSession(null);
-                //e;
-               
-      
-                displayAccountMessage("Failed to logout.");
-                transferToMyAccount();
+                setupClientStateWithSession(null);      
+                transferToLogin();
+                displayAccountMessage("You are not logged in");
             } 
         });
-    }
-
-
-   function _refreshUserState(e){
-        if (e!= null)
-            e.preventDefault();
-
-        nsApp.dumpObjectInfo(user,'user-state-table',true);         
     }
 
     function setupFormsValidation() {
@@ -295,18 +285,16 @@ nsApp.init = function(){
                 else {
                     setupClientStateWithSession(null);
                 }
+                if (nsApp.state.loadAccountInfo === true)
+                    _loadAccountInfo();
 
+                if (nsApp.state.loadTeamInfo === true)
+                    _loadTeamInfo();
 
             }
             else {
-                nsApp.setCookie(C_NSSID, "");
-                nsApp.state.loggedIn = false;
+                nsApp.setSession(null);
                 setupMyAccount();
-                nsApp.state.sessionId = "";
-                nsApp.state.session = null;
-                nsApp.user.name = "";
-
-
                 if (status.status === 404 || status.status === 400)
                     displayAccountMessage("Invalid Session - Please Login", false);
                 else
@@ -320,7 +308,7 @@ nsApp.init = function(){
      * @summary Sets up the MyAccount tab based on the current app client state
      */
     function setupMyAccount() {
-        if (nsApp.state.loggedIn === true) {
+        if (nsApp.isLoggedIn() === true) {
          //   $('#account-info-panel').show().removeClass('hidden');
             $('#account-welcome').show().removeClass('hidden');
             $('#account-welcome').html("<strong> Welcome " + nsApp.user.name + "</strong>");
@@ -329,8 +317,13 @@ nsApp.init = function(){
             $('#logout-li').show().removeClass('hidden');
         //    $('#login-panel').hide().addClass('hidden');
         //    $('#register-panel').hide().addClass('hidden');
-            displayAccountMessage("Signed In");
+            displayAccountMessage("Welcome " + nsApp.user.name);
         
+            $('#account-session-id').text(nsApp.session.sessionId);
+            if (nsApp.user.session!= null){
+                nsApp.dumpObjectInfo(nsApp.session,'user-session-info-table',true);
+            }
+    
 
         } else {
          //   $('#login-panel').show().removeClass('hidden');
@@ -340,12 +333,11 @@ nsApp.init = function(){
             $('#login-li').show().removeClass('hidden');
             $('#register-li').show().removeClass('hidden');
             $('#logout-li').hide().addClass('hidden');
-            displayAccountMessage("Signed Out");
+            displayAccountMessage("");
         }
         $('#account-name').text(nsApp.user.name);
       //  $('#account-org-id').text(nsApp.state.session.clientId);
-      //  $('#account-session-id').text(nsApp.state.sessionId);
-    
+        
     }
 
     /**
@@ -353,42 +345,109 @@ nsApp.init = function(){
     * @param {any} session - the session info
     */
     function setupClientStateWithSession(session) {
-        if (session != null) {
-            nsApp.state.session = session;
-            nsApp.state.sessionId = session.sessionId;
-            nsApp.user.name = session.fullName;
-            nsApp.state.loggedIn = session.isActive;
-            nsApp.setCookie(C_NSSID, session.sessionId);
-        }
-        else {
-            nsApp.state.session = null;
-            nsApp.state.sessionId = "";
-            nsApp.user.name = "";
-            nsApp.state.loggedIn = false;
-            nsApp.setCookie(C_NSSID, "");
-        }
+        nsApp.setSession(session);
         setupMyAccount();
     }
 
- 
-    setupMyAccount();
-    setupFormsValidation();
+
+  
+    $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
+    /**
+     * handler for refresh app info request
+     * @param {any} e
+     */
+    function onRefreshAppInfo(e) { 
+        if (e!= null)     
+            e.preventDefault();
+        _refreshAppInfo();
+
+    }
+
+    function _refreshAppInfo(){
+        $("#api-url").text(nsApiClient.baseURI);
+       // $('#help-message').html("<div class='alert alert-info'>Processing...</div>");
+   
+        nsApiClient.appService.getAppInfo(function (data, status) {
+            if (data != null) {
+                nsApp.dumpObjectInfo(data,'app-info-table',true);
+            }
+            else {
+              //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+                $('#appInfo').html('');
+            }
+        });
+    }
+    $('#app-state-link').on('click', _refreshAppState);
+
+    function _refreshAppState(e){
+        if (e!= null)
+            e.preventDefault();
+            
+        nsApp.dumpObjectInfo(nsApp.state,'app-state-table');  
+      
+    }
+
+
+    $('#user-state-link').on('click', _refreshUserState);
+    function _refreshUserState(e){
+        if (e!= null)
+            e.preventDefault();
+        nsApp.dumpObjectInfo(nsApp.user,'user-state-table',true);         
+    }
+    $('#account-link').on('click', _loadAccountInfo);
+    function _loadAccountInfo(){
+      
+        if (nsApp.isLoggedIn() === false){
+            return;
+        }
+        nsApiClient.userService.getAccountInfo(nsApp.session.sessionId, function (data, status) {
+            if (data != null) {
+                nsApp.user.account = data.object;
+                nsApp.dumpObjectInfo(data.object,'user-info-table',true);
+            }
+            else {
+              //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+               displayAccountMessage("Unable to load user info. Error: " + status.toString());
+            }
+        });
+    }
+
+    $('#team-link').on('click', _loadTeamInfo);
+    function _loadTeamInfo(){
+        if (nsApp.isLoggedIn() === false){
+            return;
+        }
+        nsApiClient.clientService.getClientInfo(nsApp.session.sessionId, function (data, status) {
+            if (data != null) {
+                nsApp.user.team = data.object;
+                nsApp.dumpObjectInfo(data.object,'team-info-table',true);
+            }
+            else {
+                nsApp.user.team = null;
+              //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+               displayAccountMessage("Unable to load team info. Error: " + status.toString());
+            }
+        });
+    }
 
  
-
-    this.setSessionId = function (sid) {
-        nsApp.setCookie(C_NSSID, sid);
-        if (sid != "")
-            checkSessionCookie();  // check it and update state
-    };
-
     /** 
      * @summary checks the session cookie, setup 
      * the form with any data  
+     * @param {boolean} loadTeamInfo load team info option
      */ 
-    this.setup = function () {
+    this.setup = function (loadTeamInfo) {
+     
+
+        nsApp.state.loadAccountInfo = loadTeamInfo;
+        nsApp.state.loadTeamInfo = loadTeamInfo;
+
         checkSessionCookie();
-        setupTeamsHtml5Combobox();
+        setupTeamsHtml5Combobox();   
+        setupMyAccount();
+        setupFormsValidation();
+
     };
+
 };
 nsApp.init(); // init 

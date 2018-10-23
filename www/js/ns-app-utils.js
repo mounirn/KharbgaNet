@@ -2,18 +2,89 @@
     console.log("Please include jQuery v1.10 or higher before this module");
     throw new Error("Please include jQuery");
 }
+/**
+ * @summary Defines various strings used in the app 
+ */
+var NSResources = function(){
+    this.Guest = "Guest";
+    this.Welcome = "Welcome";
+    this.Empty = "";
 
-function NSApp (){
-    this.state= {// the client app state
-        session: {
-            id: "",
-            clientId: "",
+};
+var nsLocal = "en";
+var nsResources = new NSResources();
+
+/**
+ * @summary the user session
+ */
+var NSSession = function(){
+    this.sessionId = "";
+    this.isActive = false;
+    this.isAdmin = false;
+    this.fullName  = nsResources.Guest;
+    this.reset = function(){
+        this.name = "";
+        this.isActive = false;
+        this.isAdmin = false;
+        this.fullName = nsResources.Guest;
+    };
+};
+/**
+ * @summary the user information
+ */
+var NSUser = function(){
+    this.name = nsResources.Guest;
+    this.session = new NSSession();
+
+    this.isActive = function(){
+        return (this.session != null && this.session.isActive === true);
+    };
+    this.isAdmin = function(){
+        return (this.session != null && this.session.isActive === true && this.session.isAdmin === true);
+    };
+    this.isLoggedIn = function(){
+        return this.isActive();
+    };
+    this.reset =  function(){
+        this.name= nsResources.Guest;
+        this.session = new NSSession();
+    };
+}; 
+
+/**
+ * @summary the app info including utilities:
+ * - logging
+ * - user and session info
+ * - reading and loading client cookie or local storage data
+ */
+var NSApp = function(){
+    this.state= {// the client app state   
+    };  
+
+    /**
+     * the current user session
+     */
+    this.session = new NSSession();
+
+    /**
+     * the logged in user info
+     */
+    this.user = new NSUser();
+
+    this.setSession = function(session){
+        this.session = session;
+        this.user.session = session;
+        if (session!= null){
+            this.setCookie(nsApp.C_NSSID, session.sessionId);
+            this.user.name = session.fullName;
+           
         }
-    };  
-    this.user = {// the current user info
-        name: "Guest"
-    };  
-    
+        else{
+            this.user.reset();
+            this.setCookie(nsApp.C_NSSID, nsResources.Empty);
+        }
+    };
+ 
 
     this.log= function(message) {
         try     {
@@ -22,6 +93,14 @@ function NSApp (){
         catch(err) { 
             //no action. probably just IE
         }
+    };
+
+    /**
+     * Checks if the user is logged in
+     * @returns true if logged in false otherwise
+     */
+    this.isLoggedIn = function(){ 
+        return this.user.isLoggedIn();
     };
 
 
@@ -155,14 +234,14 @@ function NSApp (){
             var obj = data[key]; 
             var objType = typeof(obj);
             if (objType == "object" ){               
-                var tr = "<tr><th style='width:20%'>"+this.toDisplayString(key) + ":</th><td>" ;
+                var tr = "<tr><th style='width:20%'>"+toDisplayString(key) + ":</th><td>" ;
                 var objHtml = "<ul>";
                 
                 if (obj!= null){
                     Object.keys(obj).forEach( function(key2){
                         if (typeof obj[key2] != "function" )
                         {                 
-                            var li = "<li>" + this.toDisplayString(key2) + ": " + obj[key2]+"</li>";
+                            var li = "<li>" + toDisplayString(key2) + ": " + obj[key2]+"</li>";
                             objHtml +=(li);
                         }
                     });
@@ -178,32 +257,32 @@ function NSApp (){
             }
             // check if array
             else{
-                var tr2 = "<tr><th style='width:20%'>"+this.toDisplayString(key) + ":</th><td>" + obj+"</td></tr>";
+                var tr2 = "<tr><th style='width:20%'>"+toDisplayString(key) + ":</th><td>" + obj+"</td></tr>";
                 $('#' + elementId +'-body').append(tr2);
             }
         });  
     };
 
     
-    /** 
-     * @summary Converts a camel case string to display 
-     *  @returns {string} the converted string
-     */
-    this.toDisplayString = function(key){
-        // key.replace(/([A-Z])/g, function($1){return " "+$1.toLowerCase();});
-        // insert a space between lower & upper
-        var ret = key.replace(/([a-z])([A-Z])/g, '$1 $2')
-        // space before last upper in a sequence followed by lower
-        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-        // uppercase the first character
-        .replace(/^./, function(str){ return str.toUpperCase();}); 
-
-        return ret;
-    };
-}
+   
+};
 $.nsApp = new NSApp();
 var nsApp = $.nsApp;  
-nsApp.C_NSGID = "_nsgid";
 nsApp.C_NSSID = "_nssid";
+
+/** @summary Converts a camel case string to display 
+ *  @returns {string} the converted string
+*/
+function toDisplayString(key){
+// key.replace(/([A-Z])/g, function($1){return " "+$1.toLowerCase();});
+    // insert a space between lower & upper
+    var ret = key.replace(/([a-z])([A-Z])/g, '$1 $2')
+    // space before last upper in a sequence followed by lower
+    .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+    // uppercase the first character
+    .replace(/^./, function(str){ return str.toUpperCase();}); 
+
+    return ret;
+}
 
    

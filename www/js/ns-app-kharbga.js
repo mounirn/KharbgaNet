@@ -1,3 +1,22 @@
+/** Kharbga App Object 
+ * Include after: 
+ * - jQuery
+ * - ns-app-utils.js 
+ * - ns-api-client.js
+ * - ns-app-user.js
+ */
+if ($ == undefined || $.nsApp == undefined){
+    console.log("Please include jQuery and ns-app-utils before this module");
+    throw new Error("Please include jQuery and ns-app-utils");
+}
+if (nsApiClient == undefined){
+    console.log("Please include ns-api-client before this module");
+    throw new Error("Please include ns-api-client");
+}
+if (nsApp == undefined || nsApp.user == undefined){
+    console.log("Please include ns-app-user before this module");
+    throw new Error("Please include ns-app-user module");
+}
 /* Kharbga App Object */
 var KharbgaApp = function () {
     // the board game and ui element
@@ -37,28 +56,24 @@ var KharbgaApp = function () {
     };
 
     // local user - a player (attacker or defender) or spectator
-    var user = {
-        name:"Guest",
-        isAttacker:true,
-        isSpectator:false,
-        score:0,
-        reset: function(){
-            this.name = "Guest";
-            this.isAttacker= true;
-            this.IsSpectator = false;
-            this.score = 0;
-        },
-        update: function(player){
-            if (player == null)
-            {
-                log("null player");
-                return;
-            }
-            this.name = player.name;
-            this.isAttacker = player.isAttacker;
-            this.isSpectator = player.isSpectator;
-            this.score = player.score;
-        } 
+    var user = nsApp.user;
+
+    user.reset = function(){
+        this.name = "Guest";
+        this.isAttacker= true;
+        this.IsSpectator = false;
+        this.score = 0;
+    };
+    user.update = function(player){
+        if (player == null)
+        {
+            log("null player");
+            return;
+        }
+        this.name = player.name;
+        this.isAttacker = player.isAttacker;
+        this.isSpectator = player.isSpectator;
+        this.score = player.score;
     };
   
     // defines the local game state 
@@ -357,9 +372,7 @@ var KharbgaApp = function () {
                 text: eventData.from.id + '-' + eventData.to.id
             }));
             currentMove.isAttacker = false;
-        }
-
-       
+        }   
        
     }
 
@@ -1451,15 +1464,24 @@ var KharbgaApp = function () {
     /**
      * @summary Displays a message about the game 
      * @param {string} message - the message to display
+     * @param {boolean} success - message is success or not
      */
-    function displayGameMessage(message){
-        $('#game-message').html("<div class='alert alert-info'>" + message + "</div>");
+    function displayGameMessage(message, success){
+        if (success === true){
+            $('#game-message').html("<div class='alert alert-success'>" + message + "</div>");
+        }else if (success === false){
+            $('#game-message').html("<div class='alert alert-danger'>" + message + "</div>");
+        }else{
+            $('#game-message').html("<div class='alert alert-info'>" + message + "</div>");
+        }
     }
      /**
      * @summary Displays a message status change from the messaging server
      * @param {string} message - the message to display
+     * @param {boolean} success - message is success or not
+     *   
      */
-    function displayNetMessage(message, success){
+    function displayNetMessage(message,success){
         if (success === true){
             $('#net-message').html("<div class='alert alert-success'>" + message + "</div>");
         }else if (success === false){
@@ -1778,305 +1800,18 @@ var KharbgaApp = function () {
         console.log(board.fen());
     }
 
-    /**
-     * Handler for login click from UI
-     * @param {any} e
-     */
-    function onLoginLink(e) {
-        e.preventDefault();
-
-        var accountTab = $('#main-tabs a[href="#account"]');
-        if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
-            accountTab.tab('show');  
-
-        // $('#login-panel').show().removeClass('hidden');
-        // $('#register-panel').hide().addClass('hidden');
-    }
-    /**
-     * Handler for register click from UI
-     * @param {any} e
-     */
-    function onRegisterLink(e) {
-        e.preventDefault();
-
-        var accountTab = $('#main-tabs a[href="#account"]');
-        if (accountTab != null &&  accountTab.tab != null &&  accountTab.tab != undefined)
-            accountTab.tab('show');
-
-      //  $('#login-panel').hide().addClass('hidden');
-       // $('#register-panel').show().removeClass('hidden');
-    }
-
- 
-    /**
-     * handler for login request 
-     * @param {any} e
-     */
-    function onLoginSubmit(e) {
-        e.preventDefault();
-        var form = $('#login-form');
-
-        // check if the form is valid
-        if (!form.valid()) {
-            $('#account-message').html("<div class='alert alert-danger'>Please fix the input errors below.</div>");
-            return false;
-        }
-
-        var loginInfo = {
-            LoginID: $('#login-id').val(),
-            Password: $('#login-pwd').val(),
-            RememberMe: $('#login-remember').is(':checked')
-        };
-        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
-
-        var result = nsApiClient.userService.validateLogin(loginInfo, function(data, status) {
-            if (data != null) {
-                $('#appInfo').html(JSON.stringify(data));
-                $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");                    
-                console.log(data);
-                setupClientStateWithSession(data.object);           
-                if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
-                    $.appViewHandler.closeLoginPanel();
-
-                // check the last game 
-                rejoinLastGameIfAny();
-               
-            }
-            else {
-                setupClientStateWithSession(null);
-            
-                if (status.status === 404 || status.status === 400  )
-                    $('#account-message').html("<div class='alert alert-danger'>Invalid Login ID or password</div>");
-                else
-                    $('#account-message').html("<div class='alert alert-danger'> Failed to login</div>");
-
-                $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }  
-        });
-    }
-
-    /**
-     * handler for register request 
-     * @param {any} e
-     */
-    function onRegisterSubmit(e) {
-        e.preventDefault();
-        var form = $('#register-form');
-      
-        // check if the form is valid
-        if (!form.valid()) {
-            $('#account-message').html("<div class='alert alert-danger'>Please fix the input errors below.</div>");
-            return false;
-        }
-
-        var registerInfo = {
-            LoginID: $('#register-login-id').val(),
-            Password: $('#register-pwd').val(),
-            ConfirmPassword: $('#register-pwd-confirm').val(),
-            Name: $('#register-name').val(),
-            Email: $('#register-email').val(),
-            OrgName: $('#register-team').val()
-
-        };
-        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
-
-        var result = nsApiClient.userService.register(registerInfo, function (data, status) {
-            if (data != null) {
-                $('#appInfo').html(JSON.stringify(data));
-                $('#account-message').html("<div class='alert alert-success'>Registered new account successfully. </div>");
-                console.log(data);
-                setupClientStateWithSession(data.object);      
-
-
-                rejoinLastGameIfAny();
-                if ($.appViewHandler != null && typeof($.appViewHandler.closeRegisterPanel) === 'function')
-                    $.appViewHandler.closeRegisterPanel();
-            }
-            else {
-                setupClientStateWithSession(null);
-               
-                if (status.status === 404 || status.status === 400)
-                    $('#account-message').html("<div class='alert alert-danger'>Invalid registration info. Errors: " + status.responseText+ " </div>");
-                else
-                    $('#account-message').html("<div class='alert alert-danger'> Failed to register.</div>");
-
-                $('#appInfo').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }
-        });
-    }
-
-    /**
-    * handler for logout request
-    * @param {any} e
-    */
-    function onLogoutSubmit(e) {
-        e.preventDefault();
-        if (appClientState.sessionId == null || appClientState.sessionId.length < 10)
-        {
-            $('#account-message').html("<div class='alert alert-info'>Invalid session</div>");
-            return; 
-        }
-        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
-        // add call for back-end to delete the session
-        nsApiClient.userService.logout(appClientState.sessionId, function (data,status) {
-            if (data != null ) {
-                $('#appInfo').html(JSON.stringify(data));
-                $('#account-message').html("<div class='alert alert-success'>Logged out successfully </div>");
-               
-                setupClientStateWithSession(null);
-                
-            }
-            else {
-                setupClientStateWithSession(null);
-                //e;
-               
-      
-                $('#account-message').html("<div class='alert alert-danger'>Failed to logout.  </div>");
-                $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            } 
-  
-
-        });
-        
-
-        
-
-    }
-    /**
-     * handler for refresh app info request
-     * @param {any} e
-     */
-    function onRefreshAppInfo(e) { 
-        if (e!= null)     
-            e.preventDefault();
-        _refreshAppInfo();
-
-    }
-
-    function _refreshAppInfo(){
-        $("#api-url").text(nsApiClient.baseURI);
-       // $('#help-message').html("<div class='alert alert-info'>Processing...</div>");
-   
-        nsApiClient.appService.getAppInfo(function (data, status) {
-            if (data != null) {
-                dumpObjectInfo(data,'app-info-table',true);
-            }
-            else {
-              //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
-                $('#appInfo').html('');
-            }
-        });
-    }
-    $('#app-state-link').on('click', _refreshAppState);
-
-    function _refreshAppState(e){
-        if (e!= null)
-            e.preventDefault();
-            
-        dumpObjectInfo(appClientState,'app-state-table');  
-      
-    }
-    /**
-     * @summary outputs 
-     * @param {any} data  - an object
-     * @param {string} elementId - the id of the element table to output the object data in the body
-     * @param {boolean} clear - clear the previous data or not
-     */
-    function dumpObjectInfo(data, elementId, clear){
-    
-     //   $('#main-message').html("<div class='alert alert-info'>Processing...</div>"); 
-        if (clear === true){
-            $('#' + elementId +'-body').html(""); 
-        }
-
-        Object.keys(data).forEach( function(key){
-            var obj = data[key]; 
-            var objType = typeof obj;
-            if (objType == "object" ){               
-                var tr = "<tr><th style='width:20%'>"+toDisplayString(key) + ":</th><td>" ;
-                var objHtml = "<ul>";
-               
-                if (obj!= null){
-                    Object.keys(obj).forEach( function(key2){
-                        if (typeof obj[key2] != "function" )
-                        {                 
-                            var li = "<li>" + toDisplayString(key2) + ": " + obj[key2]+"</li>";
-                            objHtml +=(li);
-                        }
-                    });
-                } 
-                objHtml += "<ul>";
-                tr += objHtml;
-                tr += "</td></tr>";
-
-                $('#' + elementId +'-body').append(tr);
-            }
-            else if (objType == "function" ){
-                // skip
-            }
-            // check if array
-            else{
-                var tr2 = "<tr><th style='width:20%'>"+toDisplayString(key) + ":</th><td>" + obj+"</td></tr>";
-                $('#' + elementId +'-body').append(tr2);
-            }
-        });
-      
-    }
 
 
     $('#game-state-link').on('click', _refreshGameState);
     function _refreshGameState(e){
         if (e!= null)
             e.preventDefault();
-        dumpObjectInfo(gameState,'game-state-table',true);  
-        dumpObjectInfo(game,'game-state-table', false);  
+        nsApp.dumpObjectInfo(gameState,'game-state-table',true);  
+        nsApp.dumpObjectInfo(game,'game-state-table', false);  
     }
 
 
-    $('#user-state-link').on('click', _refreshUserState);
-    function _refreshUserState(e){
-        if (e!= null)
-            e.preventDefault();
-        dumpObjectInfo(user,'user-state-table',true);         
-    }
-
-    /** @summary Converts a camel case string to display 
-     *  @returns {string} the converted string
-    */
-    function toDisplayString(key){
-       // key.replace(/([A-Z])/g, function($1){return " "+$1.toLowerCase();});
-        // insert a space between lower & upper
-        var ret = key.replace(/([a-z])([A-Z])/g, '$1 $2')
-        // space before last upper in a sequence followed by lower
-        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-        // uppercase the first character
-        .replace(/^./, function(str){ return str.toUpperCase();}); 
-
-        return ret;
-    }
-
-    /**
-     * checks the stored user session id
-     */
-    function checkSessionCookie() {
-        var cookie = getCookie(C_NSSID);
-        if (typeof cookie === "string" && cookie.length > 10)
-            checkSession(cookie);       
-        else{
-            // check local storage
-            if (window.localStorage != null){
-                var sid = window.localStorage.getItem(C_NSSID);
-                if (typeof sid  === "string" && sid.length > 10)
-                    checkSession(sid);   
-                else{
-                    setupClientStateWithSession(null);  
-                }
-            }
-            else{
-                setupClientStateWithSession(null);
-            }
-        }
-    }
+   
 
     /**
     * @summary retrieves the stored active game id 
@@ -2089,93 +1824,6 @@ var KharbgaApp = function () {
         return "";
     }
 
-    /**
-     * checks a given session with the backed and update 
-     * @param {any} sessionId the session id
-     */
-    function checkSession(sessionId) {
-        $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
-        var result = nsApiClient.userService.checkSession(sessionId, function (data, status) {
-            if (data != null) {
-                $('#appInfo').html(JSON.stringify(data));
-                $('#account-message').html("");
-
-                var session = data.object;
-                
-                if (session != null) {
-                    setupClientStateWithSession(session);
-                    
-                }
-                else {
-                    setupClientStateWithSession(null);
-                }
-
-
-                // rejoin the game if any in all cases - just in case for guests
-                rejoinLastGameIfAny();
-            }
-            else {
-                setCookie(C_NSSID, "");
-                appClientState.loggedIn = false;
-                setupMyAccount();
-                appClientState.sessionId = "";
-                appClientState.session = null;
-                user.name = "";
-
-
-                if (status.status === 404 || status.status === 400)
-                    $('#account-message').html("<div class='alert alert-warning'>Invalid Session - Please Login</div>");
-                else
-                    $('#account-message').html("<div class='alert alert-danger'> Failed to access the system. Please try your request again later. </div>");
-
-               // $('#account-message').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }
-        });
-    }
-
-    /**
-     * Sets up the MyAccount tab based on the current app client state
-     */
-    function setupMyAccount() {
-        if (appClientState.loggedIn === true) {
-            $('#account-info-panel').show().removeClass('hidden');
-            $('#account-welcome').show().removeClass('hidden');
-            $('#account-welcome').html("<strong> Welcome " + user.name + "</strong>");
-
-            $('#login-li').hide().addClass('hidden');
-            $('#register-li').hide().addClass('hidden');
-
-            $('#logout-li').show().removeClass('hidden');
-
-        //    $('#login-panel').hide().addClass('hidden');
-        //    $('#register-panel').hide().addClass('hidden');
-            displaySuccessMessage("Signed In");
-      
-
-        } else {
-          //  $('#login-panel').show().removeClass('hidden');
-          //  $('#register-panel').hide().addClass('hidden');
-            $('#account-info-panel').hide().addClass('hidden');
-
-            $('#account-welcome').hide().addClass('hidden');
-
-            $('#login-li').show().removeClass('hidden');
-            $('#register-li').show().removeClass('hidden');
-            $('#logout-li').hide().addClass('hidden');
-
-            displayWarningMessage("Signed Out");
-        }
-        $('#account-name').text(user.name);
-       // $('#account-org-id').text(appClientState.session.ClientId);
-        $('#account-session-id').text(appClientState.sessionId);
-        $('#account-game-id').text(gameState.id);
-        if (user != null) {
-            $('#account-game-role').text(user.isSpectator? "Spectator" : (user.isAttacker ? "Attacker" : "Defender"));
-        }
-        else {
-            $('#account-game-role').text("");
-        }
-    }
 
     /**
      * @summary rejoins local cached game 
@@ -2216,35 +1864,6 @@ var KharbgaApp = function () {
 
     }
 
-    // setup all the various buttons and links events
-    $('#login-link').on('click', onLoginLink);  
-    $('#register-link').on('click', onRegisterLink);
-    $('#login-submit').on('click', onLoginSubmit);
-    $('#register-submit').on('click', onRegisterSubmit);
-    $('#logout-link').on('click', onLogoutSubmit);
-    $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
-    $('#getPositionBtn').on('click', clickGetPositionBtn);
-    $('#new-game').on('click', { asAttacker: true, againstComputer: true,overTheNetwork:true }, onNewGame);
-    $('#new-game-attacker').on('click', {asAttacker: true, againstComputer:false,overTheNetwork:true}, onNewGame);
-    $('#new-game-defender').on('click', { asAttacker: false, againstComputer: false,overTheNetwork:true },onNewGame);
-    $('#new-game-attacker-system').on('click', { asAttacker: true, againstComputer: true,overTheNetwork:true }, onNewGame);
-    $('#new-game-defender-system').on('click', { asAttacker: false, againstComputer: true,overTheNetwork:true}, onNewGame);
-    $('#postMessageBtn').on('click', onPostMessage);
-    $('#loadSetting1Btn').on('click', onLoadSetting1);
-    $('#flipOrientation').on('click', onFlipBoard);// flip the board
-    $('#exchangeRequestCheckbox').on('click', function () {
-        var checked = $('#exchangeRequestCheckbox').is(':checked');
-        if (!checked) {           
-            $('#exchangeRequestDefenderPiece').text('');
-        }
-    });
-    $('#exchangeRequestAcceptedCheckbox').on('click', function () {
-        var checked = $('#exchangeRequestAcceptedCheckbox').is(':checked');
-        if (!checked) {
-            $('#exchangeRequestAttackerPiece1').text('');
-            $('#exchangeRequestAttackerPiece2').text('');
-        }
-    });
    
     /**
      * @summary handle for when a move is recorded either locally or is coming from the network
@@ -2395,7 +2014,7 @@ var KharbgaApp = function () {
         setupResignCheckbox();
 
         // refresh the myAccount info
-        setupMyAccount();
+        nsApp.setupMyAccount();
     };
    
     /** 
@@ -3156,28 +2775,6 @@ var KharbgaApp = function () {
     }
 
     /**
-    * @summary sets up the client state with the given session
-    * @param {any} session
-    */
-    var setupClientStateWithSession = function (session) {
-        if (session != null) {
-            appClientState.session = session;
-            appClientState.sessionId = session.sessionId;
-            user.name = session.fullName;
-            appClientState.loggedIn = session.isActive;
-            setCookie(C_NSSID, appClientState.sessionId);
-        }
-        else {
-            appClientState.session = null;
-            appClientState.sessionId = "";
-            user.name = "";
-            appClientState.loggedIn = false;
-            setCookie(C_NSSID, "");
-        }
-        setupMyAccount();
-    };
-
-    /**
      * @summary Helper function for setting cookie and local storage
      * @param {string} key
      * @param {string} value
@@ -3362,9 +2959,7 @@ var KharbgaApp = function () {
     // handler for resizing
     $(window).resize(resizeGame);
 
-    setupMyAccount();
-    setupFormsValidation();
-
+ 
     function playSound() {
         if (userOptions.playSound === false){
             return;
@@ -3426,7 +3021,7 @@ var KharbgaApp = function () {
             $.connection.hub.logging = loggingOn;  // turn off  (config)
 
             if (gamesHubProxy == null || typeof gamesHubProxy.client == 'undefined') {
-                displayNetMessage("Unable to setup messaging using Signal R.",false);
+                displayNetMessage("Unable to setup signalR");
                 return false;
             }
 
@@ -3434,8 +3029,9 @@ var KharbgaApp = function () {
             gamesHubProxy.client.send = onSendMessage;
             gamesHubProxy.client.hello = function () {
                 if (loggingOn) console.log("%s - Hello from server", getLoggingNow());
-                 displayNetMessage("Hello from server.");
-                 appendToNetMessagesList("server", "Hello");
+                 displaySuccessMessage("Hello from server.");
+                 appendToNetMessagesList("server","Hello");
+                
             };
 
             gamesHubProxy.client.gameDeleted = onGameDeleted;
@@ -3454,10 +3050,8 @@ var KharbgaApp = function () {
                 logMessage('Signalr Error: ');
                 logObject(error);
                 appClientState.signalReInitialized = false;
-                displayNetMessage("SignalR Error: error ");
-
-                $('#messages-list').append("<li class='list-group-item list-group-item-danger'>  " + error + "</li>");
-                refreshList('#messages-list');
+                displayNetMessage("SignalR Error: error " + error);
+                appendToNetMessagesList("server", error);
             });
             displayNetMessage("Setup Signal R successfully");
 
@@ -3476,8 +3070,9 @@ var KharbgaApp = function () {
         $.connection.hub.disconnected(function () {
             appClientState.signalReInitialized = false;
             appClientState.useServer = false;
-            $('#messages-list').append("<li class='list-group-item list-group-item-danger'> disconnected " + $.connection.hub.id + "</li>");
-            refreshList('#messages-list');
+            
+            appendToNetMessagesList("Disconnected");
+
             displayNetMessage("Disconnected");
             $("#signalr-status").html("<div class='alert alert-danger'>Disconnected</div>");
             setTimeout(function () {
@@ -3503,10 +3098,10 @@ var KharbgaApp = function () {
                     appClientState.serverConnectionId = $.connection.hub.id;
                     appClientState.signalReInitialized = true;
                     appClientState.useServer = true;
-                    // 
-                    checkSessionCookie();
+                    appendToNetMessagesList("server","Connected");
+
                     // moves the setup of the games on startup at the end of the checking session process
-                    displayNetMessage("Connected");
+                    displayNetMessage("server", "Connected");
                     $("#signalr-status").html("<div class='alert alert-success'>Connected</div>");
 
                     resizeGame();
@@ -3516,9 +3111,10 @@ var KharbgaApp = function () {
                 })
                 .fail(function () {
                     appClientState.signalReInitialized = false;
-                    checkSessionCookie();
+
+                    appendToNetMessagesList("server", "Failed to connect");
+    
                     logMessage('startSignalR failed to connect');
-                    displayNetMessage("Failed to Connected. Turning off server mode.");
                     $("#signalr-status").html("<div class='alert alert-danger'>Not connected</div>");
                     appClientState.useServer = false;
                 });
@@ -3549,20 +3145,31 @@ var KharbgaApp = function () {
         onFlipBoard();
     };
 
-    this.setSessionId = function (sid) {
-        setCookie(C_NSSID, sid);
-        if (sid != "")
-            checkSessionCookie();  // check it and update state
-    };
+  
 
     /** 
      * @summary checks the session cookie, setup the current games and last game if any 
      */ 
     this.setup = function () {
-        checkSessionCookie();
-        // the game will be rejoined if a valid session
-        // guests will not be able to rejoin their games
-        // rejoinLastGameIfAny();
+        // check previous login session
+        nsApp.setup();
+
+        // setup signal R
+        var setupOk =  _setupSignalR();
+        if (setupOk == false) {
+            // alert("Unable to setup connection to the server. Please try again later!");
+            // try again after a couple of sec
+            setTimeout(function() {
+                _setupSignalR();
+            }, 2000);
+        }
+        // init the board
+
+        this.initBoard({
+            themePath: '../img/theme-simple/{piece}.png'
+        });
+
+       
     };
 
     /** @summary starts and initializes connection to the server
@@ -4074,4 +3681,28 @@ var KharbgaApp = function () {
         else
             $('#message').html("");
     };
+
+
+    $('#getPositionBtn').on('click', clickGetPositionBtn);
+    $('#new-game').on('click', { asAttacker: true, againstComputer: true,overTheNetwork:true }, onNewGame);
+    $('#new-game-attacker').on('click', {asAttacker: true, againstComputer:false,overTheNetwork:true}, onNewGame);
+    $('#new-game-defender').on('click', { asAttacker: false, againstComputer: false,overTheNetwork:true },onNewGame);
+    $('#new-game-attacker-system').on('click', { asAttacker: true, againstComputer: true,overTheNetwork:true }, onNewGame);
+    $('#new-game-defender-system').on('click', { asAttacker: false, againstComputer: true,overTheNetwork:true}, onNewGame);
+    $('#postMessageBtn').on('click', onPostMessage);
+    $('#loadSetting1Btn').on('click', onLoadSetting1);
+    $('#flipOrientation').on('click', onFlipBoard);// flip the board
+    $('#exchangeRequestCheckbox').on('click', function () {
+        var checked = $('#exchangeRequestCheckbox').is(':checked');
+        if (!checked) {           
+            $('#exchangeRequestDefenderPiece').text('');
+        }
+    });
+    $('#exchangeRequestAcceptedCheckbox').on('click', function () {
+        var checked = $('#exchangeRequestAcceptedCheckbox').is(':checked');
+        if (!checked) {
+            $('#exchangeRequestAttackerPiece1').text('');
+            $('#exchangeRequestAttackerPiece2').text('');
+        }
+    });
 }; 
