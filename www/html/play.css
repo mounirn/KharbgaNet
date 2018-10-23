@@ -5,6 +5,43 @@
     padding-right: 5px;
 }
 
+.avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.responsive {
+    max-width: 80%;
+    height: auto;
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.thumbnail {
+    border: 1px solid #ddd;
+    /* Gray border */
+    border-radius: 4px;
+    /* Rounded border */
+    padding: 5px;
+    /* Some padding */
+    width: 30px;
+    /* Set a small width */
+}
+
+
+/* Add a hover effect (blue shadow) */
+
+img.thumbnail:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
 
 /* issue with double scroll bars https://stackoverflow.com/questions/26159229/jquery-mobile-double-scrollbar-css */
 

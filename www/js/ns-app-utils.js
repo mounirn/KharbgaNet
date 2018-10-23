@@ -35,6 +35,7 @@ var NSSession = function(){
 var NSUser = function(){
     this.name = nsResources.Guest;
     this.session = new NSSession();
+    this.preferences = {};
 
     this.isActive = function(){
         return (this.session != null && this.session.isActive === true);
@@ -234,7 +235,7 @@ var NSApp = function(){
             var obj = data[key]; 
             var objType = typeof(obj);
             if (objType == "object" ){               
-                var tr = "<tr><th style='width:20%'>"+toDisplayString(key) + ":</th><td>" ;
+                var tr = "<tr><th style='width:30%'>"+toDisplayString(key) + ":</th><td>" ;
                 var objHtml = "<ul>";
                 
                 if (obj!= null){

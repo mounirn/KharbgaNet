@@ -48,18 +48,15 @@
         <div id="account" class="">
             <div id="account-message"></div>
 
-            <div id="account-info-panel" class="panel panel-info">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <strong>My Account</strong>
-
-                        <div class="pull-right">
-                            <a href="#" id="account-link" value="user">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
+            <div id="account-info-panel">
+                <ul class="nav nav-pills">
+                    <li class="active"><a data-toggle="pill" href="#user-info-tab">My Account</a></li>
+                    <li><a data-toggle="pill" href="#user-session-tab">Session Information</a></li>
+                    <li><a data-toggle="pill" href="#user-account-tab">Account Information</a></li>
+                    <li><a data-toggle="pill" href="#user-team-tab">Team Info</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="user-info-tab" class="tab-pane fade in active">
                         <table class="table table-user-information">
                             <tbody>
                                 <tr>
@@ -70,43 +67,65 @@
                                     <td>Session Id</td>
                                     <td><span id="account-session-id"></span></td>
                                 </tr>
-                                <tr>
-                                    <td>Active Game ID</td>
-                                    <td><span id="account-game-id"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>Role</td>
-                                    <td><span id="account-game-role"></span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h3>Session Information</h3>
-                        <table id="user-session-info-table" class="table table-striped">
-                            <tbody id="user-session-info-table-body">
-
-                            </tbody>
-                        </table>
-                        <h3>Account Information</h3>
-                        <table id="user-info-table" class="table table-striped">
-                            <tbody id="user-info-table-body">
 
                             </tbody>
                         </table>
                         <div id="settings" class="panel panel-info">
                             <div class="panel-heading">
-                                Settings
+                                Preferences
                             </div>
-                            <div class="panel-body">
-                                <div class="checkbox">
-                                    <label>
-                                        <input id="use-server-checkbox" type="checkbox" /> Use Server
-                                    </label>
-                                    <label>
-                                        <input id="play-on-same-computer-checkbox" type="checkbox" />Both players play on this board
-                                    </label>
-                                </div>
+                            <div class="panel-body" id="user-preferences">
+                                <form id="user-preferences-form">
+                                    <div id="user-preferences-form-body">
+
+                                    </div>
+                                    <button id="save-user-preferences">Save</button>
+                                </form>
                             </div>
                         </div>
+
+                    </div>
+                    <div id="user-session-tab" class="tab-pane fade ">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                Current Session
+                                <div class="pull-right">
+                                    <a href="#" id="session-link" value="user">
+                                        <span class="glyphicon glyphicon-refresh"></span>Check Now
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <table id="user-session-info-table" class="table table-striped">
+                                    <tbody id="user-session-info-table-body">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="user-account-tab" class="tab-pane fade ">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                Account Details
+                                <div class="pull-right">
+                                    <a href="#" id="account-link" value="user">
+                                        <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <table id="user-info-table" class="table table-striped">
+                                    <tbody id="user-info-table-body">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="user-team-tab" class="tab-pane fade ">
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 My Team
@@ -129,10 +148,9 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
+    </div>
     </div>
     <footer>
         <div class="container row text-center">
@@ -185,12 +203,14 @@
     <script src="../js/ns-app-utils.js"></script>
     <script src="../js/ns-api-client.js"></script>
     <script src="../js/ns-app-user.js"></script>
+    <script src="../js/kharbga.js"></script>
+    <script src="../js/ns-app-kharbga.js"></script>
 
 
     <script type="text/javascript">
         //<![CDATA[
         $(document).ready(function() {
-
+            var kApp = new KharbgaApp(); // dot need to call setup here
             $.nsApp.setup(true);
 
         });

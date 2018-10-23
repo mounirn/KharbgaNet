@@ -108,6 +108,175 @@ nsApp.init = function(){
         });
     }
 
+    function parseBoolean(str) {
+        if (str == null || typeof(str) == undefined)
+            return undefined;
+        var lowerCase = str.toLowerCase();
+        if (lowerCase == 'true' ) return true;
+        else if (lowerCase == 'false') return false;
+        else return undefined;
+    }
+    /**
+     * @summary reads the user preferences from the db and sets up the user preferences object
+     */
+    function loadUserPreferences(){
+        nsApiClient.userService.getPreferences(nsApp.session.sessionId, 
+            function (data, status) {
+                if (data != null && data.success === true && data.object!=null) {
+                
+                    console.log(data);
+                    displayAccountMessage("Successfully loaded user preferences", true);     
+                    data.object.forEach(function(item,val){
+                        var obj  = nsApp.user.preferences[item.key];
+                        if (obj!= null){
+                            var objType = typeof(obj);
+                            if (objType == "boolean"){
+                                nsApp.user.preferences[item.key] = parseBoolean(item.value);
+                            }
+                            else if (objType == "number"){
+                                nsApp.user.preferences[item.key] = Number.parseInt(item.value);
+                            }
+                            else{
+                                nsApp.user.preferences[item.key] =item.value;
+                            }
+                        }
+                        else{
+                            nsApp.user.preferences[item.key] = item.value;
+                        }
+                    });
+                    OutputUserPreferences();               
+                }
+                else{
+                    displayAccountMessage("Failed to load user preferences", false);
+                }    
+            }
+        );
+    }
+
+    function OutputUserPreferences(){
+        var htmlForm ="";
+     //   var htmlForm = '<form id="user-preferences-form">';
+        // output the preferences in the table
+        Object.keys(nsApp.user.preferences).forEach(function(key){
+           
+            var obj  = nsApp.user.preferences[key];
+            var objType = typeof(obj);
+            if (objType === "boolean"){
+                htmlForm+= '<div class="checkbox" >';
+                htmlForm += '<label><input type="checkbox" id="user-'; 
+                htmlForm += key;
+                htmlForm += '" ';
+                if (obj === true){
+                    htmlForm+= ' checked ';
+                }
+                htmlForm  += '> ';
+                htmlForm += toDisplayString(key);
+                htmlForm += '</label></div>'; 
+            }
+            else{
+                 htmlForm+= '<div class="form-group">';
+                 htmlForm += '<label for="user-';
+                 htmlForm += key;
+                 htmlForm += '">';
+                 htmlForm += toDisplayString(key);
+                 htmlForm += '</label>';
+                 htmlForm += '<input id="user-';
+                 htmlForm += key;
+                 htmlForm += '" class="form-control" ';
+                 if (objType === "number"){
+                    htmlForm += ' type="number" ';
+                 }
+                 else{
+                     if (key.toLowerCase().indexOf("color")  >= 0)
+                     {
+                        htmlForm += '" type="color" ';  
+                     }
+                     else{
+
+                        htmlForm += '" type="text" ';
+                     }
+                }
+                htmlForm += " /> ";
+                if (key.toLowerCase().indexOf("avatar")  >= 0){   
+                    if (obj.length > 0)
+                        htmlForm += '<img src="'+ obj + '" alt="Avatar" class="avatar"></img>';
+                
+                }
+                htmlForm+= "</div>";
+            }
+
+            
+        });
+
+      //  htmlForm += '</form>';
+        $('#user-preferences-form-body').html(htmlForm);
+
+        // set the values
+        Object.keys(nsApp.user.preferences).forEach(function(key){
+            $('#user-'+key).attr('value',nsApp.user.preferences[key]);
+        } );
+    }
+
+    $('#save-user-preferences').on('click',saveUserPreferences);
+
+    function toBaseType(type){  // See BaseType.cs
+        if (type === "string")
+            return 12;
+        else if (type === "number")
+            return 11;
+        else if (type == "boolean")
+            return 15;
+        else if (type == "object")
+            return 18;
+        else
+            return 18;  
+    }
+    function saveUserPreferences(e){  
+        if (e!= null)
+            e.preventDefault();
+        
+        var list = [];
+        // read the prefs
+        Object.keys(nsApp.user.preferences).forEach(function(key){
+            var obj  = nsApp.user.preferences[key];
+            var objType = typeof(obj);
+            if (objType === "boolean"){
+                nsApp.user.preferences[key] = $('#user-'+key).is(":checked");
+            }
+            else if (objType === "number"){
+                nsApp.user.preferences[key] = Number.parseInt($('#user-'+key).val());
+            }
+            else{
+                nsApp.user.preferences[key] = $('#user-'+key).val();
+            }
+            var item = {
+                id: 0,
+                AppObjectId : 0,
+                BaseType: toBaseType(typeof(nsApp.user.preferences[key])),
+                key: key,
+                value: nsApp.user.preferences[key]
+            };
+            list.push(item);
+        } );
+
+        nsApiClient.userService.savePreferences(nsApp.session.sessionId, list,function (data, status) {
+            if (data != null) {
+              
+                console.log(data);
+                if (data.success === true){
+                    displayAccountMessage("Successfully saved user preferences", true);
+                    return;
+                }
+                
+            }
+           
+            displayAccountMessage("Failed to save user preferences. Error: " + status, false);  
+   
+        }
+        );
+        
+    }
+
     /**
      * handler for register request 
      * @param {any} e
@@ -243,9 +412,12 @@ nsApp.init = function(){
     }           
 
     /**
-     * @summary checks the session coockie
+     * @summary checks the session cookie
      */
-    function checkSessionCookie() {
+    function checkSessionCookie(e) {
+        if (e!= null){
+            e.preventDefault();
+        }
         var cookie = nsApp.getCookie(C_NSSID);
         if (typeof(cookie) === "string" && cookie.length > 10)
             checkSession(cookie);       
@@ -290,6 +462,9 @@ nsApp.init = function(){
 
                 if (nsApp.state.loadTeamInfo === true)
                     _loadTeamInfo();
+
+                // load prefs
+                loadUserPreferences();
 
             }
             else {
@@ -429,7 +604,7 @@ nsApp.init = function(){
             }
         });
     }
-
+    $('#session-link').on('click', checkSessionCookie);
  
     /** 
      * @summary checks the session cookie, setup 

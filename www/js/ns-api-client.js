@@ -235,6 +235,88 @@ function NSAppClient(baseURI) {
             });
 
         };
+
+        this.getPreferences = function(sessionId,callback){
+            var uri = this.serviceBaseURI + "account/preferences";
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getPreferences success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getPreferences error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getPreferences complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+        };
+
+        this.savePreferences = function(sessionId,preferences, callback){
+            var uri = this.serviceBaseURI + "account/preferences";
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET request
+                type: "POST",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                // Tell jQuery we're expecting JSONP
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId  },
+
+                // Tell YQL what we want and that we want JSON
+                data: JSON.stringify(preferences),
+                crossDomain: true,
+
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - savePreferences success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - savePreferences error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - savePreferences complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+        };
     }
 
     /**

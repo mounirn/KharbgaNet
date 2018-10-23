@@ -51,12 +51,14 @@ var KharbgaApp = function () {
         highlightLastMove: true,
         highlightLastMoveMilliSecondsBeforeTimeout: 2000,
         displayLastMove: true,
-        playSoundAfterMove: true
-        // add different types of sound depending on success or failure of last action
+        playSoundAfterMove: true,// add different types of sound depending on success or failure of last action,
+        color: "",
+        avatar: ""
     };
 
     // local user - a player (attacker or defender) or spectator
     var user = nsApp.user;
+    user.preferences = userOptions;
 
     user.reset = function(){
         this.name = "Guest";
