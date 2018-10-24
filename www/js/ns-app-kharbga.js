@@ -186,14 +186,14 @@ var KharbgaApp = function () {
             eventData.player.name;
         message += "</strong> ";
 
-     /*   if (user != null && !user.isSpectator)  {
+        if (user != null && !user.isSpectator)  {
             if (user.isAttacker === true && game.turn() == 'a')
                 message += " (Your turn) ";
 
             if (user.isAttacker === false && game.turn() == 'd')
                 message += " (Your turn) ";
         }
-      */  
+       
         displaySuccessMessage(message);
         displayGameMessage(message);
        
@@ -244,7 +244,7 @@ var KharbgaApp = function () {
          */
         }
 
-        ;
+       
         displaySuccessMessage(message);
         displayGameMessage(message);
         updateBoard(eventData.source);
@@ -306,7 +306,7 @@ var KharbgaApp = function () {
         // var sourceRequired = boardEl.find('.highlight-source');
         // sourceRequired.removeClass('highlight-source');
 
-     //   boardEl.find('.highlight-captured').removeClass('highlight-captured');
+        boardEl.find('.highlight-captured').removeClass('highlight-captured');
 
         /* highlight the previous move */
         var source = boardEl.find('.square-' + eventData.from.id);
@@ -817,7 +817,7 @@ var KharbgaApp = function () {
             if (gameState.id != "" ) {
                 // notify server pf the setting
                 displayNetMessage("Recording move # "+ gameMove.number);
-                gamesHubProxy.server.recordMove(appClientState.sessionId,gameState.id, 
+                gamesHubProxy.server.recordMove(nsApp.sessionId(),gameState.id, 
                     user.name,
                     gameMove.isAttacker, gameMove.isSetting, gameMove.from, gameMove.to, 
                     gameMove.resigned, gameMove.exchangeRequest,
@@ -1280,7 +1280,7 @@ var KharbgaApp = function () {
             // submit to the server
             if (gameState.id != "" && appClientState.useServer === true && computerPlayer!= null) {
                 // notify server pf the setting
-                gamesHubProxy.server.recordMove(appClientState.sessionId,gameState.id, computerPlayer.name,
+                gamesHubProxy.server.recordMove(nsApp.sessionId(),gameState.id, computerPlayer.name,
                     gameMove.isAttacker, gameMove.isSetting, gameMove.from, gameMove.to, gameMove.resigned, 
                     gameMove.exchangeRequest, gameMove.beforeFen, gameMove.afterFen, gameMove.message, 
                     gameMove.clientId,
@@ -1536,7 +1536,7 @@ var KharbgaApp = function () {
         // 
         if (options.overTheNetwork === null || options.overTheNetwork === true){
 
-            if (appClientState.loggedIn === false){
+            if (nsApp.loggedIn() === false){
                 displayErrorMessage("Please <a href='javascript:$.appViewHandler.openLoginPanel()'>login</a> to play network games. ");
                 if ($.appViewHandler != null && typeof($.appViewHandler.openLoginPanel) === 'function')
                     $.appViewHandler.openLoginPanel();
@@ -1552,7 +1552,7 @@ var KharbgaApp = function () {
         if (appClientState.useServer === true) {
             if (gamesHubProxy != null){
                 // call the server to start the new game
-                gamesHubProxy.server.createGame(appClientState.sessionId,user.name, e.data.asAttacker, e.data.againstComputer)
+                gamesHubProxy.server.createGame(nsApp.sessionId(),user.name, e.data.asAttacker, e.data.againstComputer)
                     .done(function () {
                         displayGameMessage('Created new game on server successfully');                   
                         logMessage("Done Server Invocation of create game");
@@ -1573,7 +1573,7 @@ var KharbgaApp = function () {
         
             gameState.reset();
             gameState.id = createGameId();
-            if (appClientState.loggedIn === false){
+            if (nsApp.isLoggedIn() === false){
                 user.name = "I";
             }
             user.isSpectator = false;
@@ -1737,7 +1737,7 @@ var KharbgaApp = function () {
         gameState.reset();
         gameState.isNetworkGame = false;
         gameState.id = createGameId();
-        if (appClientState.loggedIn === false){
+        if (nsApp.isLoggedIn() === false){
             user.name = "Guest";
         }
         user.isSpectator = false;
@@ -1812,9 +1812,6 @@ var KharbgaApp = function () {
         nsApp.dumpObjectInfo(game,'game-state-table', false);  
     }
 
-
-   
-
     /**
     * @summary retrieves the stored active game id 
     */
@@ -1825,7 +1822,6 @@ var KharbgaApp = function () {
      
         return "";
     }
-
 
     /**
      * @summary rejoins local cached game 
@@ -1852,7 +1848,7 @@ var KharbgaApp = function () {
                 displayNetMessage("Joining previous game - id: " + gid);
             //    gamesHubProxy.server.reJoinGame(user.name, gid, false);
                 // tell the server to rejoin this connection with the game
-                gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gid, false).done(function(){
+                gamesHubProxy.server.joinGame(nsApp.sessionId(),user.name, gid, false).done(function(){
                     displayNetMessage("Done joining previous game - id: " + gid);
                 });
             }
@@ -1863,10 +1859,8 @@ var KharbgaApp = function () {
 
         //resize the board 
         resizeGame();
-
     }
 
-   
     /**
      * @summary handle for when a move is recorded either locally or is coming from the network
      * Process the move in the local game if coming from the network
@@ -2053,11 +2047,13 @@ var KharbgaApp = function () {
         logObject(gameInfo);
         if (gameInfo.id !== ""){
             displayNetMessage("Joined game id: " + gameInfo.id);    
+            displayGameMessage("Joined game id: " + gameInfo.id, true);    
             if (appClientState.userServer === true){
                 setCookie(C_NSGID,gameInfo.id);
             }
         }
            
+        displayInfoMessage("Setting up joined game...");    
         // setup the local game with this
         setupLocalGame(gameInfo);
       
@@ -2120,9 +2116,13 @@ var KharbgaApp = function () {
         else{
             game.setupWith(gameInfo);
             // replay all existing moves if game is not over
+
+            displayInfoMessage("Completed game setup");    
         }
-      
-        //}
+        // close any open panels or popups for the user to view the game
+        if ($.appViewHandler != null && typeof($.appViewHandler.closeOpenPanels) === 'function')
+            $.appViewHandler.closeOpenPanels();
+    
         
         // update the board display
         updateBoard(game);
@@ -2307,7 +2307,7 @@ var KharbgaApp = function () {
    
         $('#games-list').empty();
    
-         gamesHubProxy.server.getGames(appClientState.sessionId).done(function (gamesResult) {
+         gamesHubProxy.server.getGames(nsApp.sessionId()).done(function (gamesResult) {
             if (gamesResult.success === true) {
                 $.each(gamesResult.object, function () {
                     appendGameToGamesList(this);
@@ -2340,7 +2340,7 @@ var KharbgaApp = function () {
             logMessage("onGameSelected - invalid data passed with the entry ");
             return;
         }
-        if (appClientState.loggedIn === false || appClientState.session == null || appClientState.session.isActive === false){
+        if (nsApp.isLoggedIn() === false ){
             displayErrorMessage("Please <a href='javascript:$.appViewHandler.openLoginPanel()'>login</a> to play network games. ");
             if ($.appViewHandler != null && typeof($.appViewHandler.openLoginPanel) === 'function')
                 $.appViewHandler.openLoginPanel();
@@ -2357,13 +2357,15 @@ var KharbgaApp = function () {
         displayNetMessage("Join/Watch selected game - id: " + data.id);
         var spectator = false;
         resetLocalGame();
+        displayGameMessage("Joining game...")
 
         //join the game and indicate if spectator or not
-        gamesHubProxy.server.joinGame(appClientState.sessionId, user.name, data.id, spectator).done(function () {
+        gamesHubProxy.server.joinGame(nsApp.sessionId(), user.name, data.id, spectator).done(function () {
       
             // select the game 
             selectActiveGameId(data.id);
             displayNetMessage("Done selected game id: " + data.id);
+            displayGameMessage("Joined game: " + data.id,true);
         });  
         
         // focus the game tab
@@ -2401,7 +2403,7 @@ var KharbgaApp = function () {
         var spectator = true;
 
         //join the game and indicate if spectator or not
-        gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, data.id, spectator);
+        gamesHubProxy.server.joinGame(nsApp.sessionId(),user.name, data.id, spectator);
 
         // init the local game with the given server game data    
       //  resetLocalGame();  // server will sen
@@ -2426,7 +2428,7 @@ var KharbgaApp = function () {
         e.preventDefault();
         $('#system-message').html("<div class='alert alert-info'>Refreshing active connections from the server...</div>");
         $('#connections-table').empty();
-        var result = nsApiClient.gameService.getConnections(appClientState.sessionId, { "active": true }, function (data, status) {
+        var result = nsApiClient.gameService.getConnections(nsApp.sessionId(), { "active": true }, function (data, status) {
             if (data != null) {
                 $('#system-message').html("<div class='alert alert-success'>returned connections successfully. </div>");
                 var html = "<table class='table table-responsive'><thead>";
@@ -2474,7 +2476,7 @@ var KharbgaApp = function () {
 
         $('#players-table').empty();
 
-        var result = nsApiClient.gameService.getPlayers(appClientState.sessionId,{ "active": null }, function (data, status) {
+        var result = nsApiClient.gameService.getPlayers(nsApp.sessionId(),{ "active": null }, function (data, status) {
             if (data != null) {
                 $('#system-message').html("<div class='alert alert-success'>Returned players successfully. </div>");
                 var html = "<table class='table table-responsive'><thead>";
@@ -2525,7 +2527,7 @@ var KharbgaApp = function () {
         $('#system-message').html("<div class='alert alert-waring'>Refreshing active games from the server...</div>");
         $('#games-table').empty().html('');
 
-        var result = nsApiClient.gameService.getGames(appClientState.sessionId,{ "active": null }, function (data, status) {
+        var result = nsApiClient.gameService.getGames(nsApp.sessionId(),{ "active": null }, function (data, status) {
             if (data != null) {
                 var html = "<table class='table table-responsive'><thead>";
                 var first = true;
@@ -2645,7 +2647,7 @@ var KharbgaApp = function () {
         logMessage("onPostMessage: ");
 
         // the user must be logged in to 
-        if (appClientState.loggedIn === false || appClientState.session === null){
+        if (nsApp.isLoggedIn() === false){
             // add check if admin
             displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
             return;
@@ -2655,7 +2657,7 @@ var KharbgaApp = function () {
         {
             var message = $('#move-message').val();
             displayNetMessage("Posting message: " + message);
-            gamesHubProxy.server.postMessage(appClientState.sessionId,user.name,message).done(function () {        
+            gamesHubProxy.server.postMessage(nsApp.sessionId(),user.name,message).done(function () {        
                 displayNetMessage("Posted message successfully");
             });  
         }
@@ -2740,7 +2742,7 @@ var KharbgaApp = function () {
         if (appClientState.userServer === true){
             setCookie(C_NSGID, gameState.id);
             displayNetMessage("Saving game on the server...");
-            gamesHubProxy.server.updateGameState(appClientState.sessionId,user.name, gameState.id,
+            gamesHubProxy.server.updateGameState(nsApp.sessionId(),user.name, gameState.id,
                 game.getState(), game.winner.isAttacker, game.attacker.score, game.defender.score).done(function(){
                     displayNetMessage("Done saving game on the server.");
                     displayGameMessage("Saved game on the server");
@@ -2815,34 +2817,11 @@ var KharbgaApp = function () {
 
         // set the game state
         $('#state').html(toDisplayString(Kharbga.GameState[game.getState()]));
-      //  $('#message').html("<div class='alert alert-success'>Click on the New Game button to start a new game on this computer.</div>")
-
+        if (activeGameId === null || activeGameId.length < 10){
+            displayGameMessage("Click on the New Game button to start a new game on this computer.");
+        }
 
         selectActiveGameId(activeGameId);
-
-        setupTeamsHtml5Combobox();
-    }
-
-    function setupFormsValidation() {
-        $('#login-form').validate();
-        $('#register-form').validate();
-    }
-    function setupTeamsHtml5Combobox(){
-        $("#register-team").on('keyup', function () {
-            var result = nsApiClient.clientService.getClients(appClientState.sessionId, this.value, function (data, status) {
-                if (data != null) {
-                    //   $('#appInfo').html(JSON.stringify(data));
-                    $("#register-team-list").empty();
-                    $.each(data, function () {
-                        // if (this.Status == 0 || this.Status = 1)
-                        $("#register-team-list").append("<option id=client_'" + this.systemId + "' value='" + this.name + "' ></option>");
-                    });
-                }
-                else {
-                    $('#appInfo').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-                }
-            });
-        });
     }
 
 
@@ -2963,7 +2942,7 @@ var KharbgaApp = function () {
 
  
     function playSound() {
-        if (userOptions.playSound === false){
+        if (userOptions.playSoundAfterMove === false){
             return;
         }
 
@@ -3095,7 +3074,7 @@ var KharbgaApp = function () {
 
             $.connection.hub.start({ jsonp: true, transport: ['webSockets', 'longPolling'] })
                 .done(function () {
-                    gamesHubProxy.server.hello(appClientState.sessionId);
+                    gamesHubProxy.server.hello(nsApp.sessionId());
                     logMessage('startSignalR - connected, connection ID: ' + $.connection.hub.id);
                     appClientState.serverConnectionId = $.connection.hub.id;
                     appClientState.signalReInitialized = true;
@@ -3186,7 +3165,7 @@ var KharbgaApp = function () {
             e.preventDefault();
 
         // the user must be logged in to 
-        if (appClientState.loggedIn === false || appClientState.session === null){
+        if (nsApp.isLoggedIn() === false){
             // add check if admin
             displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
             return;
@@ -3200,7 +3179,7 @@ var KharbgaApp = function () {
         }
         if (appClientState.signalReInitialized ){
             displayNetMessage("Signal R is setup. Pinging...");
-            gamesHubProxy.server.ping(appClientState.sessionId).done(function () { 
+            gamesHubProxy.server.ping(nsApp.sessionId()).done(function () { 
                 displayNetMessage("Done Pinging."); 
             });
         }
@@ -3252,7 +3231,7 @@ var KharbgaApp = function () {
     this.postMessage = function(msg){
 
         // the user must be logged in to 
-        if (appClientState.loggedIn === false || appClientState.session === null){
+        if (nsApp.isLoggedIn() === false){
             // add check if admin
             displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
             return;
@@ -3263,7 +3242,7 @@ var KharbgaApp = function () {
             return;
         }
         displayNetMessage("Posting message...");
-        gamesHubProxy.server.postMessage(appClientState.sessionId,user.name, msg.message);
+        gamesHubProxy.server.postMessage(nsApp.sessionId(),user.name, msg.message);
     };
 
 
@@ -3286,8 +3265,8 @@ var KharbgaApp = function () {
         if (move == null)
             return;
 
-     //   boardEl.find('.highlight-move').removeClass('highlight-move');
-     //   boardEl.find('.highlight-captured').removeClass('highlight-captured');
+        boardEl.find('.highlight-move').removeClass('highlight-move');
+        boardEl.find('.highlight-captured').removeClass('highlight-captured');
         if (move.exchangeRequest == false)
             boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
 
@@ -3673,7 +3652,7 @@ var KharbgaApp = function () {
             return;        
         }
         //join the game and indicate if spectator or not
-        gamesHubProxy.server.joinGame(appClientState.sessionId,user.name, gameId, false);
+        gamesHubProxy.server.joinGame(nsApp.sessionId(),user.name, gameId, false);
 
     };
 

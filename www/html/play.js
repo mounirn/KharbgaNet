@@ -51,6 +51,18 @@ $.appViewHandler = {
         $("#login-popup").popup( "close" );
     },
 
+    closeOpenPanels : function(){
+        if ($("#account-panel").hasClass("ui-panel-open") == true ){
+            $("#account-panel").panel( "close" );
+        }
+        if ($("#play-watch-section").hasClass("ui-panel-open") == true ){
+            $("#play-watch-section").panel( "close" );
+        }
+        if ($("#popup-menu-popup").hasClass("ui-popup-active") == true ){
+            $("#popup-menu").popup("close");
+        }
+    },
+
     closeRegisterPanel: function (){
         $("#register-panel").popup( "close" );    
     },

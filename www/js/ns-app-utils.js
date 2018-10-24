@@ -104,6 +104,16 @@ var NSApp = function(){
         return this.user.isLoggedIn();
     };
 
+    /**
+     * @summary retrieves the current session id
+     */
+    this.sessionId = function(){
+        if (this.session!= null)
+            return this.session.sessionId;
+        else
+            return nsResources.Empty;
+    };
+
 
     /**
      * Helper function for reading cookie

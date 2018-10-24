@@ -11,29 +11,6 @@
     <link rel="stylesheet" href="./css/site.css" />
 
     <script src="./lib/jquery/jquery.min.js"></script>
-    <script>
-        /*     window.fbAsyncInit = function() {
-                                                                                                                                                                            FB.init({
-                                                                                                                                                                                appId: '107740655926360',
-                                                                                                                                                                                cookie: true,
-                                                                                                                                                                                xfbml: true,
-                                                                                                                                                                                version: 'v2.8'
-                                                                                                                                                                            });
-
-                                                                                                                                                                            FB.AppEvents.logPageView();
-
-                                                                                                                                                                            checkLoginState();
-
-                                                                                                                                                                        };
-                                                                                                                                                                    */
-        function handleLoad(e) {
-            console.log('Loaded import: ' + e.target.href);
-        }
-
-        function handleError(e) {
-            console.log('Error loading import: ' + e.target.href);
-        }
-    </script>
 
     <script>
         (function(i, s, o, g, r, a, m) {
@@ -48,24 +25,13 @@
             m.parentNode.insertBefore(a, m)
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-        //   ga('create', 'UA-6996887-11', 'auto');
-        //   ga('send', 'pageview');
+        ga('create', 'UA-6996887-11', 'auto');
+        ga('send', 'pageview');
     </script>
 </head>
 
 <body>
-    <script>
-        (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {
-                return;
-            }
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-    </script>
+
     <div class="container-fluid text-center">
         <a href="./index.html">
             <img src="./img/kharbga.png" title="Kharbga Game Network" style="max-height:40px;">
@@ -79,86 +45,18 @@
                     If you are new here, please <a target="rules" href="./html/rules.html">click here to view the game rules.</a>
                 </p>
                 <figure class="text-center">
-                    <a href="./v3/index.html" title="Play the game online">
+                    <a href="./html/play.html" title="Play the game online">
                         <img src="./img/players.png" style="width:250px;max-width:80%" title="Kharbga players from North Africa">
                     </a>
                     <figcaption>Kharbga game played on a sand board in an north african oasis</figcaption>
                 </figure>
                 <hr>
                 <div id="main">
-                    <h2><a href="./v3/index.html">Play Online</a></h2>
+                    <h2><a href="./html/play.html">Play Online</a></h2>
                 </div>
             </div>
         </div>
-        <div id="facebook-section" class="text-center">
-            <div id="status">
-            </div>
-            <!-- 
-            <div id="loginButton">
-                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-                </fb:login-button>
 
-            </div> -->
-            <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="true" data-auto-logout-link="true" data-use-continue-as="true"></div>
-
-            <div id="logoutButton">
-                <button id="logout" name="Logout" value="Logout" type="submit" title="Logout of App using Facebook"></button>
-            </div>
-        </div </div>
-        <script>
-            function checkLoginState() {
-                if (typeof FB === 'object') {
-                    FB.getLoginStatus(function(response) {
-                        statusChangeCallback(response);
-                    });
-                }
-            }
-
-            function statusChangeCallback(response) {
-                console.log('statusChangeCallback');
-                console.log(response);
-                // The response object is returned with a status field that lets the
-                // app know the current login status of the person.
-                // Full docs on the response object can be found in the documentation
-                // for FB.getLoginStatus().
-                if (response.status === 'connected') {
-                    // Logged into your app and Facebook.
-                    testAPI();
-                    $('#loginButton').hide();
-                    $('#logoutButton').show();
-                } else {
-                    // The person is not logged into your app or we are unable to tell.
-                    $('#loginButton').show();
-                    document.getElementById('status').innerHTML = 'Please log ' +
-                        'into this app.';
-
-                    $('#logoutButton').hide();
-                }
-            }
-
-            // Here we run a very simple test of the Graph API after login is
-            // successful.  See statusChangeCallback() for when this call is made.
-            function testAPI() {
-                console.log('Welcome!  Fetching your information.... ');
-                FB.api('/me', function(response) {
-                    console.log('Successful login for: ' + response.name);
-                    console.log(response);
-                    document.getElementById('status').innerHTML =
-                        'Welcome ' + response.name + '!';
-                });
-            }
-
-
-            $(document).ready(function() {
-                $('#logout').click(function() {
-                    FB.logout(function(response) {
-                        // Person is now logged out
-                        console.log("Logout ", response);
-                        $('#loginButton').show();
-                    });
-                });
-            });
-        </script>
 
 
         <footer>
@@ -166,7 +64,7 @@
                 <div class="col-sm-8">
                     <div class="row">
                         <div class="col-sm-4">
-                            <a href="./v3/index.html">
+                            <a href="./html/play.html">
                                 <img src="./img/title.png" class="text-center" style="max-height:100px;" title="Kharbga Game Network">
                             </a>
                         </div>

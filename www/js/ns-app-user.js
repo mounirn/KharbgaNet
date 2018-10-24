@@ -101,7 +101,7 @@ nsApp.init = function(){
                 if (status.status === 404 || status.status === 400  )
                     displayAccountMessage("Invalid user name or password",false);
                 else
-                   displayAccountMessage("Failed to login. Error: " + error.status,false);
+                   displayAccountMessage("Failed to login. Error: " + status,false);
 
                 $('#appInfo').html("<pre> " + JSON.stringify(status) + " </pre>");
             }  
