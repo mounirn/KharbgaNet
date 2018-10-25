@@ -111,14 +111,14 @@
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
                 <div class="panel panel-info">
-                    <div class="panel-heading ui-bar ui-bar-b"><a target="rules" href="../html/my-account.html">My Account</a></div>
+                    <div class="panel-heading ui-bar ui-bar-b">
+                        <a target="rules" href="../html/my-account.html">My Account</a>
+                    </div>
                     <div class="panel-body ui-body">
 
                         <p>If this is your first time here, please click <a target="rules" href="../html/rules.html">here
                                 to learn about the game.</a></p>
-                        <p>
-                            This system provides a platform for learning and playing this fun board game from North Africa.
-                        </p>
+
                         <figure class="center">
                             <a href="#popup-menu" data-rel="popup">
                                 <img src="../img/players.png" style="width:90%;" class="img" title="Kharbga game played in the desert of North Africa">
@@ -156,18 +156,14 @@
             <div id="play-watch-section" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
-                <div class="panel panel-info">
-                    <div class="ui-bar ui-bar-b">
-                        </a> Active Games
-                    </div>
+
+                <div class="center  ui-bar ui-bar-b">
+                    <a id="games-link" href="#">Refresh  Active Games </a>
                 </div>
-                <div class="text-center center ui-body ui-body-b">
-                    <a id="games-link" href="#" class="glyphicon glyphicon-refresh ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-refresh ui-btn-icon-notext ui-btn-left">Refresh
-                    <a href="#popup-menu" data-rel="popup" data-transition="slideup" data-icon="gear">Create a New Game</a>
-                    <ul id="games-list" data-role="listview" data-inset="true" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
-                    </ul>
-                </div>
-                <div class="center ui-bar ui-bar-c">
+
+                <ul id="games-list" data-role="listview" data-inset="true" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                </ul>
+                <div class="center ui-bar ui-bar-b">
                     <a href="#" data-rel="close">Close</a>
                 </div>
 
@@ -186,6 +182,8 @@
             <div class="row ui-grid-b kharbga-grid">
                 <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
                     <div class="panel-heading ui-bar ui-bar-a small" style="font-size:small">
+                        <!--   <a href="#popup-menu" data-icon="plus" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">
+                        </a> -->
                         Board - Turn: <span id="player-turn" class="badge"></span>
                     </div>
                     <a href="#account-panel" xdata-icon="user" xclass="ui-btn-right">
@@ -197,7 +195,7 @@
                         <div id="board"></div>
                     </div>
                     <div class="">
-                        <label for="resign-checkbox" style="font-size:x-small"> To resign, check this move a solider
+                        <label for="resign-checkbox" style="font-size:x-small"> To resign, check this box and move a solider
                             <input id="resign-checkbox" type="checkbox" name="resign-checkbox" data-mini="true" class="">
                         </label>
                     </div>
@@ -226,13 +224,14 @@
 
                 </div>
                 <div class="col-sm-4 ui-block-b" xstyle="padding-top:70px;">
-                    <div class="panel-heading ui-bar ui-bar-a" style="font-size:small">
-                        Current Game Information
+                    <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
+                        Game Information
+                        <a id="start-new-game-btn" href="#popup-menu" data-mini="true" data-rel="popup" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">New Game</a>
                     </div>
                     <div id="game-message" class=""></div>
-                    <div class="panel panel-success">
+                    <div id="current-game-info" class="panel panel-success">
                         <div class="panel-heading ui-bar ui-bar-b">
-                            <small>Game ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
+                            <small>Current Game ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
                         </div>
                         <div class="panel-body">
 
@@ -372,10 +371,9 @@
                                 </div>
                             </form>
                         </div>
-
-                        <div class="alert alert-warning ui-bar ui-bar-c">
-                            To play with other users in the network, you need to have a valid user account. </strong>
-                            Click here to <a href="../html/register.html" target="account" class="ui-mini ui-inline">sign up if not already registered.</a>
+                        <p>To play with other users in the network, you need to have a valid user account. </p>
+                        <div class="alert alert-warning ui-bar ui-bar-b">
+                            <a href="../html/register.html" target="account" class="ui-mini ui-inline">Sign Up</a>
                         </div>
                         <hr>
                     </div>
@@ -385,13 +383,13 @@
                 <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 
                 <div class="modal-header ui-bar" data-theme="a">
-                    <h4 class="modal-title text-center center">GAME OVER</h4>
+                    <h4 class="modal-title text-center center text-warning">GAME OVER</h4>
                 </div>
                 <div class="modal-body ui-body">
                     <p class="text-center text-info center"><strong><span id="game-players"></span></strong></p>
                     <p class="text-center text-success center">Winner is: <span id="game-winner"></span></p>
                     <p class="text-center text-success center"><span id="game-result"></span></p>
-                    <p class="text-center text-info center">Final Score: <span id="game-score"></span></p>
+                    <p class="text-center text-warning center">Final Score: <span id="game-score"></span></p>
                 </div>
 
             </div>

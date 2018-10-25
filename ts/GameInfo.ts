@@ -56,7 +56,9 @@ namespace Kharbga {
             this.defender = gameInfo.defender;
             this.players = [this.attacker,this.defender];
             this.nextMoveNumber = gameInfo.nextMoveNumber;
-            this.isNetworkGame = gameInfo.isNetworkGame;
+
+            this.isNetworkGame =  (gameInfo.isNetworkGame === true) ;
+
         }
         public getComputerPlayer(): Player {
             if (this.attacker !== null && this.attacker.isSystem === true) {

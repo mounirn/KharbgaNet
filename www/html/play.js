@@ -79,6 +79,9 @@ $.appViewHandler = {
     openLoginPanel : function(){
         $("#login-popup").popup("open");
     },
+    openNewGamePanel : function(){
+        $("#popup-menu").popup("open");
+    },
 
     playBeginning : function () {
         if ($.nsAppKharbga == null )

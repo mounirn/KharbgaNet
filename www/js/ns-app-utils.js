@@ -194,15 +194,24 @@ var NSApp = function(){
     this.displayGameMessage= function(message){
         $('#game-message').html("<div class='alert alert-info'>" + message + "</div>");
     };
-        /**
+   
+    /**
      * @summary Displays a message status change from the messaging server
      * @param {string} message - the message to display
+     * @param {boolean} success - message is success or not
+     *   
      */
-    this.displayNetMessage= function(message){
-        $('#net-message').html("<div class='alert alert-info'>" + message + "</div>");
-        //   $('#message').html("<div class='alert alert-info'>" + message + "</div>");
+    this.displayNetMessage = function(message,success){
+        if (success === true){
+            $('#net-message').html("<div class='alert alert-success'>" + message + "</div>");
+        }else if (success === false){
+            $('#net-message').html("<div class='alert alert-danger'>" + message + "</div>");
+        }else{
+            $('#net-message').html("<div class='alert alert-info'>" + message + "</div>");
+        }
+     //   $('#message').html("<div class='alert alert-info'>" + message + "</div>");
         $('#main-message').html("<div class='alert alert-info'>" + message + "</div>");
-    };
+    }
 
     /**
      * @summary Display computer Message
@@ -296,4 +305,10 @@ function toDisplayString(key){
     return ret;
 }
 
+var resScript= "../jsconfig/ns-app-resources.js";
+console.log("loading: " + resScript);
+var resElement = document.createElement('script');
+resElement.setAttribute('src', resScript);
+document.body.appendChild(resElement);
+console.log("loading: " + resScript);
    

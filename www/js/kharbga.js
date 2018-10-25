@@ -1327,11 +1327,13 @@ var Kharbga;
             this.numberOfSettingsAllowed = 2; // temp counter used for Settings. Players are allowed to set two pieces at a time
             this.attackerMove = 0; // not really used
             this.defenderMove = 0; // not really used
+            this.lastPlayerStartTime = 0;
             // transitional state
             this.moveSourceRequired = ""; // the source piece required after a capture
             this.moveDestinationsPossibleCapture = null; // the possible destinations to capture
             this.firstMove = true;
             this.thinkingTimerId = -1;
+            this.loggingOn = true; // could be reset by clients
             this.state = Kharbga.GameState.NotStarted;
             this.gameEvents = gameEvents;
             this.boardEvents = boardEvents;
@@ -1342,8 +1344,11 @@ var Kharbga;
          * @summary - initializes the game
          */
         Game.prototype.init = function () {
+            if (this.loggingOn === true) {
+                console.log("game.init");
+            }
             this.id = "";
-            this.startTime = new Date();
+            this.startTime = new Date().getTime();
             this.attackerMove = 0;
             this.defenderMove = 0;
             this.currentPlayer = this.attacker;
@@ -1352,24 +1357,29 @@ var Kharbga;
             this.reset();
         };
         /**
-         * @summary Starts a new game between two players on the same computer
+         * @summary Starts the game
          */
         Game.prototype.start = function () {
-            this.init();
-            this.reset();
+            if (this.loggingOn === true) {
+                console.log("game.start");
+            }
             var eventData = new Kharbga.GameEventData(this, this.getCurrentPlayer());
             this.gameEvents.newGameStartedEvent(eventData);
             this.gameEvents.newPlayerTurnEvent(eventData);
+            this.lastPlayerStartTime = new Date().getTime();
             // start the timer for adding total thinking time for each player
-            this.thinkingTimerId = setInterval(this.thinkingTimerHandler, 5, this);
+            //  this.thinkingTimerId = setInterval(this.thinkingTimerHandler,5,this);
         };
         Game.prototype.thinkingTimerHandler = function (game) {
-            var p = game.getCurrentPlayer();
-            p.totalTimeThinkingSinceStartOfGame += 5;
+            // let p: Player = game.getCurrentPlayer();
+            //  p.totalTimeThinkingSinceStartOfGame += 5;
             return;
         };
         Game.prototype.setGameDone = function () {
-            this.endTime = new Date();
+            if (this.loggingOn === true) {
+                console.log("game.setGameDone");
+            }
+            this.endTime = new Date().getTime();
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -1380,6 +1390,9 @@ var Kharbga;
          * and stops the players thinking timer
          */
         Game.prototype.reset = function () {
+            if (this.loggingOn === true) {
+                console.log("game.reset");
+            }
             this.board.clear();
             this.attacker.reset();
             this.defender.reset();
@@ -1387,6 +1400,9 @@ var Kharbga;
             this.currentPlayer = this.attacker;
             this.history.reset();
             this.moveFlags.reset();
+            this.startTime = 0;
+            this.endTime = 0;
+            this.lastPlayerStartTime = 0;
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -1836,14 +1852,6 @@ var Kharbga;
         Game.prototype.getAttackerMoveNumber = function () { return this.attackerMove; };
         Game.prototype.getDefenderMoveNumber = function () { return this.defenderMove; };
         /**
-         * @returns the startup time of the game
-         */
-        Game.prototype.getStartTime = function () { return this.startTime; };
-        /**
-         * @returns the end time of the game
-         */
-        Game.prototype.getEndTime = function () { return this.endTime; };
-        /**
          * @summary Checks the time since the start of the game
          */
         // public TimeSpan timeSinceStartup { return DateTime.Now - _startTime; } }
@@ -1852,6 +1860,13 @@ var Kharbga;
          * @returns the game's winner
          */
         Game.prototype.getWinner = function () { return this.winner; };
+        /**
+         *  @summary calculates the total game play time
+         *
+         */
+        Game.prototype.getTotalPlayTime = function () {
+            return this.endTime - this.startTime;
+        };
         /**
          *  Returns the attacker
          */
@@ -1879,6 +1894,9 @@ var Kharbga;
          */
         Game.prototype.processSetting = function (cellId, resigned) {
             if (resigned === void 0) { resigned = false; }
+            if (this.loggingOn === true) {
+                console.log("game.processSetting");
+            }
             this.moveFlags.resigned = resigned;
             var ret = this.recordSetting(cellId); // process the move first
             if (this.moveFlags.resigned === true) {
@@ -1895,6 +1913,9 @@ var Kharbga;
          * @returns true if successful, false otherwise
          */
         Game.prototype.processMove = function (fromCellId, toCellId, resigned, exchangeRequest) {
+            if (this.loggingOn === true) {
+                console.log("game.processMove");
+            }
             if (this.state !== Kharbga.GameState.Moving) {
                 return false;
             }
@@ -2006,6 +2027,9 @@ var Kharbga;
          * @param moveHandler the event handle for callback
          */
         Game.prototype.processMove2 = function (move, moveHandler) {
+            if (this.loggingOn === true) {
+                console.log("game.processMove2");
+            }
             var ret = this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
             if (moveHandler != null) {
                 moveHandler.moveProcessed(ret, move);
@@ -2457,7 +2481,7 @@ var Kharbga;
             this.defender = gameInfo.defender;
             this.players = [this.attacker, this.defender];
             this.nextMoveNumber = gameInfo.nextMoveNumber;
-            this.isNetworkGame = gameInfo.isNetworkGame;
+            this.isNetworkGame = (gameInfo.isNetworkGame === true);
         };
         GameInfo.prototype.getComputerPlayer = function () {
             if (this.attacker !== null && this.attacker.isSystem === true) {

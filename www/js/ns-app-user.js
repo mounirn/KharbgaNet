@@ -328,9 +328,17 @@ nsApp.init = function(){
     function transferToMyAccount(){
         document.location= "../html/my-account.html";
     }
+
+    /**
+     * @summary transfers the user to the the play page
+     */
     function transferToPlay(){
         document.location= "../html/play.html";
     }
+
+    /**
+     * @summary transfers the user to the login page
+     */
     function transferToLogin(){
         document.location= "../html/login.html";
     }
@@ -397,17 +405,17 @@ nsApp.init = function(){
     function displayAccountMessage(message, success){
         if (success == undefined){
             $('#account-message').html("<div class='alert alert-info'>" + message + "</div>");
-            nsApp.displayInfoMessage(message);
+            nsApp.displayNetMessage(message,success);
         }else if (success === true){
             $('#account-message').html("<div class='alert alert-success'>" + message + "</div>");
-            nsApp.displaySuccessMessage(message);
+              nsApp.displayNetMessage(message, success);
         }
         else if (success === false){
             $('#account-message').html("<div class='alert alert-danger'>" + message + "</div>");
-            nsApp.displayErrorMessage(message);
+             nsApp.displayNetMessage(message,success);
         }else{
             $('#account-message').html("<div class='alert alert-warning'>" + message + " - " + success+ "</div>"); 
-            nsApp.displayInfoMessage(message + " - " + success);
+             nsApp.displayNetMessage(message + " - " + success);
         }   
     }           
 
@@ -469,6 +477,7 @@ nsApp.init = function(){
             }
             else {
                 nsApp.setSession(null);
+                
                 setupMyAccount();
                 if (status.status === 404 || status.status === 400)
                     displayAccountMessage("Invalid Session - Please Login", false);
@@ -521,7 +530,12 @@ nsApp.init = function(){
     */
     function setupClientStateWithSession(session) {
         nsApp.setSession(session);
+
         setupMyAccount();
+
+        if (session === null && nsApp.state.transferToLogin === true){
+            transferToLogin();
+        }
     }
 
 
@@ -610,12 +624,14 @@ nsApp.init = function(){
      * @summary checks the session cookie, setup 
      * the form with any data  
      * @param {boolean} loadTeamInfo load team info option
+     * @param {boolean} transferToLogin transfer to login page if invalid session
      */ 
-    this.setup = function (loadTeamInfo) {
+    this.setup = function (loadTeamInfo,transferToLogin) {
      
 
         nsApp.state.loadAccountInfo = loadTeamInfo;
         nsApp.state.loadTeamInfo = loadTeamInfo;
+        nsApp.state.transferToLogin = transferToLogin;
 
         checkSessionCookie();
         setupTeamsHtml5Combobox();   

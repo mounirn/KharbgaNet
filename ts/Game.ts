@@ -24,12 +24,15 @@ namespace Kharbga {
         attackerMove:number = 0;   // not really used
         defenderMove:number = 0;   // not really used
 
+        lastPlayerStartTime : number = 0;
+
         // transitional state
         moveSourceRequired: string = ""; // the source piece required after a capture
         moveDestinationsPossibleCapture: string[] = null; // the possible destinations to capture
         firstMove = true;
         moveFlags: GameMoveFlags; // current state of the move params
         private thinkingTimerId: number = -1;
+        loggingOn: boolean = true;   // could be reset by clients
 
         /*
          * @summary Initializes the game to the no started state
@@ -47,6 +50,9 @@ namespace Kharbga {
          * @summary - initializes the game
          */
         init(): void {
+            if (this.loggingOn === true) {
+                console.log("game.init");
+            }
             this.id = "";
             this.startTime = new Date().getTime();
             this.attackerMove = 0;
@@ -58,26 +64,30 @@ namespace Kharbga {
         }
 
         /**
-         * @summary Starts a new game between two players on the same computer
+         * @summary Starts the game
          */
         public start(): void {
-            this.init();
-            this.reset();
-
+            if (this.loggingOn === true) {
+                console.log("game.start");
+            }
             var eventData: GameEventData = new GameEventData(this, this.getCurrentPlayer());
             this.gameEvents.newGameStartedEvent(eventData);
             this.gameEvents.newPlayerTurnEvent(eventData);
+            this.lastPlayerStartTime = new Date().getTime();
             // start the timer for adding total thinking time for each player
-            this.thinkingTimerId = setInterval(this.thinkingTimerHandler,5,this);
+          //  this.thinkingTimerId = setInterval(this.thinkingTimerHandler,5,this);
         }
 
         private thinkingTimerHandler(game:Game): void {
-            let p: Player = game.getCurrentPlayer();
-            p.totalTimeThinkingSinceStartOfGame += 5;
+           // let p: Player = game.getCurrentPlayer();
+          //  p.totalTimeThinkingSinceStartOfGame += 5;
             return;
         }
 
         private setGameDone(): void {
+            if (this.loggingOn === true) {
+                console.log("game.setGameDone");
+            }
             this.endTime = new Date().getTime();
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
@@ -90,6 +100,9 @@ namespace Kharbga {
          * and stops the players thinking timer
          */
         public reset(): void {
+            if (this.loggingOn === true) {
+                console.log("game.reset");
+            }
             this.board.clear();
             this.attacker.reset();
             this.defender.reset();
@@ -99,6 +112,8 @@ namespace Kharbga {
             this.moveFlags.reset();
             this.startTime = 0;
             this.endTime = 0;
+            this.lastPlayerStartTime = 0;
+
             if (this.thinkingTimerId > 0) {
                 clearInterval(this.thinkingTimerId);
                 this.thinkingTimerId = -1;
@@ -580,7 +595,7 @@ namespace Kharbga {
         getWinner(): Player { return this.winner; }
 
         /**
-         *  @summary calcualtes the 
+         *  @summary calculates the total game play time
          *
          */
         getTotalPlayTime(): number {
@@ -617,15 +632,17 @@ namespace Kharbga {
          * @returns true if a successful setting, false otherwise
          */
         public processSetting(cellId: string, resigned: boolean = false): boolean {
+            if (this.loggingOn === true) {
+                console.log("game.processSetting");
+            }
+            this.moveFlags.resigned = resigned;
 
-                this.moveFlags.resigned = resigned;
+            let ret : boolean = this.recordSetting(cellId);// process the move first
+            if (this.moveFlags.resigned === true) {
+                this.processCurrentPlayerAbandoned();
+            }
 
-                let ret : boolean = this.recordSetting(cellId);// process the move first
-                if (this.moveFlags.resigned === true) {
-                    this.processCurrentPlayerAbandoned();
-                }
-
-                return ret;
+            return ret;
 
         }
 
@@ -638,6 +655,9 @@ namespace Kharbga {
          * @returns true if successful, false otherwise
          */
         public processMove(fromCellId: string, toCellId: string, resigned: boolean, exchangeRequest: boolean): boolean {
+            if (this.loggingOn === true) {
+                console.log("game.processMove");
+            }
             if (this.state !== GameState.Moving) {
                 return false;
             }
@@ -753,6 +773,9 @@ namespace Kharbga {
          * @param moveHandler the event handle for callback
          */
         public processMove2(move: GameMove, moveHandler: IGameEvents): boolean {
+            if (this.loggingOn === true) {
+                console.log("game.processMove2");
+            }
             var ret: boolean = this.processMove(move.from, move.to, move.resigned, move.exchangeRequest);
 
             if (moveHandler != null ) {
