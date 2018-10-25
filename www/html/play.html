@@ -80,7 +80,7 @@
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
                                     <label for="over-the-network-game">over the network</label>
                                     <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
-                                    <label for="local-game">local on this device</label>
+                                    <label for="local-game">on this device</label>
                                     <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
                                 </fieldset>
                             </li>
@@ -178,15 +178,14 @@
             <div class="row ui-grid-b kharbga-grid">
                 <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
                     <div class="ui-bar ui-bar-b small" style="font-size:small">
-                        <a href="#popup-menu" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-mini ui-btn ui-icon-plus ui-btn-inline ui-btn-icon-left ui-btn-icon-notext ">
+                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" class="ui-mini ui-btn ui-icon-plus ui-btn-inline ui-btn-icon-left ui-btn-icon-notext ">
                         </a>
-                        <a id="clear-board-button" data-mini="true" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-icon-notext  ">Clear</a>
+                        <a id="clear-board-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-icon-notext  ">Clear</a>
 
-                        <a id="flipOrientation" data-mini="true" href="#" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-shadow  ui-icon-recycle  ui-btn-icon-left ui-btn-icon-notext">Flip</a>
+                        <a id="flipOrientation" href="#" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-shadow  ui-icon-recycle  ui-btn-icon-left ui-btn-icon-notext">Flip</a>
 
                     </div>
-
-                    <div class="message" id="message" class=""></div>
+                    <div class="message" id="message" class="small" style="font-size:x-small"></div>
                     <div class="panel-body ">
                         <!-- The Board -->
                         <div id="board"></div>
@@ -208,13 +207,14 @@
                             </audio>
                         </div>
 
-                        <!--   <div class="col-sm-3 col-xs-3" >
-                        <a href='' data-ng-click="soundUp()" id="sound-up"><span class="glyphicon glyphicon-volume-up"></span></a>
-                        <a href='' data-ng-click="soundDown()" id="sound-down"><span class="glyphicon glyphicon-volume-down"></span></a>
-                    </div>-->
+                        <!--  <div class="col-sm-3 col-xs-3" >
+                            <a href='' data-ng-click="soundUp()" id="sound-up"><span class="glyphicon glyphicon-volume-up"></span></a>
+                            <a href='' data-ng-click="soundDown()" id="sound-down"><span class="glyphicon glyphicon-volume-down"></span></a>
+                            </div>-->
+
                     </div>
 
-
+                    <hr/>
 
                 </div>
                 <div class="col-sm-4 ui-block-b" xstyle="padding-top:70px;">
