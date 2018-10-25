@@ -47,7 +47,7 @@
                         <li><a href="#play" data-target="tab-pane">New</a></li>
                       -->
                         <li><a target="rules" href="../html/rules.html" title="Kharbga Game Rules">Rules</a></li>
-                        <li><a href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
+                        <li><a target="kharbga" href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li id="login-li"><a id="xlogin-link" href="../html/login.html"><span class="glyphicon glyphicon-log-in"></span>
@@ -59,114 +59,116 @@
                 </div>
             </div>
         </nav>
-        <div id="main-message" class=""></div>
+    </div>
 
-        <div id="account" class="">
-            <div id="account-message"></div>
+    <div id="account" class="container">
+        <div id="account-message"></div>
 
-            <div id="account-info-panel">
-                <ul class="nav nav-pills">
-                    <li class="active"><a data-toggle="pill" href="#user-info-tab">My Account</a></li>
-                    <li><a data-toggle="pill" href="#user-session-tab">Session Information</a></li>
-                    <li><a data-toggle="pill" href="#user-account-tab">Account Information</a></li>
-                    <li><a data-toggle="pill" href="#user-team-tab">Team Info</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div id="user-info-tab" class="tab-pane fade in active">
-                        <table class="table table-user-information">
-                            <tbody>
-                                <tr>
-                                    <td>Name:</td>
-                                    <td><span id="account-name"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>Session Id</td>
-                                    <td><span id="account-session-id"></span></td>
-                                </tr>
+        <div id="account-info-panel">
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#user-info-tab">My Account</a></li>
+                <li><a data-toggle="pill" href="#user-session-tab">Session Information</a></li>
+                <li><a data-toggle="pill" href="#user-account-tab">Account Information</a></li>
+                <li><a data-toggle="pill" href="#user-team-tab">Team Info</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="user-info-tab" class="tab-pane fade in active">
+                    <table class="table table-user-information">
+                        <tbody>
+                            <tr>
+                                <td>Name:</td>
+                                <td><span id="account-name"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Session Id</td>
+                                <td><span id="account-session-id"></span></td>
+                            </tr>
 
-                            </tbody>
-                        </table>
-                        <div id="settings" class="panel panel-info">
-                            <div class="panel-heading">
-                                Preferences
-                            </div>
-                            <div class="panel-body" id="user-preferences">
-                                <form id="user-preferences-form">
-                                    <div id="user-preferences-form-body">
+                        </tbody>
+                    </table>
+                    <div id="settings" class="panel panel-info">
+                        <div class="panel-heading">
+                            Preferences
+                        </div>
+                        <div class="panel-body" id="user-preferences">
+                            <form id="user-preferences-form">
+                                <div id="user-preferences-form-body">
 
-                                    </div>
-                                    <button id="save-user-preferences">Save</button>
-                                </form>
+                                </div>
+                                <button id="save-user-preferences">Save</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <div id="user-session-tab" class="tab-pane fade ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Current Session
+                            <div class="pull-right">
+                                <a href="#" id="session-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Check Now
+                                </a>
                             </div>
                         </div>
 
-                    </div>
-                    <div id="user-session-tab" class="tab-pane fade ">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                Current Session
-                                <div class="pull-right">
-                                    <a href="#" id="session-link" value="user">
-                                        <span class="glyphicon glyphicon-refresh"></span>Check Now
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="panel-body">
+                            <table id="user-session-info-table" class="table table-striped">
+                                <tbody id="user-session-info-table-body">
 
-                            <div class="panel-body">
-                                <table id="user-session-info-table" class="table table-striped">
-                                    <tbody id="user-session-info-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="user-account-tab" class="tab-pane fade ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Account Details
+                            <div class="pull-right">
+                                <a href="#" id="account-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <table id="user-info-table" class="table table-striped">
+                                <tbody id="user-info-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="user-team-tab" class="tab-pane fade ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            My Team
+                            <div class="pull-right">
+                                <a href="#" id="team-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="user-team-info">
+                                <table id="team-info-table" class="table table-striped">
+
+                                    <tbody id="team-info-table-body">
 
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="user-account-tab" class="tab-pane fade ">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                Account Details
-                                <div class="pull-right">
-                                    <a href="#" id="account-link" value="user">
-                                        <span class="glyphicon glyphicon-refresh"></span>Refresh
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="panel-body">
-                                <table id="user-info-table" class="table table-striped">
-                                    <tbody id="user-info-table-body">
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="user-team-tab" class="tab-pane fade ">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                My Team
-                                <div class="pull-right">
-                                    <a href="#" id="team-link" value="user">
-                                        <span class="glyphicon glyphicon-refresh"></span>Refresh
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="panel-body">
-                                <div id="user-team-info">
-                                    <table id="team-info-table" class="table table-striped">
-
-                                        <tbody id="team-info-table-body">
-
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <p>
+            If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
+        </p>
+        <strong>Thank you!</strong>
     </div>
     <footer>
         <div class="container row text-center">
@@ -205,7 +207,7 @@
         </div>
         <hr />
     </footer>
-    </div>
+
     <script src="../lib/json/json3.min.js"></script>
     <script src="../lib/jquery/jquery.min.js"></script>
     <script src="../lib/bootstrap/js/bootstrap.min.js"></script>

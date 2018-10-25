@@ -3,20 +3,15 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Kharbga</title>
+    <title>Kharbga.Net - Play and watch Kharbga on local device or with network players</title>
     <meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="../css/kharbga.css" />
-    <!-- <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css"> -->
-    <!-- <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile-1.4.5.min.css"> -->
-
     <link rel="stylesheet" href="../css/themes/Kharbga2.min.css">
     <link rel="stylesheet" href="../css/themes/jquery.mobile.icons.min.css">
     <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile.structure-1.4.5.css">
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../css/site.css">
     <link rel="stylesheet" href="./play.css">
-
-    <!--  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> -->
     <script src="../lib/jquery/jquery-1.11.3.min.js"></script>
     <script src="../lib/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
 
@@ -41,56 +36,55 @@
 <body>
     <section data-role="page" id="first" data-theme="a">
         <header data-role="header" data-position="fixed" class="text-center">
-            <div style="padding-top:10px">
-                <a target="rules" href="../html/rules.html">
-                    <img src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
-                </a>
-                <div id="login-li">
-                    <a id="login-link-v3" href="#login-popup" data-rel="popup" data-position-to="window" data-icon="user" class="ui-btn-right">
-                        <span class="glyphicon glyphicon-log-in"></span>Login</a>
-                </div>
-                <div id="logout-li">
-                    <a id="logout-link" href="#logout" data-icon="user" class="ui-btn-right"><span class="glyphicon glyphicon-log-out"></span>Sign Out</a>
-                </div>
-            </div>
+            <a target="rules" href="../html/rules.html" class="ui-mini" data-theme="c">
+                <img src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
+            </a>
             <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">Play / Watch
+            </a>
+            <a id="xlogin-popup" href="#login-popup" data-rel="popup" data-mini="true" data-position-to="window" data-icon="user" class="ui-btn-right" data-iconpos="notext">
+                <span class="glyphicon glyphicon-log-in"></span>Login
+            </a>
+
+            <a id="account-link" href="#account-panel" data-icon="user" class="ui-btn-right">
+                <span id="account-welcome">Welcome</span>
             </a>
 
         </header>
         <article role="main" class="ui-content">
             <div id="popup-menu" data-role="popup">
-
                 <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
-                    New Game Options
+                    Main Menu
                 </div>
                 <ul data-role="listview" data-inset="true">
                     <li>
-                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                        <strong>New Game Options</strong>
+                        <ul>
+                            <li>
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
 
-                            <label for="play-as-attacker">Play as Attacker</label>
-                            <input type="radio" name="radioPlayRole" id="play-as-attacker" checked/>
-                            <label for="play-as-defender">as Defender</label>
-                            <input type="radio" name="radioPlayRole" id="play-as-defender" />
-                        </fieldset>
-                    </li>
-                    <li>
-                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                            <label for="player-two-person">with real player</label>
-                            <input type="radio" name="radioWithPersonOrComputer" id="player-two-person" />
-                            <label for="player-two-computer">or against computer</label>
-                            <input type="radio" name="radioWithPersonOrComputer" id="player-two-computer" checked/>
-                        </fieldset>
-                    </li>
-                    <li>
-                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                            <label for="over-the-network-game">over the network</label>
-                            <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
-                            <label for="local-game">local on this device</label>
-                            <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
-                        </fieldset>
-                    </li>
-
-                    <li>
+                                    <label for="play-as-attacker">Play as Attacker</label>
+                                    <input type="radio" name="radioPlayRole" id="play-as-attacker" checked/>
+                                    <label for="play-as-defender">as Defender</label>
+                                    <input type="radio" name="radioPlayRole" id="play-as-defender" />
+                                </fieldset>
+                            </li>
+                            <li>
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <label for="player-two-person">with real player</label>
+                                    <input type="radio" name="radioWithPersonOrComputer" id="player-two-person" />
+                                    <label for="player-two-computer">or against computer</label>
+                                    <input type="radio" name="radioWithPersonOrComputer" id="player-two-computer" checked/>
+                                </fieldset>
+                            </li>
+                            <li>
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <label for="over-the-network-game">over the network</label>
+                                    <input type="radio" name="radioOneOrTwoPlayers" id="over-the-network-game" />
+                                    <label for="local-game">local on this device</label>
+                                    <input type="radio" name="radioOneOrTwoPlayers" id="local-game" checked/>
+                                </fieldset>
+                            </li>
+                        </ul>
                         <button id="start-game-with-options">Start New Game</button>
                     </li>
                     <li><strong>Play with other network players - must be logged in</strong>
@@ -103,6 +97,16 @@
                                             system</a></li>-->
                         </ul>
                     </li>
+                    <li>
+                        <a target="rules" href="../html/rules.html">Game Rules</a>
+                    </li>
+                    <li>
+                        <a target="rules" href="../html/my-account.html">My Account</a>
+                    </li>
+                    <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
+                    <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
+                    <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
+
                 </ul>
 
             </div>
@@ -111,11 +115,17 @@
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
                 <div class="panel panel-info">
-                    <div class="panel-heading ui-bar ui-bar-b">
+                    <div class="panel-heading ui-bar ui-bar-c">
                         <a target="rules" href="../html/my-account.html">My Account</a>
+
                     </div>
                     <div class="panel-body ui-body">
-
+                        <p id="my-account-info">
+                            <a id="logout-link" href="#logout" data-icon="user" class="ui-btn-right">
+                                <span class="glyphicon glyphicon-log-out"></span>Sign Out
+                            </a>
+                        </p>
+                        <hr>
                         <p>If this is your first time here, please click <a target="rules" href="../html/rules.html">here
                                 to learn about the game.</a></p>
 
@@ -140,10 +150,7 @@
                     </ul>
                 </div>
                 <div class="ui-body">
-                    <p>
-                        If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
-                    </p>
-                    <strong>Thank you!</strong>
+
                     <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
 
                     <p class="center">
@@ -168,27 +175,17 @@
                 </div>
 
             </div>
-            <!--   <div class="row kharbga-grid ui-grid-b">
-                <div class="ui-block-a">
-                    
-                </div>
-              
-                <div class="ui-block-c">
-
-                </div>
-            </div>  
-        -->
-
             <div class="row ui-grid-b kharbga-grid">
                 <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
-                    <div class="panel-heading ui-bar ui-bar-a small" style="font-size:small">
-                        <!--   <a href="#popup-menu" data-icon="plus" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">
-                        </a> -->
-                        Board - Turn: <span id="player-turn" class="badge"></span>
+                    <div class="ui-bar ui-bar-b small" style="font-size:small">
+                        <a href="#popup-menu" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-mini ui-btn ui-icon-plus ui-btn-inline ui-btn-icon-left ui-btn-icon-notext ">
+                        </a>
+                        <a id="clear-board-button" data-mini="true" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-icon-notext  ">Clear</a>
+
+                        <a id="flipOrientation" data-mini="true" href="#" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-shadow  ui-icon-recycle  ui-btn-icon-left ui-btn-icon-notext">Flip</a>
+
                     </div>
-                    <a href="#account-panel" xdata-icon="user" xclass="ui-btn-right">
-                        <span id="account-welcome">Welcome</span>
-                    </a>
+
                     <div class="message" id="message" class=""></div>
                     <div class="panel-body ">
                         <!-- The Board -->
@@ -199,12 +196,9 @@
                             <input id="resign-checkbox" type="checkbox" name="resign-checkbox" data-mini="true" class="">
                         </label>
                     </div>
-                    <div class="panel-footer ui-bar ui-bar-c small">
-                        <a id="flipOrientation" href="#" class="pull-right ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-recycle ui-btn-icon-notext ui-btn-right" data-icon="recycle" value="Flip orientation">Flip</a>
-                        <a id="clear-board-button" data-mini="true" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-notext ui-btn-left ">Clear</a>
-                        <hr>
-                        <p class="text-center"> <span id="state" class="badge"></span></p>
-
+                    <div class="panel-footer ui-bar ui-bar-a small">
+                        <p class="text-center" style="font-size:x-small">Kharbga Board State:
+                            <span id="state" class="badge"></span> <span id="player-turn" class="badge"></span></p>
                     </div>
                     <div class="row fieldset ui-grid-a">
                         <div class="col-sm-2 col-xs-2 ui-block-a" style="width:20%">
@@ -477,8 +471,6 @@
                 </div>
             </div>
 
-            <!-- </div><a href="#second" data-role="button" data-inline="true" data-transition="flow" data-icon="carat-r" data-iconpos="right">Go to Page 2</a>
-           -->
         </article>
         <footer data-role="footer" data-position="fixed">
             <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>

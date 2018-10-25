@@ -53,7 +53,15 @@ var KharbgaApp = function () {
         displayLastMove: true,
         playSoundAfterMove: true,// add different types of sound depending on success or failure of last action,
         color: "",
-        avatar: ""
+        avatar: "",
+        boardColor: "#f0d9b5",
+        attackerColor: "#0000ff",
+        defenderColor: "#8B0000",
+        highlightSelectedColor: "#ffff00",
+        highlightMoveColor: "#ffff00",
+        highlightSourceRequiredColor: "#008000",
+        highlightCapturedColor: "#ff0000",
+        highlightExchangedColor: "#ffa500",
     };
 
     // local user - a player (attacker or defender) or spectator
@@ -644,7 +652,7 @@ var KharbgaApp = function () {
      */
     function allowedToMove() {
         if (game.game_over() === true){
-            onClear();  // display play link
+          //  onClear();  // display play link
             return false;  
         }   
 
@@ -1699,6 +1707,9 @@ var KharbgaApp = function () {
             displayComputerMessage("Started computer player task");
             appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,4000);
         }
+        // set up the sound for the current user
+        setupSound();
+
         // start the game
         game.start(); 
     }
@@ -1788,7 +1799,7 @@ var KharbgaApp = function () {
             appClientState.backgroundJobId = -1;
             displayComputerMessage("Ended computer play task");
         }
-        displayGameMessage(""); 
+        displayGameMessage("Cleared last game"); 
         nsApp.displayNetMessage("");
 
         // stop a reply timer if any
@@ -2316,9 +2327,9 @@ var KharbgaApp = function () {
             // add watch link
             title = ("Watch " + gameInfo.attackerName + " vs. " + gameInfo.defenderName ) ;
             title += (" - " + Kharbga.GameStatus[gameInfo.status].toString() + " status");   
-            html += ("<a id='watch-" + gameInfo.id + "' class='btn btn-default' ");
+            html += ("<a id='watch-" + gameInfo.id + "' class='btn btn-default ui-btn ui-icon-eye ui-btn-icon-left' ");
             html += ("title='" + title + "'");
-            html += ">Watch ";
+            html += "> ";
             html += (gameInfo.attackerName + " vs. " + gameInfo.defenderName);
             html += "</a>";
         }
@@ -3728,6 +3739,20 @@ var KharbgaApp = function () {
 
     };
     this.soundToggle = _soundToggle;
+
+    /**
+     * Sets up the sound depending on user preferences
+     */
+    function setupSound(){
+        var sound = document.getElementById("sound");
+        if (sound == null || typeof (sound) == 'undefined')
+            return;
+
+        sound.muted = userOptions.playSoundAfterMove === false;
+        $('#sound-mute').removeClass('mute');
+        if (soundMuted)
+            $('#sound-mute').addClass('mute');
+    }
 
     this.soundUp = function () {
         logMessage("soundUp");

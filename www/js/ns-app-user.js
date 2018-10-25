@@ -494,9 +494,13 @@ nsApp.init = function(){
     function setupMyAccount() {
         if (nsApp.isLoggedIn() === true) {
          //   $('#account-info-panel').show().removeClass('hidden');
+            $('#account-link').show().removeClass('hidden'); 
             $('#account-welcome').show().removeClass('hidden');
             $('#account-welcome').html("<strong> Welcome " + nsApp.user.name + "</strong>");
             $('#login-li').hide().addClass('hidden');
+            $('#login-link').hide().addClass('hidden');
+            $('#login-popup').hide().addClass('hidden');
+            $('#register-link').hide().addClass('hidden');
             $('#register-li').hide().addClass('hidden');
             $('#logout-li').show().removeClass('hidden');
         //    $('#login-panel').hide().addClass('hidden');
@@ -513,7 +517,11 @@ nsApp.init = function(){
          //   $('#login-panel').show().removeClass('hidden');
          //   $('#register-panel').hide().addClass('hidden');
          //   $('#account-info-panel').hide().addClass('hidden');
+            $('#account-link').hide().addClass('hidden'); 
             $('#account-welcome').hide().addClass('hidden');
+            $('#login-link').show().removeClass('hidden');
+            $('#login-popup').show().removeClass('hidden');
+            $('#register-link').show().removeClass('hidden');
             $('#login-li').show().removeClass('hidden');
             $('#register-li').show().removeClass('hidden');
             $('#logout-li').hide().addClass('hidden');
