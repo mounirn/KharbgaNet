@@ -1020,7 +1020,8 @@ var KharbgaApp = function () {
 
     var removeLastMoveHighlighting = function () {
         boardEl.find('.highlight-captured').removeClass('highlight-captured');
-        boardEl.find('.highlight-source').removeClass('highlight-source');
+        if (game.moveSourceRequired === "")
+            boardEl.find('.highlight-source').removeClass('highlight-source');
      //   boardEl.find('.highlight-exchange').removeClass('highlight-exchange');
 
     };
