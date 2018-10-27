@@ -101,9 +101,7 @@ nsApp.init = function(){
                 if (status.status === 404 || status.status === 400  )
                     displayAccountMessage("Invalid user name or password",false);
                 else
-                   displayAccountMessage("Failed to login. Error: " + status,false);
-
-                $('#appInfo').html("<pre> " + JSON.stringify(status) + " </pre>");
+                   displayStatus(status);
             }  
         });
     }
@@ -120,6 +118,9 @@ nsApp.init = function(){
      * @summary reads the user preferences from the db and sets up the user preferences object
      */
     function loadUserPreferences(){
+        if (nsApp.isLoggedIn() !== true){
+            return;
+        }
         nsApiClient.userService.getPreferences(nsApp.session.sessionId, 
             function (data, status) {
                 if (data != null && data.success === true && data.object!=null) {
@@ -162,8 +163,8 @@ nsApp.init = function(){
             var obj  = nsApp.user.preferences[key];
             var objType = typeof(obj);
             if (objType === "boolean"){
-                htmlForm+= '<div class="checkbox" >';
-                htmlForm += '<label><input type="checkbox" id="user-'; 
+                htmlForm+= '<div class="col-sm-offset-6 col-sm-6"><div class="checkbox" >';
+                htmlForm += '<label class="strong"><strong><input type="checkbox" id="user-'; 
                 htmlForm += key;
                 htmlForm += '" ';
                 if (obj === true){
@@ -171,16 +172,16 @@ nsApp.init = function(){
                 }
                 htmlForm  += '> ';
                 htmlForm += toDisplayString(key);
-                htmlForm += '</label></div>'; 
+                htmlForm += '</strong></label></div><hr></div>'; 
             }
             else{
                  htmlForm+= '<div class="form-group">';
-                 htmlForm += '<label for="user-';
+                 htmlForm += '<label class="control-label col-sm-6" for="user-';
                  htmlForm += key;
                  htmlForm += '">';
                  htmlForm += toDisplayString(key);
                  htmlForm += '</label>';
-                 htmlForm += '<input id="user-';
+                 htmlForm += '<div class="col-sm-6"><input id="user-';
                  htmlForm += key;
                  htmlForm += '" class="form-control" ';
                  if (objType === "number"){
@@ -196,13 +197,13 @@ nsApp.init = function(){
                         htmlForm += '" type="text" ';
                      }
                 }
-                htmlForm += " /> ";
+                htmlForm += ' /> ';
                 if (key.toLowerCase().indexOf("avatar")  >= 0){   
                     if (obj.length > 0)
                         htmlForm += '<img src="'+ obj + '" alt="Avatar" class="avatar"></img>';
                 
                 }
-                htmlForm+= "</div>";
+                htmlForm+= "</div></div>";
             }
 
             
@@ -318,9 +319,7 @@ nsApp.init = function(){
                 if (status.status === 404 || status.status === 400)
                     $('#account-message').html("<div class='alert alert-danger'>Invalid registration info. Errors: " + status.responseText+ " </div>");
                 else
-                    $('#account-message').html("<div class='alert alert-danger'> Failed to register.</div>");
-
-                $('#appInfo').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
+                   displayStatus(status);
             }
         });
     }
@@ -423,6 +422,7 @@ nsApp.init = function(){
      * @summary checks the session cookie
      */
     function checkSessionCookie(e) {
+        if (nsApp.loggingOn) console.log("user.checkSessionCookie");
         if (e!= null){
             e.preventDefault();
         }
@@ -450,7 +450,8 @@ nsApp.init = function(){
      * @param {any} sessionId the session id
      */
     function checkSession(sessionId) {
-        displayAccountMessage("Processing...");
+        if (nsApp.loggingOn) console.log("user.checkSession");
+            displayAccountMessage("Processing...");
         var result = nsApiClient.userService.checkSession(sessionId, function (data, status) {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
@@ -460,38 +461,46 @@ nsApp.init = function(){
                 
                 if (session != null) {
                     setupClientStateWithSession(session);
-                    
+                  //  loadUserPreferences();
                 }
                 else {
                     setupClientStateWithSession(null);
                 }
-                if (nsApp.state.loadAccountInfo === true)
+                if (nsApp.state.loadAccountInfo === true){
                     _loadAccountInfo();
+                    nsApp.state.loadAccountInfo = false;
+                }
 
-                if (nsApp.state.loadTeamInfo === true)
+                if (nsApp.state.loadTeamInfo === true){
                     _loadTeamInfo();
-
-                // load prefs
-                loadUserPreferences();
-
+                    nsApp.state.loadTeamInfo = false;
+                }
             }
             else {
                 nsApp.setSession(null);
                 
                 setupMyAccount();
-                if (status.status === 404 || status.status === 400)
-                    displayAccountMessage("Invalid Session - Please Login", false);
-                else
-                    displayAccountMessage("Failed to access the system. Please try your request again later.",false);
-
+                displayStatus(status);
+            
             }
         });
+    }
+
+    function displayStatus(status){
+        if (status == null || typeof status.status !== "number" )
+            return; 
+
+        if (status.status === 404 || status.status === 400)
+            displayAccountMessage("Not found", false);
+        else
+            displayAccountMessage("Failed to access the system. Please try your request again later.",false);
     }
 
     /**
      * @summary Sets up the MyAccount tab based on the current app client state
      */
     function setupMyAccount() {
+        if (nsApp.loggingOn) console.log("setupMyAccount");
         if (nsApp.isLoggedIn() === true) {
          //   $('#account-info-panel').show().removeClass('hidden');
             $('#account-link').show().removeClass('hidden'); 
@@ -505,11 +514,18 @@ nsApp.init = function(){
             $('#logout-li').show().removeClass('hidden');
         //    $('#login-panel').hide().addClass('hidden');
         //    $('#register-panel').hide().addClass('hidden');
-            displayAccountMessage("Welcome " + nsApp.user.name);
+        //    displayAccountMessage("Welcome " + nsApp.user.name);
         
             $('#account-session-id').text(nsApp.session.sessionId);
             if (nsApp.user.session!= null){
-                nsApp.dumpObjectInfo(nsApp.session,'user-session-info-table',true);
+                nsApp.displayObjectInfo(nsApp.session,'user-session-info',true, {
+                    fullName: {},
+                    lastAccess: {},
+                    createdOn: {},
+                    accountId: { type:"url", title:"Account",
+                        url: "../html/user.html?id={?}"
+                    }
+                });
             }
     
 
@@ -537,6 +553,7 @@ nsApp.init = function(){
     * @param {any} session - the session info
     */
     function setupClientStateWithSession(session) {
+        if (nsApp.loggingOn) console.log("user.setupClientStateWithSession");
         nsApp.setSession(session);
 
         setupMyAccount();
@@ -600,11 +617,22 @@ nsApp.init = function(){
         nsApiClient.userService.getAccountInfo(nsApp.session.sessionId, function (data, status) {
             if (data != null) {
                 nsApp.user.account = data.object;
-                nsApp.dumpObjectInfo(data.object,'user-info-table',true);
+                var displayRules =   {
+                        firstName: {},
+                        lastName: {}, 
+                        birthDate: {}, 
+                        createdOn: {},
+                        lastLogin: {},
+                        imageUrl: {
+                            type: "img",
+                            title:"Avatar"
+                        }
+                    };
+                nsApp.displayObjectInfo(data.object,'user-account-info',true, displayRules);
             }
             else {
               //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
-               displayAccountMessage("Unable to load user info. Error: " + status.toString());
+               displayAccountMessage("Unable to load user info. Error: " + status.statusText, false);
             }
         });
     }
@@ -617,15 +645,125 @@ nsApp.init = function(){
         nsApiClient.clientService.getClientInfo(nsApp.session.sessionId, function (data, status) {
             if (data != null) {
                 nsApp.user.team = data.object;
-                nsApp.dumpObjectInfo(data.object,'team-info-table',true);
+                var displayRules =    {
+                        name: {},
+                        createdOn: {},
+                        mainUserId: { type:"url", title:"Captain",
+                            url: "../html/user.html?id={?}"
+                        }
+                    };
+                nsApp.displayObjectInfo(data.object,'user-team-info',true, displayRules );
             }
             else {
                 nsApp.user.team = null;
               //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
-               displayAccountMessage("Unable to load team info. Error: " + status.toString());
+               displayAccountMessage("Unable to load team info. Error: " + status.statusText, false);
             }
         });
     }
+
+    $('#team-members-link').on('click', _loadTeamMembers);
+    function _loadTeamMembers(){
+        if (nsApp.isLoggedIn() === false){
+            return;
+        }
+        nsApiClient.clientService.getClientMembers(nsApp.session.sessionId, function (data, status) {
+            if (data != null) {
+                nsApp.user.teamMembers = data.object;
+                var displayRules =    {
+                    name: {},
+                    id: { type:"url", title:"Account",
+                        url: "../html/user.html?id={?}"
+                    }
+                };
+                displayUserList(data.object,'team-members-list',true,displayRules);
+            }
+            else {
+                nsApp.user.teamMembers = null;
+              //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+               displayAccountMessage("Unable to load team members. Error: " + status.statusText, false);
+            }
+        });
+    }
+    /**
+     * @summary outputs user list 
+     * @param {any} list  - an array of objects
+     * @param {string} elementId - the id of the element table to output the html
+     * @param {boolean} clear - clear the previous data or not
+     * @param {object} rules - defines how to handle each field in the list item
+     */
+    function displayUserList(list, elementId, clear){ 
+        if (clear === true){
+            $('#' + elementId ).html(""); 
+        }
+        var html = "<ul class='list-group dropdown'>";
+        $.each(list, function(item,data){                   
+            html += ( "<li class='list-group-item'>");
+            html += "<a href='../html/user.html?id=" + data.systemId;
+            html += "'><div class='row'>"
+            html+="<div class='col-xs-3 col-sm-4'>";
+            if (typeof(data.imageUrl) == "string")
+            {
+                
+                html+="<img src='"+data.imageUrl + "' style='max-height:60px;'>";
+                
+            } 
+            html+="</div>";
+            html+="<div class='col-xs-9 col-sm-8'>";
+            html+= data.name;
+            html+="</div>"
+           html+= "</div></a></li>";
+           
+        });
+        html+= "</ul>"
+         $('#' + elementId).html(html);
+    }
+
+    $('#upload-logo').click(function () {  
+        if ($('#file-logo').val() == '') {  
+            displayAccountMessage("Please select file to upload",false);
+            return;  
+        }  
+
+        var formData = new FormData();  
+        var file = $('#file-logo')[0];  
+        formData.append('uploadedLogo', file.files[0]);  
+        nsApiClient.userService.uploadLogo(nsApp.session.sessionId, formData,
+            function (data, status) {
+                if (data != null) {
+                    displayAccountMessage("Uploaded file successfully ",true);
+                    _loadAccountInfo();
+                }
+                else {
+                  
+                  //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+                   displayAccountMessage("Unable to load file. Error: " + status.statusText, false);
+                }
+        });
+    });  
+
+    $('#upload-file').click(function () {  
+        if ($('#file-file').val() == '') {  
+            displayAccountMessage("Please select file to upload",false);
+            return;  
+        }  
+
+        var formData = new FormData();  
+        var file = $('#file-file')[0];  
+        formData.append('uploadedFile', file.files[0]);  
+        nsApiClient.objectService.uploadFile(nsApp.session.sessionId, nsApp.user.account.id, formData,
+            function (data, status) {
+                if (data != null) {
+                    displayAccountMessage("Uploaded file successfully " + data);
+                }
+                else {
+                    nsApp.user.teamMembers = null;
+                  //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
+                   displayAccountMessage("Unable to load file. Error: " + status.toString());
+                }
+        });
+    });  
+
     $('#session-link').on('click', checkSessionCookie);
  
     /** 
@@ -635,16 +773,26 @@ nsApp.init = function(){
      * @param {boolean} transferToLogin transfer to login page if invalid session
      */ 
     this.setup = function (loadTeamInfo,transferToLogin) {
-     
+        if (nsApp.loggingOn) console.log("user.setup");
 
         nsApp.state.loadAccountInfo = loadTeamInfo;
         nsApp.state.loadTeamInfo = loadTeamInfo;
         nsApp.state.transferToLogin = transferToLogin;
 
         checkSessionCookie();
-        setupTeamsHtml5Combobox();   
-        setupMyAccount();
-        setupFormsValidation();
+
+        setTimeout(function(){ 
+            setupTeamsHtml5Combobox();   
+            loadUserPreferences();
+            setupMyAccount();
+            setupFormsValidation();         
+            _loadAccountInfo();
+            if (loadTeamInfo){
+                _loadTeamInfo();
+                _loadTeamMembers();
+            }        
+            
+        },4000); // wait for the check session to complete
 
     };
 

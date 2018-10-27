@@ -10,8 +10,14 @@ $(document).one("pageshow", function() {
 
 $.nsAppViewModel = {};
 
+$(document).ready(function() {
+    //  $('.combobox').combobox()
+    var kApp = new KharbgaApp();
 
-$(document).ready(function(){
+    // make the app available
+    $.kApp = kApp;
+    $.nsAppKharbga = kApp;
+
     $('#start-game-with-options').on('click',function(e){
         var options = {
             asAttacker: $('#play-as-attacker').is(':checked'),
@@ -42,6 +48,24 @@ $(document).ready(function(){
     $('#play-end').on('click',$.appViewHandler.playEnd);
     $('#sound-set-volume').on('click',$.appViewHandler.setVolume);
     $('#sound-toggle').on('click',$.appViewHandler.soundToggle);
+
+    // check the query string for game id
+    var queries = {};
+    $.each(document.location.search.substr(1).split('&'),function(c,q){
+      if (q!= ""){
+         var i = q.split('=');
+         queries[i[0].toString()] = i[1].toString();
+      }
+    });
+    var gameId = "";
+    //console.log(queries);
+    if (queries.id != null && queries.id.length > 10){
+        gameId = queries.id;;
+    }
+
+    // setup - start with the given game Id
+    $.kApp.setup(gameId);
+    
 });
 
 

@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kharbga.Net - User Profile</title>
+    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+    <!-- Compressed CSS -->
+    <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/kharbga.css" />
+    <link rel="stylesheet" href="../css/site.css">
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-6996887-11', 'auto');
+        ga('send', 'pageview');
+    </script>
+</head>
+
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+    <div class="container-fluid">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#home-section"><img src="../img/kharbga.png" style="max-height:25px;" title="Kharbga played in the desert of North Africa"></a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <!--  <li class="active dropdown"><a data-target="tab-pane" href="#play">Play</a></li>
+                        <li><a href="#play" data-target="tab-pane">New</a></li>
+                      -->
+                        <li><a target="rules" href="../html/rules.html" title="Kharbga Game Rules">Rules</a></li>
+                        <li><a target="kharbga" href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li id="login-li"><a id="xlogin-link" href="../html/login.html"><span class="glyphicon glyphicon-log-in"></span>
+                                Login</a></li>
+                        <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>
+                                Logout</a></li>
+                    </ul>
+                    <p id="account-welcome" class="navbar-text navbar-right text-success"></p>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div id="account" class="container">
+        <div id="account-message"></div>
+
+        <div id="account-info-panel">
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#user-info-tab">Profile</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="user-info-tab" class="tab-pane fade in active">
+                    <div id="user-profile" class="panel panel-info">
+                        <div class="panel-heading">
+                            User Profile
+                        </div>
+                        <div class="panel-body" id="user-profile">
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="container row text-center">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <a href="../index.html">
+                            <img src="../img/title.png" class="text-center" style="max-height:100px;" title="Kharbga Game Network">
+                        </a>
+                    </div>
+                    <div class="col-sm-8">
+                        <ul class="nav navbar-nav">
+                            <li id="terms-li">
+                                <a target="rules" id="terms-link" href="../html/terms.html">
+                                    <span class="glyphicon glyphicon-star"></span> Terms & Conditions
+                                </a>
+                            </li>
+                            <li id="privacy-li">
+                                <a target="rules" id="privacy-link" href="../html/privacy.html">
+                                    <span class="glyphicon glyphicon-lock"></span> Privacy
+                                </a>
+                            </li>
+                            <li id="contact-us-li">
+                                <a target="nouris" id="contact-us-link" href="http://www.nourisolutions.com/company/message/send/1">
+                                    <span class="glyphicon glyphicon-envelope"></span> Contact Us
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-4">
+                <strong>Developed & Operated By <a href="http://www.nouriSolutions.com ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+            </div>
+        </div>
+        <hr />
+    </footer>
+
+    <script src="../lib/json/json3.min.js"></script>
+    <script src="../lib/jquery/jquery.min.js"></script>
+    <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="../js/jquery.validate.js"></script>
+    <script src="../js/additional-methods.js"></script>
+
+    <script src="../jsconfig/env.js"></script>
+    <script src="../js/moment.min.js"></script>
+    <!-- -->
+    <script src="../js/ns-app-utils.js"></script>
+    <script src="../js/ns-api-client.js"></script>
+    <script src="../js/ns-app-user.js"></script>
+    <script src="../js/kharbga.js"></script>
+    <script src="../js/ns-app-kharbga.js"></script>
+
+
+    <script type="text/javascript">
+        //<![CDATA[
+        $(document).ready(function() {
+            var kApp = new KharbgaApp(); // dot need to call setup here
+            $.nsApp.setup(true, true);
+
+        });
+
+        //]]>
+    </script>
+</body>
+
+</html>

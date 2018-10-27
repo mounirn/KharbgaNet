@@ -19,17 +19,7 @@ function setSystemError(on) {
 function NSAppClient(baseURI) {
     this.baseURI = baseURI;
     console.log("NSAppClient CTOR - " + this.baseURI);
-    //https://stackoverflow.com/questions/6677035/jquery-scroll-to-element
-    // helper for scrolling to an element
-    $.fn.nsScrollTo = function (speed) {
-        if (typeof (speed) === 'undefined')
-            speed = 1000;
-
-        $('html, body').animate({
-            scrollTop: parseInt($(this).offset().top)
-        }, speed);
-    };
-///
+   
     /**
      * Creates the user service object
      * @param {any} baseURI - the base URI
@@ -317,6 +307,47 @@ function NSAppClient(baseURI) {
                 }
             });
         };
+            
+        /**
+         * @summary: updates the user logo
+         * @param {string} sessionId - the session id
+         * @param {FormData} formData - the formData with the file info   
+        */
+
+        this.uploadLogo = function(sessionId, formData, callback){
+            var uri = this.serviceBaseURI + "logo" ;
+            console.log("%s - ajax POST %s ", getLoggingNow(), uri);
+
+            $.ajax({
+                url: uri,
+                type: "POST",// Whether this is a POST or GET request
+                //jsonp: "callback",
+            //  dataType: "json",
+            //  contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "_nssid": sessionId  },
+
+                // Tell YQL what we want and that we want JSON
+                data: formData,
+                contentType: false,  
+                processData: false,  
+                crossDomain: true,
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - uploadLogo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - uploadLogo error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - uploadLogo complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+        };
     }
 
     /**
@@ -437,12 +468,94 @@ function NSAppClient(baseURI) {
                 }
             });
         };
+
+        this.getClientMembers = function (sessionId, callback) {
+
+            var queryString = {
+                max:20
+            };
+            var uri = this.serviceBaseURI + "members";
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                data: queryString,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+  
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getClientInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getClientInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getClientInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+        };
+
+        /**
+         * @summary: updates the org logo
+         * @param {string} sessionId - the session id
+         * @param {FormData} formData - the formData with the file info   
+        */
+       this.uploadLogo = function(sessionId, formData, callback){
+            var uri = this.serviceBaseURI + "logo" ;
+            console.log("%s - ajax POST %s ", getLoggingNow(), uri);
+
+            $.ajax({
+                url: uri,
+                type: "POST",// Whether this is a POST or GET request
+                //jsonp: "callback",
+            //  dataType: "json",
+            //  contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "_nssid": sessionId  },
+
+                // Tell YQL what we want and that we want JSON
+                data: formData,
+                contentType: false,  
+                processData: false,  
+                crossDomain: true,
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - uploadLogo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - uploadLogo error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - uploadLogo complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+        };
     }
 
     function GameService(baseURI) {
         this.serviceBaseURI = baseURI + "api/game/";
         console.log("%s - Game Service CTOR - %s ", getLoggingNow(), this.serviceBaseURI);
 
+        /**
+         * @summary: retrieves list of server connections depending on current user logged in
+         * @param {string} sessionId - the session id
+         * @param {object} queryString - the query string object with key value pairs 
+         */
         this.getConnections = function (sessionId, queryString, callback) {
             var uri = this.serviceBaseURI + "connections";
             var ret = null;
@@ -471,6 +584,12 @@ function NSAppClient(baseURI) {
             });
             return ret;
         };
+
+        /**
+         * @summary: retrieves list of players depending on current user logged in
+         * @param {string} sessionId - the session id
+         * @param {object} queryString - the query string object with key value pairs 
+         */
         this.getPlayers = function (sessionId, queryString, callback) {
             var uri = this.serviceBaseURI + "players";
             var ret = null;
@@ -499,6 +618,12 @@ function NSAppClient(baseURI) {
             });
             return ret;
         };
+
+        /**
+         * @summary: retrieves list of games depending on current user logged in
+         * @param {string} sessionId - the session id
+         * @param {object} queryString - the query string object with key value pairs 
+         */
         this.getGames = function (sessionId, queryString, callback) {
             var uri = this.serviceBaseURI + "list";
             var ret = null;
@@ -526,6 +651,150 @@ function NSAppClient(baseURI) {
             });
             return ret;
         };
+
+
+           /**
+         * @summary: retrieves list of games depending on current user logged in
+         * @param {string} sessionId - the session id
+         * @param {object} queryString - the query string object with key value pairs 
+         */
+        this.getUserGames = function (sessionId, queryString, callback) {
+            var uri = this.serviceBaseURI + "user/list";
+            var ret = null;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("%s - ajax - getUserGames success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("%s - ajax - getUserGames error: status: %s,  error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getGames complete: status: %s", getLoggingNow(),JSON.stringify(status));
+                }
+            });
+            return ret;
+        };
+    }
+
+    function ObjectService(baseURI){
+        this.serviceBaseURI = baseURI + "api/object/";
+        console.log("%s - ObjectService CTOR - %s ", getLoggingNow(), this.serviceBaseURI);
+
+        /**
+         * @summary: posts an object logo
+         * @param {string} sessionId - the session id
+         * @param {object} id - the object id    
+         * @param {FormData} formData - the formData with the file info   
+        */
+        this.uploadLogo = function(sessionId,id, formData, callback){
+            var uri = this.serviceBaseURI + "logo/" + id;
+            console.log("%s - ajax POST %s ", getLoggingNow(), uri);
+
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET request
+                type: "POST",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                // Tell jQuery we're expecting JSONP
+              //  dataType: "json",
+
+              //  contentType: "application/json",
+   
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "_nssid": sessionId  },
+
+                // Tell YQL what we want and that we want JSON
+                data: formData,
+                contentType: false,  
+                processData: false,  
+                crossDomain: true,
+
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - uploadLogo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - uploadLogo error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - uploadLogo complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+        };
+
+        /**
+         * @summary: posts an object logo
+         * @param {string} sessionId - the session id
+         * @param {object} id - the object id    
+         * @param {FormData} formData - the formData with the file info   
+        */
+       this.uploadFile = function(sessionId,id, formData, callback){
+            var uri = this.serviceBaseURI + "file/" + id;
+            console.log("%s - ajax POST %s ", getLoggingNow(), uri);
+
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET request
+                type: "POST",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                // Tell jQuery we're expecting JSONP
+            //  dataType: "json",
+
+            //  contentType: "application/json",
+
+            
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "_nssid": sessionId  },
+
+                // Tell YQL what we want and that we want JSON
+                data: formData,
+                contentType: false,  
+                processData: false,  
+                crossDomain: true,
+
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - uploadFile success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - uploadFile error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - uploadFile complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+        };
     }
 
     this.clientService = new ClientService(this.baseURI);
@@ -535,6 +804,8 @@ function NSAppClient(baseURI) {
     this.appService = new AppService(this.baseURI);
 
     this.gameService = new GameService(this.baseURI);
+
+    this.objectService = new ObjectService(this.baseURI);
 
 }
 

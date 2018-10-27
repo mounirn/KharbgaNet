@@ -1326,3 +1326,7 @@ a.text-danger:focus {
 .alert-danger .alert-link {
     color: #843534;
 }
+
+.strong {
+    font-weight: bold;
+}

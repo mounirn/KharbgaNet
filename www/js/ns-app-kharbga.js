@@ -29,7 +29,7 @@ var KharbgaApp = function () {
     var gamesHubProxy = null;
 
     // flag for turning on/off logging 
-    var loggingOn = true; 
+    var loggingOn = window.__env.enableDebug; 
     
     /**
      * play options on the computer
@@ -49,7 +49,6 @@ var KharbgaApp = function () {
 
     var userOptions = {
         highlightLastMove: true,
-        highlightLastMoveMilliSecondsBeforeTimeout: 2000,
         displayLastMove: true,
         playSoundAfterMove: true,// add different types of sound depending on success or failure of last action,
         color: "",
@@ -61,7 +60,8 @@ var KharbgaApp = function () {
         highlightMoveColor: "#ffff00",
         highlightSourceRequiredColor: "#008000",
         highlightCapturedColor: "#ff0000",
-        highlightExchangedColor: "#ffa500",
+        highlightExchangedColor: "#ffa500", 
+        "highlightLastMoveTimeout": 2000,
     };
 
     // local user - a player (attacker or defender) or spectator
@@ -2537,150 +2537,7 @@ var KharbgaApp = function () {
 
     $('#ping-link').on('click', _ping);
 
-    $('#connections-link').on('click', refreshConnections);
-    function refreshConnections(e) {
-        e.preventDefault();
-        $('#system-message').html("<div class='alert alert-info'>Refreshing active connections from the server...</div>");
-        $('#connections-table').empty();
-        var result = nsApiClient.gameService.getConnections(nsApp.sessionId(), { "active": true }, function (data, status) {
-            if (data != null) {
-                $('#system-message').html("<div class='alert alert-success'>returned connections successfully. </div>");
-                var html = "<table class='table table-responsive'><thead>";
-                var first = true;
-                $('#connections-count').text(data.length);
-                $.each(data, function () {
-                    if (first) {
-                        // append the header
-                        html += "<thead><tr>";
-                        html += ("<th>ID</th>");
-                        html += ("<th>User Name</th>");
-                        html += ("<th>Connected</th>");
-                        html += ("<th>Created On</th>");
-                        html += "</tr></thead><tbody>";
-                        first = false;
-                    }
-
-                    html += "<tr>";
-                    html += ("<td>" + this.id + "</td>");
-                    html += ("<td>" + this.userName + "</td>");
-                    html += ("<td>" + (this.connected ? "Yes" : "No") + "</td>");
-                    html += ("<td>" + this.createdOn + "</td>");
-                    html += "</tr>";
-
-                });
-
-                html += "</tbody></table>";
-
-                $('#connections-table').html(html);
-            }
-            else {
-                $('#system-message').html("<div class='alert alert-danger'>Failed to retrieve connections from the server. Errors: " + status.responseText + " </div>");
-                $('#connections-list').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }
-        });
-    }
-    $('#players-link').on('click', refreshPlayers);
-    /**
-     * returns the list of active players (cached) from the server
-     * @param {any} e - the event
-     */
-    function refreshPlayers(e) {
-        e.preventDefault();
-        $('#system-message').html("<div class='alert alert-info'>Refreshing players from the server...</div>");
-
-        $('#players-table').empty();
-
-        var result = nsApiClient.gameService.getPlayers(nsApp.sessionId(),{ "active": null }, function (data, status) {
-            if (data != null) {
-                $('#system-message').html("<div class='alert alert-success'>Returned players successfully. </div>");
-                var html = "<table class='table table-responsive'><thead>";
-                $('#players-count').text(data.length);
-                var first = true;
-                $.each(data, function () {
-                    if (first) {
-                        // append the header
-                        html += "<thead><tr>";
-                        html += ("<th>Name</th>");
-                        html += ("<th>Is Spectator</th>");
-                        html += ("<th>Is Attacker</th>");
-                        html += ("<th>Current Game ID</th>");
-                        html += ("<th>Connected</th>");
-                        html += ("<th>Current Connection ID</th>");
-                        html += "</tr></thead><tbody>";
-                        first = false;
-                    }
-
-                    html += "<tr>";
-                    html += ("<td>" + this.name + "</td>");
-                    html += ("<td>" + (this.isSpectator === true ? "Yes" : "No") + "</td>");
-                    html += ("<td>" + (this.isAttacker === true ? "Yes" : "No") + "</td>");
-                    html += ("<td>" + this.currentGameId + "</td>");
-                    html += ("<td>" + (this.connected === true ? "Yes" : "No") + "</td>");
-                    html += ("<td>" + (this.currentConnection != null ? this.currentConnection.id : "") + "</td>");
-                    html += "</tr>";
-
-                });
-
-                html += "</tbody></table>";
-                $('#players-table').html(html);
-            }
-            else {
-                $('#system-message').html("<div class='alert alert-danger'>Failed to retrieve connections from the server. Errors: " + status.responseText + " </div>");
-                $('#players-table').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }
-        });
-     }
-
-    $('#system-games-link').on('click', refreshGames2);
-    /**
-     * Returns the list of active games (cached) by the server
-     * @param {any} e - the event
-     */
-    function refreshGames2(e) {
-        e.preventDefault();
-        $('#system-message').html("<div class='alert alert-waring'>Refreshing active games from the server...</div>");
-        $('#games-table').empty().html('');
-
-        var result = nsApiClient.gameService.getGames(nsApp.sessionId(),{ "active": null }, function (data, status) {
-            if (data != null) {
-                var html = "<table class='table table-responsive'><thead>";
-                var first = true;
-                $('#games-count').text(data.length);
-                $.each(data, function () {
-                    if (first) {
-                        // append the header
-                        html += "<thead><tr>";
-                        html += ("<th>ID</th>");
-                        html += ("<th>Attacker</th>");
-                        html += ("<th>Defender</th>");
-                        html += ("<th>Status</th>");
-                        html += ("<th>State</th>");
-                        html += ("<th>FEN</th>");
-                        html += "</tr></thead><tbody>";
-                        first = false;
-                    }
-
-                    html += "<tr>";
-                    html += ("<td> <a id='glink-"+this.id + "' href='javascript:viewGame(" + this.id + ")'>View</a></td>");
-                    html += ("<td>" + this.attackerName  + "</td>");
-                    html += ("<td>" + (this.defenderName ) + "</td>");
-                    html += ("<td>" + getStatusText(this.status) + "</td>");
-                    html += ("<td>" + Kharbga.GameState[this.state] + "</td>");
-                    html += ("<td>" + this.fen + "</td>");
-                    html += "</tr>";
-
-                });
-
-                html += "</tbody></table>";
-                $('#games-table').html(html);
-                $('#system-message').html("<div class='alert alert-success'>Done refreshing games from the server. </div>");
-            }
-            else {
-                $('#system-message').html("<div class='alert alert-danger'>Failed to retrieve the active games from the server. Errors: " + status.responseText + " </div>");
-                $('#games-table').html("<div class='panel panel-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
-            }
-        });
-    }
+  
     $('#server-link').on('click', setupSignalR);
     function setupSignalR(e){
         if (e!= null)
@@ -3227,7 +3084,8 @@ var KharbgaApp = function () {
                     resizeGame();
 
                     // check if we got a game to rejoin and refresh the active games
-                    rejoinLastGameIfAny();
+                   // rejoinLastGameIfAny();
+                    joinGame(nsApp.state.gameId);
                 })
                 .fail(function () {
                     appClientState.signalReInitialized = false;
@@ -3265,12 +3123,48 @@ var KharbgaApp = function () {
         onFlipBoard();
     };
 
-  
+    /** @summary joins a game by game id 
+     * @param {string} gameId - the game id
+     */
+    function joinGame(gameId){
+        if (loggingOn) console.log("joinGame");
+        if (gameId == null || typeof(gameId) != "string" || gameId.length < 10){
+            return;
+        }
+        // check if the user is logged in for
+        if (nsApp.isLoggedIn() === false){
+            // add check if admin
+            nsApp.displayErrorMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");   
+            nsApp.displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
+            return;
+        }
+        // attempt to start SignalR if not init
+        if (appClientState.signalReInitialized == false)
+        {
+            nsApp.displayNetMessage("Signal R is not setup. Setting up...");
+            _setupSignalR();
+            //startSignalR();
+        }
+        if (gameId != "" && gamesHubProxy != null && appClientState.signalReInitialized) {
+            nsApp.displayNetMessage("Joining game - id: " + gameId);
+            nsApp.displayGameMessage("Joining game - id: " + gameId);
+        //    gamesHubProxy.server.reJoinGame(user.name, gid, false);
+            // tell the server to rejoin this connection with the game
+            gamesHubProxy.server.joinGame(nsApp.sessionId(),user.name, gameId, false).done(function(){
+                nsApp.displayNetMessage("Done joining game - id: " + gameId);
+                nsApp.displayGameMessage("Done joining game - id: " + gameId);
+                //resize the board 
+                resizeGame();
+            });
+        }
+    };
 
     /** 
      * @summary checks the session cookie, setup the current games and last game if any 
+     * @param {string} gameId - the startup game Id
      */ 
-    this.setup = function () {
+    this.setup = function (gameId) {
+        nsApp.state.gameId = gameId;
         // check previous login session
         nsApp.setup();
 
@@ -3402,6 +3296,8 @@ var KharbgaApp = function () {
         return appClientState;
     };
 
+    
+
     /**
      * @summary updates the board with a given move captured or exchanged pieces
      * @param {Kharbga.GameMove} move - the move info
@@ -3503,7 +3399,7 @@ var KharbgaApp = function () {
         
         // we now have a completed game
         console.log("playBeginning - status: %s - Last replay Position: %s",
-            gameState.status, appClientState.lastReplayPosition);
+        gameState.status, appClientState.lastReplayPosition);
         if (gameState.moves == null || gameState.moves.length == 0){
             displayGameMessage("No moves to replay");
             return;
@@ -3531,7 +3427,7 @@ var KharbgaApp = function () {
         }
        
         
-        updateBoardWithMove(move, true);
+      //  updateBoardWithMove(move, true);
         boardEl.find('.highlight-move').removeClass('highlight-move');
 
         $('#fen').html(board.fen().replaceAll2('/','/ ') );
@@ -3601,7 +3497,7 @@ var KharbgaApp = function () {
        // $('#replay-position').html("move#" + move.id);
 
         board.position(move.beforeFen, true);
-        updateBoardWithMove(move, true);
+      //  updateBoardWithMove(move, true);
         $('#fen').html(board.fen().replaceAll2('/','/ ') );
 
         $('#play-start').attr('class', 'disabled');
@@ -3826,7 +3722,7 @@ var KharbgaApp = function () {
         else
             $('#message').html("");
     };
-
+   
 
     $('#getPositionBtn').on('click', clickGetPositionBtn);
     $('#new-game').on('click', { asAttacker: true, againstComputer: true,overTheNetwork:true }, onNewGame);

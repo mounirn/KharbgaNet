@@ -195,9 +195,12 @@
 
     <script src="../js/kharbga-ui.js"></script>
     <script src="../js/kharbga.js"></script>
+    <script src="../js/ns-app-utils.js"></script>
     <script src="../js/ns-api-client.js"></script>
-    <!-- compiled TS-->
-    <script src="../js/ns-app.kharbga.js"></script>
+    <script src="../js/ns-app-user.js"></script>
+
+    <script src="../js/ns-app-kharbga.js"></script>
+    <script src="../js/system.js"></script>
 
     <script type="text/javascript">
         //<![CDATA[
@@ -219,6 +222,9 @@
         });
 
         //]]>
+        function viewGame(id) {
+            document.location = "../html/play.html?id=" + id
+        }
     </script>
 </body>
 
