@@ -106,6 +106,11 @@ function NSAppClient(baseURI) {
             });
 
         };
+        /**
+         * @summary logs out the current user
+         * @param {string} sessionId - the user session id 
+         * @param {function} callback - the callback function with the result (data, status)
+         */
         this.logout = function (sessionId, callback) {
             var uri = this.serviceBaseURI + "token";
             console.log("%s - ajax DELETE %s ", getLoggingNow(), uri);
@@ -144,6 +149,7 @@ function NSAppClient(baseURI) {
             });
 
         };
+
         this.register = function (registerInfo, callback) {
             var uri = this.serviceBaseURI + "register";
             console.log("%s - ajax POST %s ", getLoggingNow(), uri);
@@ -186,7 +192,11 @@ function NSAppClient(baseURI) {
             });
 
         };
-
+        /**
+         * @summary retrieves the current user logged in account information
+         * @param {string} sessionId - the user session id 
+         * @param {function} callback - the callback function with the result (data, status)
+         */
         this.getAccountInfo = function (sessionId, callback) {
             var uri = this.serviceBaseURI + "account/my";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
@@ -225,7 +235,12 @@ function NSAppClient(baseURI) {
             });
 
         };
-
+  
+        /**
+         * @summary retrieves the current user logged in account preferences
+         * @param {string} sessionId - the user session id 
+         * @param {function} callback - the callback function with the result (data, status)
+         */
         this.getPreferences = function(sessionId,callback){
             var uri = this.serviceBaseURI + "account/preferences";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
@@ -265,6 +280,11 @@ function NSAppClient(baseURI) {
             });
         };
 
+        /**
+         * @summary updatess the current user logged in account preferences
+         * @param {string} sessionId - the user session id 
+         * @param {function} callback - the callback function with the result (data, status)
+         */
         this.savePreferences = function(sessionId,preferences, callback){
             var uri = this.serviceBaseURI + "account/preferences";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
@@ -307,6 +327,52 @@ function NSAppClient(baseURI) {
                 }
             });
         };
+
+        /**
+         * @summary retrieves a user profile
+         * @param {string} sessionId - the user logged in session id 
+         * @param {string} userId - the user id of the profile to retrieve 
+         * @param {function} callback - the callback function with the result (data, status)
+         */
+        this.getUserInfo = function (sessionId, userId, callback) {
+            var uri = this.serviceBaseURI + "account/profile/" + userId;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getUserInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getUserInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getUserInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+
+        };
+
             
         /**
          * @summary: updates the user logo
@@ -358,7 +424,9 @@ function NSAppClient(baseURI) {
         this.serviceBaseURI = baseURI + "api/app/";
         console.log("%s - App Service CTOR - %s ", getLoggingNow(), this.serviceBaseURI);
 
-      
+        /**
+         * @summary retrieves basic app info - available to all users
+         */
         this.getAppInfo = function (callback) {
             var uri = this.serviceBaseURI + "info";
             var ret = null;
@@ -386,17 +454,73 @@ function NSAppClient(baseURI) {
             });
 
             return ret;
+        
         };
-  
+        
+       
+        this.getSystemHelper = function (sessionId, api, callback) {
+            var uri = this.serviceBaseURI + api;
+            var ret = null;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+                type: "GET",
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid" : sessionId  },
+        
+                  // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("%s - ajax - getSystemInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("%s - ajax - getSystemInfo error: status: %s,  error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getSystemInfo complete: status: %s", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+
+            return ret;
+        
+        };
+        /**
+         * @summary retrieves app hosting info - available to sys admin
+         */
+        this.getSystemHostInfo = function(sessionId, callback){
+            getSystemHelper(sessionId, "host/info", callback);
+        }
+        /**
+         * @summary retrieves system log for sys admin
+         */
+        this.getSystemLog = function(sessionId, callback){
+            getSystemHelper(sessionId, "log", callback);
+        }
+
+        /**
+         * @summary retrieves app info details for sys admin
+         */
+        this.getSystemInfo = function(sessionId, callback){
+            getSystemHelper(sessionId, "about", callback);
+        }
     }
 
     function ClientService(baseUI){
         this.serviceBaseURI = baseURI + "api/client/";
 
-        this.getClients = function (sessionId, searchItem, callback) {
+        /**
+         * @summary search for organization by name contains
+         * @param {string} name - name contains
+         * @param {function} callback callback function (data, status)
+         */
+        this.getClients = function (sessionId, name, callback) {
 
             var queryString = {     
-                nameContains: searchItem,
+                nameContains: name,
                 
             };
             var uri = this.serviceBaseURI + "list/filter";

@@ -29,7 +29,7 @@
     </script>
 </head>
 
-<body data-spy="scroll" data-target=".navbar" data-offset="50">
+<body xdata-spy="scroll" xdata-target=".navbar" xdata-offset="50" style="padding-top:50px;">
     <div class="container-fluid">
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
@@ -47,32 +47,59 @@
                         <li><a href="#play" data-target="tab-pane">New</a></li>
                       -->
                         <li><a target="rules" href="../html/rules.html" title="Kharbga Game Rules">Rules</a></li>
-                        <li><a target="kharbga" href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
+                        <li><a href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li id="login-li"><a id="xlogin-link" href="../html/login.html"><span class="glyphicon glyphicon-log-in"></span>
-                                Login</a></li>
-                        <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>
-                                Logout</a></li>
+
+                        <li id="account-li">
+                            <a href="../html/my-account.html" class="">
+                                <span id="account-welcome"></span></a>
+                        </li>
+                        <li id="login-li">
+                            <a id="xlogin-link" href="../html/login.html"> <span class="glyphicon glyphicon-log-in"></span> Login
+                            </a>
+                        </li>
+                        <li id="logout-li">
+                            <a id="logout-link" href="#logout"> <span class="glyphicon glyphicon-log-out  "></span> Logout
+                            </a>
+                        </li>
+
                     </ul>
-                    <p id="account-welcome" class="navbar-text navbar-right text-success"></p>
                 </div>
             </div>
         </nav>
     </div>
 
     <div id="account" class="container">
+        <h1>Welcome <span id="account-name"></span></h1>
+
         <div id="account-message"></div>
 
         <div id="account-info-panel">
+            <p>View user profile and active games:</p>
+            <div id="user-name"></div>
+
             <ul class="nav nav-pills">
-                <li class="active"><a data-toggle="pill" href="#user-info-tab">Profile</a></li>
+                <li class="active"><a data-toggle="pill" href="#user-info-tab">User Profile</a></li>
+                <li><a data-toggle="pill" href="#user-active-games-tab">Active Games</a></li>
             </ul>
             <div class="tab-content">
                 <div id="user-info-tab" class="tab-pane fade in active">
-                    <div id="user-profile" class="panel panel-info">
+                    <div class="panel panel-info">
                         <div class="panel-heading">
                             User Profile
+                        </div>
+                        <div class="panel-body">
+                            <div id="user-profile">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div id="user-active-games-tab" class="tab-pane fade">
+                    <div id="user-active-games" class="panel panel-info">
+                        <div class="panel-heading">
+                            User Active Games
                         </div>
                         <div class="panel-body" id="user-profile">
 
@@ -136,7 +163,7 @@
     <script src="../js/ns-app-user.js"></script>
     <script src="../js/kharbga.js"></script>
     <script src="../js/ns-app-kharbga.js"></script>
-
+    <script src="../js/user.js"></script>
 
     <script type="text/javascript">
         //<![CDATA[

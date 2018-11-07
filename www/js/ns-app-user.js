@@ -12,8 +12,7 @@ if (nsApiClient == undefined){
     console.log("Please include ns-api-client before this module");
     throw new Error("Please include ns-api-client");
 }
-var nsApp = $.nsApp;
-nsApp.init = function(){ 
+$.nsApp.init = function(){ 
    // setup all the various buttons and links events
    $('#user-state-link').on('click', _refreshUserState);
    $('#login-link').on('click', onLoginLink);  
@@ -672,7 +671,7 @@ nsApp.init = function(){
                 nsApp.user.teamMembers = data.object;
                 var displayRules =    {
                     name: {},
-                    id: { type:"url", title:"Account",
+                    systemId: { type:"url", title:"Account",
                         url: "../html/user.html?id={?}"
                     }
                 };
@@ -685,6 +684,14 @@ nsApp.init = function(){
             }
         });
     }
+
+    function displayCookieUsage(){
+        var html = "We use cookies and local storage to make various functions";
+        html += " work on this site and to collect data on how it is being used.";
+        html += "By clicking Accept, you agree to our use of these tools for advertising, analytics and support.";  
+
+    }
+
     /**
      * @summary outputs user list 
      * @param {any} list  - an array of objects
@@ -711,6 +718,9 @@ nsApp.init = function(){
             html+="</div>";
             html+="<div class='col-xs-9 col-sm-8'>";
             html+= data.name;
+            if (data.isClientAdmin === true){
+                html += "<strong class='text-success'> (Team Captain) </strong>";
+            }
             html+="</div>"
            html+= "</div></a></li>";
            
@@ -783,11 +793,11 @@ nsApp.init = function(){
 
         setTimeout(function(){ 
             setupTeamsHtml5Combobox();   
-            loadUserPreferences();
             setupMyAccount();
             setupFormsValidation();         
             _loadAccountInfo();
-            if (loadTeamInfo){
+            if (loadTeamInfo){ 
+                 loadUserPreferences();
                 _loadTeamInfo();
                 _loadTeamMembers();
             }        
@@ -797,4 +807,4 @@ nsApp.init = function(){
     };
 
 };
-nsApp.init(); // init 
+$.nsApp.init(); // init 

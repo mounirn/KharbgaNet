@@ -11,6 +11,20 @@
     <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/kharbga.css" />
     <link rel="stylesheet" href="../css/site.css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-6996887-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-6996887-12');
+    </script>
+
+
     <script>
         (function(i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r;
@@ -67,12 +81,9 @@
     </div>
     <div id="account-info-panel" class="container">
         <ul class="nav nav-pills">
-            <li class="active"><a data-toggle="pill" href="#user-account-tab">Account Information</a></li>
-            <li><a data-toggle="pill" href="#user-pref-tab">Preferences</a></li>
+            <li class="active"><a data-toggle="pill" href="#user-account-tab">My Account</a></li>
             <li><a data-toggle="pill" href="#user-games-tab">My Games</a></li>
             <li><a data-toggle="pill" href="#user-team-tab">My Team</a></li>
-            <li><a data-toggle="pill" href="#user-team-members-tab">Members</a></li>
-            <li><a data-toggle="pill" href="#user-session-tab">Session Information</a></li>
         </ul>
         <div class="tab-content">
             <div id="user-account-tab" class="tab-pane fade in active">
@@ -95,8 +106,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="user-pref-tab" class="tab-pane fade ">
                 <div id="settings" class="panel panel-info">
                     <div class="panel-heading">
                         Preferences
@@ -112,10 +121,23 @@
                         </form>
                     </div>
                 </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Current Session
+                        <div class="pull-right">
+                            <a href="#" id="session-link" value="user">
+                                <span class="glyphicon glyphicon-refresh"></span>Check Now
+                            </a>
+                        </div>
+                    </div>
 
+                    <div class="panel-body">
+                        <div id="user-session-info" class="">
+
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
             <div id="user-games-tab" class="tab-pane fade ">
                 <div class="panel panel-info">
                     <div class="panel-heading">
@@ -150,8 +172,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="user-team-members-tab" class="tab-pane fade ">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         My Team Members
@@ -169,25 +189,6 @@
                     </div>
                 </div>
             </div>
-            <div id="user-session-tab" class="tab-pane fade ">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        Current Session
-                        <div class="pull-right">
-                            <a href="#" id="session-link" value="user">
-                                <span class="glyphicon glyphicon-refresh"></span>Check Now
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="panel-body">
-                        <div id="user-session-info" class="">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
     </div>

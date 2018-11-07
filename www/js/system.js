@@ -1,3 +1,27 @@
+
+$(document).ready(function() {
+    //  $('.combobox').combobox()
+    var kApp = new KharbgaApp();
+    // kApp.initBoard({
+    //     themePath: '../img/theme-simple/{piece}.png'
+    // });
+    // Change hash for page-reload
+    $('.nav-tabs a').on('shown.bs.tab', function(e) {
+        window.location.hash = e.target.hash;
+    })
+    var url = document.location.toString();
+    if (url.match('#')) {
+        var activeTab = url.substring(url.indexOf("#") + 1);
+        // $('.nav-tabs a[href=#' + activeTab + ']').tab('show');
+    }
+});
+
+//]]>
+function viewGame(id) {
+    document.location = "../html/play.html?id=" + id
+}
+
+
 $('#system-games-link').on('click', refreshGames2);
 /**
  * Returns the list of active games (cached) by the server

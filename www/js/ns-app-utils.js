@@ -22,12 +22,25 @@ function NSSession(){
     this.isActive = false;
     this.isAdmin = false;
     this.fullName  = nsResources.Guest;
+    this.mailRole = 0;
     this.reset = function(){
-        this.name = "";
+        this.sessionId = "";
+        this.name = nsResources.Guest;
         this.isActive = false;
         this.isAdmin = false;
-        this.fullName = nsResources.Guest;
+        this.mailRole = 0;
     };
+    this.setup = function(session){
+        if (session == null || typeof(session) != "object"){
+            session.reset();
+        }
+        else{
+            this.name = session.fullName;
+            this.isActive = session.isActive;
+            this.isAdmin = session.isAdmin;
+            this.mainRole = session.mailRole;
+        }
+    }
 };
 /**
  * @summary the user information
@@ -62,12 +75,7 @@ function NSApp(){
     this.state= {// the client app state   
 
     };  
-
-    /**
-     * the current user session
-     */
     this.session = new NSSession();
-
     /**
      * the logged in user info
      */
@@ -77,20 +85,16 @@ function NSApp(){
     this.loggingOn = window.__env.enableDebug;
 
     this.setSession = function(session){
-        this.session = session;
-        this.user.session = session;
+        this.session = session;  // db obj override
+        this.user.session.setup(session);
         if (session!= null){
-            this.setCookie(nsApp.C_NSSID, session.sessionId);
-            this.user.name = session.fullName;
-           
+            this.setCookie(nsApp.C_NSSID, session.sessionId);    
         }
-        else{
-            this.user.reset();
+        else{ 
             this.setCookie(nsApp.C_NSSID, nsResources.Empty);
         }
     };
  
-
     this.log= function(message) {
         try     {
             console.log(message);
@@ -112,8 +116,8 @@ function NSApp(){
      * @summary retrieves the current session id
      */
     this.sessionId = function(){
-        if (this.session!= null)
-            return this.session.sessionId;
+        if (this.user.session!= null)
+            return this.user.session.sessionId;
         else
             return nsResources.Empty;
     };
@@ -371,8 +375,9 @@ function NSApp(){
                 }
                 // check if array
                 else{
-                    var tr2 ="<div class='row'><div class='col-xs-3 col-md-4'>"
+                    var tr2 ="<div class='row'>"
                     if (keyRules.type === "url" && obj!= null){
+                        tr2+= "<div class='col-xs-3 col-md-4'>";
                         tr2+= keyRules.title + ":</div><div class='col-xs-9 col-md-8 '>";
                         tr2 += "<a href='";
                         var url = keyRules.url;
@@ -383,11 +388,18 @@ function NSApp(){
                     
                     }
                     else if (keyRules.type === "img"){
+                        tr2+= "<div class='col-xs-3 col-md-4'>";
                         var html = getImageUrlContent(obj);
                         tr2 += keyRules.title + ":</div><div class='col-xs-9 col-md-4 strong'>";
                         tr2 += (html + "</div></div>");         
                     }
+                    else if (keyRules.type === "avatar"){
+                        tr2+= "<div class='col-xs-3 col-md-4'>";
+                        var html = getAvatar(obj);
+                        tr2 += (html + "</div><div class='col-xs-9 col-md-4'></div>");         
+                    }
                     else{
+                        tr2+= "<div class='col-xs-3 col-md-4'>";
                         tr2 += toDisplayString(key) + ":</div><div class='col-xs-9 col-md-6'>" + getText(obj)+"</div></div>";
                         
                     } 
@@ -417,6 +429,21 @@ function NSApp(){
         html += '</div>';
         return html;
     }
+    function getAvatar(url, title){
+        var html = '<div class="img">';
+        if (url != null){
+            html += '<img src="' + url;
+            html += '" style="max-height:120px;max-width:120px;" ';
+            if (typeof(title) == "string"){
+                html += ' title=" ' + title + '"';
+            }
+            html += '/>  ';
+        }
+      
+        html += '</div>';
+        return html;
+    }
+
         
       /**
      * @summary outputs and object properties to the table body element  
@@ -492,6 +519,34 @@ function NSApp(){
             $('#' + elementId).append(tr);
         });
     };
+    /**
+     * @summary outputs and user profile
+     * @param {any} obj  - the profile object
+     * @param {string} elementId - the id of the element table to output the object data
+     */
+    this.displayUserProfile = function(obj, elementId){
+        var html ="";
+        $('#' + elementId).html(html);
+        html += "<div class='row'>";
+        var title = obj.name;
+        html += "<div class='col-sm-4'>";
+        html +=  getAvatar(obj.imageUrl, title);
+        html += "</div>";
+        html += "<div class='col-sm-8'>";
+        if (obj.isClientAdmin === true){
+            html += "<strong class='text-success'>Team Captain</strong>";
+        }
+        html += "<ul>";
+        
+        html += "<li><strong>First Name:</strong> " + getText(obj.firstName) +"</li>";
+        html += "<li><strong>Last Name:</strong> " + getText(obj.lastName) +"</li>";
+        html+= "</ul>";
+        html += "</div>";
+
+        $('#' + elementId).html(html);
+    };
+
+    
 };
 var nsApp = new NSApp();
 nsApp.C_NSSID = "_nssid";
