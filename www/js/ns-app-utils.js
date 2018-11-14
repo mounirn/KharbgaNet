@@ -32,7 +32,7 @@ function NSSession(){
     };
     this.setup = function(session){
         if (session == null || typeof(session) != "object"){
-            session.reset();
+            this.reset();
         }
         else{
             this.name = session.fullName;
