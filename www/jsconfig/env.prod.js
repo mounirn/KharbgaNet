@@ -3,7 +3,7 @@
 (function (window) {
     window.__env = window.__env || {};  
     // Base url
-    window.__env.baseURI = 'https://www.kharbga.com/v3/';
+    window.__env.baseURI = 'https://api.kharbga.com/';
   
     // Whether or not to enable debug mode
     // Setting this to false will disable console output

@@ -31,8 +31,8 @@ function NSSession(){
         this.mailRole = 0;
     };
     this.setup = function(session){
-        if (session == null || typeof(session) != "object"){
-            session.reset();
+        if (session === null || typeof(session) !== "object" || session === undefined){
+            this.reset();
         }
         else{
             this.name = session.fullName;
@@ -85,7 +85,7 @@ function NSApp(){
     this.loggingOn = window.__env.enableDebug;
 
     this.setSession = function(session){
-        this.session = session;  // db obj override
+        this.session.setup(session);  // db obj override
         this.user.session.setup(session);
         if (session!= null){
             this.setCookie(nsApp.C_NSSID, session.sessionId);    
@@ -138,6 +138,23 @@ function NSApp(){
         }
         return ret;
     };
+    /**
+     * Helper function for reading from local storage. If local storage is not available, use cookies
+     * @param {any} key - a key
+     * @returns {any} - the value or empty string. 
+     */
+    this.getFromLocalStorage = function(key) {
+        
+        var ret = '';      
+        if (window.localStorage != null){
+            val = window.localStorage.getItem(key);            
+        }
+        else{
+            return getCookie(key);
+        }
+        
+        return ret;
+    };
 
     /**
      * Helper function for setting cookie
@@ -150,6 +167,18 @@ function NSApp(){
         document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 
         // store in local storage 
+        if (window.localStorage != null){
+            window.localStorage.setItem(key, value);            
+        }
+    };
+
+    /**
+     * Helper function for setting a value in local storage. If local storage is not available, use cookies
+     * @param {any} key - the key to set
+     * @param {any} value - the value
+     */
+    this.setLocalStorage  = function(key, value) {
+                // store in local storage 
         if (window.localStorage != null){
             window.localStorage.setItem(key, value);            
         }

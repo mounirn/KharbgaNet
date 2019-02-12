@@ -3033,8 +3033,8 @@ var KharbgaApp = function () {
                // nsApp.displayNetMessage("SignalR Error: error " + error);
                // appendToNetMessagesList("server", error);
             });
-            nsApp.displayNetMessage($.nsResources.ConnectedSuccessfully,true);
-
+        //    nsApp.displayNetMessage($.nsResources.ConnectedSuccessfully,true);
+        nsApp.displayNetMessage("ConnectedSuccessfully",true);
             return startSignalR();
         }
         catch (e) {
@@ -3078,8 +3078,10 @@ var KharbgaApp = function () {
                     appendToNetMessagesList("server","Connected");
 
                     // moves the setup of the games on startup at the end of the checking session process
-                    nsApp.displayNetMessage($.nsResources.ConnectedSuccessfully, true);
-                    $("#signalr-status").html("<div class='alert alert-success'>Connected</div>");
+                  //  nsApp.displayNetMessage($.nsResources.ConnectedSuccessfully, true);
+                     nsApp.displayNetMessage("ConnectedSuccessfully", true);
+                 
+                  $("#signalr-status").html("<div class='alert alert-success'>Connected</div>");
 
                     resizeGame();
 
