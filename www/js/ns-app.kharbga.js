@@ -2126,7 +2126,7 @@ var KharbgaApp = function () {
                 if (status.status === 404 || status.status === 400)
                     $('#account-message').html("<div class='alert alert-warning'>Invalid Session - Please Login</div>");
                 else
-                    $('#account-message').html("<div class='alert alert-danger'> Failed to access the system. Please try your request again later. </div>");
+                    $('#account-message').html("<div class='alert alert-danger'> Server is temporarily not available. </div>");
 
                // $('#account-message').html("<div class='alert alert-danger'> <pre> " + JSON.stringify(status) + " </pre> </div>");
             }

@@ -4,7 +4,7 @@
     window.__env = window.__env || {};
   
     // Base url
-    window.__env.baseURI = 'http://localhost:3121/';
+    window.__env.baseURI = 'http://localhost/v2018/myOnlineObjects/';
   
     // Whether or not to enable debug mode
     // Setting this to false will disable console output

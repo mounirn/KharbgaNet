@@ -1,5 +1,6 @@
 ﻿if ($ == undefined ){
     console.log("Please include jQuery v1.10 or higher before this module");
+    alert ("Application Error: jQuery is not Included");
     throw new Error("Please include jQuery");
 }
 /**
@@ -25,7 +26,7 @@ function NSSession(){
     this.mailRole = 0;
     this.reset = function(){
         this.sessionId = "";
-        this.name = nsResources.Guest;
+        this.fullName = nsResources.Guest;
         this.isActive = false;
         this.isAdmin = false;
         this.mailRole = 0;
@@ -35,7 +36,8 @@ function NSSession(){
             this.reset();
         }
         else{
-            this.name = session.fullName;
+            this.sessionId = session.sessionId;
+            this.fullName = session.fullName;
             this.isActive = session.isActive;
             this.isAdmin = session.isAdmin;
             this.mainRole = session.mailRole;
@@ -46,10 +48,15 @@ function NSSession(){
  * @summary the user information
  */
 function NSUser(){
-    this.name = nsResources.Guest;
+    this.name = "Guest";
     this.session = new NSSession();
     this.preferences = {};
 
+    this.setup = function (session){ 
+        this.session.setup(session);
+        this.name = this.session.fullName;
+     
+    }
     this.isActive = function(){
         return (this.session != null && this.session.isActive === true);
     };
@@ -59,9 +66,9 @@ function NSUser(){
     this.isLoggedIn = function(){
         return this.isActive();
     };
-    this.reset =  function(){
-        this.name= nsResources.Guest;
-        this.session = new NSSession();
+    this.reset =  function(){       
+        this.session.reset();
+        this.preferences = {};
     };
 }; 
 
@@ -73,9 +80,9 @@ function NSUser(){
  */
 function NSApp(){
     this.state= {// the client app state   
-
+    
     };  
-    this.session = new NSSession();
+    this.sessionId = "";
     /**
      * the logged in user info
      */
@@ -85,12 +92,14 @@ function NSApp(){
     this.loggingOn = window.__env.enableDebug;
 
     this.setSession = function(session){
-        this.session.setup(session);  // db obj override
-        this.user.session.setup(session);
+        this.user.setup(session);
+        
         if (session!= null){
+            this.sessionId = session.sessionId;
             this.setCookie(nsApp.C_NSSID, session.sessionId);    
         }
         else{ 
+            this.sessionId =nsResources.Empty;
             this.setCookie(nsApp.C_NSSID, nsResources.Empty);
         }
     };
@@ -598,6 +607,9 @@ function toDisplayString(key){
 }
 
 var resScript= "../jsconfig/ns-app-resources.js";
+var path = document.location.path;
+var origin = document.location.origin;
+
 console.log("loading: " + resScript);
 var resElement = document.createElement('script');
 resElement.setAttribute('src', resScript);

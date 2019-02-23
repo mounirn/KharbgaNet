@@ -33,7 +33,7 @@ function loadUserProfile(userId){
     if (nsApp.isLoggedIn() === false){
         return;
     }
-    nsApiClient.userService.getUserInfo(nsApp.session.sessionId, userId, function (data, status) {
+    nsApiClient.userService.getUserInfo(nsApp.sessionId, userId, function (data, status) {
         if (data != null) {
           
             nsApp.displayUserProfile(data.object,'user-profile');

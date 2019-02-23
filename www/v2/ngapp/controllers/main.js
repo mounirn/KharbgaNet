@@ -198,11 +198,11 @@ nsApp.controller('accountController', ['$scope', '$state', '$rootScope', '$locat
             var sessionId = sessionData.sessionId;
 
             nsApiClient.userService.getAccountInfo(sessionId, function (data, status) {
-               
-                $scope.user.account = data.object;
-                if (angular.isObject($scope.user.account))
-                    $scope.action.invalid = false;
-
+                if (angular.isObject(data)){
+                    $scope.user.account = data.object;
+                    if (angular.isObject($scope.user.account))
+                        $scope.action.invalid = false;
+                }
                 $scope.action.status = status;
 
                 // add check for status to trigger a system error event

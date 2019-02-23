@@ -22,7 +22,7 @@ $(document).ready(function() {
             max:50
         };
 
-        nsApiClient.gameService.getUserGames(nsApp.session.sessionId, query, function (data, status) {
+        nsApiClient.gameService.getUserGames(nsApp.sessionId, query, function (data, status) {
             if (data != null) {
                 nsApp.user.games = data.object;
                 nsApp.displayAccountMessage("Loaded user games successfully" , true);

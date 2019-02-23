@@ -120,7 +120,7 @@ $.nsApp.init = function(){
         if (nsApp.isLoggedIn() !== true){
             return;
         }
-        nsApiClient.userService.getPreferences(nsApp.session.sessionId, 
+        nsApiClient.userService.getPreferences(nsApp.sessionId, 
             function (data, status) {
                 if (data != null && data.success === true && data.object!=null) {
                 
@@ -515,9 +515,9 @@ $.nsApp.init = function(){
         //    $('#register-panel').hide().addClass('hidden');
         //    displayAccountMessage("Welcome " + nsApp.user.name);
         
-            $('#account-session-id').text(nsApp.session.sessionId);
+            $('#account-session-id').text(nsApp.sessionId);
             if (nsApp.user.session!= null){
-                nsApp.displayObjectInfo(nsApp.session,'user-session-info',true, {
+                nsApp.displayObjectInfo(nsApp.user.session,'user-session-info',true, {
                     fullName: {},
                     lastAccess: {},
                     createdOn: {},
@@ -613,7 +613,7 @@ $.nsApp.init = function(){
         if (nsApp.isLoggedIn() === false){
             return;
         }
-        nsApiClient.userService.getAccountInfo(nsApp.session.sessionId, function (data, status) {
+        nsApiClient.userService.getAccountInfo(nsApp.sessionId, function (data, status) {
             if (data != null) {
                 nsApp.user.account = data.object;
                 var displayRules =   {
@@ -641,7 +641,7 @@ $.nsApp.init = function(){
         if (nsApp.isLoggedIn() === false){
             return;
         }
-        nsApiClient.clientService.getClientInfo(nsApp.session.sessionId, function (data, status) {
+        nsApiClient.clientService.getClientInfo(nsApp.sessionId, function (data, status) {
             if (data != null) {
                 nsApp.user.team = data.object;
                 var displayRules =    {
@@ -666,7 +666,7 @@ $.nsApp.init = function(){
         if (nsApp.isLoggedIn() === false){
             return;
         }
-        nsApiClient.clientService.getClientMembers(nsApp.session.sessionId, function (data, status) {
+        nsApiClient.clientService.getClientMembers(nsApp.sessionId, function (data, status) {
             if (data != null) {
                 nsApp.user.teamMembers = data.object;
                 var displayRules =    {
@@ -694,7 +694,7 @@ $.nsApp.init = function(){
 
     /**
      * @summary outputs user list 
-     * @param {any} list  - an array of objects
+     * @param {any} list  - an array of app users
      * @param {string} elementId - the id of the element table to output the html
      * @param {boolean} clear - clear the previous data or not
      * @param {object} rules - defines how to handle each field in the list item
@@ -717,7 +717,13 @@ $.nsApp.init = function(){
             } 
             html+="</div>";
             html+="<div class='col-xs-9 col-sm-8'>";
-            html+= data.name;
+          //  html+= data.name;
+            if (typeof(data.name === "string")){
+                    html+= data.name;
+            }
+            else{
+                html+= (data.firstName + " " + data.lastName);
+            }
             if (data.isClientAdmin === true){
                 html += "<strong class='text-success'> (Team Captain) </strong>";
             }
@@ -738,7 +744,7 @@ $.nsApp.init = function(){
         var formData = new FormData();  
         var file = $('#file-logo')[0];  
         formData.append('uploadedLogo', file.files[0]);  
-        nsApiClient.userService.uploadLogo(nsApp.session.sessionId, formData,
+        nsApiClient.userService.uploadLogo(nsApp.sessionId, formData,
             function (data, status) {
                 if (data != null) {
                     displayAccountMessage("Uploaded file successfully ",true);
@@ -761,7 +767,7 @@ $.nsApp.init = function(){
         var formData = new FormData();  
         var file = $('#file-file')[0];  
         formData.append('uploadedFile', file.files[0]);  
-        nsApiClient.objectService.uploadFile(nsApp.session.sessionId, nsApp.user.account.id, formData,
+        nsApiClient.objectService.uploadFile(nsApp.sessionId, nsApp.user.account.id, formData,
             function (data, status) {
                 if (data != null) {
                     displayAccountMessage("Uploaded file successfully " + data);

@@ -17,6 +17,8 @@ function setSystemError(on) {
 
 
 function NSAppClient(baseURI) {
+    
+  
     this.baseURI = baseURI;
     console.log("NSAppClient CTOR - " + this.baseURI);
    
@@ -537,7 +539,7 @@ function NSAppClient(baseURI) {
                 //jsonp: "callback",             
 
                 //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
-                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", C_NSSID: sessionId },
 
                 crossDomain: true,
 
@@ -615,16 +617,16 @@ function NSAppClient(baseURI) {
 
                 // Work with the response
                 success: function (result, status, xhr) {
-                    console.log("%s - ajax - getClientInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log("%s - ajax - getClientMembers success: status: %s data:", getLoggingNow(), JSON.stringify(status));
                     console.log(result);
                     callback(result, status);
                 },
                 error: function (status, errorThrown) {
-                    console.log("%s - ajax - getClientInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    console.log("%s - ajax - getClientMembers error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
                     callback(null, status);
                 },
                 complete: function (xhr, status) {
-                    console.log("%s - ajax - getClientInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+                    console.log("%s - ajax - getClientMembers complete: status: %s ", getLoggingNow(), JSON.stringify(status));
 
                 }
             });
