@@ -74,7 +74,7 @@ img.thumbnail:hover {
 
 /* stack all grids below 40em (340px) */
 
-@media all and (max-width: 419px) {
+@media all and (max-width: 600px) {
     .kharbga-grid .ui-block-a,
     .kharbga-grid .ui-block-b,
     .kharbga-grid .ui-block-c {
@@ -83,13 +83,15 @@ img.thumbnail:hover {
     }
 }
 
-@media all and (max-width: 720px) and (min-width:420px) {
+@media all and (max-width: 720px) and (min-width:601px) {
     .kharbga-grid.ui-grid-b .ui-block-a {
-        width: 40%;
+        width: 50%;
+        min-width: 280px;
         /*max-width: 280px; */
     }
     .kharbga-grid.ui-grid-b .ui-block-b {
-        width: 60%;
+        width: 50%;
+        min-width: 280px;
     }
     .kharbga-grid.ui-grid-b .ui-block-c {
         width: 100%;
@@ -106,6 +108,7 @@ img.thumbnail:hover {
 .board-grid {
     font-weight: normal;
     font-size: small;
+    min-width: 280px;
     /* max-width: 280px; */
 }
 
