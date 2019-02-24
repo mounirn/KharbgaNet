@@ -752,9 +752,9 @@ var KharbgaApp = function () {
         if (loggingOn) console.log("processAction");
         var ret = false;
         var gameMove = new Kharbga.GameMove();
-        gameMove.player = game.getCurrentPlayer();
+        var player = game.getCurrentPlayer();
 
-        gameMove.playerName = gameMove.player.name; 
+        gameMove.playerName = player.name; 
 
         gameMove.message = $("#move-message").val();
 
@@ -1193,7 +1193,7 @@ var KharbgaApp = function () {
         logMessage("computer_play() as" + getComputerRole() + "required From Piece: "+ moveSourceRequired);
               
         appClientState.computerIsPlaying = true;
-        gameMove.player = computerPlayer;
+     //   gameMove.player = computerPlayer;
         gameMove.playerName = computerPlayer.name;
         gameMove.from = "";
         gameMove.to = "";
