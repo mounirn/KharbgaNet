@@ -9,11 +9,11 @@ if ($ == undefined || $.nsApp == undefined){
     console.log("Please include jQuery and ns-app-utils before this module");
     throw new Error("Please include jQuery and ns-app-utils");
 }
-if (nsApiClient == undefined){
+if (nsApp == null || nsApiClient == undefined){
     console.log("Please include ns-api-client before this module");
     throw new Error("Please include ns-api-client");
 }
-if (nsApp == undefined || nsApp.user == undefined){
+if (nsApp == null || nsApp == undefined || nsApp.user == undefined){
     console.log("Please include ns-app-user before this module");
     throw new Error("Please include ns-app-user module");
 }
@@ -2416,7 +2416,7 @@ var KharbgaApp = function () {
                     refreshList('#games-list');
                 }
                 
-                displayGameMessage("Done refreshing active games from the server.");
+                nsApp.displayNetMessage("Done refreshing active games from the server.");
                 
                 selectActiveGameId(gameState.id);
             }); 
@@ -2728,7 +2728,7 @@ var KharbgaApp = function () {
             
             if (typeof(window.localStorage) !== "undefined" ){
                 displayGameMessage("Saving game locally"); 
-                window.localStorage.setItem("kharbgaGameState", JSON.stringify(gameState));
+            //    window.localStorage.setItem("kharbgaGameState", JSON.stringify(gameState));
                 displayGameMessage("Saved game state locally");
             }
         }

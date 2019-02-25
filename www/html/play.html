@@ -5,14 +5,25 @@
     <meta charset="utf-8" />
     <title>Kharbga.Net - Play and watch Kharbga on local device or with network players</title>
     <meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
     <link rel="stylesheet" href="../css/kharbga.css" />
-    <link rel="stylesheet" href="../css/themes/Kharbga2.min.css">
+    <!--
+    <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile-1.4.5.css">
+  -->
+    <link rel="stylesheet" href="../css/themes/Kharbga2.css">
+    <link rel="stylesheet" href="../css/jqm-helpers.css">
     <link rel="stylesheet" href="../css/themes/jquery.mobile.icons.min.css">
+
     <link rel="stylesheet" href="../lib/jquery.mobile/jquery.mobile.structure-1.4.5.css">
-    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+
     <link rel="stylesheet" href="../css/site.css">
     <link rel="stylesheet" href="./play.css">
-    <script src="../lib/jquery/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jqm-helpers.js"></script>
+    <!--   <script src="../lib/jquery/jquery-1.11.3.min.js"></script>
+ -->
     <script src="../lib/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
     <!--
     <script>
@@ -34,8 +45,8 @@
 </head>
 
 <body>
-    <section data-role="page" id="first" data-theme="a">
-        <header data-role="header" data-position="fixed" class="text-center">
+    <div data-role="page" id="first" data-theme="a" class="ns-kharbga">
+        <div data-role="header" data-position="fixed" class="text-center jqm-header">
             <a target="rules" href="../html/rules.html" class="ui-mini" data-theme="c">
                 <img src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
             </a>
@@ -49,8 +60,8 @@
                 <span id="account-welcome">Welcome</span>
             </a>
 
-        </header>
-        <article role="main" class="ui-content">
+        </div>
+        <div role="main" class="ui-content jqm-content">
             <div id="popup-menu" data-role="popup">
                 <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
                     Main Menu
@@ -164,19 +175,38 @@
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
 
-                <div class="center  ui-bar ui-bar-b">
-                    <a id="games-link" href="#">Refresh  Active Games </a>
+
+                <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-inset="false">
+                    <div data-role="collapsible">
+                        <h3>My Games</h3>
+                        <a id="games-link" href="#">Refresh My Games </a>
+                        <ul id="games-list" data-role="listview" data-inset="true" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                        </ul>
+
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>Active Games</h3>
+                        <a id="active-games-link" href="#">Active Games </a>
+                        <ul id="active-games-list" data-role="listview" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                        </ul>
+
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>Active Players</h3><a id="active-games-link" href="#">Active Players </a>
+                        <ul id="active-players-list" data-role="listview" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                        </ul>
+                    </div>
                 </div>
 
-                <ul id="games-list" data-role="listview" data-inset="true" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
-                </ul>
+
+
                 <div class="center ui-bar ui-bar-b">
                     <a href="#" data-rel="close">Close</a>
                 </div>
 
             </div>
-            <div class="row ui-grid-b kharbga-grid">
-                <div id="board-frame" class="col-sm-4 col-md-5 col-lg-4 panel panel-success ui-block-a">
+            <div class="ui-grid-b kharbga-grid">
+                <div id="board-frame" class=" ui-block-a">
                     <div class="ui-bar ui-bar-b small" style="font-size:small">
                         <a href="#popup-menu" data-rel="popup" data-transition="slideup" class="ui-mini ui-btn ui-icon-plus ui-btn-inline ui-btn-icon-left ui-btn-icon-notext ">
                         </a>
@@ -217,7 +247,7 @@
                     <hr/>
 
                 </div>
-                <div class="col-sm-4 ui-block-b" xstyle="padding-top:70px;">
+                <div class="ui-block-b" xstyle="padding-top:70px;">
                     <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
                         Game Information
                         <a id="start-new-game-btn" href="#popup-menu" data-mini="true" data-rel="popup" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">New Game</a>
@@ -307,31 +337,43 @@
                     </div>
                     <hr/>
                 </div>
-                <div class="col-sm-4 col-md-6 col-lg-6 ui-block-c">
+                <div class="ui-block-c">
                     <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
                         <h3>Game Network</h3>
                         <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
 
                     </div>
-                    <div id="net-message"></div>
-                    <div class="panel-body ui-body">
-                        <label for="move-message">Message:</label>
-                        <input type="text" xclass="form-control" id="move-message" name="move-message">
-                        <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
-                        <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
-                                Reconnect
-                            </a>
-                        <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
-                        <div class="ui-bar ui-bar-c">
-                            <small>URI:<pre> <span id="server-uri"></span></pre></small>
+                    <div>
+                        <div class="center  ui-bar ui-bar-b">
+                            <a id="net-messages" href="">Messages </a>
                         </div>
-                        <div class="ui-body">
 
-                            <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
+                        <div id="net-message"></div>
+                        <div class="panel-body ui-body">
+                            <label for="move-message">Message:</label>
+                            <input type="text" xclass="form-control" id="move-message" name="move-message">
+                            <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
+                            <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
+                                    Reconnect
+                                </a>
+                            <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
+                            <div class="ui-bar ui-bar-c">
+                                <small>URI:<pre> <span id="server-uri"></span></pre></small>
+                            </div>
+                            <div class="ui-body">
+
+                                <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+
+
+
+
             <div id="login-popup" data-role="popup" data-theme="a" class="ui-content" style="max-width:400px;">
                 <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <div class="panel panel-info">
@@ -388,95 +430,81 @@
 
             </div>
 
-            <a href="#dev-support-panel" xclass="ui-btn-left ui-shadow ui-corner-all ui-btn-inline ui-mini">Development & Operation Support</a>
+            <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                <h4>Server Status</h4>
 
-            <div id="dev-support-panel" xdata-role="panel" xdata-theme="b" xdata-position="right">
-                <div data-role="tabs" id="game-tabs">
-                    <div data-role="navbar">
-                        <ul>
-                            <li>
-                                <a href="#tab-server" data-ajax="false">Server Status</a>
-                            </li>
-                            <li>
-                                <a href="#tab-game-state" data-ajax="false">Game State</a>
-                            </li>
-                            <li>
-                                <a href="#tab-app-state" data-ajax="false">Client App State</a>
-                            </li>
-                            <li>
-                                <a href="#tab-user-state" data-ajax="false">User State</a>
-                            </li>
-                        </ul>
-                    </div>
+                <div id="tab-server">
+                    <h5>API URL: <span id="api-url"></span>
+                        <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">
+                                Refresh </a>
+                    </h5>
+                    <div id="help-message"> </div>
+                    <table id="app-info-table" class="table table-striped">
+                        <tbody id="app-info-table-body">
 
-                    <div id="tab-server">
-
-                        <h4>API URL: <span id="api-url"></span>
-                            <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">
-                             Refresh </a>
-                        </h4>
-                        <div id="help-message"> </div>
-                        <table id="app-info-table" class="table table-striped">
-                            <tbody id="app-info-table-body">
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="tab-game-state">
-                        <h4>Active Game State
-                            <a href="#" id="game-state-link" value="Refresh">
-                             Refresh
-                        </a>
-                        </h4>
-
-                        <div class="panel-body">
-                            <div id="game-state-message"> </div>
-                            <table id="game-state-table" class="table table-striped">
-                                <tbody id="game-state-table-body">
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div id="tab-app-state">
-                        <h4>App Client State -
-                            <a href="#" id="app-state-link" value="Refresh">
-                            Refresh
-                        </a>
-                        </h4>
-                        <div class="panel-body">
-                            <div id="app-state-message"> </div>
-                            <table id="app-state-table" class="table table-striped">
-                                <tbody id="app-state-table-body">
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div id="tab-user-state">
-                        <h4>User and Account State -
-                            <a href="#" id="user-state-link" value="Refresh">
-                            Refresh
-                        </a>
-                        </h4>
-                        <div class="panel-body">
-                            <div id="user-state-message"> </div>
-                            <table id="user-state-table" class="table table-striped">
-                                <tbody id="user-state-table-body">
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
+                <!--
+                <ul data-role="listview" data-inset="false">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>-->
             </div>
 
-        </article>
-        <footer data-role="footer" data-position="fixed">
+            <div data-role="collapsibleset" data-inset="false">
+                <div data-role="collapsible">
+                    <h4>Active Game State </h4>
+                    <a href="#" id="game-state-link" value="Refresh">
+                        Refresh
+                     </a>
+                    <div id="game-state-message"> </div>
+                    <table id="game-state-table" class="table table-striped">
+                        <!-- change to a list-->
+                        <tbody id="game-state-table-body">
+
+                        </tbody>
+                    </table>
+                    <!--    <ul data-role="listview" data-inset="false">
+                        <li>Cats</li>
+                        <li>Dogs</li>
+                        <li>Lizards</li>
+                        <li>Snakes</li>
+                    </ul>-->
+                </div>
+                <div data-role="collapsible">
+                    <h4>App Client State </h4>
+                    <a href="#" id="app-state-link" value="Refresh">
+                        Refresh
+                    </a>
+                    <div id="app-state-message"> </div>
+                    <table id="app-state-table" class="table table-striped">
+                        <tbody id="app-state-table-body">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div data-role="collapsible">
+                    <h4>User and Account State </h4>
+                    <a href="#" id="user-state-link" value="Refresh">
+                        Refresh
+                    </a>
+                    <div id="user-state-message"> </div>
+                    <table id="user-state-table" class="table table-striped">
+                        <tbody id="user-state-table-body">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- collapsible set -->
+        </div>
+        <div data-role="footer" data-position="fixed">
             <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>
             </h5>
-        </footer>
-    </section>
+        </div>
+    </div>
     <script src="../lib/json/json3.min.js"></script>
     <!--  <script src="../lib/jquery/jquery.min.js"></script> -->
 
@@ -503,5 +531,3 @@
     <script src="../js/ns-app-kharbga.js"></script>
     <script src="play.js"></script>
 </body>
-
-</html>
