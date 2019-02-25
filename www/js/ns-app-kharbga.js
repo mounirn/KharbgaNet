@@ -2396,7 +2396,7 @@ var KharbgaApp = function () {
             return;
         }
    
-        displayGameMessage("Refreshing active games from the server...");
+       // displayGameMessage("Refreshing active games from the server...");
    
         $('#games-list').empty();
         if (appClientState.signalReInitialized == false)
