@@ -66,7 +66,7 @@
                 <div class="panel-heading ui-bar ui-bar-b" data-theme="b">
                     Main Menu
                 </div>
-                <ul data-role="listview" data-inset="true">
+                <ul data-role="listview" data-inset="false">
                     <li>
                         <strong>New Game Options</strong>
                         <ul data-role="listview" data-inset="true">
@@ -99,7 +99,7 @@
                         <button id="start-game-with-options">Start New Game</button>
                     </li>
                     <li><strong>Play with other network players - must be logged in</strong>
-                        <ul data-role="listview" data-inset="true">
+                        <ul data-role="listview" data-inset="false">
                             <li><a id="new-game-attacker" href="#play-attacker">As Attacker</a></li>
                             <li><a id="new-game-defender" href="#play-defender">As Defender</a></li>
                             <!--      <li><a id="new-game-attacker-system" href="#play-attacker-system">As Attacker against
@@ -125,6 +125,8 @@
 
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
+                <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+
                 <div class="panel panel-info">
                     <div class="panel-heading ui-bar ui-bar-c">
                         <a target="rules" href="../html/my-account.html">My Account</a>
@@ -153,7 +155,7 @@
                         </p>
                     </div>
                     <div class="ui-bar ui-bar-c">Choose from the options below to learn more about this system.</div>
-                    <ul data-role="listview" data-inset="true">
+                    <ul data-role="listview" data-inset="false">
                         <li><a target="rules" href="../html/rules.html">Game Rules</a></li>
                         <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
                         <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
@@ -353,22 +355,22 @@
                         </div>
 
                         <div id="net-message"></div>
-                        <div class="panel-body ui-body">
-                            <label for="move-message">Message:</label>
-                            <input type="text" xclass="form-control" id="move-message" name="move-message">
-                            <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
-                            <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
-                                    Reconnect
-                                </a>
-                            <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
-                            <div class="ui-bar ui-bar-c">
-                                <small>URI:<pre> <span id="server-uri" style="font-size:xx-small"></span></pre></small>
-                            </div>
-                            <div class="ui-body">
 
-                                <ul id="messages-list" class="list-group" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
-                            </div>
+                        <label for="move-message">Message:</label>
+                        <input type="text" xclass="form-control" id="move-message" name="move-message">
+                        <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
+                        <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
+                                Reconnect
+                            </a>
+                        <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
+                        <div class="ui-bar ui-bar-c">
+                            <small>URI: <span id="server-uri" style="font-size:xx-small"></span></small>
                         </div>
+                        <div class="ui-body">
+
+                            <ul id="messages-list" class="list-group" data-inset="false" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
