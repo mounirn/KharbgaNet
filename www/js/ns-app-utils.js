@@ -349,9 +349,15 @@ function NSApp(){
      */
     this.displayStatus = function(status){
         if (nsApp.isValid(status)){
-            if ( status.status === 400 ){  // Bad request
-                $('#message').html("<div class='alert alert-danger'>" + 
-                    status.status + ": " + status.responseText + "</div>");
+            if ( status.status === 400 || status.status === 404){  // Bad request
+                if (nsApp.isValid(status.responseJSON)){
+                    $('#message').html("<div class='alert alert-danger'>" + 
+                        status.status + ": " + status.responseJSON.message + "</div>");
+                }
+                else{
+                    $('#message').html("<div class='alert alert-danger'>" + 
+                         status.status + ": " + status.responseText + "</div>"); 
+                }
             }
             else{
                 $('#message').html("<div class='alert alert-danger'>" + 
@@ -373,7 +379,26 @@ function NSApp(){
         else{
             this.displayStatus(status);
         }
-    }
+        this.displayProcessing(false);
+    };
+
+    /**
+     * @summary 
+     * @param {Boolean} processing - processing flag
+     */
+    this.displayProcessing = function(processing){
+        if (processing){
+            $('#processing').html("<div class='alert alert-info'>" + 
+                "<i class='fa fa-spinner'>Processing...</div>");
+            this.displayNetMessage("<i class='fa fa-spinner fa2x'> Processing...");
+
+        }
+        else{
+            this.displayNetMessage("Done");
+            $('#processing').html("");
+        }
+
+    };
 
     /**
      * @summary Displays the data result as JSON data in a an div with id="appDebugInfo" if debug is turned on
