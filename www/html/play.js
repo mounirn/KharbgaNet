@@ -166,6 +166,12 @@ $.appViewHandler = {
         if ($.nsAppKharbga == null )
             return;
         $.nsAppKharbga.setVolume(volume);
+    },
+    sendMessage : function(msg, data){
+        if (msg === nsApp.MSG_on_logout_done_success){
+            
+            this.closeOpenPanels();
+        }
     }
 };  
 

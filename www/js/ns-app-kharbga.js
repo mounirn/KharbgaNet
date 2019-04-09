@@ -171,7 +171,7 @@ var KharbgaApp = function () {
      * @param {any} eventData -- the event data
      */
     function onNewGameStarted(eventData) {
-        if (loggingOn) console.log("onNewGameStarted");
+        if (nsApp.loggingOn) console.log("onNewGameStarted");
         logMessage("event: onNewGameStarted - game Id: " + eventData.source.id);
         logObject(eventData);
         var message = "Started a new game";
@@ -197,7 +197,7 @@ var KharbgaApp = function () {
      */
     function onNewPlayerTurn(eventData) {
         if (typeof (eventData) == "undefined" || typeof(eventData.player) == "undefined" ){
-            if (loggingOn) console.log("Invalid event:onNewPlayerTurn " );
+            if (nsApp.loggingOn) console.log("Invalid event:onNewPlayerTurn " );
             return;
         }
         logMessage("event: onNewPlayerTurn - player: " + eventData.player.name);

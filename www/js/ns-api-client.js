@@ -67,7 +67,7 @@ function NSAppClient(baseURI) {
 
         };
         this.validateLogin = function (loginInfo, callback) {
-            var uri = this.serviceBaseURI + "token";
+            var uri = this.serviceBaseURI + "login";
             console.log("%s - ajax POST %s ", getLoggingNow(), uri);
             $.ajax({
                 url: uri,
@@ -200,7 +200,7 @@ function NSAppClient(baseURI) {
          * @param {function} callback - the callback function with the result (data, status)
          */
         this.getAccountInfo = function (sessionId, callback) {
-            var uri = this.serviceBaseURI + "account/my";
+            var uri = this.serviceBaseURI + "my";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
             $.ajax({
                 url: uri,
@@ -244,7 +244,7 @@ function NSAppClient(baseURI) {
          * @param {function} callback - the callback function with the result (data, status)
          */
         this.getPreferences = function(sessionId,callback){
-            var uri = this.serviceBaseURI + "account/preferences";
+            var uri = this.serviceBaseURI + "preferences";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
 
             $.ajax({
@@ -288,7 +288,7 @@ function NSAppClient(baseURI) {
          * @param {function} callback - the callback function with the result (data, status)
          */
         this.savePreferences = function(sessionId,preferences, callback){
-            var uri = this.serviceBaseURI + "account/preferences";
+            var uri = this.serviceBaseURI + "preferences";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
 
             $.ajax({
@@ -337,7 +337,7 @@ function NSAppClient(baseURI) {
          * @param {function} callback - the callback function with the result (data, status)
          */
         this.getUserInfo = function (sessionId, userId, callback) {
-            var uri = this.serviceBaseURI + "account/profile/" + userId;
+            var uri = this.serviceBaseURI + "profile/" + userId;
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
             $.ajax({
                 url: uri,
@@ -430,7 +430,7 @@ function NSAppClient(baseURI) {
          * @summary retrieves basic app info - available to all users
          */
         this.getAppInfo = function (callback) {
-            var uri = this.serviceBaseURI + "info";
+            var uri = this.serviceBaseURI + "status";
             var ret = null;
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
             $.ajax({
@@ -494,38 +494,39 @@ function NSAppClient(baseURI) {
          * @summary retrieves app hosting info - available to sys admin
          */
         this.getSystemHostInfo = function(sessionId, callback){
-            getSystemHelper(sessionId, "host/info", callback);
-        }
+            return getSystemHelper(sessionId, "host/info", callback);
+        };
         /**
          * @summary retrieves system log for sys admin
          */
         this.getSystemLog = function(sessionId, callback){
-            getSystemHelper(sessionId, "log", callback);
-        }
+            return getSystemHelper(sessionId, "log", callback);
+        };
 
         /**
          * @summary retrieves app info details for sys admin
          */
         this.getSystemInfo = function(sessionId, callback){
-            getSystemHelper(sessionId, "about", callback);
-        }
+            return getSystemHelper(sessionId, "about", callback);
+        };
     }
 
     function ClientService(baseUI){
         this.serviceBaseURI = baseURI + "api/client/";
 
         /**
-         * @summary search for organization by name contains
+         * @summary search for organizations by name contains
          * @param {string} name - name contains
-         * @param {function} callback callback function (data, status)
+         * @param {function} callback callback function (data, status) 
+         *          data is a result list of client organizations
          */
-        this.getClients = function (sessionId, name, callback) {
+        this.getClientsFilter = function (sessionId, name, callback) {
 
             var queryString = {     
                 nameContains: name,
                 
             };
-            var uri = this.serviceBaseURI + "list/filter";
+            var uri = this.serviceBaseURI + "filter";
             console.log("%s - ajax GET %s ", getLoggingNow(), uri);
             $.ajax({
                 url: uri,
@@ -545,20 +546,68 @@ function NSAppClient(baseURI) {
 
                 // Work with the response
                 success: function (result, status, xhr) {
-                    console.log("%s - ajax - getClients success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log("%s - ajax - getClientsFilter success: status: %s data:", getLoggingNow(),JSON.stringify(status));
                     console.log(result);
                     callback(result, status);
                 },
                 error: function (status, errorThrown) {
-                    console.log("%s - ajax - getClients error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    console.log("%s - ajax - getClientsFilter error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
                     callback(null, status);
                 },
                 complete: function (xhr, status) {
-                    console.log("%s - ajax - getClients complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+                    console.log("%s - ajax - getClientsFilter complete: status: %s ", getLoggingNow(),JSON.stringify(status));
 
                 }
             });
         };
+
+    /**
+         * @summary search for organizations by name contains
+         * @param {string} name - name contains
+         * @param {function} callback callback function (data, status) 
+         *      data is a result list of app objects lookup data to include in a dropdown 
+         */
+        this.getClientsLookup = function (sessionId, name, callback) {
+
+            var queryString = {     
+                nameContains: name,
+                
+            };
+            var uri = this.serviceBaseURI + "lookup";
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                data: queryString,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",             
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", C_NSSID: sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getClientsLookup success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getClientsLookup error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getClientsLookup complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+        };
+
         this.getClientInfo = function (sessionId, callback) {
 
             var queryString = {

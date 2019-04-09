@@ -2,7 +2,7 @@
 var _setupSignalR = function () {
     try {
         $.connection.hub.url = nsApiClient.baseURI + 'signalr';
-        if (loggingOn) console.log("Hub URL: %s", $.connection.hub.url);
+        if (nsApp.loggingOn) console.log("Hub URL: %s", $.connection.hub.url);
         gamesHubProxy = $.connection.gamesHub;
         $.connection.hub.logging = loggingOn;  // turn off  (config)
 
@@ -14,7 +14,7 @@ var _setupSignalR = function () {
         gamesHubProxy.client.moveRecorded = onMoveRecorded;
         gamesHubProxy.client.send = onSendMessage;
         gamesHubProxy.client.hello = function () {
-            if (loggingOn) console.log("%s - Hello from server", getLoggingNow());
+            if (nsApp.loggingOn) console.log("%s - Hello from server", getLoggingNow());
             //  $('#message').html("<div class='alert alert-success'>Hello from server.</div>")
             // $('#messages-list').append("<li class='list-group-item'>Hello from server</li>");
         };
@@ -41,7 +41,7 @@ var _setupSignalR = function () {
     $.connection.hub.disconnected(function () {
         appClientState.signalRinitalized = false;
         setTimeout(function () {
-            if (loggingOn) console.log('%s - RestartSignalR after disconnect!', getLoggingNow());
+            if (nsApp.loggingOn) console.log('%s - RestartSignalR after disconnect!', getLoggingNow());
             startSignalR();
         }, 3000); // Restart connection after 3 seconds.
     });
@@ -54,7 +54,7 @@ function startSignalR() {
         $.connection.hub.start({ jsonp: true, transport: ['webSockets', 'longPolling'] })
             .done(function () {
                 gamesHubProxy.server.hello();
-                if (loggingOn === true)
+                if (nsApp.loggingOn === true)
                     console.log('%s - startSignalR - connected, connection ID: %', getLoggingNow(), $.connection.hub.id);
 
                 appClientState.serverConnectionId = $.connection.hub.id;

@@ -97,8 +97,8 @@ function onLoginSubmit(e) {
     }
 
     var loginInfo = {
-        LoginID: $('#login-id').val(),
-        Password: $('#login-pwd').val(),
+        LoginId: $('#login-id').val(),
+        Pwd: $('#login-pwd').val(),
         RememberMe: $('#login-remember').is(':checked')
     };
     $('#message').html("<div class='alert alert-info'>Processing... </div>");

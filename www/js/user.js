@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
     var kApp = new KharbgaApp();
-    $.kApp =  kApp// dot need to call setup here
+    $.kApp =  kApp;// dot need to call setup here
     $.nsApp.setup(false, false);
     // load user games after few seconds
    
@@ -17,7 +17,7 @@ $(document).ready(function() {
     var userId = "";
     //console.log(queries);
     if (queries.id != null && queries.id.length > 10){
-        userId = queries.id;;
+        userId = queries.id;
     }
     setTimeout(function(){
         // setup - start with the given game Id
@@ -34,13 +34,17 @@ function loadUserProfile(userId){
         return;
     }
     nsApiClient.userService.getUserInfo(nsApp.sessionId, userId, function (data, status) {
-        if (data != null) {
+        if (data != null && data.object!= null) {
           
             nsApp.displayUserProfile(data.object,'user-profile');
         }
         else {
-          //  $('#help-message').html("<div class='alert alert-error'>" + JSON.stringify(status) + "</div>");
-           nsApp.displayAccountMessage("Unable to load user info. Error: " + status.statusText, false);
+            if (data!= null){
+                nsApp.displayResult(data);
+            }
+            else{
+                nsApp.displayAccountMessage("Unable to load user profile info. Error: " + status.statusText, false);
+            }
         }
     });
 }

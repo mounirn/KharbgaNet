@@ -1,7 +1,7 @@
 ﻿if ($ == undefined ){
     console.log("Please include jQuery v1.10 or higher before this module");
     alert ("Application Error: jQuery is not Included");
-    throw new Error("Please include jQuery");
+    throw new Error("NS App: Please include jQuery");
 }
 /**
  * @summary Defines various strings used in the app 
@@ -16,6 +16,32 @@ var nsLocal = "en";
 var nsResources = new NSResources();
 
 /**
+ * Defines the processing result of an action 
+ */
+function NSResult(){
+    this.success = true;
+    this.status = 0;
+    this.errorMessage = "";
+    this.startTime = "";
+    this.endTime = "";
+}
+/**
+ * Defines a base app object
+ */
+function NSObject() {
+    this.id = 0;
+    this.systemId = "";
+    this.name ="";
+    this.description = "";
+    this.code = "";
+    this.isActive = false;
+    this.isPublic = false;
+    this.imageUrl ="";
+    this.status = 0;
+    this.classId = 0; 
+
+}
+/**
  * @summary the user session
  */
 function NSSession(){
@@ -23,14 +49,27 @@ function NSSession(){
     this.isActive = false;
     this.isAdmin = false;
     this.fullName  = nsResources.Guest;
-    this.mailRole = 0;
+    this.mainRole = 0;
+    this.lastAccess = "";
+    this.createdOn = "";
+    this.clientId = 0;
+    this.accountId = 0;
+    this.imageUrl = "";
     this.reset = function(){
         this.sessionId = "";
         this.fullName = nsResources.Guest;
         this.isActive = false;
         this.isAdmin = false;
         this.mailRole = 0;
+        this.lastAccess = "";
+        this.createdOn = "";
+        this.clientId = 0;
+        this.accountId = 0;
+        this.imageUrl = "";
     };
+    /**
+     * Setup the session with back-end data
+     */
     this.setup = function(session){
         if (session === null || typeof(session) !== "object" || session === undefined){
             this.reset();
@@ -40,23 +79,83 @@ function NSSession(){
             this.fullName = session.fullName;
             this.isActive = session.isActive;
             this.isAdmin = session.isAdmin;
-            this.mainRole = session.mailRole;
+            this.mainRole = session.mainRole;
+            this.lastAccess = session.lastAccess;
+            this.createdOn = session.createdOn;
+            this.clientId = session.clientId;  // the team id
+            this.accountId = session.accountId; // the user id
+            this.imageUrl = session.imageUrl;
         }
-    }
-};
+    };
+}
+
+function NSClient(){
+    this.name = "Guest";
+    this.object = null;
+}
 /**
  * @summary the user information
  */
 function NSUser(){
     this.name = "Guest";
+    this.systemId = "";
+    this.id = 0;
+    this.clientId = 0;  // the team id
     this.session = new NSSession();
+    this.account = null;
+    this.object = null;
+    this.team = null;  // aka client org
+    this.teamMembers = null;  
     this.preferences = {};
+    this.imageUrl = "";
+    this.createdOn = "";
 
+    /**
+     * sets up the user with the session result
+     */
     this.setup = function (session){ 
         this.session.setup(session);
         this.name = this.session.fullName;
+        if (session == null){
+           this.setAccount(null);
+        }
      
-    }
+    };
+    /**
+     * sets up the user with the account info result
+     */
+    this.setAccount = function(account){
+        this.account = account;
+        if (this.account!= null){
+            
+            this.systemId = this.account.systemId;
+            this.object = this.account.extension;
+            if (this.object!= null){
+                this.name = this.object.name;
+                this.clientId = this.object.clientId;
+                this.id = this.object.id;
+                this.imageUrl = this.object.imageUrl;
+                this.createdOn = this.object.createdOn;
+            }
+        }
+        else{
+            this.object = null;
+            this.team = null;  // aka client org
+            this.preferences = {};
+            this.imageUrl = "";
+            this.createdOn = "";
+            this.teamMembers = null;  
+            this.systemId = "";
+            this.object = null;
+        }
+    };
+    /**
+     * sets up the user record with the current client record
+     */
+    this.setTeam = function(team){
+        this.team = team;
+    };
+
     this.isActive = function(){
         return (this.session != null && this.session.isActive === true);
     };
@@ -70,7 +169,7 @@ function NSUser(){
         this.session.reset();
         this.preferences = {};
     };
-}; 
+} 
 
 /**
  * @summary the app info including utilities:
@@ -88,9 +187,14 @@ function NSApp(){
      */
     this.user = new NSUser();
 
-    // turn on logging 
+    /**
+     * @summary Defines if debugging is turned on or not
+     */
     this.loggingOn = window.__env.enableDebug;
 
+    /**
+     * @summary Sets the app and user session - after login or session checking
+     */
     this.setSession = function(session){
         this.user.setup(session);
         
@@ -103,7 +207,18 @@ function NSApp(){
             this.setCookie(nsApp.C_NSSID, nsResources.Empty);
         }
     };
- 
+
+    /**
+     * @summary Returns the current user logged in user session
+     * @returns {NSSession} - the current user session
+     */
+    this.getSession = function(){
+        return this.user.session;
+    };
+    
+    this.setAppStatus = function(appStatus){
+        this.appStatus = appStatus; 
+    };
     this.log= function(message) {
         try     {
             console.log(message);
@@ -114,7 +229,7 @@ function NSApp(){
     };
 
     /**
-     * Checks if the user is logged in
+     * @summary Checks if the user is logged in
      * @returns true if logged in false otherwise
      */
     this.isLoggedIn = function(){ 
@@ -216,6 +331,59 @@ function NSApp(){
         this.cw = undefined;
     };
 
+    /**
+     * @summary Displays the processing result in the case of an error is a div with id = "message"
+     * @param {NSResult} result - the message to display
+     */
+    this.displayResult = function(result){
+        if (result!= null && result.errorMessage != null){
+            $('#message').html("<div class='alert alert-danger'> Status Code: " + 
+                result.status + " - Error: " + result.errorMessage + "</div>");
+        }
+    };
+
+    
+    /**
+     * @summary Displays the processing status
+     * @param {HTTPResponseStatus} status - the status to parse and 
+     */
+    this.displayStatus = function(status){
+        if (nsApp.isValid(status)){
+            if ( status.status === 400 ){  // Bad request
+                $('#message').html("<div class='alert alert-danger'>" + 
+                    status.status + ": " + status.responseText + "</div>");
+            }
+            else{
+                $('#message').html("<div class='alert alert-danger'>" + 
+                    status.status + ": " + status.statusText + "</div>");
+            }
+        }
+    };
+ 
+    /**
+     * @summary Checks the processing results of backend requests and display result in the 
+     * case of a result error and no data is returned
+     * @param {NSResult} data - the data result object
+     * @param {HTTPResponseStatus} status - the http status to parse and 
+     */
+    this.handleResultNoData = function (data,status){
+        if (this.isValid(data)){
+            this.displayResult(data);
+        }
+        else{
+            this.displayStatus(status);
+        }
+    }
+
+    /**
+     * @summary Displays the data result as JSON data in a an div with id="appDebugInfo" if debug is turned on
+     * @param {any} result - the data object
+     */
+    this.displayDebugResult = function(result){
+        if (this.loggingOn){
+            $('#appInfo').html(JSON.stringify(result));
+        }
+    }
         
     /**
      * @summary Displays an error message to the user
@@ -369,7 +537,7 @@ function NSApp(){
     
 
     /**
-     * @summary outputs and object properties to the table body element  
+     * @summary outputs the object properties to the table body element  
      * @param {any} data  - an object
      * @param {string} elementId - the id of the element table to output the object data
      *  in the body. the element body should by in html as '{elementId} + '-body'
@@ -413,7 +581,7 @@ function NSApp(){
                 }
                 // check if array
                 else{
-                    var tr2 ="<div class='row'>"
+                    var tr2 ="<div class='row'>";
                     if (keyRules.type === "url" && obj!= null){
                         tr2+= "<div class='col-xs-3 col-md-4'>";
                         tr2+= keyRules.title + ":</div><div class='col-xs-9 col-md-8 '>";
@@ -433,8 +601,8 @@ function NSApp(){
                     }
                     else if (keyRules.type === "avatar"){
                         tr2+= "<div class='col-xs-3 col-md-4'>";
-                        var html = getAvatar(obj);
-                        tr2 += (html + "</div><div class='col-xs-9 col-md-4'></div>");         
+                        var html2 = getAvatar(obj);
+                        tr2 += (html2 + "</div><div class='col-xs-9 col-md-4'></div>");         
                     }
                     else{
                         tr2+= "<div class='col-xs-3 col-md-4'>";
@@ -557,18 +725,22 @@ function NSApp(){
             $('#' + elementId).append(tr);
         });
     };
+
+  
     /**
      * @summary outputs and user profile
-     * @param {any} obj  - the profile object
+     * @param {any} obj  - the profile user object
      * @param {string} elementId - the id of the element table to output the object data
      */
     this.displayUserProfile = function(obj, elementId){
+        if (obj == undefined || obj== null || obj.extension === null || obj.extension == undefined)
+            return;
         var html ="";
-        $('#' + elementId).html(html);
+        $('#' + elementId).html(html);      
         html += "<div class='row'>";
-        var title = obj.name;
+        var title = obj.extension.name;
         html += "<div class='col-sm-4'>";
-        html +=  getAvatar(obj.imageUrl, title);
+        html +=  getAvatar(obj.extension.imageUrl, title);
         html += "</div>";
         html += "<div class='col-sm-8'>";
         if (obj.isClientAdmin === true){
@@ -579,13 +751,67 @@ function NSApp(){
         html += "<li><strong>First Name:</strong> " + getText(obj.firstName) +"</li>";
         html += "<li><strong>Last Name:</strong> " + getText(obj.lastName) +"</li>";
         html+= "</ul>";
-        html += "</div>";
+   /*     var objElementId = "ns-obj" +  elementId;
 
+        html += "</div><div id='" + objElementId + "'></div>";
         $('#' + elementId).html(html);
+        if (obj.extension != null){
+             var displayRules = {
+                name: {},
+                imageUrl : { type: "img"}
+
+            };
+            this.displayObjectInfo(obj.extension, objElementId, true, displayRules);
+        }
+*/
+       
+    };
+    // App utilities
+    /**
+     * @summary -- checks if the object is valid or not 
+     * @returns {boolean} -- false if the object is null or undefined true otherwise
+     * 
+     */
+    this.isValid = function(obj) {
+        if (obj === null) return false;
+        if (obj === undefined) return false;     
+        if (obj == null) return false;
+        if (obj == undefined) return false;
+        return true;
     };
 
-    
-};
+    /**
+     * @summary -- checks if the data object and result object is valid or not 
+     * @returns {boolean} -- true if both the data and result object are not null and undefined
+     * 
+     */
+    this.isValidResult = function(data){
+        if (this.isValid(data) && this.isValid(data.object)) {
+            return true;
+        } else {
+            return false;               
+        }
+          
+    };
+     /**
+     * @summary -- checks if the object is valid or 
+     * @returns {boolean} -- false if the object is null or undefined true otherwise
+     * 
+     */
+    this.isValidString = function(obj) {
+        if (typeof obj === "string") return true;
+        if (obj === undefined) return false;     
+        if (obj == null) return false;
+        if (obj == undefined) return false;
+        return true;
+    };
+
+    // various messages 
+    /**
+     * @summary logout message success
+     */
+    this.MSG_on_logout_done_success = 'on-logout-done-success';
+}
 var nsApp = new NSApp();
 nsApp.C_NSSID = "_nssid";
 

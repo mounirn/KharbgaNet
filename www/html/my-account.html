@@ -43,169 +43,176 @@
     </script>
 </head>
 
-<body xdata-spy="scroll" xdata-target=".navbar" xdata-offset="50" style="padding-top:50px;">
-    <div class="container-fluid">
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#home-section"><img src="../img/kharbga.png" style="max-height:25px;" title="Kharbga played in the desert of North Africa"></a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav">
-                        <!--  <li class="active dropdown"><a data-target="tab-pane" href="#play">Play</a></li>
-                        <li><a href="#play" data-target="tab-pane">New</a></li>
-                      -->
-                        <li><a target="rules" href="../html/rules.html" title="Kharbga Game Rules">Rules</a></li>
-                        <li><a target="kharbga" href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li id="login-li"><a id="xlogin-link" href="../html/login.html"><span class="glyphicon glyphicon-log-in"></span>
-                                Login</a></li>
-                        <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>
-                                Logout</a></li>
-                    </ul>
-                    <p id="account-welcome" class="navbar-text navbar-right text-success"></p>
-                </div>
+<body style="padding-top:50px;">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#home-section"><img src="../img/kharbga.png" style="max-height:25px;" title="Kharbga played in the desert of North Africa"></a>
             </div>
-        </nav>
-    </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <!--  <li class="active dropdown"><a data-target="tab-pane" href="#play">Play</a></li>
+                    <li><a href="#play" data-target="tab-pane">New</a></li>
+                    -->
+                    <li><a target="rules" href="../html/rules.html" title="Kharbga Game Rules">Rules</a></li>
+                    <li><a target="kharbga" href="../html/play.html" title="Create a new Game or Join Active Games">Play or Watch</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="login-li"><a id="xlogin-link" href="../html/login.html"><span class="glyphicon glyphicon-log-in"></span>
+                            Login</a></li>
+                    <li id="logout-li"><a id="logout-link" href="#logout"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
+                </ul>
+                <span id="account-welcome" class="navbar-text navbar-right text-success"></span>
 
-    <div id="account" class="container">
-        <h1>Welcome <span id="account-name"></span></h1>
+                <span id="account-img" class="navbar-text navbar-right text-success"></span>
+
+
+            </div>
+        </div>
+    </nav>
+
+    <div id="account" class="container-fluid">
+        <div class="alert alert-info">
+
+            <h1>My Account Profile Management</h1>
+            <p>This page includes information about your user account, your games, your team, and your team members. </p>
+        </div>
+
         <div id="account-message"></div>
-    </div>
-    <div id="account-info-panel" class="container">
-        <ul class="nav nav-pills">
-            <li class="active"><a data-toggle="pill" href="#user-account-tab">My Account</a></li>
-            <li><a data-toggle="pill" href="#user-games-tab">My Games</a></li>
-            <li><a data-toggle="pill" href="#user-team-tab">My Team</a></li>
-        </ul>
-        <div class="tab-content">
-            <div id="user-account-tab" class="tab-pane fade in active">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        Account Information
-                        <div class="pull-right">
-                            <a href="#" id="account-link" value="user">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
+
+        <div id="account-info" class="container">
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#user-account-tab">My Account</a></li>
+                <li><a data-toggle="pill" href="#user-games-tab">My Games</a></li>
+                <li><a data-toggle="pill" href="#user-team-tab">My Team</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="user-account-tab" class="tab-pane fade in active">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Account Information
+                            <div class="pull-right">
+                                <a href="#" id="account-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div id="user-account-info">
+
+                            </div>
+                            <div class="text-center center">
+                                <input id="upload-logo" class="btn btn-info" type="button" value="Update Avatar" />
+                            </div>
                         </div>
                     </div>
-
-                    <div class="panel-body">
-                        <div id="user-account-info">
-
+                    <div id="settings" class="panel panel-info">
+                        <div class="panel-heading">
+                            Preferences
                         </div>
-                        <div class="text-center center">
-                            <input id="upload-logo" class="btn btn-info" type="button" value="Update Avatar" />
+                        <div class="panel-body" id="user-preferences">
+                            <form id="user-preferences-form" class="form-horizontal">
+                                <div id="user-preferences-form-body">
+
+                                </div>
+                                <div class="text-center">
+                                    <button id="save-user-preferences" class="btn btn-success">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Current Session
+                            <div class="pull-right">
+                                <a href="#" id="session-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Check Now
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div id="user-session-info" class="">
+
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div id="settings" class="panel panel-info">
-                    <div class="panel-heading">
-                        Preferences
-                    </div>
-                    <div class="panel-body" id="user-preferences">
-                        <form id="user-preferences-form" class="form-horizontal">
-                            <div id="user-preferences-form-body">
-
+                <div id="user-games-tab" class="tab-pane fade ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            My Games
+                            <div class="pull-right">
+                                <a href="#" id="user-games-link">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
                             </div>
-                            <div class="text-center">
-                                <button id="save-user-preferences" class="btn btn-success">Save</button>
+                        </div>
+                        <div class="panel-body">
+                            <div id="user-games-info">
+                                <ul id="user-games-list" class="list-group">
+                                </ul>
                             </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        Current Session
-                        <div class="pull-right">
-                            <a href="#" id="session-link" value="user">
-                                <span class="glyphicon glyphicon-refresh"></span>Check Now
-                            </a>
                         </div>
                     </div>
+                </div>
+                <div id="user-team-tab" class="tab-pane fade ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            My Team
+                            <div class="pull-right">
+                                <a href="#" id="team-link">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="user-team-info">
 
-                    <div class="panel-body">
-                        <div id="user-session-info" class="">
-
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            My Team Members
+                            <div class="pull-right">
+                                <a href="#" id="team-members-link" value="user">
+                                    <span class="glyphicon glyphicon-refresh"></span>Refresh
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="user-team-members-info">
+                                <ul id="team-members-list" class="list-group">
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="user-games-tab" class="tab-pane fade ">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        My Games
-                        <div class="pull-right">
-                            <a href="#" id="user-games-link">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <div id="user-games-info">
-                            <ul id="user-games-list" class="list-group">
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="user-team-tab" class="tab-pane fade ">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        My Team
-                        <div class="pull-right">
-                            <a href="#" id="team-link">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <div id="user-team-info">
 
-                        </div>
-                    </div>
+        </div>
+        <div class="container">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    Help
                 </div>
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        My Team Members
-                        <div class="pull-right">
-                            <a href="#" id="team-members-link" value="user">
-                                <span class="glyphicon glyphicon-refresh"></span>Refresh
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <div id="user-team-members-info">
-                            <ul id="team-members-list" class="list-group">
-                            </ul>
-                        </div>
-                    </div>
+                <div class="panel-body">
+                    <p>
+                        If you are a developer interested in contributing, please <a href="https://www.onlineobjecs.app/message/send/1">contact us</a> for additional info and let us know how you could help.
+                    </p>
+                    <strong>Thank you!</strong>
                 </div>
             </div>
         </div>
-
     </div>
-    <div class="container">
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                Help
-            </div>
-            <div class="panel-body">
-                <p>
-                    If you are a developer interested in contributing, please <a href="http://www.nourisolutions.com/company/message/send/1">contact us</a> for additional info and let us know how you could help.
-                </p>
-                <strong>Thank you!</strong>
-            </div>
-        </div>
-    </div>
-
     <footer>
         <div class="container row text-center">
             <div class="col-sm-8">
@@ -218,17 +225,17 @@
                     <div class="col-sm-8">
                         <ul class="nav navbar-nav">
                             <li id="terms-li">
-                                <a target="rules" id="terms-link" href="../html/terms.html">
+                                <a id="terms-link" href="../html/terms.html">
                                     <span class="glyphicon glyphicon-star"></span> Terms & Conditions
                                 </a>
                             </li>
                             <li id="privacy-li">
-                                <a target="rules" id="privacy-link" href="../html/privacy.html">
+                                <a id="privacy-link" href="../html/privacy.html">
                                     <span class="glyphicon glyphicon-lock"></span> Privacy
                                 </a>
                             </li>
                             <li id="contact-us-li">
-                                <a target="nouris" id="contact-us-link" href="http://www.nourisolutions.com/company/message/send/1">
+                                <a id="contact-us-link" href="https://www.onlineobjects.app/message/send/1">
                                     <span class="glyphicon glyphicon-envelope"></span> Contact Us
                                 </a>
                             </li>
@@ -238,7 +245,7 @@
 
             </div>
             <div class="col-sm-4">
-                <strong>Developed & Operated By <a href="http://www.nouriSolutions.com ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+                <strong>Developed & Operated By <a href="https://www.onlineobjects.app/client/display ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
             </div>
         </div>
         <hr />

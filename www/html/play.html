@@ -109,14 +109,18 @@
                         </ul>
                     </li>
                     <li>
-                        <a target="rules" href="../html/rules.html">Game Rules</a>
+                        <!--   <a target="rules" href="../html/rules.html">Game Rules</a> -->
+                        <a href="../html/rules.html" data-prefetch="true" data-rel="dialog">Game Rules</a>
                     </li>
                     <li>
                         <a target="rules" href="../html/my-account.html">My Account</a>
                     </li>
                     <li><a target="rules" href="../html/terms.html">Terms & Conditions</a></li>
-                    <li><a target="rules" href="../html/privacy.html">Privacy</a></li>
-                    <li><a target="nouris" href="http://www.nourisolutions.com/company/message/send/1">Contact Us</a></li>
+                    <!--  <li><a target="rules" href="../html/privacy.html">Privacy</a></li>-->
+                    <li>
+                        <a href="../html/privacy.html" data-prefetch="true" data-rel="dialog">Privacy</a>
+                    </li>
+                    <li><a target="nouris" href="https://www.onlineobjects.app/message/send/1">Contact Us</a></li>
 
                 </ul>
 
@@ -129,15 +133,20 @@
 
                 <div class="panel panel-info">
                     <div class="panel-heading ui-bar ui-bar-c">
-                        <a target="rules" href="../html/my-account.html">My Account</a>
+                        <a target="rules" href="../html/my-account.html" class="ui-btn ui-btn-b " style="vertical-align:middle">
+
+                            <span style="vertical-align:-webkit-baseline-middle">My Account</span>
+                        </a>
 
                     </div>
-                    <div class="panel-body ui-body">
-                        <p id="my-account-info">
-                            <a id="logout-link" href="#logout" data-icon="user" class="ui-btn-right">
-                                <span class="glyphicon glyphicon-log-out"></span>Sign Out
+                    <div class="panel-body ui-body center">
+                        <span id="account-img" class="text-success"></span>
+                        <div id="account-message"></div>
+                        <div id="logout-li" class="center">
+                            <a id="logout-link" href="#logout" data-icon="user" class="ui-btn ui-mini">
+                                <span class="fa fa-log-out"></span>Sign Out
                             </a>
-                        </p>
+                        </div>
                         <hr>
                         <p>If this is your first time here, please click <a target="rules" href="../html/rules.html">here
                                 to learn about the game.</a></p>
@@ -509,6 +518,9 @@
         <div data-role="footer" data-position="fixed">
             <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>
             </h5>
+            <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">
+                Play / Watch
+            </a>
         </div>
     </div>
     <script src="../lib/json/json3.min.js"></script>
