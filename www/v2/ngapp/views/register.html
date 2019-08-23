@@ -11,7 +11,7 @@
                         <span class="input-group-addon"><i class="glyphicon glyphicon-tent"></i></span>
                         <input class="form-control" autofocus data-ng-change="teamChange()" data-ng-model="registerData.orgName" type="text" list="register-team-list" id="register-team" size="50" required placeholder="Select or enter Team" minlength="3" maxlength="50" />
                         <datalist id="register-team-list" >
-                            <option data-ng-repeat="team in teamList" value="{{team.name}}"></option>
+                            <option data-ng-repeat="team in teamList.data" value="{{team.id}}" >{{team.name}}</option>
                         </datalist>
                     </div>
                 </div>

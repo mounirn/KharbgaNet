@@ -1,5 +1,5 @@
 /* register controller */
-nsApp.controller('registerController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('registerController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         $scope.message = "";
         $log.info("registerController started");
@@ -58,13 +58,14 @@ nsApp.controller('registerController', ['$scope', '$state', '$rootScope', '$loca
 
         $scope.teamChange = function () {
             var sessionId = "";
-            if ($scope.sessionData != null)
+            if (angular.isObject($scope.sessionData) )
                 sessionId = $scope.sessionData.sessionId;
+
             // calling the API here
-            nsApiClient.clientService.getClients(sessionId, $scope.registerData.orgName, function (data,status) {
-                $scope.teamList = data;               
+            nsApiClient.clientService.getClientsLookup(sessionId, $scope.registerData.orgName, function (data, status) {
+                $scope.teamList = data;
             });
-        }
+        };
 
         var setupUser = function (sessionResult) {
             var sessionData = null;
@@ -74,7 +75,7 @@ nsApp.controller('registerController', ['$scope', '$state', '$rootScope', '$loca
             $scope.sessionData = sessionData; 
         
 
-            if (sessionData != null && sessionData.isActive) {
+            if (angular.isObject(sessionData) && sessionData.isActive) {
                 localStorageService.set('sessionData', sessionData); 
 
                 $scope.user = {};
@@ -111,7 +112,7 @@ nsApp.controller('registerController', ['$scope', '$state', '$rootScope', '$loca
     }]);
 
 /* register Confirm controller */
-nsApp.controller('registerConfirmController', ['$scope', '$state', '$stateParams', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('registerConfirmController', ['$scope', '$state', '$stateParams', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $stateParams, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         $scope.message = "";
         $log.info("registerConfirmController started");
@@ -126,7 +127,7 @@ nsApp.controller('registerConfirmController', ['$scope', '$state', '$stateParams
 
 
 /* contactUs controller */
-nsApp.controller('contactUsController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('contactUsController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         $scope.message = "";
         $log.info("contactUsController started");

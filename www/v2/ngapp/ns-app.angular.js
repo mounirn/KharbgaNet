@@ -1,6 +1,6 @@
-var nsApp = angular.module('nsApp', ['ui.router', 'LocalStorageModule', 'ui.bootstrap' ]);
+var myApp = angular.module('nsApp', ['ui.router', 'LocalStorageModule', 'ui.bootstrap' ]);
 /* States */
-nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider', '$urlRouterProvider',
+myApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider', '$urlRouterProvider',
     function ($locationProvider, $urlMatcherFactoryProvider, $stateProvider, $urlRouterProvider) {
     $locationProvider.html5Mode(false); // ??
     $urlMatcherFactoryProvider.caseInsensitive(true);
@@ -133,7 +133,7 @@ nsApp.config(['$locationProvider', '$urlMatcherFactoryProvider', '$stateProvider
 }]);
 
 /* App Constants */
-nsApp.constant('appConstants', {
+myApp.constant('appConstants', {
     Settings: {
         appName: "Kharbga",
         ApiServiceBaseUri: nsApiClient.baseURI,
@@ -149,7 +149,7 @@ nsApp.constant('appConstants', {
     }
 });
 
-nsApp.factory('authInterceptorService', ['$q', '$injector', '$location', 'localStorageService',
+myApp.factory('authInterceptorService', ['$q', '$injector', '$location', 'localStorageService',
     function ($q, $injector, $location, localStorageService) {
 
     var authInterceptorServiceFactory = {};
@@ -190,7 +190,7 @@ nsApp.factory('authInterceptorService', ['$q', '$injector', '$location', 'localS
     }]);
 
 /* Shared service */
-nsApp.factory('appSharedService', function ($rootScope) {
+myApp.factory('appSharedService', function ($rootScope) {
     var sharedService = {};
 
     sharedService.actionType = 'None';
@@ -210,7 +210,7 @@ nsApp.factory('appSharedService', function ($rootScope) {
 });
 
 
-nsApp.run(['$rootScope', '$state', '$stateParams', '$log', '$location', '$window',
+myApp.run(['$rootScope', '$state', '$stateParams', '$log', '$location', '$window',
     function ($rootScope, $state, $stateParams, $log, $location, $window) {
     $rootScope.color = 'blue';
     $rootScope.user = { sessionId: "", loggedIn: false };
@@ -242,7 +242,7 @@ nsApp.run(['$rootScope', '$state', '$stateParams', '$log', '$location', '$window
 }]);
 
 
-nsApp.filter('toStatusString', function () {
+myApp.filter('toStatusString', function () {
     return function (status) {
         switch (status) {
             case 0:
@@ -263,11 +263,11 @@ nsApp.filter('toStatusString', function () {
     };
 });
 
-nsApp.filter('toStateString', function () {
+myApp.filter('toStateString', function () {
     return function (state) { return Kharbga.GameState[state]; }; // depends on Kharbga.js
 });
 
-nsApp.filter('toStatusCSS', function () {
+myApp.filter('toStatusCSS', function () {
     return function (status) {
       switch (status) {
             case 0:
@@ -289,7 +289,7 @@ nsApp.filter('toStatusCSS', function () {
 });
 
 // directives
-nsApp.directive('tabs',
+myApp.directive('tabs',
     function() {
         return {
             restrict: 'E',
@@ -326,7 +326,7 @@ nsApp.directive('tabs',
         };
     });
 
-nsApp.directive('pane',
+myApp.directive('pane',
     function() {
         return {
             require: '^tabs',

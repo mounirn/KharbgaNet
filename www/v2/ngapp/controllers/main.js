@@ -1,5 +1,5 @@
 /* main/home controller */
-nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         this.message = "";
         $scope.sessionData = localStorageService.get('sessionData');
@@ -44,7 +44,7 @@ nsApp.controller('mainController', ['$scope', '$state', '$rootScope', '$location
     }]);
 
 /* login controller */
-nsApp.controller('loginController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('loginController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         $log.info("loginController started");
 
@@ -104,7 +104,7 @@ nsApp.controller('loginController', ['$scope', '$state', '$rootScope', '$locatio
 
 
 /* session controller */
-nsApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         this.message = "";
         this.data = localStorageService.get('sessionData');
@@ -184,7 +184,7 @@ nsApp.controller('sessionController', ['$scope', '$state', '$rootScope', '$locat
     }]);
 
 /* user account controller */
-nsApp.controller('accountController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('accountController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         $log.info("accountController started");
         $scope.user = {};
@@ -217,7 +217,7 @@ nsApp.controller('accountController', ['$scope', '$state', '$rootScope', '$locat
     }]);
 
 /* team controller */
-nsApp.controller('teamController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
+myApp.controller('teamController', ['$scope', '$state', '$rootScope', '$location', 'appConstants', 'localStorageService', '$http', '$window', '$log',
     function ($scope, $state, $rootScope, $location, appConstants, localStorageService, $http, $window, $log) {
         $scope.message = "";
         $log.info("teamController started");

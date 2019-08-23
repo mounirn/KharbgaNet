@@ -1,5 +1,5 @@
 /* Kharbga controller */
-nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
+myApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
     function ($scope, $tsate, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
 //    document.title = "Kharbga";
     $log.info("Kharbga controller started");

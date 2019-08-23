@@ -185,13 +185,21 @@
 
     <script src="../js/moment.min.js"></script>
 
+  
+    <!-- nsApp and ns API  -->
+    <script src="../js/ns-app-utils.js"></script>
+    <script src="../js/ns-api-client.js"></script>
+    <script src="../js/ns-app-user.js"></script>
+
     <!-- Kharbga -->
     <script src="../js/kharbga-ui.js"></script>
     <script src="../js/kharbga.js"></script>
+
     <script src="../js/ns-app.kharbga.js"></script>
 
-    <!-- NS API -->
-    <script src="../js/ns-api-client.js"></script>
+    <script src="../js/kharbga-ui.js"></script>
+
+
 
     <!-- NS angular App-->
     <script src="./ngapp/ns-app.angular.js"></script>
@@ -204,7 +212,7 @@
     <script src="./ngapp/controllers/help.js"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $.nsAppKharbga = new KharbgaApp();
             var setupOk = $.nsAppKharbga.initMessaging();
         });

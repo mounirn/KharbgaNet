@@ -1,6 +1,6 @@
 /* App controller */
 
-nsApp.controller('appController', ['$scope', '$rootScope', '$http', 'appConstants',
+myApp.controller('appController', ['$scope', '$rootScope', '$http', 'appConstants',
     function ($scope, $rootScope, $http, appConstants) {
     document.title = "App Info";
     // appSharedService.prepForBroadcast('shouldSelectTab', appConstants.NavTabs.Settings);

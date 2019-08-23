@@ -1,7 +1,7 @@
 /* Security Service*/
 // http://jasonwatmore.com/post/2015/03/10/angularjs-user-registration-and-login-example-tutorial
 
-nsApp.factory('secService', ['$http', '$q', '$rootScope','localStorageService',  'appConstants',
+myApp.factory('secService', ['$http', '$q', '$rootScope','localStorageService',  'appConstants',
     function ($http, $q, localStorageService, appConstants) {
 
         var serviceBase = appConstants.Settings.ApiServiceBaseUri + "api/user/";

@@ -1,5 +1,5 @@
 /* Help controller */
-nsApp.controller('helpController', ['$scope', '$rootScope', '$http', 'appConstants',
+myApp.controller('helpController', ['$scope', '$rootScope', '$http', 'appConstants',
     function ($scope, $rootScope, $http, appConstants) {
     document.title = appConstants.appName + " - Help";
     // appSharedService.prepForBroadcast('shouldSelectTab', appConstants.NavTabs.Settings);

@@ -1,5 +1,5 @@
 /* Kharbga controller */
-nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
+myApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
     function ($scope, $state, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
   //  document.title = "Kharbga";
 
@@ -175,7 +175,7 @@ nsApp.controller('kharbgaController', ['$scope', '$state', '$stateParams', '$roo
 }]);
 
 /* replay controller */
-nsApp.controller('replayController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
+myApp.controller('replayController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService' , 'appConstants',
     function ($scope, $state, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
 
     $log.info("Kharbga replay controller started");
@@ -190,7 +190,7 @@ nsApp.controller('replayController', ['$scope', '$state', '$stateParams', '$root
     }]);
 
 
-nsApp.controller('activeGamesController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService', 'appConstants',
+myApp.controller('activeGamesController', ['$scope', '$state', '$stateParams', '$rootScope', '$http', '$log', 'localStorageService', 'appConstants',
     function ($scope, $state, $stateParams, $rootScope, $http, $log, localStorageService, appConstants) {
 
         $log.info("Kharbga active Games controller started");

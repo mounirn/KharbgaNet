@@ -1,6 +1,6 @@
 /* System controller */
 
-nsApp.controller('systemController', ['$scope', '$state', '$http', 'appConstants', 'localStorageService', '$log',
+myApp.controller('systemController', ['$scope', '$state', '$http', 'appConstants', 'localStorageService', '$log',
     function ($scope, $state, $http, appConstants, localStorageService, $log) {
     document.title = appConstants.appName + " - System Info";
     // appSharedService.prepForBroadcast('shouldSelectTab', appConstants.NavTabs.Settings);
