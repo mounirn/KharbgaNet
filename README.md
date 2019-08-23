@@ -1,6 +1,6 @@
 # kharbga
 
-An online board strategy game based on the ancient games of Kharbga and Seega from North Africa. 
+An online board strategy game based on the ancient games of Kharbga and Seega from North Africa.
 The rules of this online game are close to the rules of Seega as documented by various online resources.
 See references below. However, the exact rules enforced by this program are based on the version played in the south of Tunisia.
 
@@ -23,6 +23,7 @@ See references below. However, the exact rules enforced by this program are base
 ### Moving and capturing
 
   The game starts when setting is completed and all board cells are filled up with each plyer 24 soldiers strategically placed.
+  
   1. The attacker starts the first move using one of their soldiers into the middle cell. The first move may or may not capture any of the defender's soldiers.
   2. Moves on the board could be orthogonal in any possible direction (up, down, left, or up) but not diagonally from one cell to another adjacent cell. The adjacent cell must be empty.
   3. An opponent solider is captured if its gets sandwiched (placed between two opponent soldiers ) on the move (not during setting)
