@@ -1,8 +1,9 @@
-.gitignore
 node_modules
 bower_components
+.vs
 .vs/*
 .vs/slnx.sqlite
 .vs/KharbgaNet/v15/.suo
 *.log
 www/lib/jquery.mobile/demos
+www/html/create.html

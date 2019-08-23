@@ -49,8 +49,8 @@
 <body>
     <div data-role="page" id="first" data-theme="a" class="ns-kharbga">
         <div data-role="header" data-position="fixed" class="text-center jqm-header">
-            <a target="rules" href="../html/rules.html" class="ui-mini" data-theme="c">
-                <img src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
+            <a id="" target="rules" href="../html/rules.html" class="ui-mini ns-hide-when-small" data-theme="c">
+                <img id="" src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
             </a>
             <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">Play / Watch
             </a>
@@ -399,8 +399,9 @@
                     </div>
 
                     <div class="panel-body ui-body">
+                        <div class="ns-message"></div>
                         <div class="">
-                            <span id="account-message" class="text-success"></span>
+
                             <form class="form-horizontal" id="login-form" novalidate>
                                 <div class="form-group">
                                     <label class="control-label col-sm-4" for="login-id">Login ID:</label>
@@ -424,6 +425,8 @@
                                 </div>
                             </form>
                         </div>
+                        <div class="ns-processing"></div>
+                        <div class="ns-account-message"></div>
                         <p>To play with other users in the network, you need to have a valid user account. </p>
                         <div class="alert alert-warning ui-bar ui-bar-b">
                             <a href="../html/register.html" target="account" class="ui-mini ui-inline">Sign Up</a>

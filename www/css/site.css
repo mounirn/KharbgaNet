@@ -3,6 +3,13 @@
     font-family: Frutiger, Futura, Gills Sans, Helvetica, Lucida, Optima, Palatino, Agfa Rotis, Arial, and Univers;
 }
 
+@media only screen and (max-width: 600px) {
+    /* For mobile phones: */
+    .ns-hide-when-small {
+        display: none;
+    }
+}
+
 .navbar-inverse {
     background-color: #4D7D56;
     border-color: #4D7D56;

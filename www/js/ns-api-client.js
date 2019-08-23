@@ -375,7 +375,99 @@ function NSAppClient(baseURI) {
 
         };
 
-            
+        /**
+    * @summary retrieves a user profile
+    * @param {string} sessionId - the user logged in session id 
+    * @param {string} userSystemId - the user system id of the profile to retrieve 
+    * @param {function} callback - the callback function with the result (data, status)
+    */
+        this.getUserProfile = function (sessionId, userSystemId, callback) {
+            var uri = this.serviceBaseURI + "profile/" + userSystemId;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getUserProfile success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getUserProfile error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getUserProfile complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+
+        };
+
+
+        /**
+* @summary retrieves a user profile
+* @param {string} sessionId - the user logged in session id 
+* @param {string} userId - the user id of the user profile to retrieve 
+* @param {function} callback - the callback function with the result (data, status)
+*/
+        this.getUserView = function (sessionId, userId, callback) {
+            var uri = this.serviceBaseURI + "view/" + userId;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "GET",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - getUserInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - getUserInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getUserInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+
+        };
+
+
+
         /**
          * @summary: updates the user logo
          * @param {string} sessionId - the session id

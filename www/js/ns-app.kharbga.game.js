@@ -155,7 +155,7 @@ var KharbgaGameController = function () {
         if (userOptions.highlightLastMove) {
             setTimeout(function () {
                 removeSelectedCells();
-                removLastMoveHighlighting;
+               // removeLastMoveHighlighting();
             },userOptions.highlightLastMoveMilliSecondsBeforeTimeout);           
         }
 

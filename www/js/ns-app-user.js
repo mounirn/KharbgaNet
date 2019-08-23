@@ -47,7 +47,7 @@ $.nsApp.init = function(){
     }
     /**
      * Handler for register click from UI
-     * @param {any} e
+     * @param {any} e the event data
      */
     function onRegisterLink(e) {
         e.preventDefault();
@@ -64,8 +64,8 @@ $.nsApp.init = function(){
 
  
     /**
-     * handler for login request 
-     * @param {any} e
+     * @summary handler for login request 
+     * @param {any} e - the event data
      */
     function onLoginSubmit(e) {
         e.preventDefault();
@@ -89,19 +89,29 @@ $.nsApp.init = function(){
         nsApp.displayInfoMessage("Checking Login Credentials...");
 
         nsApiClient.userService.validateLogin(loginInfo, function(data, status) {
-            if (nsApp.isValidResult(data)) {               
-                nsApp.displayProcessing(false);   
+            nsApp.displayProcessing(false);
+            if (nsApp.isValid(data)) {               
+            
                 nsApp.displaySuccessMessage("Logged in Successfully.");                 
                 console.log(data);
-                setupClientStateWithSession(data.object);           
-                if ($.appViewHandler != null && typeof($.appViewHandler.closeLoginPanel) === 'function')
+                setupClientStateWithSession(data);           
+                if (nsApp.isValid($.appViewHandler) && typeof $.appViewHandler.closeLoginPanel === 'function')
                     $.appViewHandler.closeLoginPanel();
 
                transferToPlay();
             }
             else {
-                   
-                nsApp.handleResultNoData(data,status);            
+                if (nsApp.isValid(status)) {
+                    if (status.status === 404 || status === 400) {
+                        nsApp.displayErrorMessage("Invalid Login Id or Password. Please check your input");
+                    }
+                    else {
+                        nsApp.handleResultNoData(data, status);
+                    }
+                }
+                else {
+                    nsApp.handleResultNoData(data, status);
+                }
             }
         });
     }
@@ -110,8 +120,8 @@ $.nsApp.init = function(){
         if (str == null || typeof(str) == undefined)
             return undefined;
         var lowerCase = str.toLowerCase();
-        if (lowerCase == 'true' ) return true;
-        else if (lowerCase == 'false') return false;
+        if (lowerCase === 'true' ) return true;
+        else if (lowerCase === 'false') return false;
         else return undefined;
     }
     /**
@@ -125,10 +135,10 @@ $.nsApp.init = function(){
 
         nsApiClient.userService.getPreferences(nsApp.sessionId, 
             function (data, status) {
-                if (nsApp.isValidResult(data)) {                
+                if (nsApp.isValid(data)) {                
                     console.log(data);
                     nsApp.displayProcessing(false);    
-                    data.object.forEach(function(item,val){
+                    data.forEach(function(item,val){
                         var obj  = nsApp.user.preferences[item.key];
                         if (obj!= null){
                             var objType = typeof(obj);
@@ -276,13 +286,12 @@ $.nsApp.init = function(){
             displayAccountMessage("Failed to save user preferences. Error: " + status, false);  
    
         }
-        );
-        
+        ); 
     }
 
     /**
      * handler for register request 
-     * @param {any} e
+     * @param {any} e the event data
      */
     function onRegisterSubmit(e) {
         e.preventDefault();
@@ -306,8 +315,8 @@ $.nsApp.init = function(){
         nsApp.displayProcessing(true);
 
         var result = nsApiClient.userService.register(registerInfo, function (data, status) {
-            if (nsApp.isValidResult(data)) {
-                setupClientStateWithSession(data.object);      
+            if (nsApp.isValid(data)) {
+                setupClientStateWithSession(data);      
                 transferToPlay();
                 nsApp.displayProcessing(false);
                 if (nsApp.isValid($.appViewHandler) && typeof($.appViewHandler.closeRegisterPanel) === 'function')
@@ -348,7 +357,7 @@ $.nsApp.init = function(){
     }
     /**
     * handler for logout request
-    * @param {any} e
+    * @param {any} e the event data
     */
     function onLogoutSubmit(e) {
         e.preventDefault();
@@ -363,7 +372,7 @@ $.nsApp.init = function(){
 
         // add call for back-end to delete the session
         nsApiClient.userService.logout(session.sessionId, function (data,status) {
-            if (nsApp.isValidResult(data)) {          
+            if (nsApp.isValid(data)) {          
                 setupClientStateWithSession(null);    
                   nsApp.displayProcessing(false);   
 
@@ -394,11 +403,11 @@ $.nsApp.init = function(){
                 return;
 
             nsApp.displayProcessing(true);
-            nsApiClient.clientService.getClientsLookup("", val, function (data, status) {
-                if (nsApp.isValidResult(data) && nsApp.isValid(data.object)  && nsApp.isValid(data.object.data)) {
+            nsApiClient.clientService.getClientsLookup("", val, function (result, status) {
+                if (nsApp.isValid(result) && nsApp.isValid(result.data)) {
                     nsApp.displayProcessing(false);  
                     $("#register-team-list").empty();
-                    $.each(data.object.data, function () {
+                    $.each(result.data, function () {
                         // if (this.Status == 0 || this.Status = 1)
                         $("#register-team-list").append("<option id=client_'" + this.systemId + "' value='" + this.name + "' ></option>");
                     });
@@ -417,6 +426,7 @@ $.nsApp.init = function(){
 
     /**
      * @summary checks the session stored in cookie or local storage
+     * @param {object} e - the event
      */
     function checkSessionCookie(e) {
         if (nsApp.loggingOn) console.log("user.checkSessionCookie");
@@ -452,11 +462,12 @@ $.nsApp.init = function(){
         nsApp.displayProcessing(true);
         
         nsApiClient.userService.checkSession(sessionId, function (data, status) {
-            if (nsApp.isValidResult(data)) {
+            nsApp.displayProcessing(false);
+            if (nsApp.isValidObject(data)) {
                 nsApp.displayDebugResult(data);
-                nsApp.displayProcessing(false);
+              
 
-                var session = data.object;  
+                var session = data;  
                 setupClientStateWithSession(session);              
                
                 if (nsApp.state.loadAccountInfo === true){
@@ -560,7 +571,7 @@ $.nsApp.init = function(){
 
     /**
      * handler for refresh app info request
-     * @param {any} e
+     * @param {any} e - the event data
      */
     function onRefreshAppInfo(e) { 
         if (e!= null)     
@@ -607,8 +618,8 @@ $.nsApp.init = function(){
             return;
         }
         nsApiClient.userService.getAccountInfo(nsApp.sessionId, function (data, status) {
-            if (nsApp.isValidResult(data)) {
-                nsApp.user.setAccount(data.object);
+            if (nsApp.isValid(data)) {
+                nsApp.user.setAccount(data);
                 var displayRules =   {
                         name: {},
                         firstName: {},
@@ -642,9 +653,9 @@ $.nsApp.init = function(){
             return;
         }
         nsApiClient.clientService.getClientInfo(nsApp.sessionId, function (data, status) {
-            if (nsApp.isValidResult(data)) {
-                nsApp.user.setTeam(data.object.extension);
-                nsApp.setAppStatus(data.object.appStatus);
+            if (nsApp.isValid(data)) {
+                nsApp.user.setTeam(data);
+            //    nsApp.setAppStatus(data.object.appStatus);
                 var displayRules =    {
                         name: {},
                         createdOn: {},
@@ -669,15 +680,15 @@ $.nsApp.init = function(){
             return;
         }
         nsApiClient.clientService.getClientMembers(nsApp.sessionId, function (data, status) {
-            if (nsApp.isValidResult(data)) {
-                nsApp.user.teamMembers = data.object;
+            if (nsApp.isValid(data)) {
+                nsApp.user.teamMembers = data;
                 var displayRules =    {
                     name: {},
                     systemId: { type:"url", title:"Account",
                         url: "../html/user.html?id={?}"
                     }
                 };
-                displayUserList(data.object,'team-members-list',true,displayRules);
+                displayUserList(data,'team-members-list',true,displayRules);
             }
             else {
                 nsApp.handleResultNoData(data,status);    
@@ -705,15 +716,15 @@ $.nsApp.init = function(){
         }
         var html = "<ul class='list-group dropdown'>";
         $.each(list, function(item,data){                   
-             var obj = data.extension; 
+             var obj = data; 
              if (obj!== null && obj !== undefined) {  
                 html += ( "<li class='list-group-item'>");
-                html += "<a href='../html/user.html?id=" + obj.systemId;
+                html += "<a href='../html/user.html?id=" + obj.Id;
                 html += "'><div class='row'>";
                 html+="<div class='col-xs-3 col-sm-4'>";
             
           
-                if (typeof(obj.imageUrl) == "string")
+                if (typeof(obj.imageUrl) === "string")
                 {
                     
                     html+="<img src='"+obj.imageUrl + "' style='max-height:60px;'>";

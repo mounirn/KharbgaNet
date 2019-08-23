@@ -457,7 +457,7 @@ namespace Kharbga {
          * @returns true if the game is over in any of the possible game over cases
          */
         public game_over(): boolean {
-            if (this.state === GameState.Pending || this.state === GameState.Setting || this.state === GameState.Moving){
+            if (this.state === GameState.Pending || this.state === GameState.Setting || this.state === GameState.Moving) {
                 return false;
             } else {
                 return true;

@@ -4,16 +4,17 @@ var KharbgaApp = function () {
     var board,
         boardEl = $('#board');
 
-    const C_NSGID = "_nsgid";
+    // defines a the current game id the user is playing or replaying
+    var C_NSGID = "_nsgid";
 
     // signalR communications
     var gamesHubProxy = null;
 
     // flag for turning on/off logging 
-    var loggingOn = true; 
+    var loggingOn = nsApp.loggingOn; 
     
     /**
-     * play options on the computer
+     * play options on this computer/user device
      */
     var playOptions = {
         //useServer : false,
@@ -28,6 +29,7 @@ var KharbgaApp = function () {
 
     };
 
+    /** user options  */
     var userOptions = {
         highlightLastMove: true,
         highlightLastMoveMilliSecondsBeforeTimeout: 2000,
@@ -227,7 +229,6 @@ var KharbgaApp = function () {
          */
         }
 
-        ;
         displaySuccessMessage(message);
         displayGameMessage(message);
         updateBoard(eventData.source);
@@ -261,7 +262,6 @@ var KharbgaApp = function () {
         $('.exchangeRequest').show();
 
         boardEl.find('.square-d4').removeClass('highlight-malha');
-
        
     }
 
@@ -313,9 +313,7 @@ var KharbgaApp = function () {
                 text: eventData.from.id + '-' + eventData.to.id
             }));
             currentMove.isAttacker = false;
-        }      
-
-        
+        }        
     }
 
     /**
@@ -339,8 +337,7 @@ var KharbgaApp = function () {
         var moveSourceRequired = eventData.targetCellId;
         // highlight the piece required for moving
         var sourceRequired = boardEl.find('.square-' + moveSourceRequired);
-        sourceRequired.addClass('highlight-source');
-        
+        sourceRequired.addClass('highlight-source');       
 
         updateScores(eventData.source);
 
@@ -357,10 +354,7 @@ var KharbgaApp = function () {
                 text: eventData.from.id + '-' + eventData.to.id
             }));
             currentMove.isAttacker = false;
-        }
-
-       
-       
+        }       
     }
 
     /**
@@ -394,9 +388,7 @@ var KharbgaApp = function () {
         gameState.status = Kharbga.GameStatus.Completed;
 
         updateLocalGameStatus(gameState);
-
         updateBoard(eventData.source);
-
         currentMove.copyToLastAndReset();
         currentMove.reset();
 
@@ -406,9 +398,13 @@ var KharbgaApp = function () {
                 removeLastMoveHighlighting();
             }, userOptions.highlightLastMoveMilliSecondsBeforeTimeout);
         }  
-       
-       // turn off the background computer thread
-        if (typeof appClientState.backgroundJobId == "number" && appClientState.backgroundJobId > 0){
+
+        turnOffBackgroundComputerPlayTask();
+    }
+
+    function turnOffBackgroundComputerPlayTask(){
+         // turn off the background computer thread
+         if (typeof appClientState.backgroundJobId == "number" && appClientState.backgroundJobId > 0){
             clearInterval(appClientState.backgroundJobId);
             appClientState.backgroundJobId = -1;
             displayComputerMessage("Ended computer play task");
@@ -426,7 +422,6 @@ var KharbgaApp = function () {
         exchangeSquare.addClass('highlight-exchange');
 
         updateMoveFlags(eventData.source.moveFlags);
-
     }
 
     /**
@@ -465,7 +460,6 @@ var KharbgaApp = function () {
     function onInvalidSettingMalha(eventData) {
         logMessage("event: onInvalidSettingMalha - targetCellId: " + eventData.targetCellId);
         displayGameMessage("Setting on middle cell (Malha) is not allowed");
-
     }
 
     /**
@@ -558,6 +552,7 @@ var KharbgaApp = function () {
 
     };
 
+    // the game object with all the logic
     var game = new Kharbga.Game(gameEvents, boardEvents); 
   
     var squareClass = 'square-55d63',
@@ -1458,17 +1453,10 @@ var KharbgaApp = function () {
      /**
      * @summary Displays a message status change from the messaging server
      * @param {string} message - the message to display
+     * @param {boolean} success - indicates whether success or no
      */
     function displayNetMessage(message, success){
-        if (success === true){
-            $('#net-message').html("<div class='alert alert-success'>" + message + "</div>");
-        }else if (success === false){
-            $('#net-message').html("<div class='alert alert-danger'>" + message + "</div>");
-        }else{
-            $('#net-message').html("<div class='alert alert-info'>" + message + "</div>");
-        }
-     //   $('#message').html("<div class='alert alert-info'>" + message + "</div>");
-        $('#main-message').html("<div class='alert alert-info'>" + message + "</div>");
+        nsApp.displayNetMessage(message,success);
     }
 
     /**
@@ -1498,6 +1486,7 @@ var KharbgaApp = function () {
     /**
      * @summary Starts a new game - the main entry point
      * @param {Kharbga.PlayOptions} e - the event data
+     * @returns {boolean} - true or false 
      */
     function onNewGame(e) {
         if (e == null || e.data == null) {
@@ -1594,6 +1583,10 @@ var KharbgaApp = function () {
      * @summary Call back when a game is created by the server
      *  or called back when a game is joined to the Joiner of the game (including spectator)
      * Also called when started a game with no server option
+     * @param status - the status 
+     * @param error - the error message
+     * @param gameInfo - the game info
+     * @param playerInfo -- the player info
     */
     var onGameCreated = function (status, error, gameInfo, playerInfo) {
         logMessage("On game Created - status: " +  status);
@@ -1749,7 +1742,7 @@ var KharbgaApp = function () {
         onGameCreated(true,"", gameState,user); 
         onSetupLocalPlayer(user,gameState);
 
-        // clear any computer thread stated
+        // clear any computer thread started
         if (appClientState.backgroundJobId> 0){
             clearInterval(appClientState.backgroundJobId);
             appClientState.backgroundJobId = -1;
@@ -1829,7 +1822,7 @@ var KharbgaApp = function () {
         };
         $('#account-message').html("<div class='alert alert-info'>Processing... </div>");
 
-        var result = nsApiClient.userService.validateLogin(loginInfo, function(data, status) {
+        nsApiClient.userService.validateLogin(loginInfo, function(data, status) {
             if (data != null) {
                 $('#appInfo').html(JSON.stringify(data));
                 $('#account-message').html("<div class='alert alert-success'>Logged in successfully </div>");                    
@@ -2215,14 +2208,14 @@ var KharbgaApp = function () {
         resizeGame();
 
     }
-
+ // MN -- moved ns-app-user
     // setup all the various buttons and links events
-    $('#login-link').on('click', onLoginLink);  
-    $('#register-link').on('click', onRegisterLink);
-    $('#login-submit').on('click', onLoginSubmit);
-    $('#register-submit').on('click', onRegisterSubmit);
-    $('#logout-link').on('click', onLogoutSubmit);
-    $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
+    //$('#login-link').on('click', onLoginLink);  
+    //$('#register-link').on('click', onRegisterLink);
+   // $('#login-submit').on('click', onLoginSubmit);
+    //$('#register-submit').on('click', onRegisterSubmit);
+   // $('#logout-link').on('click', onLogoutSubmit);
+   // $('#refreshAppInfo-submit').on('click', onRefreshAppInfo);
     $('#getPositionBtn').on('click', clickGetPositionBtn);
     $('#new-game').on('click', { asAttacker: true, againstComputer: true,overTheNetwork:true }, onNewGame);
     $('#new-game-attacker').on('click', {asAttacker: true, againstComputer:false,overTheNetwork:true}, onNewGame);
@@ -2446,9 +2439,11 @@ var KharbgaApp = function () {
             displayComputerMessage("Ended computer play task");
         }
 
+        // rules for starting the backend computer task - Only start if the game is not 
+        // completed
         var computerPlayer = gameState.getComputerPlayer();
-        if (user.isSpectator === false &&  computerPlayer!= null && 
-            gameInfo.status < Kharbga.GameStatus.Completed){
+        if (user.isSpectator === false &&  computerPlayer!= null &&
+             !game.game_over() ){
             logMessage("starting computer play timer...");
             displayComputerMessage("Started computer player task");
             appClientState.backgroundJobId = setInterval(checkBoardAndPlayIfComputer,4000);
@@ -2881,7 +2876,7 @@ var KharbgaApp = function () {
         logMessage("onPostMessage: ");
 
         // the user must be logged in to 
-        if (appClientState.loggedIn === false || appClientState.session === null){
+        if (nsApp.isLoggedIn() === false){
             // add check if admin
             displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
             return;
@@ -2908,21 +2903,21 @@ var KharbgaApp = function () {
     // base hub messages
     var onJoined = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
-            logMessage("on Joined: " + serverTime);
+            console.log("on Joined");
             logObject(connectionInfo);
             
         }
     };
     var onLeft = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
-            logMessage("onLeft: " + serverTime);
+            console.log("on left");
             logObject(connectionInfo);
         }
     };
     var onRejoined = function (connectionInfo, serverTime) {
         if (loggingOn === true) {
             if (loggingOn === true) {
-                logMessage("onRejoined: " + serverTime);
+                console.log("onRejoined");
                 logObject(connectionInfo);
             }
         }
@@ -3491,7 +3486,10 @@ var KharbgaApp = function () {
 
     this.newGame = function (options) {
         var event = { data: options };
-        logMessage("New Game Request. Options: ");
+        var message = ("New Game Request. Options: ");
+        if (loggingOn){
+            console.log("%s - %s", getLoggingNow(), message);
+        }
         log(options);
    
         onNewGame(event); // 
@@ -3500,7 +3498,7 @@ var KharbgaApp = function () {
     this.postMessage = function(msg){
 
         // the user must be logged in to 
-        if (appClientState.loggedIn === false || appClientState.session === null){
+        if (nsApp.isLoggedIn() === false){
             // add check if admin
             displayNetMessage("<a href='javascript:$.nsVM.openLoginPanel()'>Login</a> is required for this function.");
             return;
@@ -3511,7 +3509,7 @@ var KharbgaApp = function () {
             return;
         }
         displayNetMessage("Posting message...");
-        gamesHubProxy.server.postMessage(appClientState.sessionId,user.name, msg.message);
+        gamesHubProxy.server.postMessage(nsApp.sessionId,nsApp.user.name, msg.message);
     };
 
 

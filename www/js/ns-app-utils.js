@@ -181,7 +181,12 @@ function NSApp(){
     this.state= {// the client app state   
     
     };  
+
+    /**
+     * @summary - the current session id
+     */
     this.sessionId = "";
+
     /**
      * the logged in user info
      */
@@ -376,8 +381,26 @@ function NSApp(){
         if (this.isValid(data)){
             this.displayResult(data);
         }
-        else{
-            this.displayStatus(status);
+        else {
+            if (this.isValidObject(status)) {
+
+                if (status.status === 500) {
+                    this.displayErrorMessage("500 - Internal Server Error");
+                }
+                else if (status.status === 400) {
+                    this.displayWarningMessage("400 - Invalid Input - Please check all your input");
+                }
+                else if (status.status === 404) {
+                    this.displayWarningMessage("404 - Not Found ");
+                }
+                else {
+                    this.displayStatus(status);
+                }
+            }
+            else {
+                this.displayErrorMessage("Network Error - Unable to process your request - ");
+            }
+            
         }
         this.displayProcessing(false);
     };
@@ -391,11 +414,13 @@ function NSApp(){
             $('#processing').html("<div class='alert alert-info'>" + 
                 "<i class='fa fa-spinner'>Processing...</div>");
             this.displayNetMessage("<i class='fa fa-spinner fa2x'> Processing...");
-
+            $('.ns-processing').html("<div class='alert alert-info'>" + 
+            "<i class='fa fa-spinner'>Processing...</div>");
         }
         else{
             this.displayNetMessage("Done");
             $('#processing').html("");
+            $('.ns-processing').html("");
         }
 
     };
@@ -416,6 +441,7 @@ function NSApp(){
      */
     this.displayErrorMessage= function(message){
         $('#message').html("<div class='alert alert-danger'>" + message + "</div>");
+        $('.ns-message').html("<div class='alert alert-danger'>" + message + "</div>");
     };
 
     /**
@@ -424,6 +450,8 @@ function NSApp(){
      */
     this.displaySuccessMessage= function(message){
         $('#message').html("<div class='alert alert-success'>" + message + "</div>");
+        $('.ns-message').html("<div class='alert alert-success'>" + message + "</div>");
+
     };
 
     /**
@@ -466,6 +494,8 @@ function NSApp(){
      */
     this.displayInfoMessage= function(message){
         $('#message').html("<div class='alert alert-info'>" + message + "</div>");
+        $('.ns-message').html("<div class='alert alert-info'>" + message + "</div>");
+
     };
         
     /**
@@ -474,6 +504,8 @@ function NSApp(){
      */
     this.displayWarningMessage = function (message){
         $('#message').html("<div class='alert alert-warning'>" + message + "</div>");
+        $('.ns-message').html("<div class='alert alert-warning'>" + message + "</div>");
+
     };
 
     /**
@@ -484,17 +516,22 @@ function NSApp(){
     this.displayAccountMessage = function(message, success){
         if (success == undefined){
             $('#account-message').html("<div class='alert alert-info'>" + message + "</div>");
+            $('.ns-account-message').html("<div class='alert alert-info'>" + message + "</div>");
+      
             this.displayNetMessage(message,success);
         }else if (success === true){
             $('#account-message').html("<div class='alert alert-success'>" + message + "</div>");
+            $('.ns-account-message').html("<div class='alert alert-success'>" + message + "</div>");
             this.displayNetMessage(message, success);
         }
         else if (success === false){
             $('#account-message').html("<div class='alert alert-danger'>" + message + "</div>");
+            $('.ns-account-message').html("<div class='alert alert-danger'>" + message + "</div>");
              this.displayNetMessage(message,success);
         }else{
             $('#account-message').html("<div class='alert alert-warning'>" + message + " - " + success+ "</div>"); 
-             this.displayNetMessage(message + " - " + success);
+            $('.ns-account-message').html("<div class='alert alert-warning'>" + message + " - " + success+ "</div>"); 
+            this.displayNetMessage(message + " - " + success);
         }   
     } ;         
 
@@ -794,6 +831,7 @@ function NSApp(){
     // App utilities
     /**
      * @summary -- checks if the object is valid or not 
+     * @param {Object} obj: the object to check
      * @returns {boolean} -- false if the object is null or undefined true otherwise
      * 
      */
@@ -807,11 +845,12 @@ function NSApp(){
 
     /**
      * @summary -- checks if the data object and result object is valid or not 
+     * @param {Object} data: the result object
      * @returns {boolean} -- true if both the data and result object are not null and undefined
      * 
      */
-    this.isValidResult = function(data){
-        if (this.isValid(data) && this.isValid(data.object)) {
+    this.isValidObject = function(data){
+        if (this.isValid(data) && (typeof data === "object") ) {
             return true;
         } else {
             return false;               
@@ -820,6 +859,7 @@ function NSApp(){
     };
      /**
      * @summary -- checks if the object is valid or 
+     * @param {string} obj: the string to check
      * @returns {boolean} -- false if the object is null or undefined true otherwise
      * 
      */
@@ -831,6 +871,39 @@ function NSApp(){
         return true;
     };
 
+    /**
+     * @summary Creates a random id using a Guid format
+     * @returns {string} -- a random guid
+     */
+    this.createGuid = function () {
+        return 'xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx'.replace(/x/g, function (c) {
+            var r = Math.random() * 16 | 0;
+            return r.toString(16);
+        });
+    }; 
+    
+    /**
+     * @summary Generates a random number from the given range
+     * @param {Number} lower - range start
+     * @param {Number} upper - range to
+     */
+    this.getRandom = function(lower, upper) {
+        // https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+        var percent = (Math.random() * 100);
+        // this will return number between 0-99 because Math.random returns decimal number from 0-0.9929292 something like that
+        //now you have a percentage, use it find out the number between your INTERVAL :upper-lower 
+        var num = ((percent * (upper - lower) / 100));
+        //num will now have a number that falls in your INTERVAL simple maths
+        num += lower;
+        //add lower to make it fall in your INTERVAL
+        //but num is still in decimal
+        //use Math.floor>downward to its nearest integer you won't get upper value ever
+        //use Math.ceil>upward to its nearest integer upper value is possible
+        //Math.round>to its nearest integer 2.4>2 2.5>3   both lower and upper value possible
+        // console.log("upper: %s,lower: %s, num: %s, floor num: %s, ceil num: %s, round num: %s", lower, upper, num, Math.floor(num), Math.ceil(num), Math.round(num));
+        return Math.floor(num);
+    }; 
+    
     // various messages 
     /**
      * @summary logout message success

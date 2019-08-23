@@ -33,18 +33,14 @@ function loadUserProfile(userId){
     if (nsApp.isLoggedIn() === false){
         return;
     }
-    nsApiClient.userService.getUserInfo(nsApp.sessionId, userId, function (data, status) {
-        if (data != null && data.object!= null) {
+    nsApiClient.userService.getUserView(nsApp.sessionId, userId, function (data, status) {
+        if (nsApp.isValid(data) ) {
           
-            nsApp.displayUserProfile(data.object,'user-profile');
+            nsApp.displayUserProfile(data,'user-profile');
         }
         else {
-            if (data!= null){
-                nsApp.displayResult(data);
-            }
-            else{
-                nsApp.displayAccountMessage("Unable to load user profile info. Error: " + status.statusText, false);
-            }
+           nsApp.displayAccountMessage("Unable to load user profile info. Error: " + status.statusText, false);
+           
         }
     });
 }
