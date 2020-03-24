@@ -152,6 +152,51 @@ function NSAppClient(baseURI) {
 
         };
 
+
+          /**
+         * @summary signs out the current user  uses a POST instead of DELETE
+         * @param {string} sessionId - the user session id 
+         * @param {function} callback - the callback function with the result (data, status)
+         */
+        this.signOut = function (sessionId, callback) {
+            var uri = this.serviceBaseURI + "logout";
+            console.log("%s - ajax POST %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET requests or DELETE
+                type: "POST",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid" : sessionId  },
+          
+                crossDomain: true,
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - sign out success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - sign out error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - sign out complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+
+                }
+            });
+
+        };
+
         this.register = function (registerInfo, callback) {
             var uri = this.serviceBaseURI + "register";
             console.log("%s - ajax POST %s ", getLoggingNow(), uri);
@@ -194,6 +239,50 @@ function NSAppClient(baseURI) {
             });
 
         };
+
+        this.registerClient = function (registerInfo, callback) {
+            var uri = this.serviceBaseURI + "register/client";
+            console.log("%s - ajax POST %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+
+                // Whether this is a POST or GET request
+                type: "POST",
+
+                // The name of the callback parameter, as specified by the YQL service
+                //jsonp: "callback",
+
+                // Tell jQuery we're expecting JSONP
+                dataType: "json",
+
+                contentType: "application/json",
+
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+
+                // Tell YQL what we want and that we want JSON
+                data: JSON.stringify(registerInfo),
+                crossDomain: true,
+
+
+                // Work with the response
+                success: function (result, status, xhr) {
+                    console.log("%s - ajax - registerClient success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log(result);
+                    callback(result, status);
+                },
+                error: function (status, errorThrown) {
+                    console.log("%s - ajax - registerClient  error: status: %s, error: %s", getLoggingNow(),JSON.stringify(status), errorThrown);
+                    callback(null, status);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - registerClient complete: status: %s ", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+
+        };
+
         /**
          * @summary retrieves the current user logged in account information
          * @param {string} sessionId - the user session id 
@@ -283,7 +372,7 @@ function NSAppClient(baseURI) {
         };
 
         /**
-         * @summary updatess the current user logged in account preferences
+         * @summary updates the current user logged in account preferences
          * @param {string} sessionId - the user session id 
          * @param {function} callback - the callback function with the result (data, status)
          */
@@ -1081,5 +1170,5 @@ var nsApiClient = new NSAppClient(__env.baseURI);
 
 var teamsUrl = nsApiClient.clientService.serviceBaseURI + "list"; 
 
-const C_NSSID = "_nssid";
+var C_NSSID = "_nssid";
 

@@ -23,7 +23,7 @@ var KharbgaApp = function () {
     var board,
         boardEl = $('#board');
 
-    const C_NSGID = "_nsgid";
+    var C_NSGID = "_nsgid";
 
     // signalR communications
     var gamesHubProxy = null;

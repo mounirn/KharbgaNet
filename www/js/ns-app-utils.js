@@ -129,7 +129,9 @@ function NSUser(){
         if (this.account!= null){
             
             this.systemId = this.account.systemId;
-            this.object = this.account.extension;
+          //  this.object = this.account.extension;
+          // MN -- the object is the same as the extension now
+          this.object = this.account; 
             if (this.object!= null){
                 this.name = this.object.name;
                 this.clientId = this.object.clientId;

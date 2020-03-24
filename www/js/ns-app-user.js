@@ -314,7 +314,7 @@ $.nsApp.init = function(){
         };
         nsApp.displayProcessing(true);
 
-        var result = nsApiClient.userService.register(registerInfo, function (data, status) {
+        var result = nsApiClient.userService.registerClient(registerInfo, function (data, status) {
             if (nsApp.isValid(data)) {
                 setupClientStateWithSession(data);      
                 transferToPlay();
@@ -371,7 +371,7 @@ $.nsApp.init = function(){
         nsApp.displayProcessing(true);
 
         // add call for back-end to delete the session
-        nsApiClient.userService.logout(session.sessionId, function (data,status) {
+        nsApiClient.userService.signOut(session.sessionId, function (data,status) {
             if (nsApp.isValid(data)) {          
                 setupClientStateWithSession(null);    
                   nsApp.displayProcessing(false);   
@@ -381,8 +381,10 @@ $.nsApp.init = function(){
                 }
             }
             else {
-             
-                nsApp.handleResultNoData(data,status);   
+                // clear the session anyway
+                setupClientStateWithSession(null);    
+                nsApp.displayProcessing(false); 
+              //  nsApp.handleResultNoData(data,status);   
             } 
         });
     }
@@ -525,6 +527,7 @@ $.nsApp.init = function(){
             
             $('#account-session-id').text(session.sessionId);
           
+            displayAccountMessage("Welcome! You are logged in", true);
             nsApp.displayObjectInfo(session,'user-session-info',true, {
                 fullName: {},
                 lastAccess: {},
@@ -550,7 +553,8 @@ $.nsApp.init = function(){
             $('#login-li').show().removeClass('hidden');
             $('#register-li').show().removeClass('hidden');
             $('#logout-li').hide().addClass('hidden');
-            displayAccountMessage("");
+
+            displayAccountMessage("You are not logged in", null);
         }
         $('#account-name').text(nsApp.user.name);
       //  $('#account-org-id').text(nsApp.state.session.clientId);
