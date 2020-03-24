@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
     var kApp = new KharbgaApp();
-    $.kApp =  kApp// dot need to call setup here
+    $.kApp =  kApp; // dot need to call setup here
     $.nsApp.setup(true, true);
     // load user games after few seconds
     setTimeout(function(){

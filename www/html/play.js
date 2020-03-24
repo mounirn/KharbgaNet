@@ -60,7 +60,7 @@ $(document).ready(function() {
     var gameId = "";
     //console.log(queries);
     if (queries.id != null && queries.id.length > 10){
-        gameId = queries.id;;
+        gameId = queries.id;
     }
 
     // setup - start with the given game Id
