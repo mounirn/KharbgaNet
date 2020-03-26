@@ -384,7 +384,7 @@ $.nsApp.init = function(){
                 // clear the session anyway
                 setupClientStateWithSession(null);    
                 nsApp.displayProcessing(false); 
-              //  nsApp.handleResultNoData(data,status);   
+                nsApp.handleResultNoData(data,status);   
             } 
         });
     }

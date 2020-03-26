@@ -366,6 +366,9 @@ function NSApp(){
                          status.status + ": " + status.responseText + "</div>"); 
                 }
             }
+            else if (status === 0){
+                $('#message').html("<div class='alert alert-danger'>Unable to process your request at this time. Please try again later or contact us for support!</div>");
+            }
             else{
                 $('#message').html("<div class='alert alert-danger'>" + 
                     status.status + ": " + status.statusText + "</div>");
@@ -396,7 +399,7 @@ function NSApp(){
                     this.displayWarningMessage("404 - Not Found ");
                 }
                 else {
-                    this.displayStatus(status);
+                    this.displayStatus(status.status);
                 }
             }
             else {
@@ -435,7 +438,7 @@ function NSApp(){
         if (this.loggingOn){
             $('#appInfo').html(JSON.stringify(result));
         }
-    }
+    };
         
     /**
      * @summary Displays an error message to the user

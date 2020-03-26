@@ -2442,7 +2442,11 @@ var KharbgaApp = function () {
         if (loggingOn) console.log("_refreshMyGames");   
         if (typeof e != "undefined" && e != null)
              e.preventDefault();
-      
+             
+        if (nsApp.isLoggedIn() === false){
+            nsApp.displayNetMessage("Please <a href='javascript:onNsLogin()'>login</a> to access this function!");
+            return;
+        }
         logMessage("_refreshing My Games from the server : ");
         
         if (appClientState.userServer === false){
@@ -2491,7 +2495,10 @@ var KharbgaApp = function () {
              e.preventDefault();
       
         logMessage("_refreshingActiveGames from the server : ");
-        
+        if (nsApp.isLoggedIn() === false){
+            nsApp.displayNetMessage("Please <a href='javascript:onNsLogin()'>login</a> to access this function!");
+            return;
+        }
         if (appClientState.userServer === false){
             displayWarningMessage("Messaging Server Not To Use Mode - Action: Refresh Active Games");
             return;
@@ -2538,6 +2545,12 @@ var KharbgaApp = function () {
         if (typeof e != "undefined" && e != null)
              e.preventDefault();
       
+        /* check permissions */
+        
+        if (nsApp.isLoggedIn() === false){
+            nsApp.displayNetMessage("Please <a href='javascript:onNsLogin()'>login</a> to access this function!");
+            return;
+        }
         logMessage("_refreshingActivePlayers from the server : ");
         
         if (appClientState.userServer === false){
