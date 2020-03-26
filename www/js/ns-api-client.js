@@ -539,16 +539,16 @@ function NSAppClient(baseURI) {
 
                 // Work with the response
                 success: function (result, status, xhr) {
-                    console.log("%s - ajax - getUserInfo success: status: %s data:", getLoggingNow(), JSON.stringify(status));
+                    console.log("%s - ajax - getUserView success: status: %s data:", getLoggingNow(), JSON.stringify(status));
                     console.log(result);
                     callback(result, status);
                 },
                 error: function (status, errorThrown) {
-                    console.log("%s - ajax - getUserInfo error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    console.log("%s - ajax - getUserView error: status: %s, error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
                     callback(null, status);
                 },
                 complete: function (xhr, status) {
-                    console.log("%s - ajax - getUserInfo complete: status: %s ", getLoggingNow(), JSON.stringify(status));
+                    console.log("%s - ajax - getUserView complete: status: %s ", getLoggingNow(), JSON.stringify(status));
 
                 }
             });
@@ -975,6 +975,43 @@ function NSAppClient(baseURI) {
             return ret;
         };
 
+
+        /**
+         * @summary: retrieves list of users who are active in the last few games
+         * @param {string} sessionId - the session id
+         * @param {object} queryString - the query string object with key value pairs 
+         */
+        this.getUsers = function (sessionId, queryString, callback) {
+            var uri = this.serviceBaseURI + "users";
+            var ret = null;
+            console.log("%s - ajax GET %s ", getLoggingNow(), uri);
+            $.ajax({
+                url: uri,
+                type: "GET",
+                data: queryString,
+                contentType: "application/json",
+                //  headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": "OAuth oauth_token=ACCESSTOKEN" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json", "_nssid": sessionId },
+                // Work with the response
+                success: function (data, status, xhr) {
+                    console.log("%s - ajax - getPlayers success: status: %s data:", getLoggingNow(),JSON.stringify(status));
+                    console.log(data);
+                    callback(data, status);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log("%s - ajax - getPlayers error: status: %s,  error: %s", getLoggingNow(), JSON.stringify(status), errorThrown);
+                    callback(null, status, errorThrown);
+                },
+                complete: function (xhr, status) {
+                    console.log("%s - ajax - getPlayers complete: status: %s", getLoggingNow(),JSON.stringify(status));
+
+                }
+            });
+            return ret;
+        };
+
+
+
         /**
          * @summary: retrieves list of games depending on current user logged in
          * @param {string} sessionId - the session id
@@ -1007,7 +1044,6 @@ function NSAppClient(baseURI) {
             });
             return ret;
         };
-
 
            /**
          * @summary: retrieves list of games depending on current user logged in

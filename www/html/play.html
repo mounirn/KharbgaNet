@@ -131,8 +131,8 @@
 
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
-                <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
-
+                <!--   <a href="#play-watch-section" class="ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+              -->
                 <div class="panel panel-info">
                     <div class="panel-heading ui-bar ui-bar-c">
                         <a target="rules" href="../html/my-account.html" class="ui-btn ui-btn-b " style="vertical-align:middle">
@@ -184,36 +184,9 @@
                     </p>
                 </div>
             </div>
-            <div id="play-watch-section" data-role="panel" data-position="right" data-display="overlay" data-theme="a">
+            <div id="play-watch-section" data-role="popup" x-data-position="right" x-data-display="overlay" data-theme="a" class="ui-content">
                 <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
                 <img src="../img/kharbga.png" style="max-height:40px" title="Kharbga Game Network" />
-
-
-                <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-inset="false">
-                    <div data-role="collapsible">
-                        <h3>My Games</h3>
-                        <a id="games-link" href="#">Refresh </a>
-                        <hr>
-                        <ul id="games-list" data-role="listview" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
-                        </ul>
-
-                    </div>
-                    <!--
-                    <div data-role="collapsible">
-                        <h3>Active Games</h3>
-                        <a id="active-games-link" href="#">Active Games </a>
-                        <hr>
-                        <ul id="active-games-list" data-role="listview" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
-                        </ul>
-
-                    </div>
-                    <div data-role="collapsible">
-                        <h3>Active Players</h3><a id="active-games-link" href="#">Active Players </a>
-                        <hr>
-                        <ul id="active-players-list" data-role="listview" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
-                        </ul>
-                    </div>
---></div>
 
 
 
@@ -225,11 +198,10 @@
             <div class="ui-grid-b kharbga-grid">
                 <div id="board-frame" class=" ui-block-a">
                     <div class="ui-bar ui-bar-b small" style="font-size:small">
-                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" class="ui-mini ui-btn ui-icon-plus ui-btn-inline ui-btn-icon-left ui-btn-icon-notext ">
-                        </a>
-                        <a id="clear-board-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-icon-notext  ">Clear</a>
+                        <a href="#popup-menu" data-rel="popup" data-transition="slideup" class="ui-mini ui-btn ui-icon-plus ui-btn-inline ui-btn-icon-left xui-btn-icon-notext " title="New Game">Board</a>
+                        <a id="clear-board-button" href="#" class="ui-btn ui-shadow ui-corner-all ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-icon-notext  " title="Clear">Clear</a>
 
-                        <a id="flipOrientation" href="#" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-shadow  ui-icon-recycle  ui-btn-icon-left ui-btn-icon-notext">Flip</a>
+                        <a id="flipOrientation" href="#" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-shadow  ui-icon-recycle  ui-btn-icon-left ui-btn-icon-notext" title="Flip">Flip</a>
 
                     </div>
                     <div class="message" id="message" class="small" style="font-size:x-small"></div>
@@ -265,14 +237,14 @@
 
                 </div>
                 <div class="ui-block-b" xstyle="padding-top:70px;">
-                    <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
-                        Game Information
+                    <div class="ui-bar ui-bar-b">
+                        <h1> Current Game Information</h1>
                         <a id="start-new-game-btn" href="#popup-menu" data-mini="true" data-rel="popup" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">New Game</a>
                     </div>
                     <div id="game-message" class=""></div>
                     <div id="current-game-info" class="panel panel-success">
-                        <div class="panel-heading ui-bar ui-bar-b">
-                            <small>Current Game ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
+                        <div class="ui-bar ui-bar-b">
+                            <small>ID: <span id="current-game-id" style="font-size:xx-small"></span></small>
                         </div>
                         <div class="panel-body">
 
@@ -328,25 +300,41 @@
                             </p>
                             <hr>
                             <div id="computer-message" class=""></div>
-                            <div id="game-moves-history">
-                                <div class="ui-bar ui-bar-c">
-                                    <strong>Moves History</strong>
 
-                                    <p class="text-center">
-                                        <a href='#' title="Go to beginning" id="play-beginning"><span class="glyphicon glyphicon-step-backward"></span></a>
-                                        <a href='#' title="Play back" id="play-backward"><span class="glyphicon glyphicon-backward"></span></a>
-                                        <a href='#' title="Start" id="play-start"><span class="glyphicon glyphicon-play"></span></a>
-                                        <a href='#' title="Pause" id="play-pause"><span class="glyphicon glyphicon-pause"></span></a>
-                                        <a href='#' title="Play forward" id="play-forward"><span class="glyphicon glyphicon-forward"></span></a>
-                                        <a href='#' title="Go to the end" id="play-end"><span class="glyphicon glyphicon-step-forward"></span></a>
+                            <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-inset="true">
+                                <div data-role="collapsible" data-collapsed="false">
+                                    <h3>Game Moves</h3>
+                                    <div id="game-moves-history">
+                                        <div class="ui-bar ui-bar-c">
+                                            <strong>History</strong>
 
-                                    </p>
+                                            <p class="text-center">
+                                                <a href='#' title="Go to beginning" id="play-beginning"><span class="glyphicon glyphicon-step-backward"></span></a>
+                                                <a href='#' title="Play back" id="play-backward"><span class="glyphicon glyphicon-backward"></span></a>
+                                                <a href='#' title="Start" id="play-start"><span class="glyphicon glyphicon-play"></span></a>
+                                                <a href='#' title="Pause" id="play-pause"><span class="glyphicon glyphicon-pause"></span></a>
+                                                <a href='#' title="Play forward" id="play-forward"><span class="glyphicon glyphicon-forward"></span></a>
+                                                <a href='#' title="Go to the end" id="play-end"><span class="glyphicon glyphicon-step-forward"></span></a>
+
+                                            </p>
+
+                                        </div>
+                                        <div class="ui-body">
+                                            <hr>
+                                            <ul data-role='listview' id='game-moves-history-list' style='height:250px;max-height:350px; overflow-y:scroll'>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+
 
                                 </div>
-                                <div class="ui-body">
-                                    <hr>
-                                    <ul data-role='listview' id='game-moves-history-list' style='height:250px;max-height:350px; overflow-y:scroll'>
+                                <div data-role="collapsible">
+                                    <h3><a id="game-players-link" href="#"> Game Players/Watchers </a></h3>
+
+                                    <ul id="game-players-list" data-role="listview" data-theme="b" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
                                     </ul>
+
                                 </div>
 
                             </div>
@@ -355,41 +343,57 @@
                     <hr/>
                 </div>
                 <div class="ui-block-c">
-                    <div class="panel-heading ui-bar ui-bar-b" style="font-size:small">
-                        <h3>Game Network</h3>
-                        <a href="#play-watch-section" data-mini="true" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
-
+                    <div class="ui-bar ui-bar-b">
+                        <h1>Game Network </h1>
+                        <!--   <a href="#play-watch-section" data-mini="true" data-rel="popup" data-position-to="window" style="width:80%" class="ui-mini ui-btn ui-shadow ui-corner-all ui-btn-inline">Join / Watch Active Games</a>
+                        -->
                     </div>
-                    <div>
-                        <div class="center  ui-bar ui-bar-b">
-                            <h2>Messages </h2>
+
+                    <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-inset="true">
+                        <div data-role="collapsible" data-collapsed="false">
+                            <h3>Messages</h3>
+
+                            <div id="net-message"></div>
+
+                            <label for="move-message">Message:</label>
+                            <input type="text" xclass="form-control" id="move-message" name="move-message">
+                            <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
+                            <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
+                                    Reconnect
+                                </a>
+                            <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
+                            <div class="ui-bar ui-bar-c">
+                                <small>URI: <span id="server-uri" style="font-size:xx-small"></span></small>
+                            </div>
+                            <div class="ui-body">
+
+                                <ul id="messages-list" class="list-group" data-inset="false" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
+                            </div>
+
                         </div>
+                        <div data-role="collapsible">
+                            <h3><a id="active-games-link" href="#"> Active Games </a></h3>
 
-                        <div id="net-message"></div>
+                            <ul id="active-games-list" data-role="listview" data-theme="b" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                            </ul>
 
-                        <label for="move-message">Message:</label>
-                        <input type="text" xclass="form-control" id="move-message" name="move-message">
-                        <button id="postMessageBtn" type="submit" class="ui-mini btn btn-default ui-btn ui-btn-inline">Post</button>
-                        <a href="#" data-icon="refresh" id="server-link" value="connect-server" class="ui-mini btn btn-default ui-btn ui-btn-inline">
-                                Reconnect
-                            </a>
-                        <a href="#" id="ping-link" value="ping" class="ui-mini btn btn-default ui-btn ui-btn-inline">Ping Server</a>
-                        <div class="ui-bar ui-bar-c">
-                            <small>URI: <span id="server-uri" style="font-size:xx-small"></span></small>
                         </div>
-                        <div class="ui-body">
+                        <div data-role="collapsible">
+                            <h3> <a id="active-players-link" href="#">Players</a></h3>
 
-                            <ul id="messages-list" class="list-group" data-inset="false" data-role="listview" style="height: 400px;overflow-y:scroll"></ul>
+                            <ul id="active-players-list" data-role="listview" data-theme="c" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                            </ul>
                         </div>
+                        <div data-role="collapsible">
+                            <h3><a id="my-games-link" href="#">My Games </a></h3>
 
+                            <ul id="my-games-list" data-role="listview" data-theme="c" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                            </ul>
+
+                        </div>
                     </div>
                 </div>
             </div>
-
-
-
-
-
 
             <div id="login-popup" data-role="popup" data-theme="a" class="ui-content" style="max-width:400px;">
                 <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
@@ -450,30 +454,27 @@
 
             </div>
 
-            <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
-                <h4>Server Status</h4>
 
-                <div id="tab-server">
-                    <h5>API URL: <span id="api-url"></span>
-                        <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">
-                                Refresh </a>
-                    </h5>
-                    <div id="help-message"> </div>
-                    <table id="app-info-table" class="table table-striped">
-                        <tbody id="app-info-table-body">
+            <div data-role="collapsibleset" data-inset="true">
+                <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                    <h4> <a href="#" id="refreshAppInfo-submit" data-icon="refresh" value="Refresh" class="">Server Status</a></h4>
 
-                        </tbody>
-                    </table>
-                </div>
-                <!--
+                    <div id="tab-server">
+                        <h5>API URL: <span id="api-url"></span> </h5>
+                        <div id="help-message"> </div>
+                        <table id="app-info-table" class="table table-striped">
+                            <tbody id="app-info-table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--
                 <ul data-role="listview" data-inset="false">
                     <li></li>
                     <li></li>
                     <li></li>
                 </ul>-->
-            </div>
-
-            <div data-role="collapsibleset" data-inset="false">
+                </div>
                 <div data-role="collapsible">
                     <h4>Active Game State </h4>
                     <a href="#" id="game-state-link" value="Refresh">

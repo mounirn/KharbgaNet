@@ -16,9 +16,10 @@ $(document).ready(function() {
     });
     var userId = "";
     //console.log(queries);
-    if (queries.id != null && queries.id.length > 10){
+   // if (queries.id != null && queries.id.length > 10){
+        console.log("retrieving user profile with id: " + userId);
         userId = queries.id;
-    }
+   // }
     setTimeout(function(){
         // setup - start with the given game Id
         loadUserProfile(userId);

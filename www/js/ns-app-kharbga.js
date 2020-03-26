@@ -1686,7 +1686,7 @@ var KharbgaApp = function () {
         if (loggingOn) console.log("Player Info: ");
         logObject(playerInfo);
 
-        appendGameToGamesList(gameInfo,true);      
+     //   appendGameToGamesList(gameInfo,true);      
         gameState.update(gameInfo); 
         setCookie(C_NSGID,gameInfo.id);
         startLocalGame();
@@ -2261,7 +2261,7 @@ var KharbgaApp = function () {
      */
     function updateGameInGameList(gameInfo) {
         $('#' + gameInfo.id).remove();
-         appendGameToGamesList(gameInfo,true);  // move the game to the top
+      //   appendGameToGamesList(gameInfo,true);  // move the game to the top
 
      /*   // update the color of the list depending on the status
         $('#' + gameInfo.id).removeClass('list-group-item-warning');
@@ -2287,8 +2287,9 @@ var KharbgaApp = function () {
      * @summary Adds a game to the active games list
      * @param {any} gameInfo - the game from the server to add to the list
      * @param {boolean} front - if true, the game is put in the front of the list 
+     * @param {string} listId - the id of the list to add the game to
      */
-    function appendGameToGamesList(gameInfo, front) {
+    function appendGameToGamesList(gameInfo, front, listId) {
         if (loggingOn) console.log("appendGameToGamesList");
         if (gameInfo == null)
             return;
@@ -2338,16 +2339,66 @@ var KharbgaApp = function () {
         html += "</li>";
 
         if (front === true){
-            $('#games-list').prepend(html);
+            $(listId).prepend(html);
         }
         else{
-            $('#games-list').append(html);
+            $(listId).append(html);
         }
 
         $('#linka-' + gameInfo.id).on('click', gameInfo, onGameSelected);
         $('#linkd-' + gameInfo.id).on('click', gameInfo, onGameSelected);
         $('#watch-' + gameInfo.id).on('click', gameInfo, onGameSelected);
      //   $('#' + gameInfo.id).addClass(getStatusCss(gameInfo.Status));          
+    }
+
+     /**
+     * @summary Adds a player to the active players list - each player is listed with his name, a
+     * link to watch the game played, a link to view the player user account
+     * 
+     * @param {any} playerInfo - the player from the server to add to the list
+     * @param {boolean} front - if true, the player is put in the front of the list 
+     * @param {string} listId - the id of the list to add the player to
+     */
+    function appendPlayerToPlayersList(playerInfo, front, listId) {
+        if (loggingOn) console.log("appendPlayerToPlayersList");
+        if (playerInfo == null)
+            return;
+
+        $('#li-' + playerInfo.id).detach(); // removes the player from the list if any
+
+        var html = "<li id='li-" + playerInfo.id + " ' style='font-size:small' class='list-group-item ";
+        var imageUrl = playerInfo.imageUrl;
+       // var gameId = playerInfo.currentGameId;
+     //   var userAccountId = playerInfo.accountId; 
+      
+        html += "'>";
+        html += "<a target='_new' title='View user account' href='user.html?id=" + playerInfo.id + "'>";
+        if (typeof imageUrl === "string" && imageUrl.length > 0) {
+            html += "<img style='max-width:80px;' src='" + playerInfo.imageUrl + "'/>";
+        }
+     //   var color  = playerInfo.color;
+     //   html += "<span style='color:blue'>";
+        html += playerInfo.name  ;   // title of the link 
+        html += "</span>"; 
+        html += "</a>";
+     //   var title="Watch the game player by " + playerInfo.name  ; 
+     //   html += ("<a id='watch-" + gameId + "' xclass='btn btn-default ui-btn ui-icon-eye ui-btn-icon-left' ");
+     //   html += ("title='" + title + "'");
+    //    html += ">Watch this game</a>";
+  
+        html += "</li>";
+
+        if (front === true){
+            $(listId).prepend(html);
+        }
+        else{
+            $(listId).append(html);
+        }
+
+      //  var gameInfo = {};
+      //  gameInfo.id = gameId; 
+      //  $('#watch-' + gameId.id).on('click', gameInfo, onGameSelected);
+             
     }
 
     
@@ -2378,18 +2429,21 @@ var KharbgaApp = function () {
         appClientState.useServer = $('#use-server.checkbox').is(':checked'); 
 
     });
-    $('#games-link').on('click', _refreshGames);
+    $('#my-games-link').on('click', _refreshMyGames);
+    $('#active-games-link').on('click', _refreshActiveGames);
+    $('#active-players-link').on('click', _refreshActivePlayers);
+
 
     /**
      * Refreshes the list of games from the server for display in the home page for the current user
      * @param {any} e - the event object
      */
-    function _refreshGames(e) {
-        if (loggingOn) console.log("_refreshGames");   
+    function _refreshMyGames(e) {
+        if (loggingOn) console.log("_refreshMyGames");   
         if (typeof e != "undefined" && e != null)
              e.preventDefault();
       
-        logMessage("_refreshingGames from the server : ");
+        logMessage("_refreshing My Games from the server : ");
         
         if (appClientState.userServer === false){
             displayWarningMessage("Messaging Server Not To Use Mode - Action: Refresh Active Games");
@@ -2397,8 +2451,8 @@ var KharbgaApp = function () {
         }
    
        // displayGameMessage("Refreshing active games from the server...");
-   
-        $('#games-list').empty();
+        var listId = '#my-games-list';
+        $(listId).empty();
         if (appClientState.signalReInitialized == false)
         {
             
@@ -2407,13 +2461,13 @@ var KharbgaApp = function () {
         }
         if (appClientState.signalReInitialized ){
             nsApp.displayNetMessage("Refreshing games from the server...");
-            gamesHubProxy.server.getGames(nsApp.sessionId).done(function (gamesResult) {
+            gamesHubProxy.server.getMyGames(nsApp.sessionId).done(function (gamesResult) {
                 if (gamesResult.success === true) {
                     $.each(gamesResult.object, function () {
-                        appendGameToGamesList(this);
+                        appendGameToGamesList(this,true,listId);
                         
                     });
-                    refreshList('#games-list');
+                    refreshList(listId);
                 }
                 
                 nsApp.displayNetMessage("Done refreshing active games from the server.");
@@ -2422,15 +2476,148 @@ var KharbgaApp = function () {
             }); 
         }
         else{
-            nsApp.displayNetMessage("Unable to refresh games from the server");
-        }
-
-   
+            nsApp.displayNetMessage("Unable to refresh my games from the server");
+        }    
+    }
+  
+    /**
+     * Refreshes the list of active games from the server for display in 
+     * the game network page for the current user
+     * @param {any} e - the event object
+     */
+    function _refreshActiveGames(e) {
+        if (loggingOn) console.log("_refreshActiveGames");   
+        if (typeof e != "undefined" && e != null)
+             e.preventDefault();
+      
+        logMessage("_refreshingActiveGames from the server : ");
         
+        if (appClientState.userServer === false){
+            displayWarningMessage("Messaging Server Not To Use Mode - Action: Refresh Active Games");
+            return;
+        }
+   
+        var listId = '#active-games-list';
+       // displayGameMessage("Refreshing active games from the server...");
+   
+        $(listId).empty();
+        if (appClientState.signalReInitialized == false)
+        {
+            
+            _setupSignalR();
+            //startSignalR();
+        }
+        if (appClientState.signalReInitialized ){
+            nsApp.displayNetMessage("Refreshing games from the server...");
+            gamesHubProxy.server.getActiveGames(nsApp.sessionId).done(function (gamesResult) {
+                if (gamesResult.success === true) {
+                    $.each(gamesResult.object, function () {
+                        appendGameToGamesList(this,true,listId);
+                        
+                    });
+                    refreshList(listId);
+                }
+                
+                nsApp.displayNetMessage("Done refreshing active games from the server.");
+                
+                selectActiveGameId(gameState.id);
+            }); 
+        }
+        else{
+            nsApp.displayNetMessage("Unable to refresh my games from the server");
+        }    
+    }
+ 
+    /**
+     * Refreshes the list of active players from the server for display 
+     *  in the game network list of active players
+     * @param {any} e - the event object
+     */
+    function _refreshActivePlayers(e) {
+        if (loggingOn) console.log("_refreshActivePlayers");   
+        if (typeof e != "undefined" && e != null)
+             e.preventDefault();
+      
+        logMessage("_refreshingActivePlayers from the server : ");
+        
+        if (appClientState.userServer === false){
+            displayWarningMessage("Messaging Server Not To Use Mode - Action: Refresh Active Games");
+            return;
+        }
+   
+        var listId = '#active-players-list';
+  
+        $(listId).empty();
+
+
+/*
+
+        if (appClientState.signalReInitialized == false)
+        {
+            
+            _setupSignalR();
+            //startSignalR();
+        }
+        if (appClientState.signalReInitialized ){
+            nsApp.displayNetMessage("Refreshing active players from the server...");
+            gamesHubProxy.server.getActivePlayers(nsApp.sessionId).done(function (playersResult) {
+                if (playersResult.success === true) {
+                    $.each(playersResult.object, function () {
+                        appendPlayerToPlayersList(this,true,listId);
+                        
+                    });
+                    refreshList(listId);
+                }
+                
+                nsApp.displayNetMessage("Done refreshing active players from the server.");
+                    
+            }); 
+        }
+        else{
+            nsApp.displayNetMessage("Unable to refresh active players from the server");
+        }   
+        */
+        nsApp.displayProcessing(true);  
+        var session = nsApp.getSession();
+        var queryString = {};
+        nsApiClient.gameService.getUsers(session.sessionId, queryString, function (data,status) {
+            console.log(data);
+            if (nsApp.isValid(data)) {          
+                var players = data;
+                nsApp.displayProcessing(false);   
+                if (players ) {
+                    $.each(players, function () {
+                        appendPlayerToPlayersList(this,true,listId);
+                        
+                    });
+                    refreshList(listId);
+                }
+                
+                nsApp.displayNetMessage("Done refreshing active players from the server.");
+               
+            }
+            else {
+                nsApp.displayProcessing(false);
+                // clear the session anyway          
+                 nsApp.handleResultNoData(data,status);   
+            }
+        });
+
+    }
+
+    /**
+     * Refresh games - current user and the active games 
+     */
+    function _refreshGames(){
+        _refreshActiveGames();
+        _refreshMyGames();
     }
 
     // externalize for client apps
     this.refreshGames = _refreshGames;
+    this.refreshMyGames = _refreshMyGames;
+    this.refreshActiveGames = _refreshActiveGames;
+    this.refreshActivePlayers = _refreshActivePlayers;
 
     /**
      * @summary Handler for when a game is selected for joining or watching from the game list

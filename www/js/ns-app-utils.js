@@ -797,14 +797,14 @@ function NSApp(){
      * @param {string} elementId - the id of the element table to output the object data
      */
     this.displayUserProfile = function(obj, elementId){
-        if (obj == undefined || obj== null || obj.extension === null || obj.extension == undefined)
+        if (obj == undefined || obj== null )
             return;
         var html ="";
-        $('#' + elementId).html(html);      
+    
         html += "<div class='row'>";
-        var title = obj.extension.name;
+        var title = obj.name;
         html += "<div class='col-sm-4'>";
-        html +=  getAvatar(obj.extension.imageUrl, title);
+        html +=  getAvatar(obj.imageUrl, title);
         html += "</div>";
         html += "<div class='col-sm-8'>";
         if (obj.isClientAdmin === true){
@@ -812,8 +812,8 @@ function NSApp(){
         }
         html += "<ul>";
         
-        html += "<li><strong>First Name:</strong> " + getText(obj.firstName) +"</li>";
-        html += "<li><strong>Last Name:</strong> " + getText(obj.lastName) +"</li>";
+     //   html += "<li><strong>First Name:</strong> " + getText(obj.firstName) +"</li>";
+     //   html += "<li><strong>Last Name:</strong> " + getText(obj.lastName) +"</li>";
         html+= "</ul>";
    /*     var objElementId = "ns-obj" +  elementId;
 
@@ -827,7 +827,10 @@ function NSApp(){
             };
             this.displayObjectInfo(obj.extension, objElementId, true, displayRules);
         }
-*/
+*/    $('#' + elementId).html(html);    
+      $('#user-name').text(obj.name);
+        
+      
        
     };
     // App utilities
