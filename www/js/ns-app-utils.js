@@ -403,7 +403,7 @@ function NSApp(){
                 }
             }
             else {
-                this.displayErrorMessage("Network Error - Unable to process your request - ");
+                this.displayErrorMessage("Network Error - Unable to process your request - Please try again later");
             }
             
         }
@@ -483,7 +483,16 @@ function NSApp(){
         }
      //   $('#message').html("<div class='alert alert-info'>" + message + "</div>");
         $('#main-message').html("<div class='alert alert-info'>" + message + "</div>");
-    }
+    };
+
+     /**
+     * @summary Displays a please login message to the user with a link for login function
+     *   
+     */
+    this.displayPleaseLogin = function(){
+        this.displayNetMessage("Please <a href='javascript:nsApp.onLogin()'>login</a> to access this function!");
+          
+    };
 
     /**
      * @summary Display computer Message

@@ -2442,9 +2442,9 @@ var KharbgaApp = function () {
         if (loggingOn) console.log("_refreshMyGames");   
         if (typeof e != "undefined" && e != null)
              e.preventDefault();
-             
+
         if (nsApp.isLoggedIn() === false){
-            nsApp.displayNetMessage("Please <a href='javascript:onNsLogin()'>login</a> to access this function!");
+            nsApp.displayPleaseLogin();          
             return;
         }
         logMessage("_refreshing My Games from the server : ");
@@ -2496,7 +2496,7 @@ var KharbgaApp = function () {
       
         logMessage("_refreshingActiveGames from the server : ");
         if (nsApp.isLoggedIn() === false){
-            nsApp.displayNetMessage("Please <a href='javascript:onNsLogin()'>login</a> to access this function!");
+            nsApp.displayPleaseLogin();
             return;
         }
         if (appClientState.userServer === false){
@@ -2548,7 +2548,7 @@ var KharbgaApp = function () {
         /* check permissions */
         
         if (nsApp.isLoggedIn() === false){
-            nsApp.displayNetMessage("Please <a href='javascript:onNsLogin()'>login</a> to access this function!");
+            nsApp.displayPleaseLogin();
             return;
         }
         logMessage("_refreshingActivePlayers from the server : ");

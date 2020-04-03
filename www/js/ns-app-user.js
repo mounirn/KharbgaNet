@@ -340,6 +340,7 @@ $.nsApp.init = function(){
         document.location= "../html/play.html";
     }
 
+   
     /**
      * @summary transfers the user to the login page
      */
@@ -832,6 +833,13 @@ $.nsApp.init = function(){
             
         },4000); // wait for the check session to complete
 
+    };
+
+    /**
+     * Use this handler in html links <a href='javascript:nsApp.onLogin()'>Login</a>
+     */
+    this.onLogin =function(){
+        transferToLogin();
     };
 
 };
