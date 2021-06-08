@@ -28,10 +28,12 @@
         ga('create', 'UA-6996887-11', 'auto');
         ga('send', 'pageview');
     </script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 </head>
 
 <body>
-    <div class="container-fluid text-center">
+    <div id="app" class="container-fluid text-center">
         <a href="./index.html">
             <img src="./img/kharbga.png" title="Kharbga Game Network" style="max-height:40px;">
         </a>
@@ -56,45 +58,64 @@
                 <div id="main">
                     <h2><a href="./html/play.html">Play Online</a></h2>
                 </div>
+
+                <!-- <div id="machine-learning">
+                    <h2><a href="./ml/p5.html">Machine Learning Experiments</a></h2>
+                </div> -->
             </div>
         </div>
-        <footer>
-            <div class="container row ">
-                <div class="col-sm-8">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <a href="./html/play.html">
-                                <img src="./img/title.png" class="text-center" style="max-height:100px;" title="Kharbga Game Network">
-                            </a>
-                        </div>
-                        <div class="col-sm-8">
-                            <ul class="nav navbar-nav">
-                                <li id="terms-li">
-                                    <a target="rules" id="terms-link" href="./html/terms.html">
-                                        <span class="glyphicon glyphicon-star"></span> Terms & Conditions
-                                    </a>
-                                </li>
-                                <li id="privacy-li">
-                                    <a target="rules" id="privacy-link" href="./html/privacy.html">
-                                        <span class="glyphicon glyphicon-lock"></span> Privacy
-                                    </a>
-                                </li>
-                                <li id="contact-us-li">
-                                    <a target="nouris" id="contact-us-link" href="http://www.nourisolutions.com/company/message/send/1">
-                                        <span class="glyphicon glyphicon-envelope"></span> Contact Us
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
 
+        <div>
+
+            <!-- route outlet -->
+            <!-- component matched by the route will render here -->
+            <router-view></router-view>
+
+            <footer>
+                <div class="container row ">
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <a href="./html/play.html">
+                                    <img src="./img/title.png" class="text-center" style="max-height:100px;" title="Kharbga Game Network">
+                                </a>
+                            </div>
+                            <div class="col-sm-8">
+                                <ul class="nav navbar-nav">
+                                    <li id="terms-li">
+                                        <router-link to="/terms">
+                                            <span class="glyphicon glyphicon-star"></span> Terms & Conditions
+                                        </router-link>
+                                        <a target="rules" id="terms-link" href="./html/terms.html">
+                                            <span class="glyphicon glyphicon-star"></span> Terms & Conditions
+                                        </a>
+                                    </li>
+                                    <li id="privacy-li">
+                                        <router-link to="/privacy" <span class="glyphicon glyphicon-lock">
+                                            </span> Privacy
+                                        </router-link>
+                                        <a target="rules" id="privacy-link" href="./html/privacy.html">
+                                            <span class="glyphicon glyphicon-lock"></span> Privacy
+                                        </a>
+                                    </li>
+                                    <li id="contact-us-li">
+                                        <a target="nouris" d="contact-us-link" href="https://www.myOnlineObjects.com/message/send/11452">
+                                            <span class="glyphicon glyphicon-envelope"></span> Contact Us
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <strong>Developed & Operated By <a href="http://www.nouriSolutions.com ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
+                    </div>
                 </div>
-                <div class="col-sm-4">
-                    <strong>Developed & Operated By <a href="http://www.nouriSolutions.com ">Nouri&nbsp;Solutions,&nbsp;LLC</a></strong>
-                </div>
-            </div>
-            <hr />
-        </footer>
+                <hr />
+            </footer>
+        </div>
+        <!-- vue App -->
     </div>
 </body>
 

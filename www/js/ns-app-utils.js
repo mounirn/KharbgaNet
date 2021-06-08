@@ -157,16 +157,35 @@ function NSUser(){
     this.setTeam = function(team){
         this.team = team;
     };
-
+    /**
+     * @summary returns true if the current user is active 
+     */
     this.isActive = function(){
         return (this.session != null && this.session.isActive === true);
     };
+    /**
+     * @summary returns true if the current user is active and is admin 
+     */
     this.isAdmin = function(){
         return (this.session != null && this.session.isActive === true && this.session.isAdmin === true);
     };
+    /**
+     * @summary returns true if the current user is active and is system admin 
+     */
+    this.isSysAdmin = function(){
+        return (this.session != null && this.session.isActive === true && this.session.mainRole === 999);
+    };
+
+    /**
+     * @summary returns true if the current user is active and logged in
+     */
     this.isLoggedIn = function(){
         return this.isActive();
     };
+
+    /**
+     * @summary logout the current user
+     */
     this.reset =  function(){       
         this.session.reset();
         this.preferences = {};

@@ -810,8 +810,9 @@ $.nsApp.init = function(){
      * the form with any data  
      * @param {boolean} loadTeamInfo load team info option
      * @param {boolean} transferToLogin transfer to login page if invalid session
+     * @param {function} statusFn the status fn call back with the current session
      */ 
-    this.setup = function (loadTeamInfo,transferToLogin) {
+    this.setup = function (loadTeamInfo,transferToLogin, statusFn) {
         if (nsApp.loggingOn) console.log("user.setup");
 
         nsApp.state.loadAccountInfo = loadTeamInfo;
@@ -824,13 +825,16 @@ $.nsApp.init = function(){
             setupTeamsHtml5Combobox();   
             setupMyAccount();
             setupFormsValidation();         
-            _loadAccountInfo();
+          // MN: Check session already load the account and team info dep. on the state settings
+          //  _loadAccountInfo();
             if (loadTeamInfo){ 
                  loadUserPreferences();
-                _loadTeamInfo();
+             //   _loadTeamInfo();
                 _loadTeamMembers();
-            }        
-            
+            }       
+         
+            if (typeof statusFn === "function")
+                statusFn( nsApp.getSession());
         },4000); // wait for the check session to complete
 
     };
@@ -842,5 +846,42 @@ $.nsApp.init = function(){
         transferToLogin();
     };
 
+    /**
+     * @summary - logouts the current status
+     * @param statusFn - function to be called after logging out the function receives the current user session 
+     * 
+     */
+    this.logout = function(statusFn){
+        var session = nsApp.getSession();
+        if (!nsApp.isValid(session) || !nsApp.isValidString(session.sessionId))
+        {         
+         //   transferToMyAccount(); 
+             statusFn(session);
+            nsApp.displayAccountMessage("You are not logged in");
+            return; 
+        }
+        nsApp.displayProcessing(true);
+        nsApiClient.userService.signOut(session.sessionId, function (data,status) {
+            if (nsApp.isValid(data)) {          
+                setupClientStateWithSession(null);    
+                  nsApp.displayProcessing(false);   
+
+                if (nsApp.isValid($.nsVM) && typeof ($.nsVM.sendMessage) === 'function'){
+                    $.nsVM.sendMessage(nsApp.MSG_on_logout_done_success,data);
+                }
+            }
+            else {
+                // clear the session anyway
+                setupClientStateWithSession(null);    
+                nsApp.displayProcessing(false); 
+                nsApp.handleResultNoData(data,status);   
+            } 
+            var session = nsApp.getSession();
+            statusFn(session);
+        });
+        
+    };
+
 };
+
 $.nsApp.init(); // init 

@@ -1,4 +1,4 @@
-$(document).on("pagecreate", function() {
+/* $(document).on("pagecreate", function() {
     $("body > [data-role='panel']").panel();
     $("body > [data-role='panel'] [data-role='listview']").listview();
 });
@@ -7,8 +7,11 @@ $(document).one("pageshow", function() {
     $("body > [data-role='header']").toolbar();
     $("body > [data-role='header'] [data-role='navbar']").navbar();
 });
-
+*/
 $.nsAppViewModel = {};
+
+$.mobile.linkBindingEnabled = true;
+$.mobile.ajaxEnabled = true;
 
 $(document).ready(function() {
     //  $('.combobox').combobox()
@@ -65,6 +68,18 @@ $(document).ready(function() {
 
     // setup - start with the given game Id
     $.kApp.setup(gameId);
+
+    // support for the sub pages
+
+    
+    $( document ).delegate("#rules", "pageinit", function() {
+       // alert('A page with an id of "rulese" was just created by jQuery Mobile!');
+
+    });
+
+    jQuery( ".ns-kharbga-rules" ).on( "pagecreate", function( event ) {
+        alert('On page create - selector: ');
+    } );
     
 });
 

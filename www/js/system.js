@@ -18,7 +18,7 @@ $(document).ready(function() {
 
 //]]>
 function viewGame(id) {
-    document.location = "../html/play.html?id=" + id
+    document.location = "../html/play.html?id=" + id;
 }
 
 
@@ -32,7 +32,8 @@ function refreshGames2(e) {
     $('#system-message').html("<div class='alert alert-waring'>Refreshing active games from the server...</div>");
     $('#games-table').empty().html('');
 
-    var result = nsApiClient.gameService.getGames(nsApp.sessionId(),{ "active": null }, function (data, status) {
+    var session = nsApp.getSession();
+    var result = nsApiClient.gameService.getGames(session.sessionId,{ "active": null }, function (data, status) {
         if (data != null) {
             var html = "<table class='table table-responsive'><thead>";
             var first = true;
@@ -83,8 +84,8 @@ function refreshPlayers(e) {
     $('#system-message').html("<div class='alert alert-info'>Refreshing players from the server...</div>");
 
     $('#players-table').empty();
-
-    var result = nsApiClient.gameService.getPlayers(appClientState.sessionId,{ "active": null }, function (data, status) {
+    var session = nsApp.getSession();
+    var result = nsApiClient.gameService.getPlayers(session.sessionId,{ "active": null }, function (data, status) {
         if (data != null) {
             $('#system-message').html("<div class='alert alert-success'>Returned players successfully. </div>");
             var html = "<table class='table table-responsive'><thead>";
@@ -132,7 +133,8 @@ function refreshPlayers(e) {
      e.preventDefault();
      $('#system-message').html("<div class='alert alert-info'>Refreshing active connections from the server...</div>");
      $('#connections-table').empty();
-     var result = nsApiClient.gameService.getConnections(appClientState.sessionId, { "active": true }, function (data, status) {
+     var session = nsApp.getSession();
+     var result = nsApiClient.gameService.getConnections(session.sessionId, { "active": true }, function (data, status) {
          if (data != null) {
              $('#system-message').html("<div class='alert alert-success'>returned connections successfully. </div>");
              var html = "<table class='table table-responsive'><thead>";

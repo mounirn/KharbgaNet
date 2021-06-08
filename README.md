@@ -46,6 +46,21 @@ See references below. However, the exact rules enforced by this program are base
 
   See Rules https://kharbga.com/html/rules.html page for details.
 
+
+Build Setup
+
+## install dependencies
+
+npm install
+
+## serve with hot reload at localhost:8080
+
+npm run dev
+
+## build for production with minification
+
+npm run build
+
 ## References
 
 1. link http://nabataea.net/seega.html

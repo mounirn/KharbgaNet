@@ -5,8 +5,11 @@
   
     // Base url
     window.__env.baseURI = 'http://localhost/dev/myOnlineObjects/';
+ //   window.__env.baseURI = 'https://api.kharbga.com/';
+
+ //  window.__env.baseURI = 'http://localhost:3121/';
   
     // Whether or not to enable debug mode
     // Setting this to false will disable console output
-    window.__env.enableDebug = true;
+    window.__env.enableDebug = true; 
   }(this));

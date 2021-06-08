@@ -47,11 +47,17 @@
 </head>
 
 <body>
-    <div data-role="page" id="first" data-theme="a" class="ns-kharbga">
+
+    <div data-role="page" id="play" data-theme="a" class="ns-kharbga">
         <div data-role="header" data-position="fixed" class="text-center jqm-header">
-            <a id="" target="rules" href="../html/rules.html" class="ui-mini ns-hide-when-small" data-theme="c">
+            <a href="../html/index.html#rules" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">
                 <img id="" src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
             </a>
+            <!--
+            <a id="" target="rules" href="#rules" class="ui-mini ns-hide-when-small" data-theme="c">
+                <img id="" src="../img/kharbga.png" style="max-height:25px;padding-top:0px;">
+            </a>
+-->
             <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">Play / Watch
             </a>
             <a id="xlogin-popup" href="#login-popup" data-rel="popup" data-mini="true" data-position-to="window" data-icon="user" class="ui-btn-right" data-iconpos="notext">
@@ -122,7 +128,7 @@
                     <li>
                         <a href="../html/privacy.html" data-prefetch="true" data-rel="dialog">Privacy</a>
                     </li>
-                    <li><a target="nouris" href="https://www.onlineobjects.app/message/send/1">Contact Us</a></li>
+                    <li><a target="nouris" href="https://www.Myonlineobjects.com/message/send/1">Contact Us</a></li>
 
                 </ul>
 
@@ -369,7 +375,14 @@
 
                         </div>
                         <div data-role="collapsible">
-                            <h3><a id="active-games-link" href="#"> Active Games </a></h3>
+                            <h3><a id="open-games-link" href="#">Open Games </a></h3>
+                            <div id="open-games-message"></div>
+                            <ul id="open-games-list" data-role="listview" data-theme="b" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                            </ul>
+
+                        </div>
+                        <div data-role="collapsible">
+                            <h3><a id="active-games-link" href="#">Active Games </a></h3>
 
                             <ul id="active-games-list" data-role="listview" data-theme="b" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
                             </ul>
@@ -385,6 +398,13 @@
                             <h3><a id="my-games-link" href="#">My Games </a></h3>
 
                             <ul id="my-games-list" data-role="listview" data-theme="c" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
+                            </ul>
+
+                        </div>
+                        <div data-role="collapsible">
+                            <h3><a id="completed-games-link" href="#">Recent Completed Games </a></h3>
+
+                            <ul id="completed-games-list" data-role="listview" data-theme="b" data-inset="false" style="height: 80%;max-height:600px;overflow-y:scroll" class="list-group ">
                             </ul>
 
                         </div>
@@ -519,13 +539,14 @@
             <!-- collapsible set -->
         </div>
         <div data-role="footer" data-position="fixed">
-            <h5> Developed & Operated By <a target="nouris" href="http://www.nouriSolutions.com">Nouri&nbsp;Solutions,&nbsp;LLC</a>
+            <h5> Developed & Operated By <a target="nouris" href="https://company.nouris.net">Nouri&nbsp;Solutions,&nbsp;LLC</a>
             </h5>
             <a href="#popup-menu" data-icon="grid" data-mini="true" data-rel="popup" data-transition="slideup" class="ui-btn-left" data-iconpos="notext">
                 Play / Watch
             </a>
         </div>
     </div>
+
     <script src="../lib/json/json3.min.js"></script>
     <!--  <script src="../lib/jquery/jquery.min.js"></script> -->
 
