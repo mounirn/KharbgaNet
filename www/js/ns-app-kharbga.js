@@ -2155,7 +2155,6 @@ var KharbgaApp = function () {
             return;
         }
       
-
         // update the game players info
         if (gameInfo.attacker != null)
             game.attacker.name = gameInfo.attacker.name;
@@ -2168,7 +2167,6 @@ var KharbgaApp = function () {
             gameState.update(gameInfo);
 
         displayGameMessage("Setup local game");    
-        
         
         if (gameInfo.status === Kharbga.GameStatus.Completed){
              if (gameInfo.moves!= null && gameInfo.moves.length> 0){
